@@ -1,3 +1,6 @@
+/* Planning on using this color scheme: https://colorhunt.co/palette/69360 */
+/* This file adds on to the CSS file used by "jekyll-theme-cayman" (_site\assets\css\style.css) https://help.github.com/en/github/working-with-github-pages/adding-a-theme-to-your-github-pages-site-using-jekyll#customizing-your-themes-css 
+*/
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
 /** 1. Set default font family to sans-serif. 2. Prevent iOS text size adjust after orientation change, without disabling user zoom. */
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700");
@@ -317,3 +320,11 @@ a:hover { text-decoration: underline; }
 .site-footer-owner { display: block; font-weight: bold; }
 
 .site-footer-credits { color: #819198; }
+
+.page-header { color: #ec625f; background-image: linear-gradient(180deg, #525252, #313131); }
+
+body { background-color: #313131; }
+
+.main-content h1, .main-content h2, .main-content h3, .main-content h4, .main-content h5, .main-content h6 { color: #ec625f; }
+
+p { color: #414141; }
