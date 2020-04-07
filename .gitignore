@@ -1,1 +1,3 @@
 Gemfile
+.sass-cache
+.sass-cache/*
