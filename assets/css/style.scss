@@ -9,12 +9,18 @@
 
 @import "jekyll-theme-cayman";
 
-.page-header { color:#ec625f; background-image: linear-gradient(180deg, #525252, #313131); }
+// having issues with relative paths and fontawesome icons. using absolute path for now.
+@import "/home/evan/Projects/dunneev.github.io/assets/fontawesome/scss/fontawesome.scss";
+@import "/home/evan/Projects/dunneev.github.io/assets/fontawesome/scss/solid.scss";
 
-body { background-color: #313131; }
+.page-header { color:#00adb5; background-color: transparent; background-image: linear-gradient(180deg, #393e46, #222831); }
 
-.main-content h1, .main-content h2, .main-content h3, .main-content h4, .main-content h5, .main-content h6 { color: #ec625f; }
+body { background-color: #222831; }
 
-p { color:#414141}
+.main-content h1, .main-content h2, .main-content h3, .main-content h4, .main-content h5, .main-content h6 { color: #00adb5; }
+
+p { color:#eeeeee }
+
+a { color: #b54800; }
 
 
