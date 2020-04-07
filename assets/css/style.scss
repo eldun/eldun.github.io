@@ -9,9 +9,12 @@
 
 @import "jekyll-theme-cayman";
 
-// having issues with relative paths and fontawesome icons. using absolute path for now.
-@import "/home/evan/Projects/dunneev.github.io/assets/fontawesome/scss/fontawesome.scss";
-@import "/home/evan/Projects/dunneev.github.io/assets/fontawesome/scss/solid.scss";
+// The default folder for scss files is _sass (this can be changed in config.yml)
+// Was having a lot of trouble trying to use fontawesome icons with their relative paths 
+// before creating the_sass directory and moving the scss files there.
+@import "fontawesome/fontawesome.scss";
+@import "fontawesome/solid.scss";
+
 
 .page-header { color:#00adb5; background-color: transparent; background-image: linear-gradient(180deg, #393e46, #222831); }
 
