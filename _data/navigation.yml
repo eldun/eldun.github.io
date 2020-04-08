@@ -1,6 +1,29 @@
+# - name: Home
+#   link: /
+#   icon: <i class="fas fa-home"></i>
+
+# - name: Tags
+#   link: /tags.html
+#   icon: <i class="fas fa-tags"></i>
+
+# - name: Archives
+#   link: /archives.html
+#   icon: <i class="fas fa-archive"></i>
+
+  # - name: About
+  # link: /about.html
+  # icon: <i class="fas fa-user"></i>
+
+  # - name: Search
+  # link: /search.html
+  # icon: <i class="fas fa-search"></i>
+
 - name: Home
   link: /
+  icon: <i class="fas fa-home"></i>
 - name: About
   link: /about.html
+  icon: <i class="fas fa-user"></i>
 - name: Blog
   link: /blog.html
+  icon: <i class="fas fa-archive"></i>
