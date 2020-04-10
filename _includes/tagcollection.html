@@ -6,6 +6,7 @@
 {% endfor %}
 {% assign rawtags = rawtags | split:'|' | sort %}
 
+<!-- Create list of unique tags "site.tags" to be used elsewhere -->
 {% assign site.tags = "" %}
 {% for tag in rawtags %}
   {% if tag != "" %}
