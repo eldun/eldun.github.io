@@ -1,0 +1,16 @@
+<div class="all-tags">
+    <ul>
+        {% assign tags = site.posts | all_tags %}
+        {% for tag in tags %}
+        {% assign tag_slug = tag['name'] | slugify: "raw" %}
+        <li>
+            <span>
+                <code><a class="tag-link" 
+                    href="{{ site.baseurl | append: "/tags/" | append: tag_slug | append: "/" }}"
+                    rel="category-tag">#{{tag['name']}}</a></code>
+                    ({{ tag['count'] }})
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
