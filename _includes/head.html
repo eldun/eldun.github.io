@@ -11,11 +11,6 @@
     {% endif %}
     <meta charset="UTF-8">
 
-    <!-- Ensure "tagcollection.html" is executed before the variable "site.tags" is used -->
-    {% if site.tags != "" %}
-    {% include tagcollection.html %}
-    {% endif %}
-
     {% seo %}
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#157878">

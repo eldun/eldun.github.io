@@ -28,3 +28,8 @@
 - name: Blog
   link: /blog.html
   icon: <i class="fas fa-archive"></i>
+
+  collections:
+  tags:
+    output: true
+    permalink: tags/:path

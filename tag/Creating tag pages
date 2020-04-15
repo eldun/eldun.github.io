@@ -1,6 +1,0 @@
-The method I'm using to implement tag functionality is based on what can be found at Long Qian's blog (https://longqian.me/2017/02/09/github-jekyll-tag/).
-
-In order to tell Github Jekyll engine to create a tag page, we need a markdown file specifying the specific tag to display and the tagpage format.
-
-The "automatic" described in Long's blog seemed a bit too much. In addition, it wasn't really automatic. I would still have to remember to run the python script before pushing to github. For posterity, the script is located in this folder under the filename tag_generator.py.
-
