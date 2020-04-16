@@ -1,10 +1,18 @@
 <!-- <link href="../assets/fontawesome/all.css" rel="stylesheet"> load all styles -->
 <nav>
   {% for item in site.data.navigation %}
-    <a class="nav-bar-links" href="{{ item.link }}" {% if page.url == item.link %}style="color: #00adb5;"{% endif %}>
+    <a class="nav-bar-links" 
+    {% if item.name == "Search" %} 
+    id="{{ item.id }}"
+    onclick="{{ item.onclick }}"
+    {% endif %} 
+    href="{{ item.link }}" {% if page.url == item.link %}style="color: #00adb5;"{% endif %}>
       {{ item.icon }}
       <br>
       {{ item.name }}
     </a>
   {% endfor %}
 </nav>
+
+<script src="/js/toggle-search.js" type="text/javascript"></script>
+
