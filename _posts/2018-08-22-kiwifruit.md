@@ -1,6 +1,8 @@
 ---
 layout: post
 author: ted
+header-image: /assets/images/kiwifruit/kiwi.jpg
+header-image-description: a kiwi!
 tags: fruit
 ---
 Kiwifruit (often abbreviated as kiwi), or Chinese gooseberry is the edible
