@@ -1,19 +1,19 @@
 - name: Home
   link: /
   icon: <i class="fas fa-home"></i>
-- name: Tags
-  link: /tags.html
-  icon: <i class="fas fa-tags"></i>
 - name: About
   link: /about.html
   icon: <i class="fas fa-user"></i>
-- name: Blog
-  link: /blog.html
+- name: Archive
+  link: /archive.html
   icon: <i class="fas fa-archive"></i>
+- name: Tags
+  link: /tags.html
+  icon: <i class="fas fa-tags"></i>
 - name: Search
   icon: <i class="fas fa-search"></i>
   id: search-button
-  onclick: toggleSearch();return false;
+  onclick: toggleSearch(); return false;
 
   collections:
   tags:
