@@ -1,7 +1,7 @@
 ---
 layout: post
 author: ted
-header-image: /assets/images/kiwifruit/kiwi.jpg
+header-image: /assets/images/blog-images/kiwifruit/kiwi.jpg
 header-image-description: a kiwi!
 tags: fruit
 ---
