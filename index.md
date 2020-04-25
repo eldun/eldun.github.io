@@ -1,6 +1,6 @@
 ---
 layout: default
-title: dunneev.github.io
+title: Home
 ---
 
 <ul style="list-style-type: none;">
