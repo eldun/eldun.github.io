@@ -18,7 +18,7 @@
 .page-header {
   background-color: transparent;
   background-image: linear-gradient(180deg, #393e46, #222831);
-  color: #00adb5;
+  color: #42cad1;
 }
 
 .nav-bar-links {
@@ -30,13 +30,17 @@ body {
   background-color: #222831;
 }
 
+.main-content code{
+  background-color: #393e46;
+}
+
 .main-content h1,
 .main-content h2,
 .main-content h3,
 .main-content h4,
 .main-content h5,
 .main-content h6 {
-  color: #00adb5;
+  color: #42cad1;
   text-align: center;
 }
 
@@ -54,7 +58,7 @@ p {
 }
 
 a {
-  color: #b54800;
+  color: #cc773f;
 }
 
 .post-date {
@@ -68,4 +72,8 @@ a {
 
 ul {
   padding: inherit;
+}
+
+.btn {
+  color: #cc773f;
 }

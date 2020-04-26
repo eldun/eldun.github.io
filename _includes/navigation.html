@@ -6,7 +6,7 @@
     id="{{ item.id }}"
     onclick="{{ item.onclick }}"
     {% endif %} 
-    href="{{ item.link }}" {% if page.url == item.link %}style="color: #00adb5;"{% endif %}>
+    href="{{ item.link }}" {% if page.url == item.link %}style="color: #42cad1;"{% endif %}>
       {{ item.icon }}
       <br>
       {{ item.name }}
@@ -15,4 +15,8 @@
 </nav>
 
 <script src="/js/toggle-search.js" type="text/javascript"></script>
+
+<!-- Nav will always be visible, so I included "back to top" code here. -->
+<script src="/js/vanilla-back-to-top.min.js"></script>
+<script>addBackToTop()</script>
 
