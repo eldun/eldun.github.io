@@ -71,6 +71,7 @@ a {
 }
 
 ul {
+  list-style-type: none;
   padding: inherit;
 }
 
@@ -81,4 +82,14 @@ ul {
 .header-image {
   max-width: 20%;
   height: auto;
+}
+
+.about-header-image {
+  max-width: 20%;
+  height: auto;
+  border-radius: 50%;
+}
+
+.tag-cloud {
+  text-align: center;
 }
