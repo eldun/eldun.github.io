@@ -6,7 +6,9 @@
     id="{{ item.id }}"
     onclick="{{ item.onclick }}"
     {% endif %} 
-    href="{{ item.link }}" {% if page.url == item.link %}style="color: #42cad1;"{% endif %}>
+    href="{{ item.link }}" 
+    {% if page.url == item.link or
+      page.url contains "tags" and item.name == "Tags" %} style="color: #42cad1;"{% endif %}>
       {{ item.icon }}
       <br>
       {{ item.name }}
