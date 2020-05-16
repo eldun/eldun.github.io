@@ -14,8 +14,3 @@
   icon: <i class="fas fa-search"></i>
   id: search-button
   onclick: toggleSearch(); return false;
-
-  collections:
-  tags:
-    output: true
-    permalink: tags/:path

@@ -6,7 +6,7 @@
         {% assign tag_slug = tag['name'] | slugify: "raw" %}
         <li>
             <code><a class="tag-link" 
-                    href="{{ site.baseurl | append: "/tags/" | append: tag_slug | append: "/" }}"
+                    href="{{ site.baseurl | append: "/tags/" | append: tag_slug }}"
                     rel="category-tag">#{{tag['name']}}</a></code>
             ({{ tag['count'] }})
         </li>
