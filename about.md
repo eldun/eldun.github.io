@@ -3,7 +3,7 @@ layout: default
 title: About
 ---
 
-## About Me 
+## About 
 <hr>
 
 Hi, my name is Evan. 

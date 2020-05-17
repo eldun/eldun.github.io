@@ -1,6 +1,6 @@
-theme: jekyll-theme-cayman
-title: dunneev.github.io
 github-profile: https://github.com/dunneev
+title: dunneev.github.io
+theme: jekyll-theme-cayman
 
 # Any plugins within jekyll_plugin group from Gemfile
 plugins:
@@ -11,7 +11,7 @@ plugins:
   - jekyll-compose
   - jekyll-redirect-from
 
-  # Exclude these files from the build process results.
+# Exclude these files from the build process results.
 # Prevents them from showing up in the master branch which 
 # is the live site.
 exclude:
