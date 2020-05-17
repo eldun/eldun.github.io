@@ -1,0 +1,27 @@
+#All of this together basically says, “Using the source branch from this repo, push all the files found within the site directory to the master branch of the repo”.
+
+language: ruby #Use Ruby
+rvm: 
+- 2.3.1 #Use RVM to set ruby version to 2.3.1
+install:
+- bundle install #Run bundle install to install all gems.
+deploy:
+  provider: pages #Use TravisCI’s Github Pages provider
+  skip_cleanup: true #Preserve files created during build phase.
+  github_token: $GITHUB_TOKEN # Our personal access token. This is currently a reference to an environment variable which will be added in the TravisCI setup section below.
+  local_dir: _site #Use all files found in this directory for deployment.
+  target_branch: master #Push resulting build files to this branch on Github.
+  on:
+    branch: source #Only run TravisCI for this branch.
+
+#This only works by using the Rakefile to manually build the site.
+# filename: Rakefile
+task :default do
+  puts "Running CI tasks..."
+
+  # Runs the jekyll build command for production
+  # TravisCI will now have a site directory with our
+  # statically generated files.
+  sh("JEKYLL_ENV=production bundle exec jekyll build")
+  puts "Jekyll successfully built"
+end

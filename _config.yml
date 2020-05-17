@@ -1,4 +1,25 @@
 theme: jekyll-theme-cayman
 title: dunneev.github.io
 github-profile: https://github.com/dunneev
+
+# Any plugins within jekyll_plugin group from Gemfile
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-paginate-v2
+  - jekyll-seo-tag
+  - jekyll-compose
+  - jekyll-redirect-from
+
+  # Exclude these files from the build process results.
+# Prevents them from showing up in the master branch which 
+# is the live site.
+exclude:
+  - vendor
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - README.md
+  - Rakefile
+
 # show_downloads: true
