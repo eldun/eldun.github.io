@@ -3,5 +3,5 @@ title: Tags
 layout: default
 ---
 
-## Tags
+## Tags ({{ site.tags | unique | size }})
 {% include tag-cloud.html %}

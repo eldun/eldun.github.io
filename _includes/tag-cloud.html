@@ -1,10 +1,6 @@
-{% assign minfont = 8 %}
-{% assign maxfont = 28 %}
+
 
 <div class="tag-cloud">
-    <p><b>{{ site.tags | unique | size }} unique tags</b></p>
-
     <!-- _plugins/tag-cloud-generator.rb -->
-    {% tag_cloud font-size: 100 - 200%}
-
+    {% tag_cloud font-size: 100% - 200%}
 </div>
