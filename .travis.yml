@@ -15,13 +15,3 @@ deploy:
     branch: source #Only run TravisCI for this branch.
 
 #This only works by using the Rakefile to manually build the site.
-# filename: Rakefile
-task :default do
-  puts "Running CI tasks..."
-
-  # Runs the jekyll build command for production
-  # TravisCI will now have a site directory with our
-  # statically generated files.
-  sh("JEKYLL_ENV=production bundle exec jekyll build")
-  puts "Jekyll successfully built"
-end
