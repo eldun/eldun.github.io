@@ -10,7 +10,7 @@ title: About
 </div>
 
 
-Hi, My name is Evan Dunne. 
+Hi, my name is Evan. 
 
 I'm a software developer located in Grand Rapids, Michigan. My interests range from usability, computer graphics, and emulation to racquetball and Super Smash Brothers (Melee).
 
