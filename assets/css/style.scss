@@ -14,6 +14,8 @@
 // before creating the_sass directory and moving the scss files there.
 @import "fontawesome/fontawesome.scss";
 @import "fontawesome/solid.scss";
+@import "fontawesome/brands.scss";
+
 
 .page-header {
   background-color: transparent;
@@ -63,6 +65,9 @@ a {
   color: #cc773f;
 }
 
+.about-me-buttons {
+  text-align: center;
+}
 .post-date {
   text-align: center;
   margin-bottom: 2%;
