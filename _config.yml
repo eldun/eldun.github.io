@@ -8,7 +8,6 @@ plugins:
   - jekyll-sitemap
   - jekyll-paginate-v2
   - jekyll-seo-tag
-  - jekyll-redirect-from
 
 # Exclude these files from the build process results.
 # Prevents them from showing up in the master branch which 
