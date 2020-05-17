@@ -6,6 +6,7 @@ layout: default
     <i class="fas fa-calendar"></i> <time>{{ page.date |date_to_string }}</time>
 </div>
 <img src="{{ page.header-image }}" alt="{{ page.header-image-description }}">
-{% include post-tags.html %}
 
 {{ content }}
+
+{% include post-tags.html %}
