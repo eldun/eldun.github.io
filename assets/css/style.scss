@@ -18,14 +18,27 @@
 
 .page-header {
   background-color: transparent;
-  background-image: linear-gradient(180deg, #393e46, #222831);
+  background-image: linear-gradient(180deg, #42cad1, #222831, #222831);
   color: #42cad1;
-  padding-bottom: 0rem;
+  padding-bottom: 2rem;
 }
 
 .nav-bar-links {
   display: inline-block;
   padding: 5px;
+}
+
+#search-container {
+  position: absolute; /* Sit on top of the page content */
+  width: max-content; 
+  height: max-content;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #393e4693; /* Background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
 }
 
 #search-input {
@@ -34,7 +47,12 @@
   background-color: #222831;
   border-color: #42cad1;
   border-style: solid;
-  color: #cc773f;
+  color: #42cad1;
+}
+
+#results-container {
+  background-color: #393e46;
+  // border-radius: 1rem;
 }
 
 body {
@@ -43,12 +61,13 @@ body {
 
 .main-content {
   padding-top: 0;
-  margin-top: 0.5 rem;
-  margin-bottom: 0.5;
+  // margin-top: 0.5 rem;
+  // margin-bottom: 0.5;
+
 }
 
 .main-content code {
-  background-color: #393e46;
+  background-color: #222831;
   color: unset;
   font-size: unset;
 }
@@ -75,6 +94,7 @@ body {
 
 p {
   color: #eeeeee;
+  margin-top: .3rem;
 }
 
 a {
@@ -101,6 +121,7 @@ a {
 
 .post-date {
   text-align: center;
+  margin-bottom: .3rem;
 }
 
 .post-button {
@@ -109,11 +130,12 @@ a {
 
 ul {
   list-style-type: none;
-  padding: inherit;
+  padding: 0rem 4rem;
 }
 
 .btn {
   color: #cc773f;
+  border-color: #cc773f;
 }
 
 .header-image {
@@ -129,4 +151,8 @@ ul {
 
 .tag-cloud {
   text-align: center;
+}
+
+.site-footer {
+  border-color: #42cad1;
 }
