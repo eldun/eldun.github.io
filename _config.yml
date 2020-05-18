@@ -1,6 +1,11 @@
 github-profile: https://github.com/dunneev
 title: dunneev.github.io
 theme: jekyll-theme-cayman
+colors:
+  - dark-primary: \#222831
+  - dark-secondary: \#393e46
+  - clickable: \#cc773f
+  - accent: \#42cad1
 
 # Any plugins within jekyll_plugin group from Gemfile
 plugins:
