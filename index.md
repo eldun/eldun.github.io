@@ -2,7 +2,6 @@
 layout: default
 title: Home
 ---
-<h2>Blog</h2>
 <ul style="list-style-type: none;">
   {% for post in site.posts %}
   <hr>
