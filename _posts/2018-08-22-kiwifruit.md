@@ -2,7 +2,8 @@
 layout: post
 author: ted
 header-image: /assets/images/blog-images/kiwifruit/kiwi.jpg
-header-image-description: a kiwi!
+header-image-alt: a kiwi!
+header-image-title: howdy, partner.
 tags: fruit
 ---
 Kiwifruit (often abbreviated as kiwi), or Chinese gooseberry is the edible
