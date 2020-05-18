@@ -67,7 +67,7 @@ body {
 }
 
 .main-content code {
-  background-color: #222831;
+  background-color: #393e46;
   color: unset;
   font-size: unset;
 }
@@ -80,6 +80,7 @@ body {
 .main-content h6 {
   color: #42cad1;
   text-align: center;
+  margin-top: 0;
   margin-bottom: 0;
 }
 
@@ -92,9 +93,15 @@ body {
   width: 1rem;
 }
 
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 1rem;
+}
+
 p {
   color: #eeeeee;
-  margin-top: .3rem;
 }
 
 a {
@@ -146,7 +153,7 @@ ul {
 .about-header-image {
   max-width: 20%;
   height: auto;
-  border-radius: 50%;
+  border-radius: 0.5rem;
 }
 
 .tag-cloud {
