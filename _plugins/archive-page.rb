@@ -36,7 +36,7 @@ module Jekyll
       self.read_yaml(File.join(base, '_layouts'), 'archive-page.html')
       
       # Setup the title (if not set?)
-      self.data['title'] = "Archives"
+      self.data['title'] = "Archive"
       
       # Grab the data we need:
       #   - A list of all years that contain posts
