@@ -1,5 +1,5 @@
 ---
-title: Howdy!
+title: "Building a Blog" 
 layout: post
 author: Evan
 header-image: /assets/images/blog-images/howdy/howdy.png
