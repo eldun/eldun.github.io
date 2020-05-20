@@ -15,6 +15,7 @@
 @import "fontawesome/fontawesome.scss";
 @import "fontawesome/solid.scss";
 @import "fontawesome/brands.scss";
+@import "fontawesome/regular.scss";
 
 
 * {
@@ -83,10 +84,16 @@ body {
   background-color: #42cad1;
 }
 
+.highlight .err {
+  color: #42cad1;
+  background-color: #393e46;
+}
+
 .main-content code {
   background-color: #393e46;
   color: #42cad1;
   font-size: unset;
+  padding: 0rem;
 }
 
 .main-content h1,
@@ -97,17 +104,25 @@ body {
 .main-content h6 {
   color: #42cad1;
   text-align: center;
-  margin-top: 0;
-  margin-bottom: 0;
+  // margin-top: 0;
+  // margin-bottom: 0;
 }
 
 .main-content hr {
   background-color: #42cad1;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-top: 4rem;
+  margin-bottom: 4rem;
   width: 1rem;
+}
+
+.table-of-contents{
+  background-color: #393e46;
+  border: 1px solid;
+  margin-left: auto;
+  margin-right: auto;
+  width: max-content;
 }
 
 img {
@@ -136,7 +151,6 @@ a {
 
 .archive-block li {
   text-align: center;
-  margin: 5px;
 }
 
 .archive-list {
@@ -152,9 +166,13 @@ a {
   text-align: center;
 }
 
+.post-tags {
+  text-align: center;
+}
+
 ul {
-  // list-style-type: none;
-  padding: 0rem 4rem;
+  list-style-type: none;
+  padding: 0.5rem 2rem;
 }
 
 .btn {
