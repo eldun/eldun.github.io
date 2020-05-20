@@ -8,7 +8,7 @@
 
     <header class="page-header" role="banner">
       <img class="header-image" src="/assets/images/site-images/header-image.png" title="An artist's modified blind sketch of yours truly." alt="Artist's sketch of me.">
-      <h1 class="project-name">{{ site.title | default: site.github.repository_name }}</h1>
+      <h1 class="project-name">{{ site.title }}</h1>
       <h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
       {% include navigation.html %}
       {% include search-bar.html %}
