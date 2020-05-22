@@ -134,7 +134,11 @@ img {
   border-radius: 0.1rem;
 }
 
-p {
+.image-row {
+  display: flex;
+}
+
+body {
   color: #eeeeee;
 }
 
