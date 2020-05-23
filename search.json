@@ -5,6 +5,7 @@
     {
 
       "title"    : "{{ post.title | escape }}",
+      "subtitle"    : "{{ post.subtitle | escape }}",
       "tags"     : "{{ post.tags | join: ', ' }}",
       "date"     : "{{ post.date }}",
       "url"      : "{{ site.baseurl }}{{ post.url }}"
