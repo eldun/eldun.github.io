@@ -1,5 +1,6 @@
 ---
-title: "Building a Blog" 
+title: "Building a Blog:"
+subtitle: "Howdy!"
 layout: post
 author: Evan
 header-image: /assets/images/blog-images/howdy/howdy.png
@@ -12,6 +13,10 @@ tags: web jekyll github-pages ruby
 They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.
 
 <!--end-excerpt-->
+---
+
+## Contents
+
 <ul class="table-of-contents">
 <li><a href="#humble-beginnings">Humble Beginnings</a></li>
 <li><a href="#github-pages">GitHub Pages</a></li>
@@ -28,11 +33,15 @@ They say the best time to start a technical blog is twenty years ago, and that t
 ## <a id="humble-beginnings"></a>Humble Beginnings
 I really decided on building a blog when I started working on Peter Shirley's [Ray Tracing in One Weekend](https://raytracing.github.io/) series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to [Victor Li's Blog](http://viclw17.github.io/). Inspired by the clarity, variety, and layout of Victor's blog, I constructed a similar site for myself to document my work and personal excursions as a developer.
 
+---
+
 ## <a id="github-pages"></a>GitHub Pages
 
 As you may have surmised from the URL, this site is hosted by GitHub Pages. Originally, I was going to register a domain from Hostinger, but GitHub Pages is FREE. Additionally, GitHub is probably the most sensible place to expand my portfolio, and a static site is all I really needed for a technical blog... for now.
 
 The only real trouble I ran into was trying to use custom plugins. More on this issue and how I went about solving it [below](#ruby-plugins).
+
+---
 
 ## <a id="jekyll"></a>Jekyll
 
@@ -41,6 +50,8 @@ Straight from Jekyll's GitHub page...
 > Jekyll is a simple, blog-aware, static site generator perfect for personal, project, or organization sites. Think of it like a file-based CMS, without all the complexity. Jekyll takes your content, renders Markdown and Liquid templates, and spits out a complete, static website ready to be served by Apache, Nginx or another web server. Jekyll is the engine behind GitHub Pages, which you can use to host sites right from your GitHub repositories.
 
 For the most part, Jekyll has been a breeze to work with. I would recommend it to anyone looking to build a static site.
+
+---
 
 ## <a id="custom-ruby-plugins"></a>Custom Ruby Plugins
 
@@ -53,6 +64,7 @@ The better solution, of course, is to automate. Big thanks to Josh Frankel and [
 The basic idea is as follows:
 ![Workflow for using custom plugins on GitHub Pages](/assets/images/blog-images/howdy/github-pages-build-process.png)
 
+---
 
 - **Create a new branch off of master (in my case, it's called *source*).**
 
@@ -63,7 +75,6 @@ The basic idea is as follows:
 - **Generate a GitHub *Personal Access Token* for Travis CI and give it repo scope/access.**
 
   This will allow Travis CI to perform pushes.
-
 
 - **Configure the Jekyll site to work with Travis CI.**
 
@@ -180,8 +191,12 @@ The Travis CI build should start, complete, and the site will be live!
 
 WOW! Quite a bit of work for some custom plugins! Namely, my archive page and tag system. Again, HUGE thanks to [Josh Frankel](https://joshfrankel.me) for [his post](https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/)!
 
+---
+
 ## <a id="archive-page"></a>Archive Page
 The archive page I have on my site at the time of this post is adapted from [Sodaware's Repository](https://github.com/Sodaware/jekyll-archive-page). There's not much to it, just some basic ruby data collection and a simple layout file. I would eventually like to style it in a way that is more pleasing on mobile devices.
+
+---
 
 ## <a id="tag-system"></a>Tag System
 For post tagging, I followed an [example from Lunar Logic](https://blog.lunarlogic.io/2019/managing-tags-in-jekyll-blog-easily/). In the Lunar Logic post, the author, [Anna Ślimak](https://blog.lunarlogic.io/author/anna/), details using Jekyll hooks - which allow for fine-grained control over various aspects of the build process. For example, one could execute custom functionality every time Jekyll renders a post. That's exactly what I'm doing on my site for the tags.
@@ -207,6 +222,7 @@ Jekyll::Hooks.register :posts, :post_write do |post|
     end
   end
 ```
+---
 
 ## <a id="search-function"></a>Search Function
 The search function was adapted from [Christian Fei's Simple Jekyll Search](https://github.com/christian-fei/Simple-Jekyll-Search). Here's the rundown:
@@ -282,6 +298,8 @@ I placed the necessary HTML elements for the search function inside `/_includes/
  The `searchResultTemplate` variable above determines what is included in the dropdown search results.
 
  Lastly, I added some javascript to toggle the search bar from visible to hidden.
+
+---
 
 ## <a id="the-future"></a>The Future
 From here onwards, I plan to document as concisely and as compellingly every personal project I undertake.
