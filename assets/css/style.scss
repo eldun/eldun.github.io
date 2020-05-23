@@ -63,6 +63,7 @@
 
 body {
   background-color: #222831;
+  color: #eeeeee;
 }
 
 .main-content {
@@ -138,10 +139,6 @@ img {
   display: flex;
 }
 
-body {
-  color: #eeeeee;
-}
-
 a {
   color: #cc773f;
 }
@@ -161,6 +158,10 @@ a {
 
 .archive-list {
   text-align: center;
+}
+
+.subtitle {
+  margin-top: 0;
 }
 
 .post-date {
