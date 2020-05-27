@@ -202,7 +202,7 @@ The archive page I have on my site at the time of this post is adapted from [Sod
 ## <a id="tag-system"></a>Tag System
 For post tagging, I followed an [example from Lunar Logic](https://blog.lunarlogic.io/2019/managing-tags-in-jekyll-blog-easily/). In the Lunar Logic post, the author, [Anna Ślimak](https://blog.lunarlogic.io/author/anna/), details using Jekyll hooks - which allow for fine-grained control over various aspects of the build process. For example, one could execute custom functionality every time Jekyll renders a post. That's exactly what I'm doing on my site for the tags.
 
-While tags can simply be entered in the Front Matter of posts, no html is generated for that specific tag.I could manually create a file for said tag in the tags directory, but the hook automatically does that work for me.
+While tags can simply be entered in the Front Matter of posts, no html is generated for that specific tag. I could manually create a file for said tag in the tags directory, but the hook automatically does that work for me.
 
 Here's the code:
 ```
