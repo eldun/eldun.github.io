@@ -80,8 +80,8 @@ The basic idea is as follows:
 
   Buckle in, becuase the next part of the process introduces a lot of changes to the Jekyll site.
   
-   - **Add the following to the `Gemfile`:**
-      
+  - **Add the following to the `Gemfile`:**
+
       ``` 
       source "https://rubygems.org"
       ruby RUBY_VERSION
@@ -103,7 +103,7 @@ The basic idea is as follows:
       ```
   - **Ensure any Gemfiles used in the Gemfile are in `_config.yml` as well.**
 
-  - **Exclude certain files to ensure they don't end up in *master* after Travis CL builds *source*.**
+  - **Exclude certain files to ensure they don't end up in *master* after Travis CI builds *source*.**
 
   - **Sample `_config.yml`:**
 
@@ -133,7 +133,8 @@ The basic idea is as follows:
     - LICENSE
     - README.md
     - Rakefile
-    ```    
+    ```
+
   - **Since *master* will be used to display the static site, we need git to ignore changes to `_site`. Add the following to `.gitignore`:**
 
     ```
@@ -146,9 +147,9 @@ The basic idea is as follows:
 
     ```
     #All of this together basically says, “Using the source branch from this repo, push all the files found within the site directory to the master branch of the repo”.
-    
+
     language: ruby #Use Ruby
-    rvm: 
+    rvm:
         - 2.3.1 #Use RVM to set ruby version to 2.3.1
     install:
         - bundle install #Run bundle install to install all gems.
@@ -161,9 +162,9 @@ The basic idea is as follows:
     on:
         branch: source #Only run TravisCI for this branch.
     ```
-    
+
   - **The `.travis.yml` only works by using the following `Rakefile` to manually build the site:**
-    
+
     ```
     # filename: Rakefile
     task :default do
