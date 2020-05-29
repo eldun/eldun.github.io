@@ -3,23 +3,27 @@ layout: default
 title: Home
 ---
 
-<ul style="list-style-type: none;">
-  {% for post in site.posts %}
-  <hr>
-  <li>
-    <h1><a href="{{ post.url }}#post-title">{{ post.title }}<br>{{ post.subtitle }}</a></h1>
-    <div class="post-date">
-      <i class="fas fa-calendar"></i> <time>{{ post.date | date_to_string }}</time>
+{% for post in site.posts %}
+<hr>
+<li>
+  <a href="{{ post.url }}#post-title">
+    <div>
+      <h1 style="color : #cc773f"> {{ post.title }}</h1>
+      <h3 style="color : #cc773f"> {{ post.subtitle }}</h3>
     </div>
-    <img src="{{ post.header-image }}" alt="{{ post.header-image-alt }}" title="{{ post.header-image-title }}">
+  </a>
+  <div class="post-date">
+    <i class="fas fa-calendar"></i> <time>{{ post.date | date_to_string }}</time>
+  </div>
+  <img src="{{ post.header-image }}" alt="{{ post.header-image-alt }}" title="{{ post.header-image-title }}">
 
-    {{ post.excerpt }}
+  {{ post.excerpt }}
 
-    <div class="post-button">
-      <a href="{{ post.url }}#continue-reading-point" class="btn">Continue reading»</a>
-    </div>
-  </li>
+  <div class="post-button">
+    <a href="{{ post.url }}#continue-reading-point" class="btn">Continue reading»</a>
+  </div>
+</li>
 
-  {% endfor %}
+{% endfor %}
 
 </ul>
