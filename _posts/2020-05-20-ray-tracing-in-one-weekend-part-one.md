@@ -3,9 +3,9 @@ title: "Ray Tracing in One Weekend:"
 subtitle: "Part One - an Introduction"
 layout: post
 author: Evan
-header-image: /assets/images/blog-images/path-tracer/finishedProduct.png
-header-image-alt: Path traced sphere scene render.
-header-image-title: Render of a sphere-filled scene with diffuse, metallic, and dielectric materials.
+header-image: /assets/images/blog-images/path-tracer/ball.png
+header-image-alt: Path traced sphere render.
+header-image-title: Render of a path traced sphere.
 tags: graphics ray-tracing ray-tracing-in-one-weekend
 ---
 
@@ -17,6 +17,7 @@ Continue reading to learn about what ray tracing is and why I decided to explore
 
 ---
 ## Contents
+{% include ray-tracing-part-nav.html %}
 
 <ul class="table-of-contents">
     <li><a href="#what-is-ray-tracing">What is Ray Tracing?</a></li>
