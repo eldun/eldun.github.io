@@ -1,0 +1,10 @@
+---
+---
+
+{% for post in site.posts %}
+{% if post.tags contains "ray-tracing-in-one-weekend" %}
+<li>
+    <a href="{{ post.url }}#post-title">{{ post.subtitle }}</a>
+</li>
+{% endif %}
+{% endfor %}
