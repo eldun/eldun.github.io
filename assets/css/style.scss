@@ -153,6 +153,11 @@ img {
   border-radius: 0.1rem;
 }
 
+.captioned-image { 
+  display: block;
+  text-align: center;
+}
+
 // Oi vey. Having lots of trouble creating aesthetically pleasing
 // rows of images with flex ragarding width - mostly for the graphics timeline
 // in my ray tracing post. I can't use block-level tags in markdown files, but I 
