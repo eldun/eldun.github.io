@@ -193,6 +193,30 @@ img {
 
 // End image row section
 
+// Mouseover images section
+
+.container {
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .2s ease;
+}
+
+.container:hover .overlay {
+  opacity: 1;
+}
+
+// End mouseover images section
+
 
 a {
   color: #cc773f;
