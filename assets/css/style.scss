@@ -97,13 +97,25 @@ body {
   padding: 0rem;
 }
 
+
 .highlight-green {
   background-color: rgba(67, 228, 67, 0.116);
+  padding: 1rem;
+  border-radius: 0.1rem;
+  display: block;
+}
+
+.highlight-yellow {
+  background-color: rgba(243, 207, 6, 0.356);
+  padding: 1rem;
+  border-radius: 0.1rem;
   display: block;
 }
 
 .highlight-red {
   background-color: rgba(243, 69, 69, 0.11);
+  padding: 1rem;
+  border-radius: 0.1rem;
   display: block;
 }
 
