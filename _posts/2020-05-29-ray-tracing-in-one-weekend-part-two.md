@@ -14,6 +14,10 @@ Now that we're familiar with ray tracing through [my introduction]({{ site.url }
 
 <!--end-excerpt-->
 
+<span class="highlight-yellow">
+I started this path tracer months ago, and only started this blog series in late May. The version of Shirley's book that I used is from sometime in 2018 (Version 1.54), and I have found that there is a recently updated version (3.1.2) on [his website](https://raytracing.github.io/) from June 6th, 2020! Therefore, there are some differences in implementation and functionality. I am trying to keep things as easy-to-follow as possible, mostly sticking with my original code and changing what I deem to be important for readability, clarity, or rendering purposes.
+</span>
+
 ---
 ## Contents
 {% include ray-tracing-part-nav.html %}
@@ -58,6 +62,7 @@ int main() {
 	int ny = 100; // Number of vertical pixels
 	std::cout << "P3\n" << nx << " " << ny << "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
 	for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
+	    std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 		for (int i = 0; i < nx; i++) {
 			float r = float(i) / float(nx);
 			float g = float(j) / float(ny);
@@ -68,6 +73,7 @@ int main() {
 			std::cout << ir << " " << ig << " " << ib << "\n";
 		}
 	}
+	std::cerr << "\nDone.\n";
 }
 ```
 
@@ -83,12 +89,68 @@ g++ main.cpp
 ./a.out > hello.ppm
 ```
 
-You may have to use a [web tool](http://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html) or download a file viewer to actually view the `.ppm` file as an image. Here's my resulting image and raw contents of the file:
+You may have to use a [web tool](http://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html) or download a file viewer (I use [IrfanView](https://www.irfanview.com/)) to actually view the `.ppm` file as an image. Here's my resulting image and raw contents of the file:
 
 <span class="image-row two-images">
 ![The "Hello World" of our path tracer](\assets\images\blog-images\path-tracer-part-two\renders\hello-world-ppm.png)
 ![The "Hello World" of our path tracer](\assets\images\blog-images\path-tracer-part-two\hello-world-ppm-raw.png)
 </span>
+
+---
+
+## <a id="timing-execution"></a>Timing Execution
+Eventually, our program is really going to chug when it comes to producing an image. It's nice to have a total running time output. This is optional, and you can [skip](#vec3-class) it if you please please. 
+
+If you want, you could just run our program in the terminal prepended with `time`. Here's an example of the utility:
+
+```
+dunneev@Evan:/mnt/c/Users/Ev/source/Projects/PathTracer/PathTracer$ time sleep 1
+
+real    0m1.019s
+user    0m0.016s
+sys     0m0.000s
+```
+
+Otherwise, you can `#include <chrono>` (for timing) and `#include <iomanip>` (for formatting) in main (or anywhere) to time more specific parts of the program:
+
+<pre><code>
+#include &lt;iostream&gt;
+<span class="highlight-green">#include &lt;chrono&gt;
+#include &lt;iomanip&gt;
+</span>
+
+int main() {
+	int nx = 200; // Number of horizontal pixels
+	int ny = 100; // Number of vertical pixels
+	std::cout << "P3\n" << nx << " " << ny << "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
+
+   	<span class="highlight-green">	auto start = std::chrono::high_resolution_clock::now();	   </span>
+
+	for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
+	    std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+		for (int i = 0; i < nx; i++) {
+			float r = float(i) / float(nx);
+			float g = float(j) / float(ny);
+			float b = 0.2;
+			int ir = int(255.99 * r);
+			int ig = int(255.99 * g);
+			int ib = int(255.99 * b);
+			std::cout << ir << " " << ig << " " << ib << "\n";
+		}
+	}
+	<span class="highlight-green">	auto stop = std::chrono::high_resolution_clock::now(); 
+
+
+	auto hours = std::chrono::duration_cast&lt;std::chrono::hours&gt;(stop - start);
+	auto minutes = std::chrono::duration_cast&lt;std::chrono::minutes&gt;(stop - start) - hours;
+	auto seconds = std::chrono::duration_cast&lt;std::chrono::seconds&gt;(stop - start) - hours - minutes;
+    	std::cerr << std::fixed << std::setprecision(2) << "\nDone in:" << std::endl << 
+	"\t" << hours.count() << " hours" << std::endl <<
+	"\t" << minutes.count() << " minutes" << std::endl <<
+	"\t" << seconds.count() << " seconds." << std::endl; </span>
+
+}
+</code></pre>
 
 ---
 
@@ -287,6 +349,7 @@ int main() {
 	int ny = 100; // Number of vertical pixels
 	std::cout << "P3\n" << nx << " " << ny << "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
 	for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
+	    std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 		for (int i = 0; i < nx; i++) {
 			<span class=highlight-green>
 			vec3 col(float(i) / float(nx), float(j) / float(ny), 0.2);
@@ -297,7 +360,8 @@ int main() {
 			std::cout << ir << " " << ig << " " << ib << "\n";
 		}
 	}
-
+    std::cerr << "\nDone.\n";
+}
 ```  
 
 ## <a id="rays"></a>Rays
@@ -380,6 +444,7 @@ int main() {
 	vec3 vertical(0.0, 2.0, 0.0);
 	vec3 origin(0.0, 0.0, 0.0);
 	for (int j = ny - 1; j >= 0; j--) {
+		std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 		for (int i = 0; i < nx; i++) {
 			double u = double(i) / double(nx);
 			double v = double(j) / double(ny);
@@ -394,6 +459,7 @@ int main() {
 			std::cout << ir << " " << ig << " " << ib << "\n";
 		}
 	}
+	std::cerr << "\nDone.\n";
 }
 ```
 
@@ -476,7 +542,9 @@ vec3 color(const ray& r) {
 The result:
 ![Ray traced sphere](\assets\images\blog-images\path-tracer-part-two\renders\red-sphere.png)
 
-Be aware that if the sphere center is change to z= +1, we'll still see the same image. We should not be seeing objects behind us. This will be fixed in the next section.
+<!-- Be aware that if the sphere center is change to z= +1, we'll still see the same image. We should not be seeing objects behind us. This will be fixed in the next section. -->
+## <a id="surface-normals-and-more-objects"></a>Surface Normals and More Objects
+
 
 ## <a id="surface-normals-and-more-objects"></a>Surface Normals and More Objects
 
@@ -663,11 +731,6 @@ And the modified `main.cpp`:
 #include "hittableList.h"
 #include "float.h"
 
-/****************************************************************************************
-The code for this path tracer is based on "Ray Tracing in One Weekend" by Peter Shirley. 
-				https://github.com/RayTracing/raytracing.github.io
-*****************************************************************************************/
-
 
 /*
 * Assign colors to pixels
@@ -711,6 +774,7 @@ int main() {
 	hittable* world = new hittable_list(list, 2);
 
 	for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
+	    std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 		for (int i = 0; i < nx; i++) {
 			double u = double(i) / double(nx);
 			double v = double(j) / double(ny);
@@ -726,6 +790,7 @@ int main() {
 			std::cout << ir << " " << ig << " " << ib << "\n";
 		}
 	}
+	std::cerr << "\nDone.\n";
 }
 ```
 
@@ -825,7 +890,7 @@ And our resulting main method:
 */
 vec3 color(const ray& r, hittable * world) {
 	hit_record rec;
-	if (world->hit(r, 0.0, TMP_MAX, rec)) {
+	if (world->hit(r, 0.0, DBL, rec)) {
 		return 0.5 * vec3(rec.normal.x() + 1, rec.normal.y() + 1, rec.normal.z() + 1); // return a vector with values between 0 and 1 (based on xyz) to be converted to rgb values
 	}
 	else { // background
@@ -850,6 +915,7 @@ int main() {
 	camera cam;
 
 	for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
+	    std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 		for (int i = 0; i < nx; i++) {
 			vec3 col(0, 0, 0);
 			for (int s = 0; s < ns; s++) { // Anti-aliasing - get ns samples for each pixel
@@ -867,16 +933,286 @@ int main() {
 			std::cout << ir << " " << ig << " " << ib << "\n";
 		}
 	}
+    std::cerr << "\nDone.\n";
 }
 ```
 
 Keep in mind - these images are only 200x100.
 The difference is clear. And blurry. Haha:
-<span class = "image-row">
+
+<span class="image-row">
 ![Sphere hittables](\assets\images\blog-images\path-tracer-part-two\renders\hittables.png)
 ![Sphere hittables](\assets\images\blog-images\path-tracer-part-two\renders\hittables-msaa.png)
 </span>
-<span class = "image-row">
+<span class="image-row">
 ![Sphere hittables](\assets\images\blog-images\path-tracer-part-two\renders\hittables-zoom.png)
 ![Sphere hittables](\assets\images\blog-images\path-tracer-part-two\renders\hittables-msaa-zoom.png)
 </span>
+
+---
+
+## <a id="diffuse-materials"></a>Diffuse Materials
+
+Our ball is pretty, but lacks texture. Let's add diffuse materials!
+
+Diffuse materials reflect light from their surface such that an incident ray is scattered ay many angles, rather than just one (which is the case with specular reflection):
+
+<span class="captioned-image">
+![Diffuse reflection](\assets\images\blog-images\path-tracer-part-two\diffuse.png)
+*An example of light reflecting off of a diffuse surface ([source](https://en.wikipedia.org/wiki/Diffuse_reflection))*
+</span>
+ 
+From Wikipedia:
+> The visibility of objects, excluding light-emitting ones, is primarily caused by diffuse reflection of light: it is diffusely-scattered light that forms the image of the object in the observer's eye.
+
+Diffuse materials also modulate the color of their surroundings with their own intrinsic color. In our ray tracer, we're going to simulate diffuse materials by randomizing ray reflections upon hitting a diffuse object. For example, if we were to shoot three rays into the space between two diffuse surfaces, we might see a result like this:
+
+<span class="captioned-image">
+![Diffuse reflection](\assets\images\blog-images\path-tracer-part-two\shirley\diffuse.png)
+*How rays might behave in our ray tracer upon hitting a diffuse surface ([source](https://raytracing.github.io/books/RayTracingInOneWeekend.html))*
+
+In addition to being reflected, some rays could also be absorbed. Naturally, the darker the surface of a given object, the more likely absorption will take place... which is why that object looks dark. Take Vantablack, one of the darkest substances known. It's made up of carbon nanotubes, and is essentially a very fine shag carpet. Light gets lost (or diffused) within this forest of tubes to create a pretty striking diffuse material:
+
+<span class="image-row">
+![Vantablack](\assets\images\blog-images\path-tracer-part-two\vantablack-zoom.png)
+<!-- *[source](https://en.wikipedia.org/wiki/Vantablack)* -->
+</span>
+<span class="image-row">
+![Vantablack](\assets\images\blog-images\path-tracer-part-two\vantablack.png)
+<!-- *[source](https://www.techbriefs.com/component/content/article/tb/supplements/pit/features/applications/27558)* -->
+</span>
+
+When I was originally reading Peter Shirley's guide, he described an incorrect (but close) approximation of ideal Lambertian reflectance(think unfinished wood or charcoal - no shiny specular highlights). We'll go through how I originally did it, and then modify the code to make matte surfaces more true-to-life, thanks to an update to his book.
+
+First of all, we need to form a unit sphere tangent to the hitpoint **p** on the scene object. The center of this sphere will be the coordinates at the end of the surface normal **n**. Be aware that there are two spheres tangential to the collided sphere - one inside the object(**p** - **n**), and one outside(**p** + **n**). we'll pick the the tangent sphere that's on the same side of the surface as the ray origin. Next, we'll select a random point **s** in the tangent unit sphere and send a ray from the hit point **p** to the random point **s** - which results in the vector **s** - **p**.
+
+
+<span class="captioned-image">
+![Diffuse material illustration](\assets\images\blog-images\path-tracer-part-two\shirley\ray-tracing-diffuse.png)
+*Generation of random diffuse bounce ray ([source](https://raytracing.github.io/books/RayTracingInOneWeekend.html))*
+</span>
+
+Now we need a way to pick the aforementioned random point **s**. Following Shirley's lead, we'll use a rejection method; picking a random point in the unit cube where x, y, and z all range from -1 to 1. If the point is outside the sphere (x<sup>2</sup> + y<sup>2</sup> + z<sup>2</sup> > 1), we reject it and try again:
+
+```
+vec3 random_unit_sphere_coordinate() {
+	vec3 p;
+	do {
+		p = 2.0 * vec3(random_double(0, 1), random_double(0, 1), random_double(0, 1)) - vec3(1, 1, 1);
+	} while (p.squared_length() >= 1.0);
+	return p;
+}
+```
+
+I put this code in camera.h, but you could put it wherever it makes sense to you. Looking back, I think I might move it when I'm done with this post.
+
+Now we have to update our `color` function to use the random coordinates:
+
+`main.cpp:`
+<pre><code>
+vec3 color(const ray& r, hittable * world) {
+	hit_record rec;
+	// Light that reflects off a diffuse surface has its direction randomized.
+	// Light may also be absorbed.
+	if (world->hit(r, 0.0, DBL_MAX, rec)) {
+		<span class="highlight-green">
+		vec3 target = rec.p + rec.normal + random_unit_sphere_coordinate(); 
+		return 0.5 * color(ray(rec.p, target - rec.p), world); // light is absorbed continually by the sphere or reflected into the world.
+		</span>
+	}
+	else { // background
+		vec3 unit_direction = unit_vector(r.direction());
+		double t = 0.5 * (unit_direction.y() + 1.0);
+		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	}
+}
+...
+</code></pre>
+
+Notice that our new code is recursive and will only stop recursing when the ray fails to hit any object. In some scenes (or some unlucky sequences of random numbers)
+, this could wreak havoc on performance. For that reason, we'll enforce a bounce limit:
+
+`main.cpp`
+<pre><code>
+<span class="highlight-green"> vec3 color(const ray& r, hittable * world, int depth) {</span>
+	hit_record rec;
+
+<span class="highlight-green">	if (depth <= 0)
+        return vec3(0,0,0); // Bounce limit reached - return darkness</span>
+
+	// Light that reflects off a diffuse surface has its direction randomized.
+	// Light may also be absorbed.
+	if (world->hit(r, 0.0, DBL_MAX, rec)) {
+		<span class="highlight-green">	vec3 target = rec.p + rec.normal + random_unit_sphere_coordinate();
+
+	// light is absorbed continually by the sphere or reflected into the world.
+	return 0.5 * color(ray(rec.p, target - rec.p), world, depth-1);</span>
+
+	}
+	else { // background
+		vec3 unit_direction = unit_vector(r.direction());
+		double t = 0.5 * (unit_direction.y() + 1.0);
+		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	}
+}
+
+int main() {
+
+	int nx = 200; // Number of horizontal pixels
+	int ny = 100; // Number of vertical pixels
+	int ns = 100; // Number of samples for each pixel for anti-aliasing
+	<span class="highlight-green">	int maxDepth = 50; // Bounce limit</span>
+	std::cout << "P3\n" << nx << " " << ny << "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
+
+	// Create spheres
+	hittable *list[2];
+	list[0] = new sphere(vec3(0, 0, -1), 0.5);
+	list[1] = new sphere(vec3(0, -100.5, -1), 100);
+	hittable* world = new hittable_list(list, 2);
+	camera cam;
+
+	for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
+	    std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+		for (int i = 0; i < nx; i++) {
+			vec3 col(0, 0, 0);
+			for (int s = 0; s < ns; s++) { // Anti-aliasing - get ns samples for each pixel
+				double u = (i + random_double(0.0, 1)) / double(nx);
+				double v = (j + random_double(0.0, 1)) / double(ny);
+				ray r = cam.get_ray(u, v);
+				vec3 p = r.point_at_parameter(2.0);
+				<span class="highlight-green">
+				col += color(r, world, maxDepth);
+				</span>
+			}
+
+			col /= double(ns); // Average the color between objects/background
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			std::cout << ir << " " << ig << " " << ib << "\n";
+		}
+	}
+    std::cerr << "\nDone.\n";
+}
+</code></pre>
+
+The result:
+<span class="captioned-image">
+![Diffuse sphere](\assets\images\blog-images\path-tracer-part-two\renders\diffuse.png)
+*Diffuse sphere*
+</span>
+
+## <a id="gamma-correction"></a>Gamma Correction
+
+Our spheres are reflecting 50% of of each bounce, so why is our picture so dark? Most image viewers assume images to be "gamma corrected". Ours is not. Here's an explanation of gamma correction from [Wikipedia](https://en.wikipedia.org/wiki/Gamma_correction):
+
+> Gamma correction, or often simply gamma, is a nonlinear operation used to encode and decode luminance or tristimulus values in video or still image systems.
+
+You can read more about gamma correction [here](https://www.cambridgeincolour.com/tutorials/gamma-correction.htm) if you feel so compelled.
+
+So basically, we need to transfrom our values before storing them. For a start, we'll use gamma 2 - which would mean raising the colors to the power of 1/*gamma* (or.5) - mathematically identical to the square root:
+
+`main.cpp:`
+<pre><code>
+...
+
+int main() {
+
+	int nx = 200; // Number of horizontal pixels
+	int ny = 100; // Number of vertical pixels
+	int ns = 10; // Number of samples for each pixel for anti-aliasing
+	int maxDepth = 50; // Bounce limit
+	std::cout << "P3\n" << nx << " " << ny << "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
+
+	// Create spheres
+	hittable *list[2];
+	list[0] = new sphere(vec3(0, 0, -1), 0.5);
+	list[1] = new sphere(vec3(0, -100.5, -1), 100);
+	hittable* world = new hittable_list(list, 2);
+	camera cam;
+
+	for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
+	    std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+		for (int i = 0; i < nx; i++) {
+			vec3 col(0, 0, 0);
+			for (int s = 0; s < ns; s++) { // Anti-aliasing - get ns samples for each pixel
+				double u = (i + random_double(0.0, 1)) / double(nx);
+				double v = (j + random_double(0.0, 1)) / double(ny);
+				ray r = cam.get_ray(u, v);
+				vec3 p = r.point_at_parameter(2.0);
+				col += color(r, world, maxDepth);
+			}
+
+			col /= double(ns); // Average the color between objects/background
+<span class="highlight-green">			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));  // set gamma to 2</span>
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			std::cout << ir << " " << ig << " " << ib << "\n";
+		}
+	}
+    std::cerr << "\nDone.\n";
+}
+</code></pre>
+
+
+<span class="captioned-image">
+![Diffuse sphere with gamma correction](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-gamma.png)
+</span>
+
+
+## <a id="shadow-acne"></a>Shadow Acne
+
+There's one small issue left to fix, known as shadow acne. Some of the rays hit the sphere (or any object, really) not at t = 0, but rather at something like t = ±0.0000001 due to floating point approximation. In that case, we'll just change our hit detection specs in `main.cpp`:
+
+```
+if (world.hit(r, 0.001, DBL_MAX, rec)) {
+```
+
+<div class="container">
+  <img src="\assets\images\blog-images\path-tracer-part-two\renders\diffuse-shadow-acne.png" alt="Shadow acne sphere">
+  <div class="overlay">
+    <img src="\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png" alt="Sphere no shadow acne">
+  </div>
+</div>
+
+You can view the images separately, as well. Here's [the one with shadow acne](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-shadow-acne.png) and [the one without](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png).
+
+## <a id="true-lambertian-reflection"></a>True Lambertian Reflection
+Recall that Lambertian reflectance is the "ideal" matte surface - the apparant brightness of a Lambertian surface to an observer is the same regardless of the observer's angle of view.
+
+Here's Shirley's explanation of the implementation of true Lambertian reflectance:
+
+> The rejection method presented here produces random points in the unit ball offset along the surface normal. This corresponds to picking directions on the hemisphere with high probability close to the normal, and a lower probability of scattering rays at grazing angles. This distribution scales by the cos3(ϕ) where ϕ is the angle from the normal. This is useful since light arriving at shallow angles spreads over a larger area, and thus has a lower contribution to the final color.
+However, we are interested in a Lambertian distribution, which has a distribution of cos(ϕ). True Lambertian has the probability higher for ray scattering close to the normal, but the distribution is more uniform. This is achieved by picking points on the surface of the unit sphere, offset along the surface normal. Picking points on the sphere can be achieved by picking points in the unit ball, and then normalizing those.
+
+![Generation of random unit vector](\assets\images\blog-images\path-tracer-part-two\shirley\rand-unit-vector.png)
+
+And our total replacement for `random_unit_sphere_coordinate()`:
+
+```
+vec3 random_unit_vector() {
+    auto a = random_double(0, 2*pi);
+    auto z = random_double(-1, 1);
+    auto r = sqrt(1 - z*z);
+    return vec3(r*cos(a), r*sin(a), z);
+}
+```
+
+The result:
+<div class="container">
+  <img src="\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png" alt="Lambertian approximation">
+  <div class="overlay">
+    <img src="\assets\images\blog-images\path-tracer-part-two\renders\lambertian.png" alt="True lambertian reflection">
+  </div>
+</div>
+
+- [Lambertian approximation](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png)
+- [True Lambertian](\assets\images\blog-images\path-tracer-part-two\renders\lambertian.png)
+
+It's a subtle difference, but a difference nonetheless. Notice that the shadows are not as pronounced and that both spheres are lighter.
+
+These changes are both due to the more uniform scattering toward the normal. For diffuse objects, they appear lighter because more light bounces toward the camera. For shadows, less light bounces straight up.
+
+## <a id="new-c++-features"></a>New C++ Features
+
