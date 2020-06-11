@@ -15,7 +15,7 @@ Now that we're familiar with ray tracing through [my introduction]({{ site.url }
 <!--end-excerpt-->
 
 <span class="highlight-yellow">
-I started this path tracer months ago, and only started this blog series in late May. The version of Shirley's book that I used is from sometime in 2018 (Version 1.54), and I have found that there is a recently updated version (3.1.2) on [his website](https://raytracing.github.io/) from June 6th, 2020! Therefore, there are some differences in implementation and functionality. I am trying to keep things as easy-to-follow as possible, mostly sticking with my original code and changing what I deem to be important for readability, clarity, or rendering purposes.
+I started this path tracer months ago, and only started this blog series in late May. The version of Shirley's book that I used is from sometime in 2018 (Version 1.54), and I have found that there is a recently updated version (3.1.2) on [his website](https://raytracing.github.io/) from June 6th, 2020! Therefore, there are some differences in implementation and functionality. I am trying to keep things easy-to-follow, mostly sticking with my original code and changing what I deem to be important for readability, clarity, or rendering purposes. If you are reading this to build your own ray tracer, I highly reccommend Shirley's book instead.
 </span>
 
 ---
@@ -1189,6 +1189,7 @@ However, we are interested in a Lambertian distribution, which has a distributio
 ![Generation of random unit vector](\assets\images\blog-images\path-tracer-part-two\shirley\rand-unit-vector.png)
 
 And our total replacement for `random_unit_sphere_coordinate()`:
+(use 3.14 as pi for now, we'll address it in the next section)
 
 ```
 vec3 random_unit_vector() {
@@ -1214,5 +1215,143 @@ It's a subtle difference, but a difference nonetheless. Notice that the shadows 
 
 These changes are both due to the more uniform scattering toward the normal. For diffuse objects, they appear lighter because more light bounces toward the camera. For shadows, less light bounces straight up.
 
-## <a id="new-c++-features"></a>New C++ Features
+## <a id="common-constants-and-utilities"></a>Common Constants and Utilities
+
+You may have noticed in `random_unit_vector()` that *pi* is not defined. That's because In Shirley's newer edition, he creates a general main header file with some constants and utilities:
+
+```
+#ifndef RTWEEKEND_H
+#define RTWEEKEND_H
+
+#include <cmath>
+#include <cstdlib>
+#include <limits>
+#include <memory>
+
+
+// Usings
+
+using std::shared_ptr;
+using std::make_shared;
+using std::sqrt;
+
+// Constants
+
+const double infinity = std::numeric_limits<double>::infinity();
+const double pi = 3.1415926535897932385;
+
+// Utility Functions
+
+inline double degrees_to_radians(double degrees) {
+    return degrees * pi / 180;
+}
+
+// Common Headers
+
+#include "ray.h"
+#include "vec3.h"
+
+#endif
+```
+
+And uses it in `main.cpp`:
+<pre><code>
+#include &lt;iostream&gt;
+#include &lt;cfloat&gt;
+
+<span class="highlight-green">
+#include "rtweekend.h"
+</span>
+
+#include "sphere.h"
+#include "hittableList.h"
+#include "camera.h"
+#include "random.h"
+
+vec3 random_unit_vector() {
+	auto a = random_double(0, 2*pi);
+    auto z = random_double(-1, 1);
+    auto r = sqrt(1 - z*z);
+    return vec3(r*cos(a), r*sin(a), z);
+}
+
+/*
+* Assign colors to pixels
+*
+* Background -
+* Linearly blends white and blue depending on the value of y coordinate (Linear Blend/Linear Interpolation/lerp).
+* Lerps are always of the form: blended_value = (1-t)*start_value + t*end_value.
+* t = 0.0 = White
+* t = 1.0 = Blue
+* 
+* Draw sphere and surface normals
+*/
+vec3 color(const ray& r, hittable * world, int depth) {
+	hit_record rec;
+
+	if (depth <= 0)
+        return vec3(0,0,0); // Bounce limit reached - return darkness
+
+<span class="highlight-green">	if (world->hit(r, 0.001, infinity, rec)) { </span>
+		vec3 target = rec.p + rec.normal + random_unit_vector(); 
+		return 0.5 * color(ray(rec.p, target - rec.p), world, depth-1); // light is absorbed continually by the sphere or reflected into the world.
+	}
+	else { // background
+		vec3 unit_direction = unit_vector(r.direction());
+		double t = 0.5 * (unit_direction.y() + 1.0);
+		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	}
+}
+
+int main() {
+
+	int nx = 1600; // Number of horizontal pixels
+	int ny = 800; // Number of vertical pixels
+	int ns = 10; // Number of samples for each pixel for anti-aliasing
+	int maxDepth = 50; // Bounce limit
+
+	std::cout << "P3\n" << nx << " " << ny << "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
+
+	// Create spheres
+	hittable *list[2];
+	list[0] = new sphere(vec3(0, 0, -1), 0.5);
+	list[1] = new sphere(vec3(0, -100.5, -1), 100);
+	hittable* world = new hittable_list(list, 2);
+	camera cam;
+
+	for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
+	        std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+
+		for (int i = 0; i < nx; i++) {
+			vec3 col(0, 0, 0);
+			for (int s = 0; s < ns; s++) { // Anti-aliasing - get ns samples for each pixel
+				double u = (i + random_double(0.0, 0.999)) / double(nx);
+				double v = (j + random_double(0.0, 0.999)) / double(ny);
+				ray r = cam.get_ray(u, v);
+				vec3 p = r.point_at_parameter(2.0);
+				col += color(r, world, maxDepth);
+			}
+
+			col /= double(ns); // Average the color between objects/background
+			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));  // set gamma to 2
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			std::cout << ir << " " << ig << " " << ib << "\n";
+		}
+	}
+}
+</code></pre>
+
+While we're here making changes, let's clean things up a bit by: 
+- Moving `random_unit_vector()` to `vec3.h`
+- Moving our `random number generator` to `rtweekend.h`
+
+
+## <a id="metal"></a>Metal
+
+## <a id="abstract-class-for-materials"></a>Abstract Class for Materials
+We're going to use an abstract material class that encapsulates behavior which will do two things:
+- Produce a scattered ray
+- Determine attenuation (reduction of magnitude) of a scattered ray
 
