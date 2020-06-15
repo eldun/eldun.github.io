@@ -1,6 +1,7 @@
 ---
 title: "Ray Tracing in One Weekend:"
 subtitle: "Part Two - The First Weekend"
+use-math: true
 layout: post
 author: Evan
 header-image: /assets/images/blog-images/path-tracer/finished-product.png
@@ -480,7 +481,6 @@ If the sphere center isn't at the origin, the formula is:
 
 (x−C<sub>x</sub>)<sup>2</sup>+(y−C<sub>y</sub>)<sup>2</sup>+(z−C<sub>z</sub>)<sup>2</sup>=r<sup>2</sup>
 
-
 It's best if formulas are kept under the hood in the vec3 class.
 
 The vector from center C=(C<sub>x</sub>,C<sub>y</sub>,C<sub>z</sub>) to point P=(x,y,z) is (P−C), and therefore
@@ -543,8 +543,6 @@ The result:
 ![Ray traced sphere](\assets\images\blog-images\path-tracer-part-two\renders\red-sphere.png)
 
 <!-- Be aware that if the sphere center is change to z= +1, we'll still see the same image. We should not be seeing objects behind us. This will be fixed in the next section. -->
-## <a id="surface-normals-and-more-objects"></a>Surface Normals and More Objects
-
 
 ## <a id="surface-normals-and-more-objects"></a>Surface Normals and More Objects
 
@@ -554,9 +552,9 @@ Our sphere looks like a circle. To make it a more obvious that it *is* a sphere,
 In our case, the outward normal is the hitpoint minus the center:
 ![Surface Normal(from Shirley's book)](\assets\images\blog-images\path-tracer-part-two\shirley\fig.sphere-normal.png)
 
-Firstly, we'll have to change `hit_sphere()` to return a `double`, which will represent the distance to the intersecting point, instead of a simple `bool` indicating the intersection. In addition, since we don't have any lights, we can vizualize the normals with a color map.
+Since we don't have any lights, we can vizualize the normals with a color map.
 
-Our main.cpp file will now look something like this:
+Our `main.cpp` file will now look something like this:
 
 `main.cpp:`
 <pre><code>
@@ -573,7 +571,7 @@ double hit_sphere(const vec3& center, double radius, const ray& r) {
 		return -1.0;
 	}
 
-<span class="highlight-green" markdown="1">
+<span class="highlight-green">
 	else {
 		return (-b - sqrt(discriminant)) / (2.0 * a);
 </span>
@@ -610,10 +608,40 @@ vec3 color(const ray& r) {
 Our resulting image:
 ![Sphere with Normals](\assets\images\blog-images\path-tracer-part-two\renders\surface-normals-render.png)
 
+As it turns out, we can simplify ray-sphere intersection. Here's our original equation:
+```
+vec3 oc = r.origin() - center;
+auto a = dot(r.direction(), r.direction());
+auto b = 2.0 * dot(oc, r.direction());
+auto c = dot(oc, oc) - radius*radius;
+auto discriminant = b*b - 4*a*c;
+```
+
+The dot product of a vector with itself is equal to the squared length of that vector.
+
+Additionally, the equation for b has a factor of two in it. Consider the quadratic equation if b = 2h:
+
+![Simplify quadratic equation](\assets\images\blog-images\path-tracer-part-two\ray-sphere-intersection-simplify.png)
+
+As such, we can refactor our code like so:
+```
+vec3 oc = r.origin() - center;
+auto a = r.direction().length_squared();
+auto half_b = dot(oc, r.direction());
+auto c = oc.length_squared() - radius*radius;
+auto discriminant = half_b*half_b - a*c;
+
+if (discriminant < 0) {
+    return -1.0;
+} else {
+    return (-half_b - sqrt(discriminant) ) / a;
+}
+```
+
 
 Cool! But it could be cooler. We need more spheres. The cleanest way to accomplish this is to create an abstract class - a class that must be overwritten by derived classes - of hittable objects.
 
-Our hittable abstract class will have a "hit" function that will be passed a ray and a record containing information about the hit, such as the time(which will be added with motion blur later in this series), position, and the surface normal: 
+Our hittable abstract class will have a "hit" function that will be passed a ray and a record containing information about the hit, such as the time(which will be added with motion blur later in this series), position, and the surface normal:
 
 `hittable.h:`
 ```
@@ -633,18 +661,79 @@ struct hit_record {
 * A class for objects rays can hit.
 */
 class hittable {
-public: 
+public:
 	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
 };
 
 #endif // !HITTABLEH
 ```
+## <a id="front-faces-versus-back-faces"></a>Front Faces Versus Back Faces
+A question we have to ask ourselves about our normals is whether they should always point outward. Right now, the normal will always be in the *direction of the center to the intersection point* - outward. So if the ray intersects from the outside, the normal is against the ray. If the ray intersects from the inside (like in a glass ball), the normal would be pointing in the same direction of the ray. The alternative option is to have the normal always point against the ray.
+
+If we decide to always have the normal point outward, we need to determine what side the ray is on when we color it. If they face the same direction, the ray is inside the object traveling outward. If they're opposite, the ray is outside traveling inward. We can determine this by taking the dot product of the ray and the normal - if the dot is positive, the ray is inside traveling outward.
+
+```
+if (dot(ray_direction, outward_normal) > 0.0) {
+    // ray is inside the sphere
+    ...
+} else {
+    // ray is outside the sphere
+    ...
+}
+```
+
+Suppose we take the other option: always having the normals point against the ray. We would have to store what side of the surface the ray is on:
+```
+bool front_face;
+if (dot(ray_direction, outward_normal) > 0.0) {
+    // ray is inside the sphere
+    normal = -outward_normal;
+    front_face = false;
+}
+else {
+    // ray is outside the sphere
+    normal = outward_normal;
+    front_face = true;
+}
+```
+
+You can choose whichever method you please, but Shirley's book reccomends the "outward" boolean method, as we will have more material types than geometric types for the time being.
+
+Following the suggestion of Shirley, we'll add a `frontFace` boolean to the `hittable.h` `hit_record` struct, as well as a function to solve the calculation:
+
+`hittable.h`:
+<pre><code>
+#ifndef HITTABLEH
+#define HITTABLEH
+
+#include "ray.h"
 
 
-And a new file for our sphere:
+struct hit_record {
+	double t; // parameter of the ray that locates the intersection point
+	vec3 p; // intersection point
+	vec3 normal;
+	<span class="highlight-green">bool frontFace;
+	
+	inline void set_face_normal(const ray& r, const vec3& outward_normal) {
+    		frontFace = dot(r.direction(), outward_normal) < 0;
+    		normal = frontFace ? outward_normal :-outward_normal;
+	} </span>
+};
+
+class hittable {
+public: 
+	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
+};
+
+#endif // !HITTABLEH
+
+</code></pre>
+
+And now to update our sphere header with the simplified ray intersection and the outward normal calculations):
 
 `sphere.h:`
-```
+<pre><code>
 #ifndef SPHEREH
 #define SPHEREH
 
@@ -661,23 +750,28 @@ public:
 
 bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
 	vec3 oc = r.origin() - center; // Vector from center to ray origin
-	double a = dot(r.direction(), r.direction());
-	double b = dot(oc, r.direction());
-	double c = dot(oc, oc) - radius*radius;
-	double discriminant = (b * b) - (a * c);
-	if (discriminant > 0) {
-		double temp = (-b - sqrt(b * b - a * c)) / a; // quadratic
+	double a = r.direction().length_squared();
+	double halfB = dot(oc, r.direction());
+	double c = oc.length_squared() - radius*radius;
+	double discriminant = (halfB * halfB) - (a * c);
+	if (discriminant > 0.0) {
+        auto root = sqrt(discriminant);
+
+		auto temp = (-halfB - root)/a;
+
 		if (temp < t_max && temp > t_min) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
-			rec.normal = (rec.p - center) / radius;
+<span class="highlight-green">			vec3 outward_normal = (rec.p - center) / radius;
+            rec.set_face_normal(r, outward_normal);</span>
 			return true;
 		}
-		temp = (-b + sqrt(b * b - a * c)) / a;
+		temp = (-halfB + root / a;
 		if (temp < t_max && temp > t_min) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
-			rec.normal = (rec.p - center) / radius;
+<span class="highlight-green">			vec3 outward_normal = (rec.p - center) / radius;
+            rec.set_face_normal(r, outward_normal);</span>
 			return true;
 		}
 	}
@@ -685,7 +779,9 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
 }
 
 #endif // !SPHEREH
-```
+</code></pre>
+
+
 
 As well as a new file for a list of hittable objects:
 
@@ -1352,6 +1448,302 @@ While we're here making changes, let's clean things up a bit by:
 
 ## <a id="abstract-class-for-materials"></a>Abstract Class for Materials
 We're going to use an abstract material class that encapsulates behavior which will do two things:
-- Produce a scattered ray
+- Produce a scattered ray (or absorb the incident ray)
 - Determine attenuation (reduction of magnitude) of a scattered ray
+
+`material.h`:
+```
+#ifndef MATERIAL_H
+#define MATERIAL_H
+
+class material {
+    public:
+        virtual bool scatter(
+            const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered
+        ) const = 0;
+};
+
+#endif
+```
+
+## <a id="describing-ray-object-intersections"></a>Describing Ray-Object Intersections
+The `hit_record` struct in `hittable.h` is where we'll be storing whatever information we want about hits. We'll be adding material to the struct.
+
+`hittable.h`:
+<pre><code>
+#ifndef HITTABLEH
+#define HITTABLEH
+
+#include "ray.h"
+
+<span class="highlight-green">class material; // forward declaration</span>
+
+struct hit_record {
+	double t; // parameter of the ray that locates the intersection point
+	vec3 p; // intersection point
+	vec3 normal;
+	bool frontFace;
+<span class="highlight-green">	material* material_ptr;</span>
+
+	inline void set_face_normal(const ray& r, const vec3& outward_normal) {
+        frontFace = dot(r.direction(), outward_normal) < 0;
+        normal = frontFace ? outward_normal : -outward_normal;
+    }
+};
+
+/* 
+* A class for objects rays can hit.
+*/
+class hittable {
+public: 
+	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
+};
+
+#endif // !HITTABLEH
+</code></pre>
+
+When a ray hits a surface, the material pointer within the hit struct will point to he material the object was instantiated with. As such, we'll have to reference the material within our sphere class to be included with the `hit_record`.
+
+`sphere.h:`
+<pre><code>
+#ifndef SPHEREH
+#define SPHEREH
+
+#include "hittable.h"
+
+class sphere : public hittable {
+public:
+	sphere() {}
+<span class="highlight-green">	sphere(vec3 cen, float r, material* material) : center(cen), radius(r), material_ptr(material) {};</span>
+	virtual bool hit(const ray& r, double tmin, double tmax, hit_record& rec) const;
+	vec3 center;
+	double radius;
+<span class="highlight-green">	material* material_ptr;</span>
+};
+
+bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+	vec3 oc = r.origin() - center; // Vector from center to ray origin
+	double a = r.direction().length_squared();
+	double halfB = dot(oc, r.direction());
+	double c = oc.length_squared() - radius*radius;
+	double discriminant = (halfB * halfB) - (a * c);
+	if (discriminant > 0.0) {
+        auto root = sqrt(discriminant);
+
+		auto temp = (-halfB - root) / a;
+
+		if (temp < t_max && temp > t_min) {
+			rec.t = temp;
+			rec.p = r.point_at_parameter(rec.t);
+			vec3 outward_normal = (rec.p - center) / radius;
+            rec.set_face_normal(r, outward_normal);
+<span class="highlight-green">			rec.material_ptr = material_ptr;</span>
+			return true;
+		}
+		temp = (-halfB + root) / a;
+		if (temp < t_max && temp > t_min) {
+			rec.t = temp;
+			rec.p = r.point_at_parameter(rec.t);
+			vec3 outward_normal = (rec.p - center) / radius;
+            rec.set_face_normal(r, outward_normal);
+<span class="highlight-green">			rec.material_ptr = material_ptr;</span>
+			return true;
+		}
+	}
+	return false;
+}
+
+#endif // !SPHEREH
+</code></pre>
+
+## <a id="light-scatter"></a>Light Scatter
+The Lambertian material we modeled previously would either scatter and attenuate by its reflectance *R*, or scatter with no attenuation but absorb 1 - *R* of rays, or somewhere in between. This is represented in code as follows:
+
+`material.h`
+```
+...
+class lambertian : public material {
+    public:
+        lambertian(const vec3& a) : albedo(a){};
+        virtual bool scatter(const ray& ray_in,
+                            const hit_record& rec,
+                            vec3& attenuation,
+                            ray& scattered) const {
+            vec3 scatter_direction = rec.p + rec.normal + random_unit_vector();
+            scattered = ray(rec.p, target - rec.p);
+            attenuation = albedo;
+            return true;
+        }
+    vec3 albedo; // reflectivity
+
+};
+...
+```
+
+## <a id="metal-reflection"></a>Metal Reflection
+Metal is definitely NOT Lambertian - here's a simple sketch depecting a general mirrored reflection:
+
+<span class="captioned-image"> ![Mirrored Reflection](\assets\images\blog-images\path-tracer-part-two\metal-reflect.png)*Metal Reflection ([source](http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/))*</span>
+
+<span class="captioned-image">![Reflection Math](\assets\images\blog-images\path-tracer-part-two\reflection-math.png)(*[source](http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/)*)
+
+In other words, the reflected ray is v + 2a. N is a unit vector, but that might not be the case for v. Also, because v points inward, we're going have to flip it by negating it. This yields the following formula:
+
+```
+vec3 reflect(const vec3& v, const vec3& n){
+    return v - 2*dot(v,n)*n;
+}
+```
+
+We can go ahead and incorporate this formula into our metal material:
+
+`material.h`
+```
+vec3 reflect(const vec3& v, const vec3& n){
+    return v - 2*dot(v,n)*n; // v enters the hittable, which is why subtraction is required.
+}
+
+class material {
+    public:
+    virtual bool scatter(const ray& ray_in, const hit_record& rec, vec3& attenuation, ray& scattered) const = 0;
+};
+
+// Matte surface
+// Light that reflects off a diffuse surface has its direction randomized.
+// Light may also be absorbed. See Diffuse.png for illustration and detailed description
+class lambertian : public material {
+    public:
+        lambertian(const vec3& a) : albedo(a){};
+        virtual bool scatter(const ray& ray_in, const hit_record& rec, vec3& attenuation, ray& scattered) const {
+            vec3 target = rec.p + rec.normal + random_unit_sphere_coordinate();
+            scattered = ray(rec.p, target - rec.p);
+            attenuation = albedo;
+            return true;
+        }
+    vec3 albedo; // reflectivity
+
+};
+
+class metal : public material {
+    public:
+        metal(const vec3& a) : albedo(a) {}
+        virtual bool scatter(const ray& ray_in, const hit_record& rec, vec3& attenuation, ray& scattered) const {
+        vec3 reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
+        scattered = ray(rec.p, reflected);
+        attenuation = albedo;
+        return dot(scattered.direction(), rec.normal) > 0.0;
+    }
+
+    vec3 albedo;
+};
+```
+
+And of course, we're going to need to update our `color`() function to use our new material:
+`main.cpp`:
+<pre><code>
+vec3 color(const ray& r, hittable *world, int depth) {
+    hit_record rec;
+
+    if (depth <= 0) {
+        return vec3(0,0,0);
+    }  
+    if (world->hit(r, 0.001, DBL_MAX, rec)) {
+        ray scattered;
+        vec3 attenuation;
+		// Scatter formulas vary based on material
+        if (rec.material_ptr->scatter(r, rec, attenuation, scattered)) {
+            return attenuation*color(scattered, world, depth-1);
+        }
+        else {
+            return vec3(0,0,0);
+        }
+    }
+    else {
+        vec3 unit_direction = unit_vector(r.direction());
+        double t = 0.5*(unit_direction.y() + 1.0);
+        return (1.0-t)*vec3(1.0, 1.0, 1.0) + t*vec3(0.5, 0.7, 1.0);
+    }
+}
+</code></pre>
+
+Now that we've got some shiny new spheres, let's add 'em to the scene, render 'em, and check 'em out:
+`main.cpp`:
+```
+int main {
+	...
+
+	hittable *list[4];
+		hittable *list[4];
+    	list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.8, 0.3, 0.3)));
+		list[1] = new sphere(vec3(0,-100.5,-1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
+		list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(0.8, 0.6, 0.2)));
+		list[3] = new sphere(vec3(-1,0,-1), 0.5, new metal(vec3(0.8, 0.8, 0.8)));
+		hittable *world = new hittable_list(list,4);
+
+		camera cam(lookFrom, lookAt, vec3(0,1,0), 20,double(nx)/double(ny), aperture, distToFocus);	
+
+		auto start = std::chrono::high_resolution_clock::now();
+
+
+		for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
+
+		...
+```
+You'll get something like this:
+
+<span class="captioned-image">![Metal and Lambertian spheres](\assets\images\blog-images\path-tracer-part-two\renders\metal.png)*Metal and Lambertian spheres*</span>
+
+Feel free to mess around with the color, positioning, and material, as well:
+<span class="captioned-image">![Metal spheres](\assets\images\blog-images\path-tracer-part-two\renders\metal-edit.png)*Your new album cover*</span>
+
+In addition to perfectly polished metal spheres, we can simulate rough metal as well, with some "fuzziness". To do so, we just need to append a random vector to the reflected rays:
+<span class="captioned-image">![Fuzzy metal reflections](\assets\images\blog-images\path-tracer-part-two\shirley\reflect-fuzzy.png)*Generating fuzzy reflections* ([*source*](https://raytracing.github.io/books/RayTracingInOneWeekend.html))</span>
+
+The larger the sphere, the fuzzier the reflections will be. If the sphere is too large, we may scatter below the surface of an object. If that happens, we can just have the surface absorb those rays.
+
+`material.h`:
+<pre><code>
+class metal : public material {
+    public:
+        metal(const vec3& a, double f) : albedo(a) {
+<span class="highlight-green">            if (f<1) fuzz = f; else fuzz = 1;</span>
+        }
+        virtual bool scatter(const ray& ray_in, const hit_record& rec, vec3& attenuation, ray& scattered) const {
+        vec3 reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
+        scattered = ray(rec.p, reflected);
+        attenuation = albedo;
+        return dot(scattered.direction(), rec.normal) > 0.0;
+    }
+
+    vec3 albedo;
+<span class="highlight-green">	double fuzz;</span>
+};
+
+</code></pre>
+
+<div class="container">
+  <img src="\assets\images\blog-images\path-tracer-part-two\renders\all-metal-no-fuzz.png" alt="Metal - no fuzz">
+  <div class="overlay">
+    <img src="\assets\images\blog-images\path-tracer-part-two\renders\metal-fuzz.png" alt="Fuzzy Metal">
+  </div>
+  (Mouseover) Fuzziness: .5, 0, and 1
+</div>
+
+
+## <a id="dielectrics"></a>Dielectrics
+Dielectrics are materials like glass. When a light ray hits one, the ray splits into a reflected ray and a refreacted ray. In this path tracer, we'll be randomly choosing which ray to simulate, only generating one ray per interaction.
+
+## <a id="refraction"></a>Refraction
+Refraction is the deflection of a ray from a straight path due to passing obliquely from one medium to another.
+
+<span class="captioned-image">
+![Refraction](\assets\images\blog-images\path-tracer-part-two\refraction.png)
+Notice both the reflected beam(top right) and the refracted beam(bottom right) ([source](https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/F%C3%A9nyt%C3%B6r%C3%A9s.jpg/1200px-F%C3%A9nyt%C3%B6r%C3%A9s.jpg))
+</span>
+
+The refractive index describes how light propagates through different mediums and is defined as
+
+$$
+K(a,b) = \int \mathcal{D}x(t) \exp(2\pi i S[x]/\hbar)
+$$
 
