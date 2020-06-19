@@ -315,6 +315,12 @@ li {
   border-color: #42cad1;
 }
 
+
+// There was an issue on certain posts where you could scroll just a tiny bit horizontally. This fixes that.
+#back-to-top {
+  margin: 0 1rem;
+}
+
 // MathJax formatting (mostly for mobile, to keep the page from going waaaay to the right when long equations are involved.
 // Either overflow: auto; for scrolling through equations
 // Or white-space: normal; to allow word wrap.
@@ -322,3 +328,7 @@ li {
 .MJXc-display {
   overflow: auto;
 }
+
+// .mjx-chtml {
+//   overflow: auto;
+// }
