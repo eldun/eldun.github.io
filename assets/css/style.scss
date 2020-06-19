@@ -94,29 +94,29 @@ body {
   background-color: #393e46;
   color: #42cad1;
   font-size: unset;
-  padding: 0rem;
+  padding: .2rem;
 }
 
 
 .highlight-green {
   background-color: rgba(67, 228, 67, 0.116);
-  padding: 1rem;
   border-radius: 0.1rem;
   display: block;
+  padding: 0.5rem;
 }
 
 .highlight-yellow {
-  background-color: rgba(243, 207, 6, 0.356);
-  padding: 1rem;
+  background-color: rgba(243, 207, 6, 0.157);
   border-radius: 0.1rem;
   display: block;
+  padding: 0.5rem;
 }
 
 .highlight-red {
   background-color: rgba(243, 69, 69, 0.11);
-  padding: 1rem;
   border-radius: 0.1rem;
   display: block;
+  padding: 0.5rem;
 }
 
 .main-content h1,
@@ -127,8 +127,6 @@ body {
 .main-content h6 {
   color: #42cad1;
   text-align: center;
-  margin-top: 0;
-  margin-bottom: 0;
 }
 
 .main-content hr {
@@ -140,19 +138,34 @@ body {
   width: 1rem;
 }
 
-.main-content ul, .main-content ol {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+// .main-content ul, .main-content ol {
+  // margin-top: 1rem;
+  // margin-bottom: 1rem;
+// }
+
+.part-navigator {
+  text-align: center;
 }
 
-.table-of-contents{
+.part-navigator li {
+  display: inline;
   background-color: #393e46;
   border: 1px solid;
+  border-radius: .1rem; 
+  margin: 0.5rem 0.5rem; 
+  margin-top: 1rem;
+  padding: .5rem 1rem;
+}
+
+.table-of-contents {
+  background-color: #393e46;
+  border: 1px solid;
+  border-radius: .1rem;
   margin-top: .5rem;
   margin-left: auto;
   margin-right: auto;
   padding: .5rem 1rem;
-  width: max-content;
+  width: fit-content;
 }
 
 img {
@@ -173,6 +186,7 @@ img {
 .captioned-image { 
   display: block;
   text-align: center;
+  font-style: italic;
 }
 
 // Oi vey. Having lots of trouble creating aesthetically pleasing
@@ -209,6 +223,8 @@ img {
 
 .container {
   position: relative;
+  text-align: center;
+  font-style: italic;
 }
 
 .overlay {
@@ -220,7 +236,7 @@ img {
   height: 100%;
   width: 100%;
   opacity: 0;
-  transition: .2s ease;
+  transition: 1s ease;
 }
 
 .container:hover .overlay {
