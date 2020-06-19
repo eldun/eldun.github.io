@@ -669,9 +669,11 @@ The result:
 ## <a id="surface-normals"></a>Surface Normals
 
 Our sphere looks like a circle. To make it more obvious that it *is* a sphere, we'll add surface normals to the face. Surface normals are simply vectors that are perpendicular to the surface of an object.
+
 ![Surface Normal](\assets\images\blog-images\path-tracer-part-two\Normal_vectors_on_a_curved_surface.svg)
 
 In our case, the outward normal is the hitpoint minus the center:
+
 ![Surface Normal(from Shirley's book)](\assets\images\blog-images\path-tracer-part-two\shirley\fig.sphere-normal.png)
 
 Since we don't have any lights, we can visualize the normals with a color map.
@@ -1417,6 +1419,7 @@ if (world.hit(r, 0.001, DBL_MAX, rec)) {
   <div class="overlay">
     <img src="\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png" alt="Sphere no shadow acne">
   </div>
+  (Mouseover) Fix shadow acne
 </div>
 
 You can view the images separately, as well. Here's [the one with shadow acne](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-shadow-acne.png) and [the one without](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png).
@@ -1449,6 +1452,7 @@ The result:
   <div class="overlay">
     <img src="\assets\images\blog-images\path-tracer-part-two\renders\lambertian.png" alt="True lambertian reflection">
   </div>
+  (Mouseover)True lambertian reflectance
 </div>
 
 [Lambertian approximation](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png)
