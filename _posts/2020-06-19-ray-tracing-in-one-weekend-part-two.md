@@ -585,7 +585,9 @@ A sphere centered at the origin of radius $R$ is $x^2 + y^2 + z^2 = R^2$.
 
 If the sphere center isn't at the origin, the formula is:
 
-(x - C_x)^2 + (y - C_y)^2 + (z - C_z)^2 = r^2$$
+$$
+(x - C_x)^2 + (y - C_y)^2 + (z - C_z)^2 = r^2
+$$
 
 It's best if formulas are kept under the hood in the vec3 class.
 
