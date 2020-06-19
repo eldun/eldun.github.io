@@ -1,6 +1,6 @@
 ---
 title: "Ray Tracing in One Weekend:"
-subtitle: "Part One - an Introduction"
+subtitle: "Part One - An Introduction"
 layout: post
 author: Evan
 header-image: /assets/images/blog-images/path-tracer/ball.png
@@ -25,7 +25,8 @@ Continue reading to learn about what ray tracing is and why I decided to explore
     <li><a href="#what-is-rasterization">What is Rasterization?</a></li>
     <li><a href="#a-happy-medium">A Happy Medium (For Now)</a></li>
     <li><a href="#practical-applications-of-ray-tracing">Practical Applications of Ray Tracing</a></li>
-    <li><a href="#an-abbreviated-graphics-timeline">An Abbreviated Graphics Timeline</a></li>        <li><a href="#why-explore-ray-tracing">Why Explore Ray Tracing?</a></li>
+    <li><a href="#an-abbreviated-graphics-timeline">An Abbreviated Graphics Timeline</a></li>
+    <li><a href="#why-explore-ray-tracing">Why Explore Ray Tracing?</a></li>
     </ul>
 
 ---
