@@ -40,7 +40,8 @@ layout: default
 
         <ul class="archive-list">
           {% for post in page.grouped_posts[year][month] reversed %}
-            <li><a href="{{ post.url }}">{{ post.title }}<br>{{ post.subtitle }}</a></li>
+            <li><a href="{{ post.url }}">{{ post.title }} {{ post.subtitle }}</a></li>
+            <br>
           {% endfor %}
         </ul>
       {% endif %}

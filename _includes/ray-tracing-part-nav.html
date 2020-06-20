@@ -1,0 +1,9 @@
+{%assign sorted-posts = site.posts | sort: 'post-date' | reverse %}
+
+<ul class="part-navigator">
+{% for post in sorted-posts %}
+{% if post.tags contains "ray-tracing-in-one-weekend" %}
+    <li><a href="{{ post.url }}#post-title">{{ post.subtitle }}</a></li>
+{% endif %}
+{% endfor %}
+</ul>

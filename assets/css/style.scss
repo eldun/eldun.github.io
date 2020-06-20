@@ -94,7 +94,32 @@ body {
   background-color: #393e46;
   color: #42cad1;
   font-size: unset;
-  padding: 0rem;
+  padding-left: .3rem;
+  padding-right: .3rem;
+  padding-top: 0rem;
+  padding-bottom: 0rem;
+}
+
+
+.highlight-green {
+  background-color: rgba(67, 228, 67, 0.116);
+  border-radius: 0.1rem;
+  display: block;
+  padding: 0.5rem;
+}
+
+.highlight-yellow {
+  background-color: rgba(243, 207, 6, 0.157);
+  border-radius: 0.1rem;
+  display: block;
+  padding: 0.5rem;
+}
+
+.highlight-red {
+  background-color: rgba(243, 69, 69, 0.11);
+  border-radius: 0.1rem;
+  display: block;
+  padding: 0.5rem;
 }
 
 .main-content h1,
@@ -118,33 +143,108 @@ body {
   width: 1rem;
 }
 
-.main-content ul, .main-content ol {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+.part-navigator {
+  text-align: center;
 }
 
-.table-of-contents{
+.part-navigator li {
+  display: inline-block;
   background-color: #393e46;
   border: 1px solid;
-  margin-top: .5rem;
+  border-radius: .1rem; 
+  margin: 0.5rem 0.5rem; 
+  margin-top: 1rem;
+  padding: .5rem 1rem;
+}
+
+.table-of-contents {
+  background-color: #393e46;
+  border: 1px solid;
+  border-radius: .1rem;
   margin-left: auto;
   margin-right: auto;
   padding: .5rem 1rem;
-  width: max-content;
+  width: fit-content;
 }
 
 img {
-  max-width: 100%;
   width: 100%;
   display: block;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   margin-left: auto;
   margin-right: auto;
   border-radius: 0.1rem;
+
+  // prevent anti-aliasing in browsers
+  image-rendering: auto;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
 }
 
+.captioned-image { 
+  display: block;
+  text-align: center;
+  font-style: italic;
+}
+
+// Oi vey. Having lots of trouble creating aesthetically pleasing
+// rows of images with flex ragarding width - mostly for the graphics timeline
+// in my ray tracing post. I can't use block-level tags in markdown files, but I 
+// can use spans. I figure most images will be singular. I'll create classes for how many pictures
+// are in a row.
 .image-row {
   display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
 }
+
+.two-images {
+  max-width: 50%;
+}
+
+.three-images {
+  max-width: 33.33%;
+}
+
+.four-images {
+  max-width: 25%;
+}
+
+.five-images {
+  max-width: 20%;
+}
+
+// End image row section
+
+// Mouseover images section
+
+.container {
+  position: relative;
+  text-align: center;
+  font-style: italic;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: 1s ease;
+}
+
+.container:hover .overlay {
+  opacity: 1;
+}
+
+// End mouseover images section
+
 
 a {
   color: #cc773f;
@@ -169,7 +269,7 @@ a {
 }
 
 .post-date {
-  color: #393e46;
+  color: #42cad1;
   text-align: center;
   margin-bottom: .3rem;
 }
@@ -185,6 +285,10 @@ a {
 ul {
   list-style-type: none;
   padding: 0rem 2rem;
+}
+
+li {
+  list-style-type: none;
 }
 
 .btn {
@@ -210,3 +314,21 @@ ul {
 .site-footer {
   border-color: #42cad1;
 }
+
+
+// There was an issue on certain posts where you could scroll just a tiny bit horizontally. This fixes that.
+#back-to-top {
+  margin: 0 1rem;
+}
+
+// MathJax formatting (mostly for mobile, to keep the page from going waaaay to the right when long equations are involved.
+// Either overflow: auto; for scrolling through equations
+// Or white-space: normal; to allow word wrap.
+// Right now, I think overflow: auto; is the better option
+.MJXc-display {
+  overflow: auto;
+}
+
+// .mjx-chtml {
+//   overflow: auto;
+// }
