@@ -1927,7 +1927,7 @@ Refraction is the deflection of a ray from a straight path due to passing obliqu
 
 <span class="captioned-image">
 ![Refraction](\assets\images\blog-images\path-tracer-part-two\refraction.png)
-Notice both the reflected beam(top right) and the refracted beam(bottom right) ([source](https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/F%C3%A9nyt%C3%B6r%C3%A9s.jpg/1200px-F%C3%A9nyt%C3%B6r%C3%A9s.jpg))
+Notice both the reflected beam (top right) and the refracted beam (bottom right) ([source](https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/F%C3%A9nyt%C3%B6r%C3%A9s.jpg/1200px-F%C3%A9nyt%C3%B6r%C3%A9s.jpg))
 </span>
 
 The refractive index describes the angle that light propagates through different mediums and is defined as:
