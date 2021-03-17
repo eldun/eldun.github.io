@@ -134,6 +134,14 @@ body {
   margin-bottom: 0;
 }
 
+button {
+  background-color: #393e46;
+  color: #cc773f;
+  border-color: #cc773f;
+  margin: 0 auto;
+  display: block;
+}
+
 .main-content hr {
   background-color: #42cad1;
   margin-left: auto;
@@ -190,7 +198,7 @@ img {
 }
 
 // Oi vey. Having lots of trouble creating aesthetically pleasing
-// rows of images with flex ragarding width - mostly for the graphics timeline
+// rows of images with flex regarding width - mostly for the graphics timeline
 // in my ray tracing post. I can't use block-level tags in markdown files, but I 
 // can use spans. I figure most images will be singular. I'll create classes for how many pictures
 // are in a row.
@@ -299,6 +307,7 @@ li {
 .header-image {
   max-width: 10rem;
   height: auto;
+  border-radius: 50%;
 }
 
 .about-header-image {
