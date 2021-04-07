@@ -7,7 +7,7 @@
    https://help.github.com/en/github/working-with-github-pages/adding-a-theme-to-your-github-pages-site-using-jekyll#customizing-your-themes-css 
 */
 
-@import "jekyll-theme-cayman";
+// @import "jekyll-theme-cayman";
 
 // The default folder for scss files is _sass (this can be changed in config.yml)
 // Was having a lot of trouble trying to use fontawesome icons with their relative paths
@@ -24,12 +24,17 @@
 
 .page-header {
   background-color: transparent;
-  background-image: linear-gradient(180deg, #42cad1, #222831, #222831);
+  background-image: linear-gradient(180deg, #42cad1 , #222831, #222831);
   color: #42cad1;
   padding-bottom: 2rem;
 }
 
-.nav-bar-links {
+nav {
+  margin: auto;
+  width: 50%;
+}
+
+.nav-bar-link {
   display: inline-block;
   padding: 5px;
 }
@@ -62,8 +67,9 @@
 }
 
 body {
-  color: white;
-  background-color: #222831;
+    color: #fffaec;
+    background-color: #222831;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .main-content {
@@ -72,55 +78,55 @@ body {
   // margin-bottom: 0.5;
 }
 
-.main-content pre {
-  background-color: #393e46;
-  border: solid 1px #42cad1;
-}
+// .main-content pre {
+//   background-color: #393e46;
+//   border: solid 1px #42cad1;
+// }
 
-.main-content pre > code {
-  color: #42cad1;
-}
+// .main-content pre > code {
+//   color: #42cad1;
+// }
 
-.highlight {
-  background-color: #42cad1;
-}
+// .highlight {
+//   background-color: #42cad1;
+// }
 
-.highlight .err {
-  color: #42cad1;
-  background-color: #393e46;
-}
+// .highlight .err {
+//   color: #42cad1;
+//   background-color: #393e46;
+// }
 
-.main-content code {
-  background-color: #393e46;
-  color: #42cad1;
-  font-size: unset;
-  padding-left: .3rem;
-  padding-right: .3rem;
-  padding-top: 0rem;
-  padding-bottom: 0rem;
-}
+// .main-content code {
+//   background-color: #393e46;
+//   color: #42cad1;
+//   font-size: unset;
+//   padding-left: .3rem;
+//   padding-right: .3rem;
+//   padding-top: 0rem;
+//   padding-bottom: 0rem;
+// }
 
 
-.highlight-green {
-  background-color: rgba(67, 228, 67, 0.116);
-  border-radius: 0.1rem;
-  display: block;
-  padding: 0.5rem;
-}
+// .highlight-green {
+//   background-color: rgba(67, 228, 67, 0.116);
+//   border-radius: 0.1rem;
+//   display: block;
+//   padding: 0.5rem;
+// }
 
-.highlight-yellow {
-  background-color: rgba(243, 207, 6, 0.157);
-  border-radius: 0.1rem;
-  display: block;
-  padding: 0.5rem;
-}
+// .highlight-yellow {
+//   background-color: rgba(243, 207, 6, 0.157);
+//   border-radius: 0.1rem;
+//   display: block;
+//   padding: 0.5rem;
+// }
 
-.highlight-red {
-  background-color: rgba(243, 69, 69, 0.11);
-  border-radius: 0.1rem;
-  display: block;
-  padding: 0.5rem;
-}
+// .highlight-red {
+//   background-color: rgba(243, 69, 69, 0.11);
+//   border-radius: 0.1rem;
+//   display: block;
+//   padding: 0.5rem;
+// }
 
 .main-content h1,
 .main-content h2,
