@@ -7,6 +7,7 @@ colors:
   - dark-secondary: \#393e46
   - clickable: \#cc773f
   - accent: \#42cad1
+  - text: \#eacda8
 excerpt_separator: <!--end-excerpt-->
 
 
