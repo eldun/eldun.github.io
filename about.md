@@ -2,7 +2,6 @@
 layout: default
 title: About
 ---
-<hr>
 
 Hi, my name is Evan. 
 
@@ -14,6 +13,7 @@ I'll be keeping a portfolio of personal projects here.
 
 Thanks for stopping by!
 <hr>
+
 <div class="about-me-buttons">
 <a href="{{ site.github-profile }}" class="btn"><i class="fab fa-github"></i> GitHub Profile</a>
 <a href="{{site.url}}/downloads/Dunne_resume.pdf" class="btn"><i class="fas fa-download"></i> Download Résumé</a>
