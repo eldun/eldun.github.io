@@ -1,6 +1,12 @@
 ---
 ---
 
+$color-primary: {{ site.data.colors["primary"]["dark-theme"] }};
+$color-secondary:  {{ site.data.colors["secondary"]["dark-theme"] }};
+$color-accent: {{ site.data.colors["accent"]["dark-theme"] }};
+$color-clickable: {{ site.data.colors["clickable"]["dark-theme"] }};
+$color-text: {{ site.data.colors["text"]["dark-theme"] }};
+
 /* Planning on using this color scheme: https://colorhunt.co/palette/69360 */
 
 /* This file adds on to the CSS file used by "jekyll-theme-cayman" (_site\assets\css\style.css)
