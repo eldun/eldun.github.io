@@ -2,14 +2,14 @@
 
 
   <!-- favicon settings -->
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/images/site-images/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/site-images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/site-images/favicon-16x16.png">
-  <link rel="manifest" href="assets/images/site-images/site.webmanifest">
-  <link rel="mask-icon" href="assets/images/site-images/safari-pinned-tab.svg" color="#5bbad5">
-  <link rel="shortcut icon" href="assets/images/site-images/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/site-images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/site-images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/site-images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site-images/site.webmanifest">
+  <link rel="mask-icon" href="/assets/images/site-images/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/assets/images/site-images/favicon.ico">
   <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="msapplication-config" content="assets/images/site-images/browserconfig.xml">
+  <meta name="msapplication-config" content="/assets/images/site-images/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
 
 
@@ -17,6 +17,9 @@
   {% if page.use-math %}
   {% include mathjax-support.html %}
   {% endif %}
+
+  <link href="/assets/css/prism.css" rel="stylesheet" />
+
 
 
   {% if site.google_analytics %}
@@ -35,5 +38,9 @@
   <meta name="theme-color" content="#157878">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' }}">
+
+  <!-- Back to top -->
+  <script src="/js/site-scripts/vanilla-back-to-top.min.js"></script>
+  <script>addBackToTop()</script>
 
 </head>

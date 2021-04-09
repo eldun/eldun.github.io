@@ -281,7 +281,7 @@ I placed the necessary HTML elements for the search function inside `/_includes/
 </div>
 
 <!-- Script pointing to search-script.js -->
-<script src="/js/search-script.js" type="text/javascript"></script>
+<script src="/js/site-scripts/search-script.js" type="text/javascript"></script>
 
 <!-- Configuration -->
 <script>

@@ -1,12 +1,20 @@
 ---
 ---
 
+$color-primary: {{ site.data.colors["primary"]["dark-theme"] }};
+$color-secondary:  {{ site.data.colors["secondary"]["dark-theme"] }};
+$color-accent: {{ site.data.colors["accent"]["dark-theme"] }};
+$color-clickable: {{ site.data.colors["clickable"]["dark-theme"] }};
+$color-text: {{ site.data.colors["text"]["dark-theme"] }};
+
 /* Planning on using this color scheme: https://colorhunt.co/palette/69360 */
 
 /* This file adds on to the CSS file used by "jekyll-theme-cayman" (_site\assets\css\style.css)
    https://help.github.com/en/github/working-with-github-pages/adding-a-theme-to-your-github-pages-site-using-jekyll#customizing-your-themes-css 
 */
 
+
+// I took this out for a second, but putting it back in is easier than writing a bunch of responive css
 @import "jekyll-theme-cayman";
 
 // The default folder for scss files is _sass (this can be changed in config.yml)
@@ -18,108 +26,43 @@
 @import "fontawesome/regular.scss";
 
 
-* {
-  scrollbar-color: #cc773f transparent;
-}
+@import "site/header.scss";
+@import "site/nav.scss";
 
-.page-header {
-  background-color: transparent;
-  background-image: linear-gradient(180deg, #42cad1, #222831, #222831);
-  color: #42cad1;
-  padding-bottom: 2rem;
-}
+@import "site/posts.scss";
+@import "site/post-navigation.scss";
+@import "site/images.scss";
 
-.nav-bar-links {
-  display: inline-block;
-  padding: 5px;
-}
+@import "site/about-me.scss";
+@import "site/archive.scss";
+@import "site/tags.scss";
+@import "site/search.scss";
 
-#search-container {
-  position: absolute; /* Sit on top of the page content */
-  width: max-content; 
-  height: max-content;
-  left: 0;
-  right: 0;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: #393e4693; /* Background with opacity */
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
-}
 
-#search-input {
-  padding-inline-start: 0.5rem;
-  padding-inline-end: 0.5rem;
-  background-color: #222831;
-  border-color: #42cad1;
-  border-style: solid 1px;
-  color: #42cad1;
-}
 
-#results-container {
-  background-color: #393e46;
-  border-radius: 0.1rem;
-}
+
 
 body {
-  color: white;
-  background-color: #222831;
+  scrollbar-color: $color-clickable transparent;
+  color: $color-text;
+  background-color: $color-primary;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.inactive-link {
+  color: $color-accent;
 }
 
 .main-content {
   padding-top: 0;
-  // margin-top: 0.5 rem;
-  // margin-bottom: 0.5;
+  padding-bottom: 0;
+   // width: 60%;
 }
 
-.main-content pre {
-  background-color: #393e46;
-  border: solid 1px #42cad1;
-}
-
-.main-content pre > code {
-  color: #42cad1;
-}
-
-.highlight {
-  background-color: #42cad1;
-}
-
-.highlight .err {
-  color: #42cad1;
-  background-color: #393e46;
-}
-
-.main-content code {
-  background-color: #393e46;
-  color: #42cad1;
-  font-size: unset;
-  padding-left: .3rem;
-  padding-right: .3rem;
-  padding-top: 0rem;
-  padding-bottom: 0rem;
-}
-
-
-.highlight-green {
-  background-color: rgba(67, 228, 67, 0.116);
-  border-radius: 0.1rem;
-  display: block;
-  padding: 0.5rem;
-}
-
-.highlight-yellow {
-  background-color: rgba(243, 207, 6, 0.157);
-  border-radius: 0.1rem;
-  display: block;
-  padding: 0.5rem;
-}
-
-.highlight-red {
-  background-color: rgba(243, 69, 69, 0.11);
-  border-radius: 0.1rem;
-  display: block;
-  padding: 0.5rem;
+.main-content hr {
+  margin: 3rem auto;
+  width: 1rem;
+  background-color: $color-secondary;
 }
 
 .main-content h1,
@@ -128,200 +71,50 @@ body {
 .main-content h4,
 .main-content h5,
 .main-content h6 {
-  color: #42cad1;
+  color: $color-accent;
   text-align: center;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin: auto;
 }
-
-button {
-  background-color: #393e46;
-  color: #cc773f;
-  border-color: #cc773f;
-  margin: 0 auto;
-  display: block;
-}
-
-.main-content hr {
-  background-color: #42cad1;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 4rem;
-  margin-bottom: 4rem;
-  width: 1rem;
-}
-
-.part-navigator {
-  text-align: center;
-}
-
-.part-navigator li {
-  display: inline-block;
-  background-color: #393e46;
-  border: 1px solid;
-  border-radius: .1rem; 
-  margin: 0.5rem 0.5rem; 
-  margin-top: 1rem;
-  padding: .5rem 1rem;
-}
-
-.table-of-contents {
-  background-color: #393e46;
-  border: 1px solid;
-  border-radius: .1rem;
-  margin-left: auto;
-  margin-right: auto;
-  padding: .5rem 1rem;
-  width: fit-content;
-}
-
-img {
-  width: 100%;
-  display: block;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 0.1rem;
-
-  // prevent anti-aliasing in browsers
-  image-rendering: auto;
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
-}
-
-.captioned-image { 
-  display: block;
-  text-align: center;
-  font-style: italic;
-}
-
-// Oi vey. Having lots of trouble creating aesthetically pleasing
-// rows of images with flex regarding width - mostly for the graphics timeline
-// in my ray tracing post. I can't use block-level tags in markdown files, but I 
-// can use spans. I figure most images will be singular. I'll create classes for how many pictures
-// are in a row.
-.image-row {
-  display: flex;
-  justify-content: center;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.two-images {
-  max-width: 50%;
-}
-
-.three-images {
-  max-width: 33.33%;
-}
-
-.four-images {
-  max-width: 25%;
-}
-
-.five-images {
-  max-width: 20%;
-}
-
-// End image row section
-
-// Mouseover images section
-
-.container {
-  position: relative;
-  text-align: center;
-  font-style: italic;
-}
-
-.overlay {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  opacity: 0;
-  transition: 1s ease;
-}
-
-.container:hover .overlay {
-  opacity: 1;
-}
-
-// End mouseover images section
-
 
 a {
-  color: #cc773f;
-}
-
-
-.about-me-buttons {
-  text-align: center;
-  margin-top: 1rem;;
-}
-
-.archive-block {
-  padding: 1rem;
-}
-
-.archive-block li {
-  text-align: center;
-}
-
-.archive-list {
-  text-align: center;
-}
-
-.post-date {
-  color: #42cad1;
-  text-align: center;
-  margin-bottom: .3rem;
-}
-
-.post-button {
-  text-align: center;
-}
-
-.post-tags {
-  text-align: center;
+  color: $color-clickable;
 }
 
 ul {
   list-style-type: none;
-  padding: 0rem 2rem;
 }
 
 li {
   list-style-type: none;
 }
 
-.btn {
-  color: #cc773f;
-  border-color: #cc773f;
+.main-content code, .btn {
+  display: inline-block;
+  color: $color-clickable;
+  background-color: $color-secondary;
+  border-color: $color-clickable;
+  margin: 1rem;
 }
 
-.header-image {
-  max-width: 10rem;
-  height: auto;
-  border-radius: 50%;
+.main-content code:hover, a:hover, .btn:hover {
+  color: $color-primary;
+  text-decoration: none;
+  background-color: $color-clickable;
+  border-color: $color-clickable;
 }
 
-.tag-cloud {
-  text-align: center;
-}
+
+
+
 
 .site-footer {
-  border-color: #42cad1;
+  border-color: $color-accent;
 }
 
 
 // There was an issue on certain posts where you could scroll just a tiny bit horizontally. This fixes that.
 #back-to-top {
-  margin: 0 1rem;
+  // margin: 0 1rem;
 }
 
 // MathJax formatting (mostly for mobile, to keep the page from going waaaay to the right when long equations are involved.

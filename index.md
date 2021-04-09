@@ -2,10 +2,9 @@
 layout: default
 title: Home
 ---
-<ul>
+<ul class="post-list">
 {% for post in site.posts %}
-<hr>
-<li>
+<li class="post">
   <a href="{{ post.url }}#post-title">
     <div>
       <h1 style="color : #cc773f"> {{ post.title }}</h1>
@@ -20,9 +19,9 @@ title: Home
   {{ post.excerpt }}
 
   <div class="post-button">
-    <a href="{{ post.url }}#continue-reading-point" class="btn">Continue reading»</a>
+    <a href="{{ post.url }}#continue-reading-point" class="btn">Continue reading »</a>
   </div>
 </li>
-
+<hr>
 {% endfor %}
 </ul>
