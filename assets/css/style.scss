@@ -88,12 +88,15 @@ li {
   list-style-type: none;
 }
 
-.btn {
+.main-content code, .btn {
+  display: inline-block;
   color: $color-clickable;
+  background-color: $color-secondary;
   border-color: $color-clickable;
+  margin: 1rem;
 }
 
-.btn:hover {
+.main-content code:hover, a:hover, .btn:hover {
   color: $color-primary;
   text-decoration: none;
   background-color: $color-clickable;
