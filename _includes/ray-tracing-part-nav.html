@@ -4,16 +4,16 @@
     {% for post in sorted-posts %}
         {% if post.tags contains "ray-tracing-in-one-weekend" %}
 
-        <script>console.log( {{ site.data.colors["accent"]["dark-theme"] }} );</script>
+        <li>
+      
 
-            <li>
+                    <a href="{{ post.url }}#post-title" class="btn"
+                        {% if {{page.url}} ==  {{post.url}} %}
+                            class="btn inactive"
+                        {% endif %}
+                    >{{ post.subtitle }}</a>
 
-                <a href="{{ post.url }}#post-title" 
-                    {% if {{page.url}} ==  {{post.url}} %}
-                        class="inactive-link"
-                    {% endif %}
-                >{{ post.subtitle }}</a>
-            </li>
+                </li>
         {% endif %}
     {% endfor %}
 </ul>
