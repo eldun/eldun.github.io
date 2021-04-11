@@ -40,6 +40,9 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 
 
 
+* {
+  border-radius: .2rem;
+}
 
 
 body {
@@ -80,13 +83,15 @@ body {
 .main-content h4,
 .main-content h5,
 .main-content h6 {
-  color: $color-accent;
+  color: inherit;
+  margin: .5rem;
   text-align: center;
-  margin: auto;
 }
 
 a {
-  color: $color-clickable;
+  color: $color-clickable;  
+  padding: .5rem;
+  display: inline-block;
 }
 
 ul {
@@ -105,7 +110,10 @@ code, .btn {
   margin: 1rem 0;
 }
 
-.main-content code:hover, a:hover, .btn:hover {
+.main-content code:hover, 
+a:hover, 
+.btn:hover,
+ {
   color: $color-primary;
   text-decoration: none;
   background-color: $color-clickable;
