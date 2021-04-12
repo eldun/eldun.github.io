@@ -42,6 +42,7 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 
 * {
   border-radius: .2rem;
+  background-color: inherit;
 }
 
 
@@ -88,10 +89,27 @@ body {
   text-align: center;
 }
 
+.main-content code {
+  color: inherit;
+  background-color: $color-secondary;
+  padding: inherit;
+}
+
 a {
   color: $color-clickable;  
-  padding: .5rem;
+  // display: inline-block;
+}
+
+.btn {
   display: inline-block;
+  color: $color-clickable;
+  background-color: $color-secondary;
+  border-color: $color-clickable;
+  margin: 1rem 0;
+}
+
+code {
+  background-color: $color-secondary;
 }
 
 ul {
@@ -102,17 +120,11 @@ li {
   list-style-type: none;
 }
 
-code, .btn {
-  display: inline-block;
-  color: $color-clickable;
-  background-color: $color-secondary;
-  border-color: $color-clickable;
-  margin: 1rem 0;
-}
 
-.main-content code:hover, 
+
 a:hover, 
 .btn:hover,
+a *:hover // all elements within a
  {
   color: $color-primary;
   text-decoration: none;
