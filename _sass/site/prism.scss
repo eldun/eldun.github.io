@@ -8,7 +8,6 @@ https://prismjs.com/download.html#themes=prism-tomorrow&languages=markup+css+cli
 
 code[class*="language-"],
 pre[class*="language-"] {
-	color: #ccc;
 	background: none;
 	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 	font-size: 1em;
@@ -34,12 +33,12 @@ pre[class*="language-"] {
 pre[class*="language-"] {
 	padding: 1em;
 	margin: .5em 0;
-	overflow: auto;
+	overflow: scroll;
 }
 
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
-	background: #2d2d2d;
+	background: $color-secondary;
 }
 
 /* Inline code */
@@ -54,7 +53,7 @@ pre[class*="language-"] {
 .token.prolog,
 .token.doctype,
 .token.cdata {
-	color: #999;
+	color: #567482;;
 }
 
 .token.punctuation {
@@ -174,6 +173,7 @@ div.code-toolbar > .toolbar {
 	right: .2em;
 	transition: opacity 0.3s ease-in-out;
 	opacity: 0;
+	padding: .25rem;
 }
 
 div.code-toolbar:hover > .toolbar {
@@ -202,6 +202,7 @@ div.code-toolbar > .toolbar button {
 	line-height: normal;
 	overflow: visible;
 	padding: 0;
+	margin: 0;
 	-webkit-user-select: none; /* for button */
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -210,12 +211,11 @@ div.code-toolbar > .toolbar button {
 div.code-toolbar > .toolbar a,
 div.code-toolbar > .toolbar button,
 div.code-toolbar > .toolbar span {
-	color: #bbb;
+	color: $color-clickable;
 	font-size: .8em;
 	padding: 0 .5em;
-	background: #f5f2f0;
-	background: rgba(224, 224, 224, 0.2);
-	box-shadow: 0 2px 0 0 rgba(0,0,0,0.2);
+	// background: $color-secondary;
+	// box-shadow: 0 2px 0 0 rgb(255, 0, 0);
 	border-radius: .5em;
 }
 
@@ -223,9 +223,12 @@ div.code-toolbar > .toolbar a:hover,
 div.code-toolbar > .toolbar a:focus,
 div.code-toolbar > .toolbar button:hover,
 div.code-toolbar > .toolbar button:focus,
+div.code-toolbar > .toolbar button:hover span,
+div.code-toolbar > .toolbar button:focus span,
 div.code-toolbar > .toolbar span:hover,
 div.code-toolbar > .toolbar span:focus {
-	color: inherit;
+	color: $color-primary;
+	background-color: $color-clickable;
 	text-decoration: none;
 }
 

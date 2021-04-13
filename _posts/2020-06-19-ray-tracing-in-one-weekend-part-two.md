@@ -2,6 +2,7 @@
 title: "Ray Tracing in One Weekend:"
 subtitle: "Part Two - The First Weekend"
 use-math: true
+use-raw-images: true
 layout: post
 author: Evan
 header-image: /assets\images\blog-images\path-tracer-part-two\renders\final-render-1.png
@@ -28,33 +29,26 @@ I started this path tracer months ago, and only started this blog in late May. T
 <ul class="table-of-contents">
     <li><a href="#image-output">Image Output</a></li>
 	<li><a href="#timing-execution">Timing Execution</a></li>
-	
 	<li><a href="#vec3-class">Vec3 Class</a></li>
 	<ul>
 	<li><a href="#vector-refresher">Vector Refresher</a></li>
 	<li><a href="#vec3-definitions">Vec3 Definitions</a></li>
 	</ul>
-
 	<li><a href="#rays">Rays</a></li>
 	<ul>
 	<li><a href="#sending-rays-from-the-camera">Sending Rays from the Camera</a></li>
 	</ul>
-
 	<li><a href="#introducing-spheres">Introducing Spheres</a></li>
 	<ul>
 	<li><a href="#describing-a-sphere">Describing a Sphere</a></li>
 	<li><a href="#placing-a-sphere">Placing a Sphere</a></li>
 	</ul>
-
 	<li><a href="#surface-normals">Surface Normals</a></li>
 	<ul>
 	<li><a href="#simplifying-ray-sphere-intersection">Simplifying Ray-Sphere Intersection</a></li>
 	</ul>
-
 	<li><a href="#multiple-spheres">Multiple Spheres</a></li>
-
 	<li><a href="#front-faces-versus-back-faces">Front Faces versus Back Faces</a></li>
-
 	<li><a href="#anti-aliasing">Anti-Aliasing</a></li>
 	<ul>
 	<li><a href="#adding-anti-aliasing-to-the-camera">Adding Anti-Aliasing to the Camera</a></li>
@@ -166,7 +160,7 @@ g++ main.cpp
 
 You may have to use a [web tool](http://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html) or download a file viewer (I use [IrfanView](https://www.irfanview.com/)) to view the `.ppm` file as an image. Here's my resulting image and raw contents of the file:
 
-<span class="image-row two-images">
+<span class="image-row">
 ![The "Hello World" of our path tracer](\assets\images\blog-images\path-tracer-part-two\renders\hello-world-ppm.png)
 ![The "Hello World" of our path tracer](\assets\images\blog-images\path-tracer-part-two\hello-world-ppm-raw.png)
 </span>

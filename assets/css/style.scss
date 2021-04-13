@@ -38,6 +38,8 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 @import "site/tags.scss";
 @import "site/search.scss";
 
+@import "site/prism.scss";
+
 
 
 * {
@@ -89,10 +91,14 @@ body {
   text-align: center;
 }
 
-.main-content code {
+.main-content code, 
+.main-content pre,
+.main-content pre > code {
   color: inherit;
   background-color: $color-secondary;
-  padding: inherit;
+  border-color: $color-clickable;
+  overflow: scroll;
+  // padding: inherit;
 }
 
 a {
@@ -100,7 +106,8 @@ a {
   // display: inline-block;
 }
 
-.btn {
+.btn,
+button {
   display: inline-block;
   color: $color-clickable;
   background-color: $color-secondary;

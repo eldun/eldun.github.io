@@ -11,44 +11,40 @@ img {
     
   }
 
-  .raw {
-    // prevent anti-aliasing in browsers
-    image-rendering: auto;
-    image-rendering: crisp-edges;
-    image-rendering: pixelated;
-  }
+  // .raw {
+    // to use raw images, specify "use-raw-images" in the post frontmatter
+    // there's a conditional internal stylesheet in "includes/head.html"
+    // that removes default image processing 
+  // }
   
   .captioned-image { 
     display: block;
     text-align: center;
     font-style: italic;
   }
+
+  // Begin image row section
   
-  // Oi vey. Having lots of trouble creating aesthetically pleasing
-  // rows of images with flex regarding width - mostly for the graphics timeline
-  // in my ray tracing post. I can't use block-level tags in markdown files, but I 
-  // can use spans. I figure most images will be singular. I'll create classes for how many pictures
-  // are in a row.
   .image-row {
     display: flex;
     margin: auto;
   }
   
-  .two-images {
-    max-width: 50%;
-  }
+  // .two-images {
+  //   max-width: 50%;
+  // }
   
-  .three-images {
-    max-width: 33.33%;
-  }
+  // .three-images {
+  //   max-width: 33.33%;
+  // }
   
-  .four-images {
-    max-width: 25%;
-  }
+  // .four-images {
+  //   max-width: 25%;
+  // }
   
-  .five-images {
-    max-width: 20%;
-  }
+  // .five-images {
+  //   max-width: 20%;
+  // }
   
   // End image row section
   
