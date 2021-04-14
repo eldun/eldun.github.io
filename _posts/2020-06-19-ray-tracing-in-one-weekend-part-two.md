@@ -104,7 +104,6 @@ Of course, the first step with producing a pretty path traced image is to produc
 255 255   0  # yellow
 255 255 255  # white
   0   0   0  # black</code></pre>
-
 <img src="\assets\images\blog-images\path-tracer-part-two\ppm-example-output.png">
 <!-- ![PPM Output](\assets\images\blog-images\path-tracer-part-two\ppm-example-output.png) -->
 
@@ -1401,8 +1400,8 @@ The result:
   (Mouseover)True lambertian reflectance
 </div>
 
-[Lambertian approximation](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png)
-[True Lambertian](\assets\images\blog-images\path-tracer-part-two\renders\lambertian.png)
+- [Lambertian approximation](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png)
+- [True Lambertian](\assets\images\blog-images\path-tracer-part-two\renders\lambertian.png)
 
 It's a subtle difference, but a difference nonetheless. Notice that the shadows are not as pronounced and that both spheres are lighter.
 
@@ -1837,8 +1836,11 @@ The larger the sphere, the fuzzier the reflections will be. If the sphere is too
     <img src="\assets\images\blog-images\path-tracer-part-two\renders\metal-fuzz.png" alt="Fuzzy Metal">
   </div>
 </div>
-  (Mouseover) Fuzziness: .5, 0, and 1
+(Mouseover) Fuzziness from left to right: .5, 0, and 1
 </div>
+
+- [No fuzz](\assets\images\blog-images\path-tracer-part-two\renders\all-metal-no-fuzz.png)
+- [Fuzz](\assets\images\blog-images\path-tracer-part-two\renders\metal-fuzz.png)
 
 ---
 
@@ -2160,6 +2162,9 @@ class dielectric : public material {
   (Mouseover) Implementation of Fresnel reflections
 </div>
 
+- [No fresnel](\assets\images\blog-images\path-tracer-part-two\renders\no-fresnel.png)
+- [Fresnel](\assets\images\blog-images\path-tracer-part-two\renders\fresnel.png)
+
 ### <a id="hollow-dielectric-spheres"></a>Hollow Dielectric Spheres
 
 Bonus fun fact! We can create a hollow glass sphere by creating a smaller sphere with a *negative* radius *inside* our existing sphere! The geometry is unaffected, but the normal points inward.
@@ -2173,6 +2178,9 @@ Bonus fun fact! We can create a hollow glass sphere by creating a smaller sphere
 </div>
   (Mouseover) Hollow dielectric sphere
 </div>
+
+- [Solid](\assets\images\blog-images\path-tracer-part-two\renders\dielectric-solid.png)
+- [Hollow](\assets\images\blog-images\path-tracer-part-two\renders\dielectric-hollow.png)
 
 And of course, you can change the color of your pretty new dielectric sphere if you please.
 ![Purple dielectric](\assets\images\blog-images\path-tracer-part-two\renders\purple-dielectric.png)
