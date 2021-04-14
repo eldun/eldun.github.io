@@ -162,7 +162,7 @@ a *:hover // all elements within a
 
 .row {
   display: flex;
-  // flex-flow: row nowrap;
+  flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
 }
@@ -182,6 +182,6 @@ a *:hover // all elements within a
 
 
 
-// .mjx-chtml {
-//   overflow: auto;
-// }
+.mjx-chtml {
+  overflow: auto;
+}
