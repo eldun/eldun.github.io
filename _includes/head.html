@@ -18,7 +18,7 @@
   {% include mathjax-support.html %}
   {% endif %}
 
-  <link href="/assets/css/prism.css" rel="stylesheet" />
+  <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
 
 
 
@@ -39,8 +39,17 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' }}">
 
-  <!-- Back to top -->
-  <script src="/js/site-scripts/vanilla-back-to-top.min.js"></script>
-  <script>addBackToTop()</script>
+  {% if page.use-raw-images %}
+    <style>
+
+    img{
+      
+      image-rendering: auto;
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+    }
+    </style>
+  {% endif %}
+
 
 </head>

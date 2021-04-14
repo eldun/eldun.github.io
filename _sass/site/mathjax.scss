@@ -1,0 +1,13 @@
+// MathJax formatting (mostly for mobile, to keep the page from going waaaay to the right when long equations are involved.
+// Either overflow: auto; for scrolling through equations
+// Or white-space: normal; to allow word wrap.
+// Right now, I think overflow: auto; is the better option
+.MJXc-display {
+    overflow: auto;
+    color: $color-accent
+  }
+
+.math-block {
+    text-align: center;
+    color: $color-text;
+}

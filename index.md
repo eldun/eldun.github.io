@@ -5,10 +5,10 @@ title: Home
 <ul class="post-list">
 {% for post in site.posts %}
 <li class="post">
-  <a href="{{ post.url }}#post-title">
+  <a href="{{ post.url }}#post-title" class="post-header">
     <div>
-      <h1 style="color : #cc773f"> {{ post.title }}</h1>
-      <h3 style="color : #cc773f"> {{ post.subtitle }}</h3>
+      <h1> {{ post.title }}</h1>
+      <h3> {{ post.subtitle }}</h3>
     </div>
   </a>
   <div class="post-date">

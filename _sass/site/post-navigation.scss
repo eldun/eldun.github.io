@@ -1,29 +1,25 @@
-.part-navigator {
-    // text-align: center;
-  }
-  
+
 
   .part-navigator {
     display: inline-block;
-    width: 100%;
     text-align: center;
+    width: 100%;
+    margin: 1rem auto;
+    padding: 0;
   }
 
   .part-navigator li {
     display: inline-block;
-    background-color: #393e46;
-    border: 1px solid;
-    border-radius: .1rem;
-  }
-
-  .part-navigator li a {
-    padding: 1rem;
+  //   background-color: #393e46;
+  //   border: 1px solid;
+  //   border-radius: .1rem;
   }
   
   .table-of-contents {
-    background-color: #393e46;
+    background-color: $color-secondary;
     border: 1px solid;
-    border-radius: .1rem;
+    // border-radius: .1rem;
+    border-color: $color-clickable;
     width: max-content;
     padding: 0;
     width: 50%;

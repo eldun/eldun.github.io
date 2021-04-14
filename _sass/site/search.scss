@@ -13,13 +13,13 @@
   #search-input {
     padding-inline-start: 0.5rem;
     padding-inline-end: 0.5rem;
-    background-color: #222831;
-    border-color: #42cad1;
+    background-color: $color-primary;
+    border-color: $color-accent;
     border-style: solid 1px;
-    color: #42cad1;
+    color: $color-accent;
   }
   
   #results-container {
     background-color: #393e46;
-    border-radius: 0.1rem;
+    // border-radius: 0.1rem;
   }

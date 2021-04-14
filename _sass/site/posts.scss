@@ -3,12 +3,16 @@
 }
 
 .post {
-  padding: 0;
+  text-align: center;
+}
+
+.post-header {
+  // color: $color-clickable;
+  text-align: center;
 }
 
 .post-date {
-  color: #42cad1;
-  text-align: center;
+  color: $color-accent;
 }
 
 .post-button {
@@ -18,3 +22,18 @@
 .post-tags {
   text-align: center;
 }
+
+
+ #continue-reading-point {
+   width: 0;
+   height: 0;
+   padding: 0;
+ }
+
+// #post-title {
+//   color: $color-accent;
+// }
+
+// #post-subtitle {
+//   color: $color-accent;
+// }

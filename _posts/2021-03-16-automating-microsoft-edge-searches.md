@@ -40,9 +40,7 @@ First off, I'd like to say that I have nothing against Edge. It's beautiful and 
 
 The first order of business was generating plausible words. I'm not sure if Bing ignores nonsense words. In fact, I don't know if there's any critera that Bing filters by. Anyway, to generate words, I just sampled a bit of code from [here](https://j11y.io/javascript/random-word-generator/), which simply alternates vowels and consonants.
 
-<pre><code> 
-
-// From https://j11y.io/javascript/random-word-generator/
+<pre><code class="language-javascript">// From https://j11y.io/javascript/random-word-generator/
 function createRandomWord(length) {
   var consonants = "bcdfghjklmnpqrstvwxyz",
     vowels = "aeiou",
@@ -61,19 +59,14 @@ function createRandomWord(length) {
     word += i * 2 < length - 1 ? randVowel : "";
   }
   return word;
-}
-
-</code></pre>
-
-<pre><code>
-console.log(createRandomWord(5));
+}</code></pre>
+<pre><code class="language-javascript">console.log(createRandomWord(5));
 console.log(createRandomWord(10));
 console.log(createRandomWord(20));
 
 Xajiq
 Sexetelufa
-Vazocolebaboxugosiqi
-</code></pre>
+Vazocolebaboxugosiqi</code></pre>
 
 ---
 
@@ -83,21 +76,15 @@ Vazocolebaboxugosiqi
 
 Well, we're almost done. Add the listener to the search button that's in the html:
 
-<pre><code> 
-
-document.addEventListener("DOMContentLoaded", init, false);
+<pre><code class="language-javascript">document.addEventListener("DOMContentLoaded", init, false);
 function init() {
   var button = document.getElementById("bing-search-button");
   button.addEventListener("click", startSearch, true);
-}
-
-</code></pre>
+}</code></pre>
 
 `startSearch` is called, and `continueSearch` is called recursively until the new tab is closed, or has reached the max number of searches (typically 50):
 
-<pre><code> 
-
-function startSearch() {
+<pre><code class="language-javascript">function startSearch() {
   let searchCount = 0;
   let randomWord = () => createRandomWord(Math.ceil(Math.random() * 14) + 3);
   let tab = window.open(`https://www.bing.com/search?q=${randomWord()}`);
@@ -113,8 +100,7 @@ function startSearch() {
       setTimeout(continueSearch, 5000, searchCount);
     }
   }
-}
-</code></pre>
+}</code></pre>
 
 ---
 
@@ -122,4 +108,4 @@ function startSearch() {
 
 I try to click this button everyday:
 
-<button id="bing-search-button">Start Auto-Search</button>
+<button class="btn" id="bing-search-button">Start Auto-Search</button>

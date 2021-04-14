@@ -33,13 +33,22 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 @import "site/post-navigation.scss";
 @import "site/images.scss";
 
+@import "site/mathjax.scss";
+
 @import "site/about-me.scss";
 @import "site/archive.scss";
 @import "site/tags.scss";
 @import "site/search.scss";
 
+@import "site/prism.scss";
 
 
+
+* {
+  border-radius: .2rem;
+  background-color: inherit;
+
+}
 
 
 body {
@@ -49,14 +58,28 @@ body {
   font-family: 'Courier New', Courier, monospace;
 }
 
-.inactive-link {
+.inactive {
   color: $color-accent;
+  pointer-events: none;
+  cursor: default;
+}
+
+.inactive.btn {
+  color: $color-accent;
+  border-color: $color-accent;
+  pointer-events: none;
+  cursor: default;
 }
 
 .main-content {
   padding-top: 0;
   padding-bottom: 0;
+  color: $color-accent;
    // width: 60%;
+}
+
+.main-content p {
+  color: $color-text;
 }
 
 .main-content hr {
@@ -71,13 +94,42 @@ body {
 .main-content h4,
 .main-content h5,
 .main-content h6 {
-  color: $color-accent;
+  color: inherit;
+  margin: .5rem;
   text-align: center;
-  margin: auto;
+}
+
+.main-content code, 
+.main-content pre,
+.main-content pre > code {
+  color: $color-text;
+  background-color: $color-secondary;
+  border-color: $color-clickable;
+  overflow: scroll;
+  padding-bottom: 0;
+  // padding: inherit;
+}
+
+.main-content a > code {
+  color: inherit;
 }
 
 a {
+  color: $color-clickable;  
+  // display: inline-block;
+}
+
+.btn,
+button {
+  display: inline-block;
   color: $color-clickable;
+  background-color: $color-secondary;
+  border-color: $color-clickable;
+  margin: 1rem 0;
+}
+
+code {
+  background-color: $color-secondary;
 }
 
 ul {
@@ -88,41 +140,34 @@ li {
   list-style-type: none;
 }
 
-.main-content code, .btn {
-  display: inline-block;
-  color: $color-clickable;
-  background-color: $color-secondary;
-  border-color: $color-clickable;
-  margin: 1rem;
-}
-
-.main-content code:hover, a:hover, .btn:hover {
+a:hover, 
+.btn:hover,
+a *:hover // all elements within a
+ {
   color: $color-primary;
   text-decoration: none;
   background-color: $color-clickable;
   border-color: $color-clickable;
 }
 
-
-
-
-
 .site-footer {
   border-color: $color-accent;
 }
 
-
-// There was an issue on certain posts where you could scroll just a tiny bit horizontally. This fixes that.
-#back-to-top {
-  // margin: 0 1rem;
+.row {
+  display: flex;
+  align-items: center;
 }
 
-// MathJax formatting (mostly for mobile, to keep the page from going waaaay to the right when long equations are involved.
-// Either overflow: auto; for scrolling through equations
-// Or white-space: normal; to allow word wrap.
-// Right now, I think overflow: auto; is the better option
-.MJXc-display {
-  overflow: auto;
+#back-to-top {
+  transition: .5s;
+}
+
+#back-to-top:hover,
+{
+  color: $color-primary;
+  background: $color-clickable;
+
 }
 
 // .mjx-chtml {

@@ -2,6 +2,7 @@
 title: "Ray Tracing in One Weekend:"
 subtitle: "Part Two - The First Weekend"
 use-math: true
+use-raw-images: true
 layout: post
 author: Evan
 header-image: /assets\images\blog-images\path-tracer-part-two\renders\final-render-1.png
@@ -28,38 +29,30 @@ I started this path tracer months ago, and only started this blog in late May. T
 <ul class="table-of-contents">
     <li><a href="#image-output">Image Output</a></li>
 	<li><a href="#timing-execution">Timing Execution</a></li>
-	
 	<li><a href="#vec3-class">Vec3 Class</a></li>
 	<ul>
 	<li><a href="#vector-refresher">Vector Refresher</a></li>
 	<li><a href="#vec3-definitions">Vec3 Definitions</a></li>
 	</ul>
-
 	<li><a href="#rays">Rays</a></li>
 	<ul>
 	<li><a href="#sending-rays-from-the-camera">Sending Rays from the Camera</a></li>
 	</ul>
-
 	<li><a href="#introducing-spheres">Introducing Spheres</a></li>
 	<ul>
 	<li><a href="#describing-a-sphere">Describing a Sphere</a></li>
 	<li><a href="#placing-a-sphere">Placing a Sphere</a></li>
 	</ul>
-
 	<li><a href="#surface-normals">Surface Normals</a></li>
 	<ul>
 	<li><a href="#simplifying-ray-sphere-intersection">Simplifying Ray-Sphere Intersection</a></li>
 	</ul>
-
 	<li><a href="#multiple-spheres">Multiple Spheres</a></li>
-
 	<li><a href="#front-faces-versus-back-faces">Front Faces versus Back Faces</a></li>
-
 	<li><a href="#anti-aliasing">Anti-Aliasing</a></li>
 	<ul>
 	<li><a href="#adding-anti-aliasing-to-the-camera">Adding Anti-Aliasing to the Camera</a></li>
 	</ul>
-
 	<li><a href="#diffuse-materials">Diffuse Materials</a></li>
 	<ul>
 	<li><a href="#the-math-of-diffuse-materials">The Math of Diffuse Materials</a></li>
@@ -67,9 +60,7 @@ I started this path tracer months ago, and only started this blog in late May. T
 	<li><a href="#shadow-acne">Shadow Acne</a></li>
 	<li><a href="#true-lambertian-reflection">True Lambertian Reflection</a></li>
 	</ul>
-
 	<li><a href="#common-constants-and-utilities">Common Constants and Utilities</a></li>
-
 	<li><a href="#metal">Metal</a></li>
 	<ul>
 	<li><a href="#abstract-class-for-materials">Abstract Class for Materials</a></li>
@@ -79,7 +70,6 @@ I started this path tracer months ago, and only started this blog in late May. T
 	<li><a href="#adding-metal-spheres-to-the-scene">Adding Metal Spheres to the Scene</a></li>
 	<li><a href="#fuzzy-metal">Fuzzy Metal</a></li>
 	</ul>
-
 	<li><a href="#dielectrics">Dielectrics</a></li>
 	<ul>
 	<li><a href="#refraction">Refraction</a></li>
@@ -89,23 +79,18 @@ I started this path tracer months ago, and only started this blog in late May. T
 	<li><a href="#dielectric-reflections">Dielectric Reflections</a></li>
 	<li><a href="#hollow-dielectric-spheres">Hollow Dielectric Spheres</a></li>
 	</ul>
-	
 	<li><a href="#camera-modeling">Camera Modeling</a></li>
-
 	<li><a href="#depth-of-field">Depth of Field</a></li>
-
 	<li><a href="#final-scene">Final Scene</a></li>
 </ul>
-
-
 
 ---
 
 ## <a id="image-output"></a>Image Output
 Of course, the first step with producing a pretty path traced image is to produce an image. The method suggested by Peter is a simple plaintext `.ppm` file. The following is an example snippet and image from [Wikipedia](https://en.wikipedia.org/wiki/Netpbm#PPM_example):
 
-<pre><code>
-P3
+<div class="row">
+<pre><code class="language-shell">P3
 3 2
 255
 # The part above is the header
@@ -118,17 +103,17 @@ P3
   0   0 255  # blue
 255 255   0  # yellow
 255 255 255  # white
-  0   0   0  # black
-  </code></pre>
+  0   0   0  # black</code></pre>
 
-![PPM Output](\assets\images\blog-images\path-tracer-part-two\ppm-example-output.png)
+<img src="\assets\images\blog-images\path-tracer-part-two\ppm-example-output.png">
+<!-- ![PPM Output](\assets\images\blog-images\path-tracer-part-two\ppm-example-output.png) -->
+
+</div>
 
 The code for creating a `.ppm` file is as follows:
 
 `main.cpp`:
-<pre>
-<code class="language-cpp">
-#include &lt;iostream>
+<pre><code class="language-cpp">#include &lt;iostream>
 
 int main() {
 	int nx = 200; // Number of horizontal pixels
@@ -147,9 +132,7 @@ int main() {
 		}
 	}
 	std::cerr &lt;&lt; "\nDone.\n";
-}
-  </code>
-  </pre>
+}</code></pre>
 
 
 Note:
@@ -159,14 +142,12 @@ Note:
 - In this simple example, from left to right, red goes from 0 to 255. Green goes from 0 to 255, bottom to top. As such, the top right corner should be yellow.
 
 Now to compile and redirect the output of our program to a file:
-```
-g++ main.cpp
-./a.out > hello.ppm
-```
+<pre><code class="language-shell">g++ main.cpp
+./a.out > hello.ppm</code></pre>
 
 You may have to use a [web tool](http://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html) or download a file viewer (I use [IrfanView](https://www.irfanview.com/)) to view the `.ppm` file as an image. Here's my resulting image and raw contents of the file:
 
-<span class="image-row two-images">
+<span class="row">
 ![The "Hello World" of our path tracer](\assets\images\blog-images\path-tracer-part-two\renders\hello-world-ppm.png)
 ![The "Hello World" of our path tracer](\assets\images\blog-images\path-tracer-part-two\hello-world-ppm-raw.png)
 </span>
@@ -178,18 +159,15 @@ Eventually, our program is going to chug when it comes to producing an image. It
 
 If you want, you could just run our program in the terminal prepended with `time`. Here's an example of the utility:
 
-```
-dunneev@Evan:/mnt/c/Users/Ev/source/Projects/PathTracer/PathTracer$ time sleep 1
+<pre><code class="shell">dunneev@Evan:/mnt/c/Users/Ev/source/Projects/PathTracer/PathTracer$ time sleep 1
 
 real    0m1.019s
 user    0m0.016s
-sys     0m0.000s
-```
+sys     0m0.000s</code></pre>
 
 Otherwise, you can `#include <chrono>` (for timing) and `#include <iomanip>` (for formatting) in main (or anywhere) to time more specific parts of the program:
 
-<pre><code>
-#include &lt;iostream&gt;
+<pre><code class="language-cpp">#include &lt;iostream&gt;
 <span class="highlight-green">#include &lt;chrono&gt;
 #include &lt;iomanip&gt;
 </span>
@@ -224,8 +202,7 @@ int main() {
 	"\t" << minutes.count() << " minutes" << std::endl <<
 	"\t" << seconds.count() << " seconds." << std::endl; </span>
 
-}
-</code></pre>
+}</code></pre>
 
 ---
 
@@ -240,13 +217,12 @@ All the operations within the code above are covered the mathisfun post. Take pa
 Here are the constructors and declarations of the functions we'll be using within `vec3.h`.
 
 `vec3.h`:
-```
-#ifndef VEC3H
+<pre><code class="language-cpp">#ifndef VEC3H
 #define VEC3H
 
-#include <math.h>
-#include <stdlib.h>
-#include <iostream>
+#include &lt;math.h>
+#include &lt;stdlib.h>
+#include &lt;iostream>
 
 // 3 dimensional vectors will be used for colors, locations, directions, offsets, etc.
 class vec3 {
@@ -289,14 +265,13 @@ public:
 	double e[3];
 };
 
-...
-```
+...</code></pre>
+
 ### <a id="vec3-definitions"></a>Vec3 Definitions
 The next step in our vector class is to define our functions. Be very careful here! This is where I had a few minor typo issues that mangled the final image later in the project. It's not hard to see why; these are the lowest-level operations of vectors, which will simulate our light rays and their properties.
 
 `vec3.h`:
-```
-...
+<pre><code class="language-cpp">...
 
 // input output overloading
 inline std::istream& operator>>(std::istream& is, vec3& t) {
@@ -407,14 +382,12 @@ inline vec3 unit_vector(vec3 v) {
 	return v / v.length();
 }
 
-#endif // !VEC3H
-```
+#endif // !VEC3H</code></pre>
 
 Make sure to include our new vec3.h in main.cpp.
 
 `main.cpp`:
-```
-```#include <iostream>
+<pre><code class="language-cpp">#include &lt;iostream>
 
 <span class=highlight-green>
 #include "vec3.h"
@@ -438,7 +411,7 @@ int main() {
 	}
     std::cerr << "\nDone.\n";
 }
-```  
+</code></pre>
 
 ---
 
@@ -457,8 +430,7 @@ Ray tracers need rays! These are what will be colliding with objects in the scen
 Here's the header file for our ray class:
 
 `ray.h:`
-```
-#ifndef RAYH
+<pre><code class="language-cpp">#ifndef RAYH
 #define RAYH
 #include "Vec3.h"
 
@@ -475,8 +447,7 @@ public:
 	vec3 B;
 };
 
-#endif // !RAYH
-```
+#endif // !RAYH</code></pre>
 
 ### <a id="sending-rays-from-the-camera"></a>Sending Rays from the Camera
 Put simply, our ray tracer will send rays through pixels and compute the color seen for each ray. The steps for doing so are as follows:
@@ -493,9 +464,7 @@ Using Peter Shirley's example, we're going to set the camera at (0,0,0), and loo
 Here's our code for the camera, as well as rendering a blue-to-white gradient:
 
 `main.cpp:`
-```
-
-#include <iostream>
+<pre><code class="language-cpp">#include &lt;iostream>
 #include "ray.h"
 
 /*
@@ -538,8 +507,7 @@ int main() {
 		}
 	}
 	std::cerr << "\nDone.\n";
-}
-```
+}</code></pre>
 
 The result:
 ![Linear Gradient](\assets\images\blog-images\path-tracer-part-two\renders\gradient.png)
@@ -547,7 +515,7 @@ The result:
 We can move the camera code into `camera.h`.
 
 `camera.h`:
-```
+<pre><code class="language-cpp">
 #ifndef CAMERAH
 #define CAMERAH
 
@@ -572,7 +540,7 @@ public:
 };
 
 #endif // !CAMERAH
-```
+</code></pre>
 
 ---
 
@@ -635,8 +603,7 @@ The unknown variable is *t*, and this is a quadratic equation. Solving for *t* w
 Prepend `main.cpp`'s main function with the following to mathematically hard-code a sphere to be hit by rays:
 
 `main.cpp:`
-```
-...
+<pre><code class="language-cpp">...
 
 bool hit_sphere(const vec3& center, double radius, const ray& r) {
 	vec3 oc = r.origin() - center;
@@ -661,8 +628,7 @@ vec3 color(const ray& r) {
 	return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
 }
 
-...
-```
+...</code></pre>
 
 The result:
 ![Ray traced sphere](\assets\images\blog-images\path-tracer-part-two\renders\red-sphere.png)
@@ -686,8 +652,7 @@ Since we don't have any lights, we can visualize the normals with a color map.
 Our `main.cpp` file will now look something like this:
 
 `main.cpp:`
-<pre><code>
-#include &lt;iostream&gt;
+<pre><code class="language-cpp">#include &lt;iostream&gt;
 #include "ray.h"
 
 double hit_sphere(const vec3& center, double radius, const ray& r) {
@@ -703,9 +668,7 @@ double hit_sphere(const vec3& center, double radius, const ray& r) {
 <span class="highlight-green">
 	else {
 		return (-b - sqrt(discriminant)) / (2.0 * a);
-</span>
-
-	}
+</span>}
 }
 
 /*
@@ -731,8 +694,7 @@ vec3 color(const ray& r) {
 
 }
 
-...
-</code></pre>
+...</code></pre>
 
 Our resulting image:
 ![Sphere with Normals](\assets\images\blog-images\path-tracer-part-two\renders\surface-normals-render.png)
@@ -741,13 +703,13 @@ Our resulting image:
 
 
 As it turns out, we can simplify ray-sphere intersection. Here's our original equation:
-```
+<pre><code class="language-cpp">
 vec3 oc = r.origin() - center;
 auto a = dot(r.direction(), r.direction());
 auto b = 2.0 * dot(oc, r.direction());
 auto c = dot(oc, oc) - radius*radius;
 auto discriminant = b*b - 4*a*c;
-```
+</code></pre>
 
 The dot product of a vector with itself is equal to the squared length of that vector.
 
@@ -770,8 +732,7 @@ $$
 $$
 
 As such, we can refactor our code like so:
-```
-vec3 oc = r.origin() - center;
+<pre><code class="language-cpp">vec3 oc = r.origin() - center;
 auto a = r.direction().length_squared();
 auto half_b = dot(oc, r.direction());
 auto c = oc.length_squared() - radius*radius;
@@ -781,8 +742,7 @@ if (discriminant < 0) {
     return -1.0;
 } else {
     return (-half_b - sqrt(discriminant) ) / a;
-}
-```
+}</code></pre>
 
 
 Cool! But it could be cooler. We need more spheres. The cleanest way to accomplish this is to create an abstract class - a class that must be overwritten by derived classes - of hittable objects.
@@ -795,8 +755,7 @@ Cool! But it could be cooler. We need more spheres. The cleanest way to accompli
 Our hittable abstract class will have a "hit" function that will be passed a ray and a record containing information about the hit, such as the time(which will be added with motion blur later in this series), position, and the surface normal:
 
 `hittable.h:`
-```
-#ifndef HITTABLEH
+<pre><code class="language-cpp">#ifndef HITTABLEH
 #define HITTABLEH
 
 #include "ray.h"
@@ -816,26 +775,25 @@ public:
 	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
 };
 
-#endif // !HITTABLEH
-```
+#endif // !HITTABLEH</code></pre>
+
+---
+
 ## <a id="front-faces-versus-back-faces"></a>Front Faces Versus Back Faces
 A question we have to ask ourselves about our normals is whether they should always point outward. Right now, the normal will always be in the *direction of the center to the intersection point* - outward. So if the ray intersects from the outside, the normal is against the ray. If the ray intersects from the inside (like in a glass ball), the normal would be pointing in the same direction of the ray. The alternative option is to have the normal always point against the ray.
 
 If we decide to always have the normal point outward, we need to determine what side the ray is on when we color it. If they face the same direction, the ray is inside the object traveling outward. If they're opposite, the ray is outside traveling inward. We can determine this by taking the dot product of the ray and the normal - if the dot is positive, the ray is inside traveling outward.
 
-```
-if (dot(ray_direction, outward_normal) > 0.0) {
+<pre><code class="language-cpp">if (dot(ray_direction, outward_normal) > 0.0) {
     // ray is inside the sphere
     ...
 } else {
     // ray is outside the sphere
     ...
-}
-```
+}</code></pre>
 
 Suppose we take the other option: always having the normals point against the ray. We would have to store what side of the surface the ray is on:
-```
-bool front_face;
+<pre><code class="language-cpp">bool front_face;
 if (dot(ray_direction, outward_normal) > 0.0) {
     // ray is inside the sphere
     normal = -outward_normal;
@@ -846,15 +804,14 @@ else {
     normal = outward_normal;
     front_face = true;
 }
-```
+</code></pre>
 
 You can choose whichever method you please, but Shirley's book recommends the "outward" boolean method, as we will have more material types than geometric types for the time being.
 
 Following the suggestion of Shirley, we'll add a `front_face` boolean to the `hittable.h` `hit_record` struct, as well as a function to solve the calculation:
 
 `hittable.h`:
-<pre><code>
-#ifndef HITTABLEH
+<pre><code class="language-cpp">#ifndef HITTABLEH
 #define HITTABLEH
 
 #include "ray.h"
@@ -877,15 +834,12 @@ public:
 	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
 };
 
-#endif // !HITTABLEH
-
-</code></pre>
+#endif // !HITTABLEH</code></pre>
 
 And now to update our sphere header with the simplified ray intersection and the outward normal calculations):
 
 `sphere.h:`
-<pre><code>
-#ifndef SPHEREH
+<pre><code class="language-cpp">#ifndef SPHEREH
 #define SPHEREH
 
 #include "hittable.h"
@@ -913,7 +867,7 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
 		if (temp < t_max && temp > t_min) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
-<span class="highlight-green">			vec3 outward_normal = (rec.p - center) / radius;
+<span class="highlight-green">vec3 outward_normal = (rec.p - center) / radius;
             rec.set_face_normal(r, outward_normal);</span>
 			return true;
 		}
@@ -921,7 +875,7 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
 		if (temp < t_max && temp > t_min) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
-<span class="highlight-green">			vec3 outward_normal = (rec.p - center) / radius;
+<span class="highlight-green">vec3 outward_normal = (rec.p - center) / radius;
             rec.set_face_normal(r, outward_normal);</span>
 			return true;
 		}
@@ -937,8 +891,7 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
 As well as a new file for a list of hittable objects:
 
 `hittableList.h:`
-```
-#ifndef HITTABLELISTH
+<pre><code class="language-cpp">#ifndef HITTABLELISTH
 #define HITTABLELISTH
 
 #include "hittable.h"
@@ -966,14 +919,12 @@ bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& re
 	return hit_anything;
 }
 
-#endif // !HITTABLELISTH
-```
+#endif // !HITTABLELISTH</code></pre>
 
 And the modified `main.cpp`:
 
 `main.cpp:`
-```
-#include <iostream>
+<pre><code class="language-cpp">#include &lt;iostream>
 #include "sphere.h"
 #include "hittableList.h"
 #include "float.h"
@@ -1039,7 +990,7 @@ int main() {
 	}
 	std::cerr << "\nDone.\n";
 }
-```
+</code></pre>
 
 The result:
 ![Sphere hittables](\assets\images\blog-images\path-tracer-part-two\renders\hittables.png)
@@ -1058,20 +1009,21 @@ If you want to learn more, I highly suggest watching [this video](https://www.yo
 
 We're going to be using multisample anti-aliasing (MSAA) in our ray tracer. As you may have supposed, multisampling, in this case, means taking multiple sub-pixel samples from each pixel and averaging the color across the whole pixel. Here's an example - the raw triangle on the left, and the triangle with four samples per pixel on the right:
 
-<span class="image-row two-images">
+<div class="captioned-image">
+<span class="image-row">
 ![No MSAA](\assets\images\blog-images\path-tracer-part-two\no-msaa.png)
 ![MSAA 4x](\assets\images\blog-images\path-tracer-part-two\msaa.png)
 </span>
 [Source](https://developer.apple.com/documentation/metal/gpu_features/understanding_gpu_family_4/about_enhanced_msaa_and_imageblock_sample_coverage_control)
+</div>
 
 Instead of taking perfectly spaced samples of pixels like in the example above, we'll be taking random samples of pixels. For that, we'll need a way of generating random numbers (you can do it however you please):
 
 `random.h:`
-```
-#ifndef RANDOMH
+<pre><code class="language-cpp">#ifndef RANDOMH
 #define RANDOMH
 
-#include <cstdlib>
+#include &lt;cstdlib>
 
 inline double random_double() {
     // Returns a random real in [0,1).
@@ -1083,15 +1035,13 @@ inline double random_double(double min, double max) {
     return min + (max-min)*random_double();
 }
 
-#endif // !RANDOMH
-```
+#endif // !RANDOMH</code></pre>
 
 ### <a id="adding-anti-aliasing-to-the-camera"></a>Adding Anti-Aliasing to the Camera
 
 Next, we'll create a camera class to manage the virtual camera and scene sampling:
 
-```
-#ifndef CAMERAH
+<pre><code class="language-cpp">#ifndef CAMERAH
 #define CAMERAH
 
 #include "ray.h"
@@ -1114,13 +1064,12 @@ public:
 	vec3 vertical;
 };
 
-#endif // !CAMERAH 
-```
+#endif // !CAMERAH</code></pre>
+
 And our resulting main method:
 
 `main.cpp:`
-```
-#include <iostream>
+<pre><code class="language-cpp">#include &lt;iostream>
 #include "sphere.h"
 #include "hittableList.h"
 #include "camera.h"
@@ -1183,8 +1132,7 @@ int main() {
 		}
 	}
     std::cerr << "\nDone.\n";
-}
-```
+}</code></pre>
 
 Keep in mind - these images are only 200x100.
 The difference is clear. And blurry. Haha:
@@ -1246,22 +1194,19 @@ First of all, we need to form a unit sphere tangent to the hitpoint **p** on the
 Now we need a way to pick the aforementioned random point **s**. Following Shirley's lead, we'll use a rejection method; picking a random point in the unit cube where x, y, and z all range from -1 to 1. If the point is outside the sphere (x<sup>2</sup> + y<sup>2</sup> + z<sup>2</sup> > 1), we reject it and try again:
 
 `vec3.h`:
-```
-vec3 random_unit_sphere_coordinate() {
+<pre><code class="language-cpp">vec3 random_unit_sphere_coordinate() {
 	vec3 p;
 	do {
 		p = 2.0 * vec3(random_double(0, 1), random_double(0, 1), random_double(0, 1)) - vec3(1, 1, 1);
 	} while (p.squared_length() >= 1.0);
 	return p;
-}
-```
+}</code></pre>
 
 
 Now we have to update our `color` function to use the random coordinates:
 
 `main.cpp:`
-<pre><code>
-vec3 color(const ray& r, hittable * world) {
+<pre><code class="language-cpp">vec3 color(const ray& r, hittable * world) {
 	hit_record rec;
 	// Light that reflects off a diffuse surface has its direction randomized.
 	// Light may also be absorbed.
@@ -1277,14 +1222,12 @@ vec3 color(const ray& r, hittable * world) {
 		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
 	}
 }
-...
-</code></pre>
+...</code></pre>
 
 Notice that our new code is recursive and will only stop recursing when the ray fails to hit any object. In some scenes (or some unlucky sequences of random numbers), this could wreak havoc on performance. For that reason, we'll enforce a bounce limit:
 
 `main.cpp`
-<pre><code>
-<span class="highlight-green"> vec3 color(const ray& r, hittable * world, int depth) {</span>
+<pre><code class="language-cpp"><span class="highlight-green"> vec3 color(const ray& r, hittable * world, int depth) {</span>
 	hit_record rec;
 
 <span class="highlight-green">	if (depth <= 0)
@@ -1343,8 +1286,7 @@ int main() {
 		}
 	}
     std::cerr << "\nDone.\n";
-}
-</code></pre>
+}</code></pre>
 
 The result:
 <span class="captioned-image">
@@ -1363,8 +1305,7 @@ You can read more about gamma correction [here](https://www.cambridgeincolour.co
 So basically, we need to transform our values before storing them. For a start, we'll use gamma 2 - which would mean raising the colors to the power of 1/*gamma* (or.5) - mathematically identical to the square root:
 
 `main.cpp:`
-<pre><code>
-...
+<pre><code class="language-cpp">...
 
 int main() {
 
@@ -1402,8 +1343,7 @@ int main() {
 		}
 	}
     std::cerr << "\nDone.\n";
-}
-</code></pre>
+}</code></pre>
 
 
 <span class="captioned-image">
@@ -1415,17 +1355,18 @@ int main() {
 
 There's one small issue left to fix, known as shadow acne. Some of the rays hit the sphere (or any object, really) not at t = 0, but rather at something like t = ±0.0000001 due to floating-point approximation. In that case, we'll just change our hit detection specs in `main.cpp`:
 
-```
-if (world.hit(r, 0.001, DBL_MAX, rec)) {
-```
+<pre><code class="language-cpp">if (world.hit(r, 0.001, DBL_MAX, rec)) {</code></pre>
 
+<div class="captioned-image">
 <div class="container">
   <img src="\assets\images\blog-images\path-tracer-part-two\renders\diffuse-shadow-acne.png" alt="Shadow acne sphere">
   <div class="overlay">
     <img src="\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png" alt="Sphere no shadow acne">
   </div>
+</div>
   (Mouseover) Fix shadow acne
 </div>
+
 
 You can view the images separately, as well. Here's [the one with shadow acne](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-shadow-acne.png) and [the one without](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png).
 
@@ -1442,14 +1383,12 @@ However, we are interested in a Lambertian distribution, which has a distributio
 And our total replacement for `random_unit_sphere_coordinate()`:
 (use 3.14 as pi for now, we'll address it in the next section)
 
-```
-vec3 random_unit_vector() {
+<pre><code class="language-cpp">vec3 random_unit_vector() {
     auto a = random_double(0, 2*pi);
     auto z = random_double(-1, 1);
     auto r = sqrt(1 - z*z);
     return vec3(r*cos(a), r*sin(a), z);
-}
-```
+}</code></pre>
 
 The result:
 <div class="container">
@@ -1473,44 +1412,38 @@ These changes are both due to the more uniform scattering toward the normal. For
 
 You may have noticed in `random_unit_vector()` that *pi* is not defined. That's because in Shirley's newer edition, he creates a general main header file with some constants and utilities:
 
-```
-#ifndef RTWEEKEND_H
+<pre><code class="language-cpp">#ifndef RTWEEKEND_H
 #define RTWEEKEND_H
 
-#include <cmath>
-#include <cstdlib>
-#include <limits>
-#include <memory>
+#include &lt;cmath>
+#include &lt;cstdlib>
+#include &lt;limits>
+#include &lt;memory>
 
 
 // Usings
-
 using std::shared_ptr;
 using std::make_shared;
 using std::sqrt;
 
 // Constants
-
-const double infinity = std::numeric_limits<double>::infinity();
+const double infinity = std::numeric_limits&lt;double>::infinity();
 const double pi = 3.1415926535897932385;
 
 // Utility Functions
-
 inline double degrees_to_radians(double degrees) {
     return degrees * pi / 180;
 }
 
 // Common Headers
-
 #include "ray.h"
 #include "vec3.h"
 
 #endif
-```
+</code></pre>
 
 And uses it in `main.cpp`:
-<pre><code>
-#include &lt;iostream&gt;
+<pre><code class="language-cpp">#include &lt;iostream&gt;
 #include &lt;cfloat&gt;
 
 <span class="highlight-green">
@@ -1594,8 +1527,7 @@ int main() {
 			std::cout << ir << " " << ig << " " << ib << "\n";
 		}
 	}
-}
-</code></pre>
+}</code></pre>
 
 While we're here making changes, let's clean things up a bit by: 
 - Moving `random_unit_vector()` to `vec3.h`
@@ -1611,8 +1543,7 @@ We're going to use an abstract material class that encapsulates behavior which w
 - Determine attenuation (reduction of magnitude) of a scattered ray
 
 `material.h`:
-```
-#ifndef MATERIAL_H
+<pre><code class="language-cpp">#ifndef MATERIAL_H
 #define MATERIAL_H
 
 class material {
@@ -1622,15 +1553,13 @@ class material {
         ) const = 0;
 };
 
-#endif
-```
+#endif</code></pre>
 
 ### <a id="describing-ray-object-intersections"></a>Describing Ray-Object Intersections
 The `hit_record` struct in `hittable.h` is where we'll be storing whatever information we want about hits. We'll be adding material to the struct.
 
 `hittable.h`:
-<pre><code>
-#ifndef HITTABLEH
+<pre><code class="language-cpp">#ifndef HITTABLEH
 #define HITTABLEH
 
 #include "ray.h"
@@ -1658,14 +1587,12 @@ public:
 	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
 };
 
-#endif // !HITTABLEH
-</code></pre>
+#endif // !HITTABLEH</code></pre>
 
 When a ray hits a surface, the material pointer within the hit struct will point to the material the object was instantiated with. As such, we'll have to reference the material within our sphere class to be included with the `hit_record`.
 
 `sphere.h:`
-<pre><code>
-#ifndef SPHEREH
+<pre><code class="language-cpp">#ifndef SPHEREH
 #define SPHEREH
 
 #include "hittable.h"
@@ -1712,15 +1639,13 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
 	return false;
 }
 
-#endif // !SPHEREH
-</code></pre>
+#endif // !SPHEREH</code></pre>
 
 ### <a id="light-scatter"></a>Light Scatter
 The Lambertian material we modeled previously would either scatter and attenuate by its reflectance *R*, or scatter with no attenuation but absorb 1 - *R* of rays, or somewhere in between. This is represented in code as follows:
 
 `material.h`
-```
-...
+<pre><code class="language-cpp">...
 class lambertian : public material {
     public:
         lambertian(const vec3& a) : albedo(a){};
@@ -1736,14 +1661,14 @@ class lambertian : public material {
     vec3 albedo; // reflectivity
 
 };
-...
-```
+...</code></pre>
 
 ### <a id="metal-reflection"></a>Metal Reflection
 Metal is definitely NOT Lambertian - here's a simple sketch depecting a general mirrored reflection:
 
 <span class="captioned-image"> ![Mirrored Reflection](\assets\images\blog-images\path-tracer-part-two\metal-reflect.png)*Metal Reflection ([source](http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/))*</span>
 
+<div class="math-block">
 $$
 \vec r = \vec v - (-2 * \vert \vec a\vert  * \vec n)
 $$
@@ -1754,7 +1679,7 @@ $$
 \vert \vec a\vert  = \vert \vec v\vert  * cos(\theta)
 $$
 
-Since 
+since 
 
 $$
 dot(\vec v, \vec n) = \vert \vec v\vert \vert \vec n\vert cos(\pi - \theta) = -\vert \vec v\vert cos(\theta)
@@ -1771,20 +1696,18 @@ and
 $$
 \vec r = \vec v - (2 * dot(\vec v, \vec n) * \vec n)
 $$
+</div>
 
 In other words, the reflected ray is v + 2a. N is a unit vector, but that might not be the case for v. Also, because v points inward, we're going have to flip it by negating it. This yields the following formula:
 
-```
-vec3 reflect(const vec3& v, const vec3& n){
+<pre><code class="language-cpp">vec3 reflect(const vec3& v, const vec3& n){
     return v - 2*dot(v,n)*n;
-}
-```
+}</code></pre>
 
 We can go ahead and incorporate this formula into our metal material:
 
 `material.h`
-```
-vec3 reflect(const vec3& v, const vec3& n){
+<pre><code class="language-cpp">vec3 reflect(const vec3& v, const vec3& n){
     return v - 2*dot(v,n)*n; // v enters the hittable, which is why subtraction is required.
 }
 
@@ -1820,13 +1743,11 @@ class metal : public material {
     }
 
     vec3 albedo;
-};
-```
+};</code></pre>
 
 And of course, we're going to need to update our `color`() function to use our new material:
 `main.cpp`:
-<pre><code>
-vec3 color(const ray& r, hittable *world, int depth) {
+<pre><code class="language-cpp">vec3 color(const ray& r, hittable *world, int depth) {
     hit_record rec;
 
     if (depth <= 0) {
@@ -1848,15 +1769,13 @@ vec3 color(const ray& r, hittable *world, int depth) {
         double t = 0.5*(unit_direction.y() + 1.0);
         return (1.0-t)*vec3(1.0, 1.0, 1.0) + t*vec3(0.5, 0.7, 1.0);
     }
-}
-</code></pre>
+}</code></pre>
 
 ### <a id="adding-metal-spheres-to-the-scene"></a>Adding Metal Spheres to the Scene
 
 Now that we've got some shiny new spheres, let's add 'em to the scene, render 'em, and check 'em out:
 `main.cpp`:
-```
-int main {
+<pre><code class="language-cpp">int main {
 	...
 
 	hittable *list[4];
@@ -1874,8 +1793,8 @@ int main {
 
 		for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
 
-		...
-```
+		...</code></pre>
+
 You'll get something like this:
 
 <span class="captioned-image">![Metal and Lambertian spheres](\assets\images\blog-images\path-tracer-part-two\renders\metal.png)*Metal and Lambertian spheres*</span>
@@ -1893,8 +1812,7 @@ In addition to perfectly polished metal spheres, we can simulate rough metal as 
 The larger the sphere, the fuzzier the reflections will be. If the sphere is too large, we may scatter below the surface of an object. If that happens, we can just have the surface absorb those rays.
 
 `material.h`:
-<pre><code>
-class metal : public material {
+<pre><code class="language-cpp">class metal : public material {
     public:
         metal(const vec3& a, double f) : albedo(a) {
 <span class="highlight-green">            if (f<1) fuzz = f; else fuzz = 1;</span>
@@ -1908,9 +1826,7 @@ class metal : public material {
 
     vec3 albedo;
 <span class="highlight-green">	double fuzz;</span>
-};
-
-</code></pre>
+};</code></pre>
 
 <div class="container">
   <img src="\assets\images\blog-images\path-tracer-part-two\renders\all-metal-no-fuzz.png" alt="Metal - no fuzz">
@@ -1943,19 +1859,19 @@ where *c* is the speed of light in a vacuum and v is the speed of light in the m
 
 For reference, here are some refractive indices:
 
-|      Material   | Refractive Index |
-| --------------- | ---------------- |
-|       Vacuum    |        1         |
-|        Air      |     1.000293     |
-|  Carbon Dioxide |      1.001	     |
-|        Ice      |       1.31       |
-|		Water	  |		 1.333       |
-|     Kerosene    |       1.39       |
-|   Vegetable Oil |       1.47       |
-|   Window Glass  |       1.52       |
-|      Amber      |       1.55       |
-|     Diamond     |       2.417      |
-|    Germanium    |       4.05       |
+| Material       | Refractive Index |
+| -------------- | ---------------- |
+| Vacuum         | 1                |
+| Air            | 1.000293         |
+| Carbon Dioxide | 1.001            |
+| Ice            | 1.31             |
+| Water          | 1.333            |
+| Kerosene       | 1.39             |
+| Vegetable Oil  | 1.47             |
+| Window Glass   | 1.52             |
+| Amber          | 1.55             |
+| Diamond        | 2.417            |
+| Germanium      | 4.05             |
 
 
 ### <a id="snells-law"></a>Snell's Law
@@ -2100,13 +2016,11 @@ $$
 
 is the discriminant.
 
-|Discriminant|Ray Behavior|
-|------------|------------|
-|	  $<0$	 | 	  Total internal reflection |
-|	  $=0$	 | 	  Boundary of total reflection - no resultant ray |
-|	  $>0$	 | 	  Refracted ray $\vec r$ |
-|||
-
+| Discriminant | Ray Behavior                                    |
+| ------------ | ----------------------------------------------- |
+| $<0$         | Total internal reflection                       |
+| $=0$         | Boundary of total reflection - no resultant ray |
+| $>0$         | Refracted ray $\vec r$                          |
 
 
 ### <a id="coding-the-refraction-vector"></a>Coding the Refraction Vector
@@ -2116,8 +2030,7 @@ is the discriminant.
 - n is the surface normal
 - refracted is the refracted ray's direction
 
-```
-bool refract(const vec3& v, const vec3& n, float n1_over_n2, vec3& refracted) {
+<pre><code class="language-cpp">bool refract(const vec3& v, const vec3& n, float n1_over_n2, vec3& refracted) {
     vec3 uv = unit_vector(v);
     float dt = dot(uv, n);
     float discriminat = 1.0 - ni_over_nt * ni_over_nt * (1-dt*dt);
@@ -2127,8 +2040,7 @@ bool refract(const vec3& v, const vec3& n, float n1_over_n2, vec3& refracted) {
     }
     else
         return false; // no refracted ray
-}
-```
+}</code></pre>
 
 
 ### <a id="dielectric-reflections"></a>Dielectric Reflections
@@ -2165,13 +2077,13 @@ $$
 We can add Schlick's approximation to `material.h`
 
 `material.h`:
-```
-float schlick(float cosine, float ref_idx) {
+<pre><code class="language-cpp">float schlick(float cosine, float ref_idx) {
     float r0 = (1 - ref_index) / (1 + ref_index); // ref_index = n2/n1
     r0 = r0 * r0;
     return r0 + (1 - r0) * pow((1 - cosine), 5);
-}
-```
+}</code></pre>
+
+
 If the incident ray produces a refraction ray (which we can check by seeing if `refract()` returns true), we are going to calculate the reflective coefficient `reflect_probability`. Otherwise, the ray exhibits total internal reflection and the reflective coefficient should be 1.
 
 ![Refraction and reflection gif](\assets\images\blog-images\path-tracer-part-two\refraction-reflection.gif)
@@ -2187,8 +2099,7 @@ To get an accurate result, we'll use our random number generator. We'll generate
 We can now bundle everything up into our dielectric material's `scatter()` method:
 
 `material.h`:
-```
-...
+<pre><code class="language-cpp">...
 
 class dielectric : public material {
     public:
@@ -2233,9 +2144,8 @@ class dielectric : public material {
     public:
         double ref_idx;
         vec3 albedo;
-};
+};</code></pre>
 
-```
 
 <div class="container">
   <img src="\assets\images\blog-images\path-tracer-part-two\renders\no-fresnel.png" alt="Dielectric without Fresnel">
@@ -2266,8 +2176,7 @@ And of course, you can change the color of your pretty new dielectric sphere if 
 Up until now, we've been using a very simple camera (though I have changed framing a little bit for illustrating certain renders). Our simple camera was described way back in chapter 4 of Shirley's book, and it had fixed world position at the origin, a fixed image plane (or near-clipping plane) size, and position at (0, 0, -1) pointing towards the negative z-axis.
 
 `camera.h`:
-```
-#ifndef CAMERAH
+<pre><code class="language-cpp">#ifndef CAMERAH
 #define CAMERAH
 
 #include "ray.h"
@@ -2290,8 +2199,7 @@ public:
 	vec3 vertical;
 };
 
-#endif // !CAMERAH
-```
+#endif // !CAMERAH</code></pre>
 
 We're going to expand the capability of the camera and make it more flexible by defining a few different variables:
 
@@ -2316,14 +2224,12 @@ $$
 
 Keeping other camera settings the same, we can rewrite our camera:
 `camera.h`
-```
-...
+<pre><code class="language-cpp">...
 lower_left_corner(-half_width, -half_height,-1.0);
 horizontal(2*half_width, 0.0, 0.0); // horizontal range
 vertical(0.0, 2*half_height, 0.0);  // vertical range
 origin = (0,0,0);
-...
-```
+...</code></pre>
 
 In world space, the vectors $e1 = (1,0,0), e2 = (0,1,0), e3 = (0,0,1)$ (the [standard basis](https://en.wikipedia.org/wiki/Standard_basis)) from an [orthonormal basis](https://en.wikipedia.org/wiki/Orthonormal_basis).
 
@@ -2341,19 +2247,15 @@ $$
 Therefore, the previous camera code should be revised to
 
 `camera.h`
-```
-lower_left_corner= origin - half_width * e1 - half_height * e2 - e3
+<pre><code class="language-cpp">lower_left_corner= origin - half_width * e1 - half_height * e2 - e3
 horizontal = 2 * half_width * e1
-vertical = 2 *half_height * e2
-```
+vertical = 2 *half_height * e2</code></pre>
 
 However, if we want to move our "camera" to position `look_from` pointing to `look_at`, we have to build a new orthonormal basis for camera space with vectors u, v, and w:
 
-```
-w = unit_vector(lookfrom - lookat) // similar to the Z axis
+<pre><code class="language-cpp">w = unit_vector(lookfrom - lookat) // similar to the Z axis
 u = unit_vector(cross(vup, w)) // similar to the X axis
-v = cross(w, u) // similar to the Y axis
-```
+v = cross(w, u) // similar to the Y axis</code></pre>
 
 ![New orthonormal basis](\assets\images\blog-images\path-tracer-part-two\orthonormal-basis.png)
 ![Shirley orthonormal basis](\assets\images\blog-images\path-tracer-part-two\shirley\orthonormal-basis.png)
@@ -2372,8 +2274,7 @@ The `vup` vector describes which direction is up for the camera. You can also th
 
 ![Shirley vector-up](\assets\images\blog-images\path-tracer-part-two\shirley\orthonormal-vup.png)
 
-```
-class camera {
+<pre><code class="language-cpp">class camera {
 public:
     camera(vec3 look_from, vec3 look_at, vec3 vup, float vfov, float aspect_ratio) {
         vec3 u, v, w;
@@ -2397,8 +2298,7 @@ public:
     vec3 horizontal;
     vec3 vertical;
     vec3 origin;
-};
-```
+};</code></pre>
 
 ---
 
@@ -2421,31 +2321,26 @@ From Wikipedia:
 From the beginning, all scene rays have originated from `look_from`. To simulate a variable aperature, we'll generate rays randomly originating from inside a disk centered at `look_from`. The larger we make this disc, the stronger the blur will be. With a disk radius of zero, the rays all originate from `look_from`, eliminating blur. One such method for generating a point inside a unit disk is as follows:
 
 `vec3.h`:
-```
-vec3 random_unit_disk_coordinate() {
+<pre><code class="language-cpp">vec3 random_unit_disk_coordinate() {
     while (true) {
         auto p = vec3(random_double(-1,1), random_double(-1,1), 0);
         if (p.length_squared() >= 1) continue;
         return p;
     }
-}
-```
+}</code></pre>
 
 Up until now, the focus distance was -1 on the z (or w) axes. We'll now make it `focus_distance` and define our image plane accordingly:
 
-```
-lower_left_corner = origin - half_width*focus_distance*u - half_height*focus_distance*v - focus_distance*w;
+<pre><code class="language-cpp">lower_left_corner = origin - half_width*focus_distance*u - half_height*focus_distance*v - focus_distance*w;
 horizontal = 2 * half_width*focus_distance*u;
-vertical = 2 * half_height*focus_distance*v;
-```
+vertical = 2 * half_height*focus_distance*v;</code></pre>
 
 ![Aperture diagram](\assets\images\blog-images\path-tracer-part-two\camera-model-summary-aperture.png)
 
 With that, we have a complete camera class:
 
 `camera.h`
-```
-class camera {
+<pre><code class="language-cpp">class camera {
     public:
         camera(vec3 look_from, vec3 look_at, vec3 vUp, double vFov, double aspect_ratio, double aperture, double focus_distance) {
             
@@ -2482,8 +2377,7 @@ class camera {
         vec3 vertical;
         vec3 u, v, w;
         double lens_radius;
-};
-```
+};</code></pre>
 
 ![Aperture 0](\assets\images\blog-images\path-tracer-part-two\renders\dof-0.png)
 ![Aperture 0.2](\assets\images\blog-images\path-tracer-part-two\renders\dof-point-2.png)
@@ -2496,8 +2390,7 @@ class camera {
 Lastly, we'll create a random scene of spheres. Feel free to customize. And be aware - this may take some time to render!
 
 `main.cpp`
-```
-...
+<pre><code class="language-cpp">...
 hittable *random_scene() {
     int n = 500;
     hittable **list = new hittable*[n+1];
@@ -2548,7 +2441,6 @@ double aperture = 0.2; // bigger = blurrier
 	camera cam(lookFrom, lookAt, vec3(0,1,0), 20,double(nx)/double(ny), aperture, distToFocus);
 ...
 }
-...
-```
+...</code></pre>
 
 ![Final render](\assets\images\blog-images\path-tracer-part-two\renders\final-render-1.png)
