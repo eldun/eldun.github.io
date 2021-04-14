@@ -37,6 +37,7 @@ Continue reading to learn about what ray tracing is and why I decided to explore
 ![Minecraft (2011 Initial Release, 2020 Path Tracing Update)](/assets/images/blog-images/path-tracer/minecraft-ray-tracing-off.png)
 ![Minecraft (2011 Initial Release, 2020 Path Tracing Update)](/assets/images/blog-images/path-tracer/minecraft-ray-tracing-on.png)
 </span>
+
 Put simply, ray tracing is a rendering technique that can accurately simulate the lighting of a scene.
 
 Ray tracing generates an image by determining the color of each pixel of the image in a mathematically formulated scene. In the simplest example, the color of each one of these pixels is determined by sending a ray from the camera into the scene, and back to its light source. 

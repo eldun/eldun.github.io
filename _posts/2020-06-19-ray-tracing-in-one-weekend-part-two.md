@@ -777,6 +777,8 @@ public:
 
 #endif // !HITTABLEH</code></pre>
 
+---
+
 ## <a id="front-faces-versus-back-faces"></a>Front Faces Versus Back Faces
 A question we have to ask ourselves about our normals is whether they should always point outward. Right now, the normal will always be in the *direction of the center to the intersection point* - outward. So if the ray intersects from the outside, the normal is against the ray. If the ray intersects from the inside (like in a glass ball), the normal would be pointing in the same direction of the ray. The alternative option is to have the normal always point against the ray.
 
@@ -1007,11 +1009,13 @@ If you want to learn more, I highly suggest watching [this video](https://www.yo
 
 We're going to be using multisample anti-aliasing (MSAA) in our ray tracer. As you may have supposed, multisampling, in this case, means taking multiple sub-pixel samples from each pixel and averaging the color across the whole pixel. Here's an example - the raw triangle on the left, and the triangle with four samples per pixel on the right:
 
-<span class="image-row two-images">
+<div class="captioned-image">
+<span class="image-row">
 ![No MSAA](\assets\images\blog-images\path-tracer-part-two\no-msaa.png)
 ![MSAA 4x](\assets\images\blog-images\path-tracer-part-two\msaa.png)
 </span>
 [Source](https://developer.apple.com/documentation/metal/gpu_features/understanding_gpu_family_4/about_enhanced_msaa_and_imageblock_sample_coverage_control)
+</div>
 
 Instead of taking perfectly spaced samples of pixels like in the example above, we'll be taking random samples of pixels. For that, we'll need a way of generating random numbers (you can do it however you please):
 
@@ -1353,13 +1357,16 @@ There's one small issue left to fix, known as shadow acne. Some of the rays hit 
 
 <pre><code class="language-cpp">if (world.hit(r, 0.001, DBL_MAX, rec)) {</code></pre>
 
+<div class="captioned-image">
 <div class="container">
   <img src="\assets\images\blog-images\path-tracer-part-two\renders\diffuse-shadow-acne.png" alt="Shadow acne sphere">
   <div class="overlay">
     <img src="\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png" alt="Sphere no shadow acne">
   </div>
+</div>
   (Mouseover) Fix shadow acne
 </div>
+
 
 You can view the images separately, as well. Here's [the one with shadow acne](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-shadow-acne.png) and [the one without](\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png).
 
@@ -1661,6 +1668,7 @@ Metal is definitely NOT Lambertian - here's a simple sketch depecting a general 
 
 <span class="captioned-image"> ![Mirrored Reflection](\assets\images\blog-images\path-tracer-part-two\metal-reflect.png)*Metal Reflection ([source](http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/))*</span>
 
+<div class="math-block">
 $$
 \vec r = \vec v - (-2 * \vert \vec a\vert  * \vec n)
 $$
@@ -1671,7 +1679,7 @@ $$
 \vert \vec a\vert  = \vert \vec v\vert  * cos(\theta)
 $$
 
-Since 
+since 
 
 $$
 dot(\vec v, \vec n) = \vert \vec v\vert \vert \vec n\vert cos(\pi - \theta) = -\vert \vec v\vert cos(\theta)
@@ -1688,6 +1696,7 @@ and
 $$
 \vec r = \vec v - (2 * dot(\vec v, \vec n) * \vec n)
 $$
+</div>
 
 In other words, the reflected ray is v + 2a. N is a unit vector, but that might not be the case for v. Also, because v points inward, we're going have to flip it by negating it. This yields the following formula:
 
