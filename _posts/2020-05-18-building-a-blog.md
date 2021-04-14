@@ -106,8 +106,7 @@ The basic idea is as follows:
 
   - **Sample `_config.yml`:**
 
-    <pre><code class="language-yaml">
-    title: Your blog title
+    <pre><code class="language-yaml">title: Your blog title
     email: your.email@gmail.com
 
     # many other settings
