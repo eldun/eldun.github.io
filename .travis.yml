@@ -2,7 +2,7 @@
 
 language: ruby #Use Ruby
 rvm: 
-- 2.3.1 #Use RVM to set ruby version to 2.3.1
+- 2.7.1 #Use RVM to set ruby version to 2.3.1
 install:
 - bundle install #Run bundle install to install all gems.
 deploy:
