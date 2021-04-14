@@ -71,7 +71,12 @@ body {
 .main-content {
   padding-top: 0;
   padding-bottom: 0;
+  color: $color-accent;
    // width: 60%;
+}
+
+.main-content p {
+  color: $color-text;
 }
 
 .main-content hr {
