@@ -33,6 +33,8 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 @import "site/post-navigation.scss";
 @import "site/images.scss";
 
+@import "site/mathjax.scss";
+
 @import "site/about-me.scss";
 @import "site/archive.scss";
 @import "site/tags.scss";
@@ -45,6 +47,7 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 * {
   border-radius: .2rem;
   background-color: inherit;
+
 }
 
 
@@ -99,12 +102,16 @@ body {
 .main-content code, 
 .main-content pre,
 .main-content pre > code {
-  color: inherit;
+  color: $color-text;
   background-color: $color-secondary;
   border-color: $color-clickable;
   overflow: scroll;
   padding-bottom: 0;
   // padding: inherit;
+}
+
+.main-content a > code {
+  color: inherit;
 }
 
 a {
@@ -152,17 +159,15 @@ a *:hover // all elements within a
   align-items: center;
 }
 
-// There was an issue on certain posts where you could scroll just a tiny bit horizontally. This fixes that.
 #back-to-top {
-  // margin: 0 1rem;
+  transition: .5s;
 }
 
-// MathJax formatting (mostly for mobile, to keep the page from going waaaay to the right when long equations are involved.
-// Either overflow: auto; for scrolling through equations
-// Or white-space: normal; to allow word wrap.
-// Right now, I think overflow: auto; is the better option
-.MJXc-display {
-  overflow: auto;
+#back-to-top:hover,
+{
+  color: $color-primary;
+  background: $color-clickable;
+
 }
 
 // .mjx-chtml {
