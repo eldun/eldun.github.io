@@ -82,8 +82,7 @@ The basic idea is as follows:
   
   - **Add the following to the `Gemfile`:**
 
-      ``` 
-      source "https://rubygems.org"
+      <pre><code class="language-ruby">source "https://rubygems.org"
       ruby RUBY_VERSION
 
       # We'll need rake to build our site in TravisCI
@@ -99,15 +98,15 @@ The basic idea is as follows:
       gem "jekyll-seo-tag"
       gem "jekyll-compose", "~> 0.5"
       gem "jekyll-redirect-from"
-      end
-      ```
+      end</code></pre>
+
   - **Ensure any Gemfiles used in the Gemfile are in `_config.yml` as well.**
 
   - **Exclude certain files to ensure they don't end up in *master* after Travis CI builds *source*.**
 
   - **Sample `_config.yml`:**
 
-    ```
+    <pre><code class="language-yaml">
     title: Your blog title
     email: your.email@gmail.com
 
@@ -132,20 +131,17 @@ The basic idea is as follows:
     - Gemfile.lock
     - LICENSE
     - README.md
-    - Rakefile
-    ```
+    - Rakefile</code></pre>
 
   - **Since *master* will be used to display the static site, we need git to ignore changes to `_site`. Add the following to `.gitignore`:**
 
-    ```
-    .sass-cache
+    <pre><code class="language-git">.sass-cache
     .jekyll-metadata
-    _site
-    ```
+    _site</code></pre>
 
   - **A `.travis.yml` file is needed to inform Travis CI how to run:**
 
-    ```
+    <pre><code class="language-yaml">
     #All of this together basically says, “Using the source branch from this repo, push all the files found within the site directory to the master branch of the repo”.
 
     language: ruby #Use Ruby
@@ -160,12 +156,11 @@ The basic idea is as follows:
         local_dir: _site #Use all files found in this directory for deployment.
         target_branch: master #Push resulting build files to this branch on Github.
     on:
-        branch: source #Only run TravisCI for this branch.
-    ```
+        branch: source #Only run TravisCI for this branch.</code></pre>
 
   - **The `.travis.yml` only works by using the following `Rakefile` to manually build the site:**
 
-    ```
+    <pre><code class="language-ruby">
     # filename: Rakefile
     task :default do
     puts "Running CI tasks..."
@@ -175,8 +170,7 @@ The basic idea is as follows:
     # statically generated files.
     sh("JEKYLL_ENV=production bundle exec jekyll build")
     puts "Jekyll successfully built"
-    end
-    ```
+    end</code></pre>
 
   - **The `Rakefile` runs on every build. All checks must be passed before Travis CI will deploy the build.**
 
@@ -205,7 +199,7 @@ For post tagging, I followed an [example from Lunar Logic](https://blog.lunarlog
 While tags can simply be entered in the Front Matter of posts, no html is generated for that specific tag. I could manually create a file for said tag in the tags directory, but the hook automatically does that work for me.
 
 Here's the code:
-```
+<pre><code class="language-ruby">
 Jekyll::Hooks.register :posts, :post_write do |post|
     all_existing_tags = Dir.entries("tags")
       .map { |t| t.match(/(.*).md/) }
@@ -221,8 +215,8 @@ Jekyll::Hooks.register :posts, :post_write do |post|
     File.open("tags/#{tag}.md", "wb") do |file|
       file << "---\nlayout: tag-page\ntag: #{tag}\n---\n"
     end
-  end
-```
+  end</code></pre>
+
 ---
 
 ## <a id="search-function"></a>Search Function
@@ -233,7 +227,7 @@ Jekyll is all client-side, so the required content for a search must be stored i
 Within the root of the Jekyll project, a `.json` file is created from existing posts containing data to search through:
 
 <a id="search-json"></a>`/search.json`:
-```
+<pre><code class="language-json">
 {% raw %}
 ---
 ---
@@ -248,13 +242,13 @@ Within the root of the Jekyll project, a `.json` file is created from existing p
 
     } {% unless forloop.last %},{% endunless %}
   {% endfor %}
-]
-```
+]</code></pre>
+
 {% endraw %}
 
 This code generates a `search.json` file in the `_site` directory. Don't forget to add escape characters to prevent the `.json` file from getting messed up. [Liquid has some useful filters that can help out](https://shopify.github.io/liquid/). Here's a snippet of my generated `search.json`:
 
-```
+<pre><code class="language-json">
 [
     {
 
@@ -264,8 +258,8 @@ This code generates a `search.json` file in the `_site` directory. Don't forget 
       "url"      : "/2020/05/18/howdy.html"
 
     } ,
-...
-```
+...</code></pre>
+
 
 If we wanted to include other aspects of the post in our search, such as the excerpt, content, or custom variables, we could easily follow the [template above](#search-json).
 
@@ -273,7 +267,7 @@ Save the [search script](https://github.com/christian-fei/Simple-Jekyll-Search/b
 
 I placed the necessary HTML elements for the search function inside `/_includes/search-bar.html`:
 
-```
+<pre><code class="language-html">
 <!-- Html Elements for Search -->
 <div id="search-container" style="visibility: hidden;">
   <input type="text" id="search-input" placeholder="Search..." />
@@ -291,9 +285,8 @@ I placed the necessary HTML elements for the search function inside `/_includes/
     json: '/search.json',
     searchResultTemplate: '<li><a href="{{ site.url }}{url}">{title}</a></li>'
   })
-  </script>
-
-```
+  </script></code></pre>
+  
  and included it right below the nav bar in `/_layouts/default.html`.
 
  The `searchResultTemplate` variable above determines what is included in the dropdown search results.

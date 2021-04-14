@@ -40,7 +40,7 @@ First off, I'd like to say that I have nothing against Edge. It's beautiful and 
 
 The first order of business was generating plausible words. I'm not sure if Bing ignores nonsense words. In fact, I don't know if there's any critera that Bing filters by. Anyway, to generate words, I just sampled a bit of code from [here](https://j11y.io/javascript/random-word-generator/), which simply alternates vowels and consonants.
 
-<pre><code> 
+<pre><code class="language-javascript"> 
 
 // From https://j11y.io/javascript/random-word-generator/
 function createRandomWord(length) {
@@ -65,7 +65,7 @@ function createRandomWord(length) {
 
 </code></pre>
 
-<pre><code>
+<pre><code class="language-javascript">
 console.log(createRandomWord(5));
 console.log(createRandomWord(10));
 console.log(createRandomWord(20));
@@ -83,7 +83,7 @@ Vazocolebaboxugosiqi
 
 Well, we're almost done. Add the listener to the search button that's in the html:
 
-<pre><code> 
+<pre><code class="language-javascript"> 
 
 document.addEventListener("DOMContentLoaded", init, false);
 function init() {
@@ -95,7 +95,7 @@ function init() {
 
 `startSearch` is called, and `continueSearch` is called recursively until the new tab is closed, or has reached the max number of searches (typically 50):
 
-<pre><code> 
+<pre><code class="language-javascript"> 
 
 function startSearch() {
   let searchCount = 0;
