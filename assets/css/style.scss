@@ -98,6 +98,7 @@ body {
   background-color: $color-secondary;
   border-color: $color-clickable;
   overflow: scroll;
+  padding-bottom: 0;
   // padding: inherit;
 }
 
@@ -127,8 +128,6 @@ li {
   list-style-type: none;
 }
 
-
-
 a:hover, 
 .btn:hover,
 a *:hover // all elements within a
@@ -143,6 +142,10 @@ a *:hover // all elements within a
   border-color: $color-accent;
 }
 
+.row {
+  display: flex;
+  align-items: center;
+}
 
 // There was an issue on certain posts where you could scroll just a tiny bit horizontally. This fixes that.
 #back-to-top {
