@@ -104,7 +104,7 @@ I started this path tracer months ago, and only started this blog in late May. T
 ## <a id="image-output"></a>Image Output
 Of course, the first step with producing a pretty path traced image is to produce an image. The method suggested by Peter is a simple plaintext `.ppm` file. The following is an example snippet and image from [Wikipedia](https://en.wikipedia.org/wiki/Netpbm#PPM_example):
 
-```
+<pre><code>
 P3
 3 2
 255
@@ -119,35 +119,38 @@ P3
 255 255   0  # yellow
 255 255 255  # white
   0   0   0  # black
-  ```
+  </code></pre>
 
 ![PPM Output](\assets\images\blog-images\path-tracer-part-two\ppm-example-output.png)
 
 The code for creating a `.ppm` file is as follows:
 
 `main.cpp`:
-```
-#include <iostream>
+<pre>
+<code class="language-cpp">
+#include &lt;iostream>
 
 int main() {
 	int nx = 200; // Number of horizontal pixels
 	int ny = 100; // Number of vertical pixels
-	std::cout << "P3\n" << nx << " " << ny << "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
+	std::cout &lt;&lt; "P3\n" &lt;&lt; nx &lt;&lt; " " &lt;&lt; ny &lt;&lt; "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
 	for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
-	    std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
-		for (int i = 0; i < nx; i++) {
+	    std::cerr &lt;&lt; "\rScanlines remaining: " &lt;&lt; j &lt;&lt; ' ' &lt;&lt; std::flush;
+		for (int i = 0; i &lt; nx; i++) {
 			float r = float(i) / float(nx);
 			float g = float(j) / float(ny);
 			float b = 0.2;
 			int ir = int(255.99 * r);
 			int ig = int(255.99 * g);
 			int ib = int(255.99 * b);
-			std::cout << ir << " " << ig << " " << ib << "\n";
+			std::cout &lt;&lt; ir &lt;&lt; " " &lt;&lt; ig &lt;&lt; " " &lt;&lt; ib &lt;&lt; "\n";
 		}
 	}
-	std::cerr << "\nDone.\n";
+	std::cerr &lt;&lt; "\nDone.\n";
 }
-```
+  </code>
+  </pre>
+
 
 Note:
 

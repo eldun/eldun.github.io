@@ -1,0 +1,15 @@
+primary: 
+    dark-theme: '#222831'
+    light-theme: 
+secondary: 
+    dark-theme: '#393e46'
+    light-theme: 
+clickable: 
+    dark-theme: '#cc773f'
+    light-theme:
+accent: 
+    dark-theme: '#42cad1'
+    light-theme: 
+text: 
+    dark-theme: '#eacda8'
+    light-theme:

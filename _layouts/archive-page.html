@@ -1,7 +1,6 @@
 ---
 layout: default
 --- 
-<hr>
 
 <ul class="archive-block">
 
@@ -12,9 +11,9 @@ layout: default
       {% for month in (1..12) %}
         {% assign has_posts = page.grouped_posts[year][month] | size %}
         {% if has_posts > 0 %}
-          <a href="#archive-{{ year }}-{{ month | rjust:2, "0" }}">{{ page.month_abbreviations[month] }}</a>
+          <a href="#archive-{{ year }}-{{ month | rjust:2, "0" }}" class="archive-month">{{ page.month_abbreviations[month] }}</a>
         {% else %}
-          <span class="empty-month">{{ page.month_abbreviations[month] }}</span>
+          <span class="archive-month empty-month">{{ page.month_abbreviations[month] }}</span>
         {% endif %}
       {% endfor %}
 
@@ -23,7 +22,6 @@ layout: default
 
 </ul>
 
-<hr>
 
 <div class="archive-list">
 

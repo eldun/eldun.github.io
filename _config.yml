@@ -2,11 +2,6 @@ github-profile: https://github.com/dunneev
 title: 
 google_analytics: UA-167888524-1
 theme: jekyll-theme-cayman
-colors:
-  - dark-primary: \#222831
-  - dark-secondary: \#393e46
-  - clickable: \#cc773f
-  - accent: \#42cad1
 excerpt_separator: <!--end-excerpt-->
 
 

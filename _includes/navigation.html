@@ -1,24 +1,25 @@
 <!-- <link href="../assets/fontawesome/all.css" rel="stylesheet"> load all styles -->
+
+<script src="/js/site-scripts/toggle-search.js" type="text/javascript"></script>
+
 <nav>
   {% for item in site.data.navigation %}
-    <a class="nav-bar-links" 
-    {% if item.name == "Search" %} 
-    id="{{ item.id }}"
-    onclick="{{ item.onclick }}"
-    {% endif %} 
-    href="{{ item.link }}" 
-    {% if page.url == item.link or
-      page.url contains "tags" and item.name == "Tags" %} style="color: #42cad1;"{% endif %}>
-      {{ item.icon }}
-      <br>
-      {{ item.name }}
-    </a>
+  <a href="{{ item.link }}"
+
+    {% if item.name=="Search" %} 
+      id="{{ item.id }}" onclick="{{ item.onclick }}" 
+    {% endif %}
+
+    {% if page.url==item.link or page.url contains "tags" and item.name=="Tags" %}
+      class="nav-bar-link inactive-link"
+    
+    {% else %}
+      class="nav-bar-link"
+    {% endif %}>
+    
+    {{ item.icon }}
+    <br>
+    {{ item.name }}
+  </a>
   {% endfor %}
 </nav>
-
-<script src="/js/toggle-search.js" type="text/javascript"></script>
-
-  <!-- Nav is always included, so I put the "back to top" code here. -->
-  <script src="/js/vanilla-back-to-top.min.js"></script>
-  <script>addBackToTop()</script>
-
