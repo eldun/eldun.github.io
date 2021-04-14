@@ -58,6 +58,12 @@ body {
   font-family: 'Courier New', Courier, monospace;
 }
 
+.highlight-yellow {
+  display: block;
+  padding: .5rem;
+  background-color: #fffb001c;;
+}
+
 .inactive {
   color: $color-accent;
   pointer-events: none;

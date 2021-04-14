@@ -1391,11 +1391,13 @@ And our total replacement for `random_unit_sphere_coordinate()`:
 }</code></pre>
 
 The result:
+<div class="captioned-image">
 <div class="container">
   <img src="\assets\images\blog-images\path-tracer-part-two\renders\diffuse-fix-shadow-acne.png" alt="Lambertian approximation">
   <div class="overlay">
     <img src="\assets\images\blog-images\path-tracer-part-two\renders\lambertian.png" alt="True lambertian reflection">
   </div>
+</div>
   (Mouseover)True lambertian reflectance
 </div>
 
@@ -1828,11 +1830,13 @@ The larger the sphere, the fuzzier the reflections will be. If the sphere is too
 <span class="highlight-green">	double fuzz;</span>
 };</code></pre>
 
+<div class="captioned-image">
 <div class="container">
   <img src="\assets\images\blog-images\path-tracer-part-two\renders\all-metal-no-fuzz.png" alt="Metal - no fuzz">
   <div class="overlay">
     <img src="\assets\images\blog-images\path-tracer-part-two\renders\metal-fuzz.png" alt="Fuzzy Metal">
   </div>
+</div>
   (Mouseover) Fuzziness: .5, 0, and 1
 </div>
 
@@ -2146,12 +2150,13 @@ class dielectric : public material {
         vec3 albedo;
 };</code></pre>
 
-
+<div class="captioned-image">
 <div class="container">
   <img src="\assets\images\blog-images\path-tracer-part-two\renders\no-fresnel.png" alt="Dielectric without Fresnel">
   <div class="overlay">
     <img src="\assets\images\blog-images\path-tracer-part-two\renders\fresnel.png" alt="Dielectric with Fresnel">
   </div>
+</div>
   (Mouseover) Implementation of Fresnel reflections
 </div>
 
@@ -2159,11 +2164,13 @@ class dielectric : public material {
 
 Bonus fun fact! We can create a hollow glass sphere by creating a smaller sphere with a *negative* radius *inside* our existing sphere! The geometry is unaffected, but the normal points inward.
 
+<div class="captioned-image">
 <div class="container">
   <img src="\assets\images\blog-images\path-tracer-part-two\renders\dielectric-solid.png" alt="Solid Dielectric">
   <div class="overlay">
     <img src="\assets\images\blog-images\path-tracer-part-two\renders\dielectric-hollow.png" alt="Hollow Dielectric">
   </div>
+</div>
   (Mouseover) Hollow dielectric sphere
 </div>
 
