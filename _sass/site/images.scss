@@ -21,6 +21,8 @@ img {
     display: block;
     text-align: center;
     font-style: italic;
+    color: $color-accent;
+    margin-bottom: 1rem;
   }
 
   // Begin image row section
@@ -54,6 +56,8 @@ img {
     position: relative;
     text-align: center;
     font-style: italic;
+    border: solid 3px $color-clickable;
+    border-radius: .2rem;
   }
   
   .overlay {
