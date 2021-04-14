@@ -21,5 +21,11 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 gem "jekyll-theme-cayman"
 gem "jekyll-include-cache"
 
+# Address kramdown vulnerabilities
+# CVE-2020-14001
+# CVE-2021-28834
+gem "kramdown"
+gem "kramdown-parser-gfm"
+
 
 # gem "rails"
