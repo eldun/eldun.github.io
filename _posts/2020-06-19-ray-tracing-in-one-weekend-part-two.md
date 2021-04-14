@@ -2284,7 +2284,7 @@ The `vup` vector describes which direction is up for the camera. You can also th
 ![vup (0,-1,0)](\assets\images\blog-images\path-tracer-part-two\renders\vup-0neg10.png)
 ![vup (1,1,0)](\assets\images\blog-images\path-tracer-part-two\renders\vup-110.png)
 </span>
-*vup (0,1,0), (0,-1,0), and (1,1,0), repsectively*
+*vup (0,1,0), (0,-1,0), and (1,1,0), respectively*
 </span>
 
 ![Shirley vector-up](\assets\images\blog-images\path-tracer-part-two\shirley\orthonormal-vup.png)
