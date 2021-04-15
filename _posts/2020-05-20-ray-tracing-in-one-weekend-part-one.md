@@ -65,25 +65,28 @@ Also - fun fact: I learned recently path tracing requires light sources to have 
 ---
 
 ## <a id="what-is-rasterization"></a>What is Rasterization?
-Rasterization is the [vast majority of games](#an-abbreviated-graphics-timeline) have used in years past to display 3D scenes on 2D screens. Using rasterization, objects are represented with virtual triangles (AKA: polygons). These triangles all have corners (AKA: vertices), and these vertices contain data of such attributes as position, color, texture, and the surface normal (orientation).
+Rasterization is the [vast majority of games](#an-abbreviated-graphics-timeline) have used in to display 3D scenes on 2D screens. Using rasterization, objects are represented with virtual triangles (aka polygons). These triangles all have corners, and these vertices contain data of such attributes as position, color, texture, and the surface normal (orientation).
 
-The triangles are eventually "converted" to pixels when being rendered. Each pixel can be assigned an initial color value from the data stored in the triangle vertices. Further pixel processing or “shading” including changing color based on how lights in the scene hit, and applying one or more textures, combine to generate the final color applied to a pixel. Rasterization is used in real-time computer graphics and while still computationally intensive, it is less so compared to ray tracing.
+The triangles are eventually converted to pixels when being rendered. Each pixel can be assigned an initial color value from the data stored in the triangle vertices. Further pixel processing or “shading” including changing color based on how lights in the scene hit, and applying one or more textures, combine to generate the final color applied to a pixel. 
 
-*(The following images are from rasterized game engines)*
-<span class="image-row three-images">
+
+Rasterization is used in real-time computer graphics and while still computationally intensive, it is less so compared to ray tracing.
+
+<div class="captioned-image">
+The following images are from rasterized game engines
+<div class="image-row three-images">
     <!-- ![Nintendo 64 (1996 (North America))](/assets/images/blog-images/path-tracer/n64.png) -->
-    ![Super Mario 64 (1996)](/assets/images/blog-images/path-tracer/mario.png)
-    ![F-Zero X (1998)](/assets/images/blog-images/path-tracer/f-zero-x.png)
-    ![The Legend of Zelda: Ocarina of Time (1998)](/assets/images/blog-images/path-tracer/zelda.png)
-</span>
-<span class="image-row three-images">
-    <!-- ![Sony Playstation (1995 (North America)) with DualShock -->
-    <!-- Controller](/assets/images/blog-images/path-tracer/playstation-2.png) -->
-    ![Solid Snake of Metal Gear Solid (1998)](/assets/images/blog-images/path-tracer/metal-gear-solid.png)
-    ![Crash Bandicoot (1996)](/assets/images/blog-images/path-tracer/crash-bandicoot.png)
-    ![Tekken (1995)](/assets/images/blog-images/path-tracer/tekken.png)
-</span>
-![Assassin's Creed Unity (2015)](/assets/images/blog-images/path-tracer/ac-unity-rasterized.png)
+    <img alt="Super Mario 64 (1996)" src="/assets/images/blog-images/path-tracer/mario.png">
+    <img alt="F-Zero X (1998)" src="/assets/images/blog-images/path-tracer/f-zero-x.png">
+    <img alt="The Legend of Zelda: Ocarina of Time (1998)" src="/assets/images/blog-images/path-tracer/zelda.png">
+</div>
+<div class="image-row">
+    <img alt="Solid Snake of Metal Gear Solid (1998)" src="/assets/images/blog-images/path-tracer/metal-gear-solid.png">
+    <img alt="Crash Bandicoot (1996)" src="/assets/images/blog-images/path-tracer/crash-bandicoot.png">
+    <img alt="Tekken (1995)" src="/assets/images/blog-images/path-tracer/tekken.png">
+</div>
+<img alt="Assassin's Creed Unity (2015)" src="/assets/images/blog-images/path-tracer/ac-unity-rasterized.png">
+</div>
 
 ---
 
