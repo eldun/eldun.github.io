@@ -7,9 +7,8 @@ $color-accent: {{ site.data.colors["accent"]["dark-theme"] }};
 $color-clickable: {{ site.data.colors["clickable"]["dark-theme"] }};
 $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 
-/* Planning on using this color scheme: https://colorhunt.co/palette/69360 */
 
-/* This file adds on to the CSS file used by "jekyll-theme-cayman" (_site\assets\css\style.css)
+/* This extends/overrides the CSS used by "jekyll-theme-cayman" (_site\assets\css\style.css)
    https://help.github.com/en/github/working-with-github-pages/adding-a-theme-to-your-github-pages-site-using-jekyll#customizing-your-themes-css 
 */
 
@@ -20,6 +19,8 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 // The default folder for scss files is _sass (this can be changed in config.yml)
 // Was having a lot of trouble trying to use fontawesome icons with their relative paths
 // before creating the_sass directory and moving the scss files there.
+
+
 @import "fontawesome/fontawesome.scss";
 @import "fontawesome/solid.scss";
 @import "fontawesome/brands.scss";
@@ -163,8 +164,24 @@ a *:hover // all elements within a
 .row {
   display: flex;
   flex-flow: row wrap;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+}
+
+.row > * {
+  flex: 0 1 auto;
+  width: auto;
+}
+
+.row-fill {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.row-fill > * {
+  flex: 1 1 10%;
+  min-width: 10%;
 }
 
 #back-to-top {
@@ -183,5 +200,5 @@ a *:hover // all elements within a
 
 
 .mjx-chtml {
-  overflow: auto;
+  // overflow: auto;
 }
