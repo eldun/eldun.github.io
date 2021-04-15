@@ -1009,7 +1009,7 @@ If you want to learn more, I highly suggest watching [this video](https://www.yo
 We're going to be using multisample anti-aliasing (MSAA) in our ray tracer. As you may have supposed, multisampling, in this case, means taking multiple sub-pixel samples from each pixel and averaging the color across the whole pixel. Here's an example - the raw triangle on the left, and the triangle with four samples per pixel on the right:
 
 <div class="captioned-image">
-<span class="image-row">
+<span class="row">
 ![No MSAA](\assets\images\blog-images\path-tracer-part-two\no-msaa.png)
 ![MSAA 4x](\assets\images\blog-images\path-tracer-part-two\msaa.png)
 </span>
@@ -1136,11 +1136,11 @@ int main() {
 Keep in mind - these images are only 200x100.
 The difference is clear. And blurry. Haha:
 
-<span class="image-row">
+<span class="row">
 ![Sphere hittables](\assets\images\blog-images\path-tracer-part-two\renders\hittables.png)
 ![Sphere hittables](\assets\images\blog-images\path-tracer-part-two\renders\hittables-msaa.png)
 </span>
-<span class="image-row">
+<span class="row">
 ![Sphere hittables](\assets\images\blog-images\path-tracer-part-two\renders\hittables-zoom.png)
 ![Sphere hittables](\assets\images\blog-images\path-tracer-part-two\renders\hittables-msaa-zoom.png)
 </span>
@@ -1169,11 +1169,11 @@ Diffuse materials also modulate the color of their surroundings with their intri
 
 In addition to being reflected, some rays could also be absorbed. Naturally, the darker the surface of a given object, the more likely absorption will take place... which is why that object looks dark. Take Vantablack, one of the darkest substances known. It's made up of carbon nanotubes, and is essentially a very fine shag carpet. Light gets lost (or diffused) within this forest of tubes to create a pretty striking diffuse material:
 
-<span class="image-row">
+<span class="row">
 ![Vantablack](\assets\images\blog-images\path-tracer-part-two\vantablack-zoom.png)
 <!-- *[source](https://en.wikipedia.org/wiki/Vantablack)* -->
 </span>
-<span class="image-row">
+<span class="row">
 ![Vantablack](\assets\images\blog-images\path-tracer-part-two\vantablack.png)
 <!-- *[source](https://www.techbriefs.com/component/content/article/tb/supplements/pit/features/applications/27558)* -->
 </span>
@@ -2279,7 +2279,7 @@ v = cross(w, u) // similar to the Y axis</code></pre>
 The `vup` vector describes which direction is up for the camera. You can also think of this as tilt in any (x,y,z).
 
 <span class= "captioned-image">
-<span class="image-row three-images">
+<span class="row-fill">
 ![vup (0,1,0)](\assets\images\blog-images\path-tracer-part-two\renders\vup-010.png)
 ![vup (0,-1,0)](\assets\images\blog-images\path-tracer-part-two\renders\vup-0neg10.png)
 ![vup (1,1,0)](\assets\images\blog-images\path-tracer-part-two\renders\vup-110.png)
