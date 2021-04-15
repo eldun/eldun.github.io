@@ -171,6 +171,7 @@ a *:hover // all elements within a
 .row > * {
   flex: 0 1 auto;
   width: auto;
+  min-width: 10%; // Clamped items (prism code blocks) were being cut off
 }
 
 .row-fill {
