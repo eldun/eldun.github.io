@@ -324,7 +324,8 @@ I used to have one monolithic style.scss file. After some refactoring, this is t
     │       ├── search.scss
     │       └── tags.scss
     └── ...</code></pre>
-`style.scss` is now mostly imports and high-level stylings:
+
+<code>style.scss</code> is now mostly imports and high-level stylings:
 <pre><code class="language-scss">{%raw%}---
 ---
 $color-primary: {{ site.data.colors["primary"]["dark-theme"] }};
@@ -368,7 +369,7 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 </details>
   
 <details>
-<summary>Started using <a href="https://prismjs.com/" target="_blank">Prism Syntax highlighter</a>
+<summary>Started using <a class="btn" href="https://prismjs.com/" target="_blank">Prism Syntax highlighter</a>
 </summary>
 <br>
 All I had to do was generate js and css files from their site, plop them into my site directory, and link 'em. To use a specific language, all I need to do is specify a code block like so:
