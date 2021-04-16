@@ -1,6 +1,6 @@
 ---
 title: "Semi-Automating Microsoft Edge Searches"
-subtitle:
+subtitle: " "
 use-math: true
 layout: post
 author: Evan
