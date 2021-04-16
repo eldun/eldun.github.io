@@ -185,19 +185,22 @@ a *:hover // all elements within a
   min-width: 10%;
 }
 
-#back-to-top:not(:focus){
-  color: $color-clickable;
-  background: $color-primary;
+#back-to-top{
   transition: .5s;
   // There was an issue on certain posts where you could scroll just a tiny bit horizontally. This fixes that.
   // margin: 0 1rem;
 }
 
-#back-to-top:hover,
+
+// Only apply hover effects to back to top on non-touch devices
+// (The button would be stuck in hover on mobile)
+@media(hover: hover) and (pointer: fine) {
+  #back-to-top:hover,
 {
   color: $color-primary;
   background: $color-clickable;
 
+}
 }
 
 
