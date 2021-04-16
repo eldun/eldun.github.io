@@ -185,7 +185,9 @@ a *:hover // all elements within a
   min-width: 10%;
 }
 
-#back-to-top {
+#back-to-top:not(:focus){
+  color: $color-clickable;
+  background: $color-primary;
   transition: .5s;
   // There was an issue on certain posts where you could scroll just a tiny bit horizontally. This fixes that.
   // margin: 0 1rem;
