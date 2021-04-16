@@ -1,32 +1,57 @@
 function toggleSearch() {
-    var x = document.getElementById("search-container");
-    var y = document.getElementById("search-button");
-    var z = document.getElementById("search-input");
+    var search_container = document.getElementById("search-container");
+    var search_button = document.getElementById("search-button");
+    var search_input = document.getElementById("search-input");
+    var results_container = document.getElementById("results-container")
 
 
-    if (x.style.visibility == "hidden") {
-      x.style.visibility = "visible";
-      z.focus();
+    if (search_container.style.visibility == "hidden") {
+      search_container.style.visibility = "visible";
+      search_input.value = "";
+      results_container.style.visibility = "hidden";
+      search_input.focus();
+
+    search_input.oninput = handleInput;
+
 
       document.onkeydown = function(evt) {
         evt = evt || window.event;
-        if (evt.keyCode == 27 && x.style.visibility == "visible") {
+
+        if (search_input.value == "") {
+          results_container.style.visibility = "hidden";
+        }
+        else {
+          results_container.style.visibility = "visible";
+        }
+
+        if (evt.keyCode == 27 && search_container.style.visibility == "visible") {
           toggleSearch();
           return;
         }
+
     };
 
-    } else {
-      x.style.visibility = "hidden";
+    function handleInput(e) {
+      if (search_input.value != "") {
+        results_container.style.visibility = "visible";
+      }
+      else {
+        results_container.style.visibility = "hidden";
+      }
     }
 
-    if (x.style.visibility == "visible"){
-      y.style.color = "#42cad1"
-      x.style.display = "block";
-      z.focus();
+    } else {
+      search_container.style.visibility = "hidden";
+    }
+
+    // Styling
+    if (search_container.style.visibility == "visible"){
+      search_button.style.color = "#42cad1"
+      search_container.style.display = "block";
+      // search_input.focus();
     }
     else {
-      y.style.color = "#cc773f";
-      x.style.display = "none";
+      search_button.style.color = "#cc773f";
+      search_container.style.display = "none";
     }
   }

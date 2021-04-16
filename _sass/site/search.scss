@@ -5,7 +5,7 @@
     left: 0;
     right: 0;
     margin: auto;
-    background-color: #393e4693; /* Background with opacity */
+    // background-color: #393e4693; /* Background with opacity */
     z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
     cursor: pointer; /* Add a pointer on hover */
   }
@@ -14,12 +14,20 @@
     padding-inline-start: 0.5rem;
     padding-inline-end: 0.5rem;
     background-color: $color-primary;
-    border-color: $color-accent;
+    border-color: $color-clickable;
     border-style: solid 1px;
-    color: $color-accent;
+    color: $color-clickable;
   }
   
   #results-container {
     background-color: #393e46;
+    text-align: left;
+    padding: .5rem 1rem;
     // border-radius: 0.1rem;
+  }
+
+  #results-container a {
+    display: inline-block;
+    width: 100%;
+    padding: .5rem;
   }
