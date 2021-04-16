@@ -141,8 +141,7 @@ The basic idea is as follows:
 
   - **A `.travis.yml` file is needed to inform Travis CI how to run:**
 
-    <pre><code class="language-yaml">
-    #All of this together basically says, “Using the source branch from this repo, push all the files found within the site directory to the master branch of the repo”.
+    <pre><code class="language-yaml">#All of this together basically says, “Using the source branch from this repo, push all the files found within the site directory to the master branch of the repo”.
 
     language: ruby #Use Ruby
     rvm:
@@ -160,8 +159,7 @@ The basic idea is as follows:
 
   - **The `.travis.yml` only works by using the following `Rakefile` to manually build the site:**
 
-    <pre><code class="language-ruby">
-    # filename: Rakefile
+    <pre><code class="language-ruby"># filename: Rakefile
     task :default do
     puts "Running CI tasks..."
 
@@ -199,8 +197,7 @@ For post tagging, I followed an [example from Lunar Logic](https://blog.lunarlog
 While tags can simply be entered in the Front Matter of posts, no html is generated for that specific tag. I could manually create a file for said tag in the tags directory, but the hook automatically does that work for me.
 
 Here's the code:
-<pre><code class="language-ruby">
-Jekyll::Hooks.register :posts, :post_write do |post|
+<pre><code class="language-ruby">Jekyll::Hooks.register :posts, :post_write do |post|
     all_existing_tags = Dir.entries("tags")
       .map { |t| t.match(/(.*).md/) }
       .compact.map { |m| m[1] }
@@ -226,16 +223,15 @@ Jekyll is all client-side, so the required content for a search must be stored i
 
 Within the root of the Jekyll project, a `.json` file is created from existing posts containing data to search through:
 
-<a id="search-json"></a>`/search.json`:
-<pre><code class="language-json">
-{% raw %}
----
+<a id="search-json"></a>`search.json`:
+<pre><code class="language-json">{% raw %}---
 ---
 [
   {% for post in site.posts %}
     {
 
       "title"    : "{{ post.title | escape }}",
+      "subtitle"    : "{{ post.subtitle | escape }}",
       "tags"     : "{{ post.tags | join: ', ' }}",
       "date"     : "{{ post.date }}",
       "url"      : "{{ site.baseurl }}{{ post.url }}"
@@ -248,16 +244,16 @@ Within the root of the Jekyll project, a `.json` file is created from existing p
 
 This code generates a `search.json` file in the `_site` directory. Don't forget to add escape characters to prevent the `.json` file from getting messed up. [Liquid has some useful filters that can help out](https://shopify.github.io/liquid/). Here's a snippet of my generated `search.json`:
 
-<pre><code class="language-json">
-[
-    {
+<pre><code class="language-json">...
+{
 
-      "title"    : "Howdy",
+      "title"    : "Building a Blog:",
+      "subtitle"    : "Howdy!",
       "tags"     : "web, jekyll, github-pages, ruby",
       "date"     : "2020-05-18 00:00:00 -0400",
-      "url"      : "/2020/05/18/howdy.html"
+      "url"      : "/2020/05/18/building-a-blog.html"
 
-    } ,
+    } 
 ...</code></pre>
 
 
@@ -267,25 +263,23 @@ Save the [search script](https://github.com/christian-fei/Simple-Jekyll-Search/b
 
 I placed the necessary HTML elements for the search function inside `/_includes/search-bar.html`:
 
-<pre><code class="language-html">
-<!-- Html Elements for Search -->
-<div id="search-container" style="visibility: hidden;">
-  <input type="text" id="search-input" placeholder="Search..." />
-  <ul id="results-container"></ul>
-</div>
+<pre><code class="language-html">&lt;!-- Html Elements for Search -->
+&lt;div id="search-container" style="visibility: hidden;">
+  &lt;input type="text" id="search-input" placeholder="Search..." />
+  &lt;ul id="results-container">&lt;/ul>
+&lt;/div>
 
-<!-- Script pointing to search-script.js -->
-<script src="/js/site-scripts/search-script.js" type="text/javascript"></script>
+&lt;!-- Script pointing to search-script.js -->
+&lt;script src="/js/site-scripts/search-script.js" type="text/javascript">&lt;/script>
 
-<!-- Configuration -->
-<script>
+&lt;!-- Configuration -->
+&lt;script>
   SimpleJekyllSearch({
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('results-container'),
     json: '/search.json',
-    searchResultTemplate: '<li><a href="{{ site.url }}{url}">{title}</a></li>'
-  })
-  </script></code></pre>
+    searchResultTemplate: '&lt;li>&lt;a href="{{ site.url }}{url}">{title}&lt;/a>&lt;/li>'
+  })</script></code></pre>
   
  and included it right below the nav bar in `/_layouts/default.html`.
 
@@ -296,7 +290,7 @@ I placed the necessary HTML elements for the search function inside `/_includes/
 ---
 
 ## <a id="the-future"></a>The Future
-From here onwards, I plan to document as concisely and as compellingly every personal project I undertake.
+From here onwards, I plan to document as concisely and as compellingly as possible every personal project I undertake.
 
 Oh, and to reformat my `style.css`. It's a little sloppy.
 
@@ -306,9 +300,11 @@ Oh, and to reformat my `style.css`. It's a little sloppy.
 
 ### <time>2021-04</time>
 
-Refactored my CSS into multiple files (used to be one huge `style.scss`):
-<pre><code class="language-treeview">
-    dunneev.github.io/
+<details>
+<summary>Refactored my CSS into multiple files</summary>
+<br>
+I used to have one monolithic style.scss file. After some refactoring, this is the result:
+<pre><code class="language-treeview">dunneev.github.io/
     ├── assets/
     │   ├── css/
     │   │   └── style.scss
@@ -328,11 +324,9 @@ Refactored my CSS into multiple files (used to be one huge `style.scss`):
     │       ├── search.scss
     │       └── tags.scss
     └── ...</code></pre>
-
 `style.scss` is now mostly imports and high-level stylings:
-<pre><code class="language-scss">---
+<pre><code class="language-scss">{%raw%}---
 ---
-
 $color-primary: {{ site.data.colors["primary"]["dark-theme"] }};
 $color-secondary:  {{ site.data.colors["secondary"]["dark-theme"] }};
 $color-accent: {{ site.data.colors["accent"]["dark-theme"] }};
@@ -370,18 +364,16 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 @import "site/tags.scss";
 @import "site/search.scss";
 
-// CSS rules here</code></pre>
-
-Started using [Prism Syntax highlighter](https://prismjs.com/).
-
+// CSS rules here{%endraw%}</code></pre>
+</details>
+  
+<details>
+<summary>Started using <a href="https://prismjs.com/" target="_blank">Prism Syntax highlighter</a>
+</summary>
+<br>
 All I had to do was generate js and css files from their site, plop them into my site directory, and link 'em. To use a specific language, all I need to do is specify a code block like so:
-
-`<pre><code class="language-xxxx">`
-
-
-
-<pre><code class="language-treeview">
-    dunneev.github.io
+<code>&lt;pre>&lt;code class="language-xxxx"></code>
+<pre><code class="language-treeview">dunneev.github.io
     ├── assets/
     │   ├── css/
     │   │   └── style.scss // import generated prism css here
@@ -425,3 +417,7 @@ All I had to do was generate js and css files from their site, plop them into my
     │       ├── search.scss
     │       └── tags.scss
     └── ...</code></pre>
+</details>
+
+
+
