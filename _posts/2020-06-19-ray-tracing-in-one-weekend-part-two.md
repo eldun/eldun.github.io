@@ -2246,7 +2246,24 @@ vertical(0.0, 2*half_height, 0.0);  // vertical range
 origin = (0,0,0);
 ...</code></pre>
 
-In world space, the vectors $e1 = (1,0,0), e2 = (0,1,0), e3 = (0,0,1)$ (the [standard basis](https://en.wikipedia.org/wiki/Standard_basis)) from an [orthonormal basis](https://en.wikipedia.org/wiki/Orthonormal_basis).
+In world space(three dimensions), the vectors 
+
+$$
+e1 = (1,0,0), 
+$$
+
+$$
+e2 = (0,1,0), 
+$$
+
+$$
+e3 = (0,0,1)
+$$ 
+
+form the [standard basis](https://en.wikipedia.org/wiki/Standard_basis).
+
+The standard basis (for a Euclidean space) is an [orthonormal basis](https://en.wikipedia.org/wiki/Orthonormal_basis), where the relevant inner product is the dot product of vectors. Put simply, this means the vectors are orthogonal: at right angles to each other; and normal: all of the same length 1.
+ 
 
 All vectors (x,y,z) in world space can be expressed as a sum of the scaled basis vectors.
 
@@ -2256,7 +2273,7 @@ $$
 
 <span class="captioned-image">
 ![Standard basis](\assets\images\blog-images\path-tracer-part-two\standard-basis.svg)
-*Standard basis*
+Every vector $a$ in three dimensions is a linear combination of the standard basis vectors $i$, $j$, and $k$.
 </span>
 
 Therefore, the previous camera code should be revised to
@@ -2278,14 +2295,20 @@ v = cross(w, u) // similar to the Y axis</code></pre>
 
 The `vup` vector describes which direction is up for the camera. You can also think of this as tilt in any (x,y,z).
 
-<span class= "captioned-image">
-<span class="row-fill">
-![vup (0,1,0)](\assets\images\blog-images\path-tracer-part-two\renders\vup-010.png)
-![vup (0,-1,0)](\assets\images\blog-images\path-tracer-part-two\renders\vup-0neg10.png)
-![vup (1,1,0)](\assets\images\blog-images\path-tracer-part-two\renders\vup-110.png)
-</span>
-*vup (0,1,0), (0,-1,0), and (1,1,0), respectively*
-</span>
+<div class="row-fill">
+	<div class= "captioned-image">
+	<img src="\assets\images\blog-images\path-tracer-part-two\renders\vup-010.png">
+	vup (0,1,0)
+	</div>
+	<div class= "captioned-image">
+	<img src="\assets\images\blog-images\path-tracer-part-two\renders\vup-0neg10.png">
+	vup (0,-1,0)
+	</div>
+	<div class= "captioned-image">
+	<img src="\assets\images\blog-images\path-tracer-part-two\renders\vup-110.png">
+	vup (1,1,0)
+	</div>
+</div>
 
 ![Shirley vector-up](\assets\images\blog-images\path-tracer-part-two\shirley\orthonormal-vup.png)
 
