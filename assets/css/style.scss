@@ -189,15 +189,17 @@ a *:hover // all elements within a
 
 // End flexbox section
 
-summary:before {
-  color: $color-clickable;
-  content: "▼";
-  cursor: pointer; 
-  pointer-events: auto;
-  margin: 1rem;
-}
+// summary:before {
+//   display: inline-block;
+//   color: $color-clickable;
+//   content: "▼";
+//   cursor: pointer; 
+//   pointer-events: auto;
+//   margin: 1rem;
+// }
 
 summary {
+  display: revert;
   color: $color-clickable;
   cursor: pointer; 
   pointer-events: auto;
