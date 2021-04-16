@@ -85,7 +85,7 @@ body {
    // width: 60%;
 }
 
-.main-content p {
+.main-content p, .main-content details {
   color: $color-text;
 }
 
@@ -161,6 +161,8 @@ a *:hover // all elements within a
   border-color: $color-accent;
 }
 
+// Begin flexbox section
+
 .row {
   display: flex;
   flex-flow: row wrap;
@@ -183,6 +185,23 @@ a *:hover // all elements within a
 .row-fill > * {
   flex: 1 1 10%;
   min-width: 10%;
+}
+
+// End flexbox section
+
+summary:before {
+  color: $color-clickable;
+  content: "▼";
+  cursor: pointer; 
+  pointer-events: auto;
+  margin: 1rem;
+}
+
+summary {
+  color: $color-clickable;
+  cursor: pointer; 
+  pointer-events: auto;
+  margin: 1rem;
 }
 
 #back-to-top{
