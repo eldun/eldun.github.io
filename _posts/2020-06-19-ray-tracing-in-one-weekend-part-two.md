@@ -388,7 +388,7 @@ Make sure to include our new vec3.h in main.cpp.
 `main.cpp`:
 <pre><code class="language-cpp">#include &lt;iostream>
 
-<span class=highlight-green>
+<span class="highlight-green">
 #include "vec3.h"
 </span>
 
@@ -399,7 +399,7 @@ int main() {
 	for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
 	    std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 		for (int i = 0; i < nx; i++) {
-			<span class=highlight-green>
+			<span class="highlight-green">
 			vec3 col(float(i) / float(nx), float(j) / float(ny), 0.2);
 			int ir = int(255.99 * col[0]);
 			int ig = int(255.99 * col[1]);
