@@ -47,7 +47,7 @@ function startSearch() {
 
     if (searchCount < MAX_BING_SEARCHES) {
 
-      viewport = tab.querySelector("meta[name=viewport]");
+      viewport = tab.document.querySelector("meta[name=viewport]");
 
       // Mobile search
       if (searchCount < 5) {
