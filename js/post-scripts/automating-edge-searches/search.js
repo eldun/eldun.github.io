@@ -1,7 +1,7 @@
 // const MICROSOFT_EDGE_PATH =
 //   "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
 
-const MAX_BING_SEARCHES = 50;
+const MAX_BING_SEARCHES = 60;
 
 // From https://j11y.io/javascript/random-word-generator/
 function createRandomWord(length) {
@@ -41,15 +41,32 @@ function startSearch() {
   let tab = window.open(`https://www.bing.com/search?q=${randomWord()}`);
   window.focus();
   setTimeout(continueSearch, 2000, searchCount);
-  
+
 
   function continueSearch(searchCount) {
-    console.log("continue search");
-    if (searchCount < MAX_BING_SEARCHES && !tab.closed) {
+
+    if (searchCount < MAX_BING_SEARCHES) {
+
+      viewport = document.querySelector("meta[name=viewport]");
+
+      // Mobile search
+      if (searchCount < 5) {
+        viewport.setAttribute('content', 'width=480, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
+      }
+      // Desktop
+      else if (searchCount < 10) {
+        viewport.setAttribute('content', 'width=1920, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
+      }
+
       tab.location = `https://www.bing.com/search?q=${randomWord()}`;
       searchCount++;
 
-      setTimeout(continueSearch, (Math.random()*3)+6000, searchCount);    }
+      setTimeout(continueSearch, (Math.random() * 3) + 6000, searchCount);
+    }
+
+    else {
+      tab.close();
+    }
   }
 }
 
