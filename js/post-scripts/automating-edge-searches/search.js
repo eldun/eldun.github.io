@@ -35,28 +35,15 @@ function createRandomWord(length) {
 // }
 
 function startSearch() {
-  console.log("start search");
   let searchCount = 0;
   let randomWord = () => createRandomWord(Math.ceil(Math.random() * 7) + 3);
   let tab = window.open(`https://www.bing.com/search?q=${randomWord()}`);
-  window.focus();
   setTimeout(continueSearch, 2000, searchCount);
 
 
   function continueSearch(searchCount) {
 
     if (searchCount < MAX_BING_SEARCHES) {
-
-      viewport = tab.document.querySelector("meta[name=viewport]");
-
-      // Mobile search
-      if (searchCount < 5) {
-        viewport.setAttribute('content', 'width=480, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
-      }
-      // Desktop
-      else if (searchCount < 10) {
-        viewport.setAttribute('content', 'width=1920, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
-      }
 
       tab.location = `https://www.bing.com/search?q=${randomWord()}`;
       searchCount++;
