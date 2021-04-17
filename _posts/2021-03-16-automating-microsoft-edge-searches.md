@@ -82,7 +82,7 @@ function init() {
   button.addEventListener("click", startSearch, true);
 }</code></pre>
 
-`startSearch` is called, and `continueSearch` is called recursively until the new tab is closed, or has reached the max number of searches (typically 50):
+`startSearch` is called, and `continueSearch` is called until the new tab is closed, or has reached the max number of searches (typically 50ish):
 
 <pre><code class="language-javascript">function startSearch() {
   let searchCount = 0;
