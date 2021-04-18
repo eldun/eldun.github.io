@@ -10,14 +10,13 @@ tags: graphics ray-tracing ray-tracing-in-one-weekend
 ---
 
 <a id="continue-reading-point"></a>
-It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year.
-Continue reading to learn about what ray tracing is and why I decided to explore it.
+It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.
 
 <!--end-excerpt-->
 
 ---
 ## Contents
-{% include ray-tracing-part-nav.html %}
+{% include ray-tracing/part-nav.html %}
 
 <ul class="table-of-contents">
     <li><a href="#what-is-ray-tracing">What is Ray Tracing?</a></li>
