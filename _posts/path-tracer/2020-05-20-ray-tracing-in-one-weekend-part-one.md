@@ -66,7 +66,9 @@ Also - fun fact: I learned recently path tracing requires light sources to have 
 ## <a id="what-is-rasterization"></a>What is Rasterization?
 Rasterization is the [vast majority of games](#an-abbreviated-graphics-timeline) have used in to display 3D scenes on 2D screens. Using rasterization, objects are represented with virtual triangles (aka polygons). These triangles all have corners, and these vertices contain data of such attributes as position, color, texture, and the surface normal (orientation).
 
-The triangles are eventually converted to pixels when being rendered. Each pixel can be assigned an initial color value from the data stored in the triangle vertices. Further pixel processing or “shading” including changing color based on how lights in the scene hit, and applying one or more textures, combine to generate the final color applied to a pixel. 
+The triangles are eventually converted to pixels when being rendered. Each pixel can be assigned an initial color value from the data stored in the triangle vertices. Further pixel processing or “shading” including changing color based on how lights in the scene hit, and applying one or more textures, combine to generate the final color applied to a pixel.
+
+![Vertices being converted to pixels](/assets/images/blog-images/path-tracer/introduction/raster.png)
 
 
 Rasterization is used in real-time computer graphics and while still computationally intensive, it is less so compared to ray tracing.
