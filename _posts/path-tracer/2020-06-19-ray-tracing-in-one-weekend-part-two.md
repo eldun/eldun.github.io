@@ -2186,7 +2186,7 @@ And of course, you can change the color of your pretty new dielectric sphere if 
 ---
 
 ## <a id="camera-modeling"></a>Camera Modeling
-Up until now, we've been using a very simple camera (though I have changed framing a little bit for illustrating certain renders). Our simple camera was described way back in chapter 4 of Shirley's book, and it had fixed world position at the origin, a fixed image plane (or near-clipping plane) size, and position at (0, 0, -1) pointing towards the negative z-axis.
+Up until now, we've been using a very simple camera (though I have changed framing a little bit for illustrating certain renders). Our simple camera was described way back in chapter 4 of Shirley's book, and it had fixed world position at the origin (0, 0, 0), a fixed image plane (or near-clipping plane) size, and the plane was position at (0, 0, -1), effectively setting our sights along the negative z-axis.
 
 `camera.h`:
 <pre><code class="language-cpp">#ifndef CAMERAH
