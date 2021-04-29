@@ -39,12 +39,12 @@ We've created a [straight-forward ray tracer]({{ site.url }}/2020/06/19/ray-trac
 
 ## <a id="motion-blur"></a>Motion Blur
 
-Similarly to how we simulated [depth of field] and [imperfect reflections] through brute force in my [previous ray tracing post]({% link _posts/path-tracer/2020-06-19-ray-tracing-in-one-weekend-part-two.md %}), we can also implement motion blur.
+Similarly to how we simulated [depth of field]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#depth-of-field) and [imperfect reflections]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#fuzzy-metal) through brute force in my [previous ray tracing post]({% link _posts/path-tracer/2020-06-19-ray-tracing-in-one-weekend-part-two.md %}), we can also implement motion blur.
 
 [Motion blur] (in a real, physical camera) is a the result of movement while the camera's shutter is open. The image produced is the average of what the camera "saw" over that amount of time.
 
 <span class="captioned-image">
-![shutter-speed](./)
+![shutter-speed](/assets/images/blog-images/path-tracer/the-next-week/shutter.webp)
 [(source)](https://www.studiobinder.com/blog/what-is-shutter-speed/)
 </span>
 
@@ -121,7 +121,7 @@ Now we have to update the camera to give each ray a time upon "shooting" one:
 
 ### <a id="creating-moving-spheres"></a>Creating Moving Spheres
 
-Motion blur would be useless without motion. We can modify our spheres to move linearly from some point `centerStart` to another `centerEnd` over an amount of time `timeToTravel`. 
+Motion blur would be useless without motion. We can modify our spheres to move linearly from some point `centerStart` to another `centerEnd` starting at `moveStartTime` and stopping at `moveEndTime`. 
 
 `sphere.h`:
 
@@ -132,7 +132,8 @@ Motion blur would be useless without motion. We can modify our spheres to move l
 		sphere(vec3 center, float radius, material *material) : 
 +			centerStart(center), 
 +			centerEnd(center), 
-+			timeToTravel(0), 
++			moveStartTime(0),
++			moveEndTime(0),
 			radius(radius), 
 			material_ptr(material){};
 
@@ -140,7 +141,8 @@ Motion blur would be useless without motion. We can modify our spheres to move l
 +		sphere(vec3 centerStart, vec3 centerEnd, double timeToTravel, float radius, material *material) : 
 +			centerStart(centerStart),
 +			centerEnd(centerEnd),
-+			timeToTravel(timeToTravel), 
++			moveStartTime(moveStartTime), 
++			moveEndTime(moveEndTime),
 +			radius(radius), 
 +			material_ptr(material){};
 
@@ -149,14 +151,15 @@ Motion blur would be useless without motion. We can modify our spheres to move l
 +		vec3 centerAt(double time) const;
 
 +		vec3 centerStart, centerEnd;
-+		double timeToTravel;
++		double moveStartTime, moveEndTime;
 		double radius;
 		material *material_ptr;
 	};
 	</code></pre>
 
 
-Checking for a hit remains mostly the same - we just account for moving spheres by calculating the centers at specific times. If you need a refresher on the implementation details of sphere collisions, check [here]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#simplifying-ray-sphere-intersection ).
+Checking for a hit remains mostly the same - we just account for moving spheres by calculating the centers at specific times. If you need a refresher on the implementation details of sphere collisions, check [here]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#simplifying-ray-sphere-intersection). I stray from Shirley's code a small amount here by actually checking if the sphere has moved yet, is moving, or has stopped moving. The result can look a little [goofy](#wait-then-move-sphere), but I like having the option for more interesting motion, and the code feels a bit less ambiguous than Shirley's:
+> I’ll create a sphere class that has its center move linearly from center0 at time0 to center1 at time1. Outside that time interval it continues on, so those times need not match up with the camera aperture open and close.  
 
 `sphere.h`:
 <pre><code class="language-diff-cpp diff-highlight"> 
@@ -173,16 +176,8 @@ Checking for a hit remains mostly the same - we just account for moving spheres 
 
 			auto temp = (-halfB - root) / a;
 
-			if (temp < t_max && temp > t_min) {
-				rec.t = temp;
-				rec.p = r.point_at_parameter(rec.t);
-+				vec3 outward_normal = (rec.p - centerAt(r.moment())) / radius;
-				rec.set_face_normal(r, outward_normal);
-				rec.material_ptr = material_ptr;
-				return true;
-			}
 			temp = (-halfB + root) / a;
-			if (temp < t_max && temp > t_min) {
+			if (temp &lt; t_max && temp > t_min) {
 				rec.t = temp;
 				rec.p = r.point_at_parameter(rec.t);
 +				vec3 outward_normal = (rec.p - centerAt(r.moment())) / radius;
@@ -195,9 +190,24 @@ Checking for a hit remains mostly the same - we just account for moving spheres 
 	}
 
 +	vec3 sphere::centerAt(double time) const {
-+		return centerStart + (time / timeToTravel) * (centerEnd - centerStart);
++
++		// Prevent divide by zero(naN) for static spheres
++		if (moveStartTime == moveEndTime) {
++			return centerStart;
++		}
++
++		else if (time < moveStartTime){
++			return centerStart;
++		}
++
++		else if (time > moveEndTime){
++			return centerEnd;
++		}
++
++		else 
++			return centerStart + ((time - moveStartTime) / (moveEndTime-moveStartTime))*+(centerEnd - centerStart);	
 +	}
-</code></pre>
+}</code></pre>
 
 ### <a id="adapting-our-material-class"></a>Adapting our Material Class
 
@@ -265,7 +275,7 @@ class dielectric : public material {
             if (refract(unit_direction, rec.normal, n1_over_n2, refracted)) {
                 reflect_probability = schlick(cosine, ref_idx);
 
-                if (reflect_random < reflect_probability) {
+                if (reflect_random &lt; reflect_probability) {
                     vec3 reflected = reflect(unit_direction, rec.normal);
 +                    scattered = ray(rec.p, reflected, ray_in.moment());
                     return true;
@@ -289,6 +299,286 @@ class dielectric : public material {
 };
 </code></pre>
 
+### <a id="using-smart-pointers"></a>Using Smart Pointers
+
+In the time since I've completed [The First Weekend]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html), Shirley has updated his code to use smart pointers in place of raw ones. Granted, I should've known to use smart pointers myself, but I was more familiar with java at that time and wanted to stick to the guide.
+
+Anyway, you can read about smart pointers [here](https://docs.microsoft.com/en-us/cpp/cpp/smart-pointers-modern-cpp). We'll mainly be using the `shared_ptr` class, which is designed for pointers that may have more than one owner. The raw pointer is not deleted until all `shared_ptr` owners have gone out of scope or given up ownership.
+
+![Shared pointer](/assets/images/blog-images/path-tracer/the-next-week/shared_ptr.png)
+
+Let's start refactoring from the bottom up - `hittable.h`:
+<pre><code class="language-diff-cpp diff-highlight">
+	#ifndef HITTABLEH
+	#define HITTABLEH
+
+	#include "ray.h"
+
++	#include &lt;memory>
++	#include &lt;vector>
++	
++	using std::shared_ptr;
++	using std::make_shared;
+
+	class material; // forward declaration
+
+	struct hit_record {
+		double t; // parameter of the ray that locates the intersection point
+		vec3 p; // intersection point
+		vec3 normal;
+		bool frontFace;
+-		material* material_ptr;
++		shared_ptr&lt;material> material_ptr;
+
+		inline void set_face_normal(const ray& r, const vec3& outward_normal) {
+			frontFace = dot(r.direction(), outward_normal) &lt; 0;
+			normal = frontFace ? outward_normal : -outward_normal;
+		}
+	};
+
+	...
+
+</code></pre>
+
+
+Additionally, we are going to edit `hittableList.h` to not only use shared pointers, but also use [vectors](https://www.cplusplus.com/reference/vector/vector/), which are basically arrays that can change size. Using raw dynamic arrays should generally be avoided, as they come with a heap of responsibility and potential for error, with no real benefits.
+
+`hittableList.h`:
+<pre><code class="language-diff-cpp diff-highlight">
+#ifndef HITTABLELISTH
+#define HITTABLELISTH
+
+#include "hittable.h"
+
+class hittable_list : public hittable {
+public:
+	hittable_list() {}
+-	hittable_list(hittable** l, int n) { list = l; list_size = n; }
++	hittable_list(shared_ptr&lt;hittable> object) {  }
+
++	void clear() { objects.clear(); }
++   void add(shared_ptr&lt;hittable> object) { objects.push_back(object); }
+	virtual bool hit(const ray& r, double tmin, double tmax, hit_record& rec) const;
+
+-	hittable** list;
+-	int list_size;
+
++	std::vector&lt;shared_ptr&lt;hittable>> objects;
+
+};
+
+bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+	hit_record temp_rec;
+	bool hit_anything = false;
+	double closest_so_far = t_max;
+	for (const auto& object : objects) {
+-		for (int i = 0; i &lt; list_size; i++) {
+-			if (list[i]->hit(r, t_min, closest_so_far, temp_rec)) {
+
++		if (object->hit(r, t_min, closest_so_far, temp_rec)) {
++			hit_anything = true;
+			closest_so_far = temp_rec.t;
+			rec = temp_rec;
+		}
+	}
+	return hit_anything;
+}
+
+#endif // !HITTABLELISTH
+</code></pre>
+
+
+`sphere.h`:
+
+<pre><code class="language-diff-cpp diff-highlight">
+class sphere : public hittable {
+	public:
+		sphere() {}
+-		sphere(vec3 center, float radius, material *material) : 
++		sphere(vec3 center, float radius, shared_ptr&lt;material> material) : 
+			centerStart(center), 
+			centerEnd(center), 
+			moveStartTime(0),
+			moveEndTime(0),
+			radius(radius), 
+			material_ptr(material){};
+
+		// Moving sphere
+-			sphere(vec3 centerStart, vec3 centerEnd, double timeToTravel, float radius, material *material) : 
++		sphere(vec3 centerStart, vec3 centerEnd, double timeToTravel, float radius, shared_ptr&lt;material> material) : 
+			centerStart(centerStart),
+			centerEnd(centerEnd),
+			moveStartTime(moveStartTime), 
+			moveEndTime(moveEndTime),
+			radius(radius), 
+			material_ptr(material){};
+
+		virtual bool hit(const ray &r, double tmin, double tmax, hit_record &rec) const;
+
+		vec3 centerAt(double time) const;
+
+		vec3 centerStart, centerEnd;
+		double moveStartTime, moveEndTime;
+		double radius;
+-		material *material_ptr;
++		shared_ptr&lt;material> material_ptr;
+	};
+
+	...
+
+</code></pre>
+
+The changes for `Main.cpp` mostly amount to replacing all uses of keyword `new` with `make_shared`.
+
+`Main.cpp`:
+
+<pre><code class="language-diff-cpp diff-highlight">
+...
+-	vec3 color(const ray& r, hittable *world, int depth) {
++	vec3 color(const ray& r, hittable_list world, int depth) {
+		hit_record rec;
+
+		if (depth &lt;= 0) {
+			return vec3(0,0,0);
+		}  
+-	    if (world->hit(r, 0.001, DBL_MAX, rec)) {
++		if (world.hit(r, 0.001, DBL_MAX, rec)) {
+			ray scattered;
+			...
+	}
+
+
+-	hittable *random_scene() {
+-    int n = 500;
+-    hittable **list = new hittable*[n+1];
+-    list[0] =  new sphere(vec3(0,-1000,0), 1000, new lambertian(vec3(0.5, 0.5, 0.5))); //"Ground"
+-    int i = 1;
+-    for (int a = -11; a &lt; 11; a++) {
+-        ...
+-    }
+-	 return new hittable_list(list,i);
+-	}
+-	
+
+
++	hittable_list random_scene() {
++		hittable_list world;
++		
++		auto ground_material = make_shared&lt;lambertian>(vec3(0.5, 0.5, 0.5));
++		auto ground_sphere = make_shared&lt;sphere>(vec3(0,-1000,0), 1000, ground_material);
++
++		world.add(ground_sphere);
++
++		...
++
++		return world;
++	}
+
+
+int main() {
+
+	int nx = 400; // Number of horizontal pixels
+	int ny = 300; // Number of vertical pixels
+	int ns = 30; // Number of samples for each pixel for anti-aliasing (see AntiAliasing.png for visualization)
+    int maxDepth = 20; // Ray bounce limit
+	std::cout &lt;&lt; "P3\n" &lt;&lt; nx &lt;&lt; " " &lt;&lt; ny &lt;&lt; "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
+
+	vec3 lookFrom(0, 2, 24);
+	vec3 lookAt(0,1,0);
+	double distToFocus = (lookFrom-lookAt).length();
+	double aperture = 0.1; // bigger = blurrier
+
+-	hittable *world = random_scene();
++	auto world = random_scene();
+
+	...
+
+}
+</code></pre>
+
 
 ### <a id="setting-our-scene"></a>Setting our Scene
+Okay - we've got all the boring maintenence out of the way. Do whatever you please; I simplified the scene to show off our new feature with a black sphere moving from left to right:
+
+<div class="row">
+<div class="captioned-image">
+<img src="/assets/images/blog-images/path-tracer/the-next-week/blur-speed1-shutter1.png" alt="Moving sphere">
+Shutter speed 1, start move at 0, stop move at 1
+</div>
+<div class="captioned-image" id="wait-then-move-sphere">
+<img src="/assets/images/blog-images/path-tracer/the-next-week/blur-start25end75-shutter1.png" alt="Wait then move sphere">
+Shutter speed 1, start move at .25, stop move at .75
+</div>
+</div>
+
+`Main.cpp`:
+<pre><code class="language-diff-cpp diff-highlight">
+
+hittable_list random_scene() {
+    hittable_list world;
+    
+    auto ground_material = make_shared&lt;lambertian>(vec3(0.5, 0.5, 0.5));
+    auto ground_sphere = make_shared&lt;sphere>(vec3(0,-1000,0), 1000, ground_material);
+
+    world.add(ground_sphere);
+
+-	...
+
+    world.add(make_shared&lt;sphere>(vec3(0, 1, 0), 1.0, make_shared&lt;dielectric>(vec3(0.9,0.9,0.0), 1.5)));
+    world.add(make_shared&lt;sphere>(vec3(-4, 1, 0), 1.0, make_shared&lt;lambertian>(vec3(0.4, 0.2, 0.1))));
+    world.add(make_shared&lt;sphere>(vec3(4, 1, 0), 1.0, make_shared&lt;metal>(vec3(0.7, 0.6, 0.5), 0.0)));
+
++    // Moving sphere
++    world.add(make_shared&lt;sphere>(vec3(-4, 3, 0), vec3(4,3,0), 0, 1.0, make_shared&lt;lambertian>(vec3(0.0, 0.0, 0.0))));
+
+
+    return world;
+}
+
+int main() {
+
+	int nx = 1600; // Number of horizontal pixels
+	int ny = 900; // Number of vertical pixels
+	int ns = 60; // Number of samples for each pixel for anti-aliasing (see AntiAliasing.png for visualization)
+    int maxDepth = 20; // Ray bounce limit
+	std::cout &lt;&lt; "P3\n" &lt;&lt; nx &lt;&lt; " " &lt;&lt; ny &lt;&lt; "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
+
+	vec3 lookFrom(0, 2, 24);
+	vec3 lookAt(0,1,0);
+	double distToFocus = (lookFrom-lookAt).length();
+	double aperture = 0.1; // bigger = blurrier
+
+	auto world = random_scene();
+
++	camera cam(lookFrom, lookAt, vec3(0,1,0), 20,double(nx)/double(ny), aperture, distToFocus, 1.0);	
+
+   	auto start = std::chrono::high_resolution_clock::now();
+
+
+	for (int j = ny - 1; j >= 0; j--) { // Navigate canvas
+        std::cerr &lt;&lt; "\rScanlines remaining: " &lt;&lt; j &lt;&lt; ' ' &lt;&lt; std::flush;
+		for (int i = 0; i &lt; nx; i++) {
+			vec3 col(0, 0, 0);
+			for (int s = 0; s &lt; ns; s++) { // Anti-aliasing - get ns samples for each pixel
+				double u = (i + random_double(0.0, 0.999)) / double(nx);
+				double v = (j + random_double(0.0, 0.999)) / double(ny);
+				ray r = cam.get_ray(u, v);
+				col += color(r, world, maxDepth);
+			}
+
+			col /= double(ns); // Average the color between objects/background
+			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));  // set gamma to 2
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			std::cout &lt;&lt; ir &lt;&lt; " " &lt;&lt; ig &lt;&lt; " " &lt;&lt; ib &lt;&lt; "\n";
+		}
+	}
+    
+	...
+
+}
+
+</code></pre>
+
 
