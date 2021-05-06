@@ -25,14 +25,21 @@ We've created a [straight-forward ray tracer]({{ site.url }}/2020/06/19/ray-trac
 {% include ray-tracing/part-nav.html %}
 
 <ul class="table-of-contents">
-    <li href="#motion-blur">Motion Blur</li>
+    <li><a href="#motion-blur">Motion Blur</a></li>
         <ul>
-            <li href="#adapting-our-ray-class">Adapting our Ray Class</li>
-            <li href="#adapting-our-camera-class">Adapting our Camera Class</li>
-			<li href="#creating-moving-spheres">Creating Moving Spheres</li>
-            <li href="#adapting-our-material-class">Adapting our Material Class</li>
-            <li href="#setting-our-scene">Setting our Scene</li>
+            <li><a href="#adapting-our-ray-class">Adapting our Ray Class</a></li>
+            <li><a href="#adapting-our-camera-class">Adapting our Camera Class</a></li>
+			<li><a href="#creating-moving-spheres">Creating Moving Spheres</a></li>
+            <li><a href="#adapting-our-material-class">Adapting our Material Class</a></li>
+            <li><a href="#setting-our-scene">Setting our Scene</a></li>
         </ul>
+    <li><a href="#bounding-volume-hierarchies">Bounding Volume Hierarchies</a></li>
+		<ul>
+            <li><a href="#establishing-a-hierarchy">Establishing a Hierarchy</a></li>
+			<li><a href="#implementing-a-hierarchy-using-axis-aligned-bounding-boxes">Implementing a Hierarchy Using Axis-Aligned Bounding Boxes</a></li>
+        </ul>
+
+
 </ul>
 
 ---
@@ -580,5 +587,51 @@ int main() {
 }
 
 </code></pre>
+
+---
+
+## <a id="bounding-volume-hierarchies"></a>Bounding Volume Hierarchies
+Shirley describes this section as the most difficult part - he justfies tackling it now to avoid future refactoring in addition to significantly reducing runtime. Let's dive in.
+
+Calculating ray-object intersections is where our ray tracer spends most of its time - and this time spent increases linearly with the number of objects in a scene. However - as Shirley points out - intersection is a repeated search upon a static model. As such, we should be able to **apply the principles of binary search** (divide and conquer) to our intersection logic.
+
+<span class="captioned-image">
+<img src="/assets/images/blog-images/path-tracer/the-next-week/binary-vs-linear.gif" alt="Binary vs linear search">
+Average case for binary search ([source](https://blog.penjee.com/binary-vs-linear-search-animated-gifs/))
+</span>
+
+In order to use a binary sort in any scenario, the data has to be sorted. Consequently, we have to find a way to "sort" our scene. We'll do this by breaking up the scene into progressively smaller chunks (like a binary tree) using bounding volumes. The most common approaches for sorting ray tracing models are to either bound by space or by scene objects. We'll be bounding by object, as it's simpler.
+
+Here's the "Key Idea" on BVH's from Shirley's book:
+> The key idea of a bounding volume over a set of primitives is to find a volume that fully encloses (bounds) all the objects. For example, suppose you computed a bounding sphere of 10 objects. Any ray that misses the bounding sphere definitely misses all ten objects. If the ray hits the bounding sphere, then it might hit one of the ten objects.
+
+It follows that the pseudo-code looks like this:
+```
+if (ray hits bounding object)
+    return whether ray hits bounded objects
+else
+    return false
+```
+
+One more important aspect of BVH's - any object is in **only one bounding volume**, but **bounding volumes can overlap**.
+
+### <a id="establishing-a-hierarchy"></a>Establishing a Hierarchy
+
+To make intersection checks sub-linear, we need to establish a hierarchy. If we had a set of objects split into two subsets - orange & blue - and we used rectangular bounding volumes in our model, this would be the result:
+
+![BVH Illustration](/assets/images/blog-images/path-tracer/the-next-week/bounding-hierarchies.png)
+
+The orange & blue subsets are simply inside the white rectangle and the binary tree has no order. The pseudo-code for this hierarchy would look like:
+
+```
+if (hits white)
+    hitOrange = hits orange enclosed objects
+    hitBlue = hits blue enclosed objects
+    if (hitOrange or hitBlue)
+        return true and info of closer hit
+return false
+```
+
+### <a id="implementing-a-hierarchy-using-axis-aligned-bounding-boxes"></a>Implementing a Hierarchy Using Axis-Aligned Bounding Boxes
 
 
