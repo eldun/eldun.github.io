@@ -304,7 +304,7 @@ Oh, and to reformat my `style.css`. It's a little sloppy.
 <summary>Refactored my CSS into multiple files</summary>
 <br>
 I used to have one monolithic style.scss file. After some refactoring, this is the result:
-<pre><code class="language-treeview">dunneev.github.io/
+<pre><code class="language-treeview">eldun.github.io/
     ├── assets/
     │   ├── css/
     │   │   └── style.scss
@@ -374,7 +374,7 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 <br>
 All I had to do was generate js and css files from their site, plop them into my site directory, and link 'em. To use a specific language, all I need to do is specify a code block like so:
 <code>&lt;pre>&lt;code class="language-xxxx"></code>
-<pre><code class="language-treeview">dunneev.github.io
+<pre><code class="language-treeview">eldun.github.io
     ├── assets/
     │   ├── css/
     │   │   └── style.scss // import generated prism css here

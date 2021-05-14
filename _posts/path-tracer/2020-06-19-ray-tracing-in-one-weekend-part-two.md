@@ -156,7 +156,7 @@ Eventually, our program is going to chug when it comes to producing an image. It
 
 If you want, you could just run our program in the terminal prepended with `time`. Here's an example of the utility:
 
-<pre><code class="shell">dunneev@Evan:/mnt/c/Users/Ev/source/Projects/PathTracer/PathTracer$ time sleep 1
+<pre><code class="shell">eldun@Evan:/mnt/c/Users/Ev/source/Projects/PathTracer/PathTracer$ time sleep 1
 
 real    0m1.019s
 user    0m0.016s
