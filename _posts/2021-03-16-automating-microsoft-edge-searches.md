@@ -82,18 +82,17 @@ function init() {
   button.addEventListener("click", startSearch, true);
 }</code></pre>
 
-`startSearch` is called, and `continueSearch` is called until the new tab is closed, or has reached the max number of searches (typically 50ish):
+`startSearch` is called, and `continueSearch` is called until the max number of searches is reached (typically 50ish):
 
 <pre><code class="language-javascript">function startSearch() {
   let searchCount = 0;
   let randomWord = () => createRandomWord(Math.ceil(Math.random() * 14) + 3);
   let tab = window.open(`https://www.bing.com/search?q=${randomWord()}`);
-  window.focus();
   setTimeout(continueSearch, 2000, searchCount);
   
 
   function continueSearch(searchCount) {
-    if (searchCount < MAX_BING_SEARCHES && !tab.closed) {
+    if (searchCount < MAX_BING_SEARCHES) {
       tab.location = `https://www.bing.com/search?q=${randomWord()}`;
       searchCount++;
 
