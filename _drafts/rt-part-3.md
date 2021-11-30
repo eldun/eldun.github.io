@@ -12,7 +12,7 @@ tags: graphics ray-tracing ray-tracing-in-one-weekend c++
 ---
 
 <a id="continue-reading-point"></a>
-We've created a [straight-forward ray tracer]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title) - what more could there be to do? By the time we're done with this segment, we'll have what Peter Shirley calls a "real ray tracer".
+We've created a [straight-forward ray tracer]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title) - what more could there be to do? By the time we're done with this segment, we'll have what Peter Shirley calls a "real ray tracer."
 
 <!--end-excerpt-->
 
@@ -591,6 +591,9 @@ int main() {
 ---
 
 ## <a id="bounding-volume-hierarchies"></a>Bounding Volume Hierarchies
+
+<img alt="BVH Illustration" src="/assets/images/blog-images/path-tracer/the-next-week/bounding-volume-hierarchy-wikipedia.svg" style="background: white; padding: 2rem;">
+
 Shirley describes this section as the most difficult part - he justfies tackling it now to avoid future refactoring in addition to significantly reducing runtime. Let's dive in.
 
 Calculating ray-object intersections is where our ray tracer spends most of its time - and this time spent increases linearly with the number of objects in a scene. However - as Shirley points out - intersection is a repeated search upon a static model. As such, we should be able to **apply the principles of binary search** (divide and conquer) to our intersection logic.
@@ -617,6 +620,7 @@ One more important aspect of BVH's - any object is in **only one bounding volume
 
 ### <a id="establishing-a-hierarchy"></a>Establishing a Hierarchy
 
+
 To make intersection checks sub-linear, we need to establish a hierarchy. If we had a set of objects split into two subsets - orange & blue - and we used rectangular bounding volumes in our model, this would be the result:
 
 ![BVH Illustration](/assets/images/blog-images/path-tracer/the-next-week/bounding-hierarchies.png)
@@ -633,5 +637,26 @@ return false
 ```
 
 ### <a id="implementing-a-hierarchy-using-axis-aligned-bounding-boxes"></a>Implementing a Hierarchy Using Axis-Aligned Bounding Boxes
+
+We want our bounding box collisions to be fast and as compact as possible. For this, we'll implement a popular solution - axis-aligned bounding boxes (AABB's). These boxes will be "parallelepipeds" - 3d parallelograms.
+
+![Parallelpiped](/assets/images/blog-images/path-tracer/the-next-week/parallelepiped-wiki.svg)
+
+Since these AABB's are simply containers for our renderable objects, we don't need any additional information about collisions (like normals, materials, or hit points).
+
+To formulate our AABB's, we'll use the slab method. Here's an explanation from [pbr-book.org](https://pbr-book.org/3ed-2018/Shapes/Basic_Shape_Interface):
+
+> One way to think of bounding boxes is as the intersection of three slabs, where a slab is the region of space between two parallel planes. To intersect a ray against a box, we intersect the ray against each of the box’s three slabs in turn.
+
+<span class="row-fill">
+	<span class="captioned-image">
+    ![Slab Intersection](/assets/images/blog-images/path-tracer/the-next-week/ray-slab-intersect.svg)
+	Slab Intersection (with normal `(1,0,0)`)
+	</span>
+	<span class="captioned-image">
+	![AABB Intersection](/assets/images/blog-images/path-tracer/the-next-week/ray-aabb-intersect.svg)
+	2D AABB Intersection
+	</span>
+</span>
 
 
