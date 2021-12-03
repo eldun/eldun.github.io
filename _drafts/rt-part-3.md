@@ -2,7 +2,7 @@
 title: "Ray Tracing in One Weekend:"
 subtitle: "Part Three - The Next Weekend"
 use-math: true
-use-raw-images: true
+use-raw-images: false
 layout: post
 author: Evan
 header-image: /assets\images\blog-images\path-tracer-part-three\
@@ -651,7 +651,7 @@ To formulate our AABB's, we'll use the slab method. Here's an explanation from [
 <span class="row-fill">
 	<span class="captioned-image">
     ![Slab Intersection](/assets/images/blog-images/path-tracer/the-next-week/ray-slab-intersect.svg)
-	Slab Intersection (with normal `(1,0,0)`)
+	Slab Intersection (with normal $(1,0,0)$)
 	</span>
 	<span class="captioned-image">
 	![AABB Intersection](/assets/images/blog-images/path-tracer/the-next-week/ray-aabb-intersect.svg)
