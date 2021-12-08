@@ -59,6 +59,10 @@ body {
   font-family: 'Courier New', Courier, monospace;
 }
 
+.main-content blockquote {
+  border-left: 0.3rem solid $color-accent;
+}
+
 .highlight-yellow {
   display: block;
   padding: .5rem;
@@ -112,9 +116,9 @@ body {
   color: $color-text;
   background-color: $color-secondary;
   border-color: $color-clickable;
-  overflow: scroll;
-  padding-bottom: 0;
-  // padding: inherit;
+  overflow: auto;
+  padding-top: 0;
+  padding-bottom:0;
 }
 
 .main-content a > code {

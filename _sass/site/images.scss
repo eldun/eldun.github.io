@@ -1,5 +1,5 @@
 img {
-    width: 100%;
+    // width: 100%;
     display: block;
     height: auto;
     max-width: 100%;
@@ -8,6 +8,10 @@ img {
     // border-radius: 0.1rem;
   
     
+  }
+
+  .half-sized-image img{
+    width: 50%;
   }
 
   // .raw {
