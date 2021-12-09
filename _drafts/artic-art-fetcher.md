@@ -23,10 +23,20 @@ I've had the [same desktop wallpaper](/assets\images\blog-images\art-fetcher\old
     <li><a href="#the-idea">The Idea</a></li>
     <li><a href="#the-gui">The GUI</a></li>
         <ul>
-            <li><a href="#creating-a-window">Creating a Window</a></li>
-            <li><a href="#creating-a-frame-for-our-window">Creating a Frame for Our Window</a></li>
-            <li><a href="#setting-up-frames-within-our-main-frame">Setting Up Frames Within Our Main Frame</a></li>
-            <li><a href="#handling-resize">Handling Resize</a></li>
+            <li><a href="#the-big-picture">The Big Picture</a></li>
+                <ul>
+                    <li><a href="#creating-a-window">Creating a Window</a></li>
+                    <li><a href="#creating-a-frame-for-our-window">Creating a Frame for Our Window</a></li>
+                    <li><a href="#setting-up-frames-within-our-main-frame">Setting Up Frames Within Our Main Frame</a></li>
+                    <li><a href="#handling-resize">Handling Resize</a></li>
+                    <li><a href="#changing-frames-to-labelframes">Changing Frames to Labelframes</a></li>
+                </ul>
+            </li>
+            <li><a href="#the-file-management-section">The File Management Section</a></li>
+                <ul>
+                    <li><a href="#creating-a-window">Creating a Window</a></li>
+                </ul>
+            </li>
         </ul>
         <!-- <ul>
             <li><a href="#adapting-our-ray-class">Adapting our Ray Class</a></li>
@@ -65,6 +75,9 @@ Additionally, I'll allow the user to control:
 ---
 
 ## <a id="the-gui"></a>The GUI
+
+## <a id="the-big picture"></a>The Big Picture
+
 
 I figure the GUI is as a good a place as any to start. (`tkinter`)[https://docs.python.org/3/library/tkinter.html] is the sole framework that's built in to the standard Python library, so that's what we'll be using here. I have used tkinter before (for my mostly-abandoned ['Sausage Solver'](https://github.com/eldun/SausageSolver) project), but it has been a while, so we'll get back up to speed together. If you need a more in-depth run-through, check out [tkdocs.com](https://tkdocs.com/tutorial/firstexample.html). Here's my mockup for the GUI:
 
@@ -269,11 +282,93 @@ window.mainloop()
 
 </code></pre>
 
+
 <span class="row">
-![Poorly Resized GUI](/assets\images\blog-images\art-fetcher\basic-gui-window-bad-resize.png)
-![Appropriately Resized GUI](/assets\images\blog-images\art-fetcher\basic-gui-window-good-resize.png)
+    <span class="captioned-image">
+        ![Poorly Resized GUI](/assets\images\blog-images\art-fetcher\basic-gui-window-bad-resize.png)
+Before
+    </span>
+    <span class="captioned-image">
+        ![Appropriately Resized GUI](/assets\images\blog-images\art-fetcher\basic-gui-window-good-resize.png)
+After
+    </span>
 </span>
 
+## <a id="changing-frames-to-labelframes"></a>Changing Frames to Labelframes
+I just found out there are built-in [LabelFrame](https://tkdocs.com/tutorial/complex.html#labelframe) widgets to group compononts together. So I'll use 'em (I also changed some padding/column/row values).
+
+`view.py`:
+<pre><code class="language-diff-python diff-highlight">
+import tkinter as tk
+from tkinter.constants import ANCHOR    # Standard binding to tk
+import tkinter.ttk as ttk   # Binding to ttk submodule for new/prettier themed widgets
+
+# Create window 
+window = tk.Tk()
+window.title("ArticArtFetcher")
+
+# Create Main Content Frame
+mainframe = ttk.Frame(master=window)
+mainframe.grid(column=0, row=0, sticky=(tk.NSEW))
+
+# Handle resize proportions
++ mainframe.columnconfigure(index=0, weight=1)
++ mainframe.columnconfigure(index=1, weight=1)
++ mainframe.rowconfigure(index=0, weight=3)
++ mainframe.rowconfigure(index=1, weight=1)
+
+window.columnconfigure(index=0, weight=1)
+window.rowconfigure(index=0, weight=1)
+
+
+- # Set up Label Frames
+- file_management_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
+- file_management_frame.grid(column=0, row=0, sticky=(tk.NSEW))
+- 
+- artwork_criteria_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
+- artwork_criteria_frame.grid(column=1, row=0, sticky=(tk.NSEW))
+- 
+- log_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
+- log_frame.grid(column=0, row=1, sticky=(tk.NSEW))
+- 
+- button_frame = ttk.Frame(master=mainframe)
+- button_frame.grid(column=1, row=1)
+-
+-
+-
+- # Populate frames with labels
+- ttk.Label(master=file_management_frame, text="File Management").grid()
+- ttk.Label(master=artwork_criteria_frame, text="Artwork Criteria").grid()
+- ttk.Label(master=log_frame, text="Log").grid()
+
++ # Set up Labelframes
++ file_management_frame = ttk.Labelframe(master=mainframe, text="File Management", borderwidth=5, relief=tk.RIDGE)
++ file_management_frame.grid(column=0, row=0, sticky=(tk.NSEW), padx=10, pady=10)
++ 
++ artwork_criteria_frame = ttk.Labelframe(master=mainframe, text="Artwork Criteria")
++ artwork_criteria_frame.grid(column=1, row=0, sticky=(tk.NSEW), padx=10, pady=10)
++ 
++ log_frame = ttk.Labelframe(master=mainframe, text="Log", borderwidth=5, relief=tk.RIDGE)
++ log_frame.grid(column=0, columnspan=2, row=1, sticky=(tk.NSEW), padx=10, pady=10)
++ 
++ button_frame = ttk.Frame(master=mainframe)
++ button_frame.grid(column=1, row=2, padx=10, pady=5, sticky=tk.SE)
+
+
+ttk.Button(master=button_frame, text="Fetch Art").grid()
+
+
+window.mainloop()
+
+</code></pre>
+
+The result:
+![Prettier GUI with padding & Labelframes](/assets\images\blog-images\art-fetcher\basic-gui-with-labelframes.png)
+
+## <a id="the-file-management-section"></a>The File Management Section
+
+There are a few things I know I want the user to be able to control in regards to the filesystem. I'm sure I'll think of more features once the program is actually usable. Here's my list (for now):
+- 
 
 
 
