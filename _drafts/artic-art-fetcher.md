@@ -368,7 +368,10 @@ The result:
 ## <a id="the-file-management-section"></a>The File Management Section
 
 There are a few things I know I want the user to be able to control in regards to the filesystem. I'm sure I'll think of more features once the program is actually usable. Here's my list (for now):
-- 
+- Maximum picture count
+- Maximum folder size
+- Auto-delete
+- Download frequency
 
 
 
