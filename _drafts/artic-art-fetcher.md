@@ -33,9 +33,7 @@ I've had the [same desktop wallpaper](/assets\images\blog-images\art-fetcher\old
                 </ul>
             </li>
             <li><a href="#the-file-management-section">The File Management Section</a></li>
-                <ul>
-                    <li><a href="#creating-a-window">Creating a Window</a></li>
-                </ul>
+            <li><a href="#the-artwork-criteria-section">The File Management Section</a></li>
             </li>
         </ul>
         <!-- <ul>
@@ -368,10 +366,88 @@ The result:
 ## <a id="the-file-management-section"></a>The File Management Section
 
 There are a few things I know I want the user to be able to control in regards to the filesystem. I'm sure I'll think of more features once the program is actually usable. Here's my list (for now):
+
+- Directory selector
 - Maximum picture count
 - Maximum folder size
 - Auto-delete
 - Download frequency
+- Description (either as .txt file on desktop or by finding a way to incorporate text into image)
+
+Here's the code to set up a dummy version of what I want:
+
+
+`view.py`:
+<pre><code class="language-diff-python diff-highlight">
+...
+
+
+# Populate file management section
+
+# Directory selection
+output_directory="Placeholder Directory"
+ttk.Label(master=file_management_frame, text=f"Artwork Directory: {output_directory}").grid(column=0, row=0, sticky=W, padx=5, pady=5)
+ttk.Button(master=file_management_frame, text="Choose Directory", command=filedialog.askdirectory).grid(column=1, row=0, padx=5, pady=5, sticky=E)
+
+# 'Max size' options
+ttk.Label(master=file_management_frame, text="Max Picture Count").grid(column=0, row=1, sticky=W, padx=5, pady=5)
+ttk.Entry(master=file_management_frame).grid(column=1, row=1, padx=5, pady=5, sticky=E)
+
+ttk.Label(master=file_management_frame, text="Max Folder Size").grid(column=0, row=2, sticky=W, padx=5, pady=5)
+ttk.Entry(master=file_management_frame).grid(column=1, row=2, padx=5, pady=5, sticky=tk.W)
+folder_size_units_combobox = ttk.Combobox(master=file_management_frame)
+folder_size_units_combobox['values'] = ('MB', 'GB', 'TB')
+folder_size_units_combobox.state(['readonly'])
+folder_size_units_combobox.grid(column=2, row=2, padx=5, pady=5, sticky=W)
+
+# Auto Delete option
+ttk.Checkbutton(master=file_management_frame, text="Auto-delete old files").grid(column=0, row=3, padx=5, pady=5, sticky=W)
+
+# Update frequency option
+ttk.Label(master=file_management_frame, text="Download new files every: ").grid(column=0, row=4, sticky=W, padx=5, pady=5)
+ttk.Entry(master=file_management_frame).grid(column=1, row=4, padx=5, pady=5, sticky=tk.W)
+art_check_frequency_combobox = ttk.Combobox(master=file_management_frame)
+art_check_frequency_combobox['values'] = ('Hours', 'Days', 'Weeks', 'Months')
+art_check_frequency_combobox.state(['readonly'])
+art_check_frequency_combobox.grid(column=2, row=4, padx=5, pady=5, sticky=W)
+
+# Description file option
+ttk.Checkbutton(master=file_management_frame, text="Create artwork description file on desktop").grid(column=0, row=5, sticky=W, padx=5, pady=5)
+
+
+
+
+
+
+
+# Configure resizing for file management columns
+file_management_frame.columnconfigure(index=0, weight=0)
+file_management_frame.columnconfigure(index=1, weight=0)
+
+for row in range(file_management_frame.grid_size()[1]):
+    file_management_frame.rowconfigure(row, weight=1, minsize=30)
+
+...
+
+</code></pre>
+
+We'll hook up everything with callbacks further down the line. Since this is a pretty small project, I don't feel too bad about 'organizing' the view code declaritively, because the view setup is only going to happen once, and the controller is going to do the heavy lifting.
+
+
+
+
+## <a id="the-artwork-criteria-section"></a>The Artwork Criteria Section
+
+Here's a short list of some criteria that may be worth filtering by:
+
+- time period
+- type of art
+- predominant color
+- popularity
+- medium
+
+More may come later. I think it'd also be neat to choose images based on the weather and time - but that may belong in the file management section, once they're already downloaded. I'm getting ahead of myself - let's populate our art section in our GUI with dummy widgets!
+
 
 
 
