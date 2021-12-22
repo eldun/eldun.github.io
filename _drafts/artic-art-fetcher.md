@@ -94,18 +94,27 @@ My quarter-baked solver GUI from a couple months ago
 ---
 
 ## <a id="creating-a-window"></a>Creating a Window
+I'm going to use the [template](https://stackoverflow.com/a/17470842) that [Bryan Oakley](https://stackoverflow.com/users/7432/bryan-oakley) uses for his tkinter projects. If you're wondering who Bryan is, have a look at his StackOverflow profile. He's the top answerer to most tkinter questions I've looked up. It's his thing.
 
-I'll be running files as scripts, as opposed to interactively (through the interpreter).
+Originally, I coded this GUI in a more procedural manner (like in the [tkdocs eqample](https://tkdocs.com/tutorial/firstexample.html)), but it started getting messy.
 
-`view.py`:
+`fetcher.py`:
 <pre><code class="language-python">
 import tkinter as tk    # Standard binding to tk
 import tkinter.ttk as ttk    # Binding to ttk submodule for new/prettier themed widgets
 
-# Create window
-window = tk.Tk()
-window.title("ArticArtFetcher")
-window.mainloop()
+class MainApplication(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        ttk.Frame.__init__(self, parent, *args, **kwargs)
+        self.parent = parent
+
+        &lt;create the rest of your GUI here>
+
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+    window.title("ArticArtFetcher")
+    window.mainloop()
 </code></pre>
 
 <span class="captioned-image">
@@ -126,21 +135,29 @@ Our GUI will be visually and logically separated into 'Frames'. Now that we have
 
 <pre><code class="language-diff-python diff-highlight">
 import tkinter as tk    # Standard binding to tk
-import tkinter.ttk as ttk   # Binding to ttk submodule for new/prettier themed widgets
+import tkinter.ttk as ttk    # Binding to ttk submodule for new/prettier themed widgets
 
-# Create window 
-window = tk.Tk()
-window.title("ArticArtFetcher")
+class MainApplication(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(self, parent, *args, **kwargs)
+        self.parent = parent
 
-+ mainframe = ttk.Frame(master=window)
-+ mainframe.grid(column=0, row=0, ipadx=200, ipady=200, sticky=(tk.NSEW))
-+ window.columnconfigure(index=0, weight=1)
-+ window.rowconfigure(index=0, weight=1)
 
-window.mainloop()
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+    window.title("ArticArtFetcher")
++   window.columnconfigure(index=0, weight=1)
++   window.rowconfigure(index=0, weight=1)
++   window.minsize(200, 200)
++
++   # Create frame for window
++   MainApplication(parent=window).grid(column=0, row=0, sticky=(tk.NSEW))
+
+    window.mainloop()
 </code></pre>
 
-I added the padding just so the window would launch at 200x200. Other than that, the outward-facing result is identical:
+The outward-facing result is identical:
 <span class="half-sized-image">
 ![Our GUI Window (with Frame)](/assets\images\blog-images\art-fetcher\basic-gui-window-with-frame.png)
 </span>
@@ -148,74 +165,124 @@ I added the padding just so the window would launch at 200x200. Other than that,
 ---
 
 ## <a id="setting-up-frames-within-our-main-frame"></a>Setting Up Frames Within Our Main Frame
-I'd like to divide our rudimentary GUI as illustrated in my <a href="#mockup">mockup</a>. We can accomplish that using frames. Keep in mind: 
-> The size of a frame is determined by the size and layout of any widgets within it. In turn, this is controlled by the geometry manager that manages the contents of the frame itself. 
-
-[- tkdocs](https://tkdocs.com/tutorial/widgets.html#frame)
-
-The [grid geometry manager](https://tkdocs.com/tutorial/grid.html) will be our main tool for creating layouts. All we really have to do is plop in some grid coordinates and tell each frame where to anchor itself with the `sticky` attribute:
+I'd like to divide our rudimentary GUI as illustrated in my <a href="#mockup">mockup</a>. We can accomplish that using [LabelFrames](https://tkdocs.com/tutorial/complex.html#labelframe).
 
 
-`view.py`
+The [grid geometry manager](https://tkdocs.com/tutorial/grid.html) will be our main tool for creating layouts. All we really have to do is plop in some grid coordinates and tell each widget where to anchor itself with the `sticky` attribute. Before we can do that, though, we'll have to create our new widget classes as illustrated in [Bryan Oakley's StackOverflow answer](https://stackoverflow.com/a/17470842).
+
+
+`fetcher.py`:
 <pre><code class="language-diff-python diff-highlight">
-import tkinter as tk    # Standard binding to tk
-import tkinter.ttk as ttk   # Binding to ttk submodule for new/prettier themed widgets
++class FileManagementFrame(ttk.Labelframe):
++    pass
++
++        
++class ArtworkCriteriaFrame(ttk.Labelframe):
++    pass
++
++class LogPaneFrame(ttk.Labelframe):
++    pass
++
++class FetchButtonFrame(ttk.Frame):
++    pass        
++
+ class MainApplication(ttk.Frame):
+     def __init__(self, parent, *args, **kwargs):
+         super().__init__(parent, *args, **kwargs)
+      
+         self.parent = parent
+       
 
-# Create window 
-window = tk.Tk()
-window.title("ArticArtFetcher")
-
-mainframe = ttk.Frame(master=window)
-mainframe.grid(column=0, row=0, sticky=(tk.NSEW))
-window.columnconfigure(index=0, weight=1)
-window.rowconfigure(index=0, weight=1)
-
-
-# Set up Frames
-+ file_management_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
-+ file_management_frame.grid(column=0, row=0, sticky=(tk.NSEW))
-
-+ artwork_criteria_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
-+ artwork_criteria_frame.grid(column=1, row=0, sticky=(tk.NE))
-
-+ log_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
-+ log_frame.grid(column=0, row=1, sticky=(tk.NSEW))
-
-+ button_frame = ttk.Frame(master=mainframe)
-+ button_frame.grid(column=1, row=1, sticky=(tk.SE))
-
-
-
-# Populate frames with labels
-+ ttk.Label(master=file_management_frame, text="File Management").grid()
-+ ttk.Label(master=artwork_criteria_frame, text="Artwork Criteria").grid()
-+ ttk.Label(master=log_frame, text="Log").grid()
-+ ttk.Button(master=button_frame, text="Fetch Art").grid()
++        self.file_management_frame = FileManagementFrame(self, text="File Management", borderwidth=5, relief=tk.RIDGE)
++        self.artwork_criteria_frame = ArtworkCriteriaFrame(self,  text="Artwork Criteria", borderwidth=5, relief=tk.RIDGE)
++        self.log_panel_frame = LogPaneFrame(self,  text="Log", borderwidth=5, relief=tk.RIDGE)
++        self.fetch_button_frame = FetchButtonFrame(self, borderwidth=5, relief=tk.RIDGE)
++
++        self.file_management_frame.grid(column=0, row=0, sticky=(NSEW), padx=10, pady=10)
++        self.artwork_criteria_frame.grid(column=1, row=0, sticky=(NSEW), padx=10, pady=10)
++        self.log_panel_frame.grid(column=0, row=1, sticky=(NSEW), padx=10, pady=10)
++        self.fetch_button_frame.grid(column=1, row=2, padx=10, pady=5, sticky=NSEW)
 
 
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+    window.title("ArticArtFetcher")
+    window.columnconfigure(index=0, weight=1)
+    window.rowconfigure(index=0, weight=1)
+    window.minsize(200, 200)
 
-window.mainloop()
+
+    # Create frame for window
+    MainApplication(parent=window).grid(column=0, row=0 sticky=(tk.NSEW))
+
+    window.mainloop()
 </code></pre>
 
-The result:
+When you run this code, you'll end up with an empty window. What's wrong? For one, our Labelframes have nothing in them. Secondly, the rows and columns aren't configured to resize (we'll address resizing in the next section).
 
-<span class="captioned-image">
-![Basic GUI with grid layout](/assets\images\blog-images\art-fetcher\basic-gui-window-gridded.png)
-Getting closer!
+> The size of a frame is determined by the size and layout of any widgets within it. In turn, this is controlled by the geometry manager that manages the contents of the frame itself.
+
+[-tkdocs](https://tkdocs.com/tutorial/widgets.html#frame)
+
+Let's add some placeholder labels, just to see how things look.
+
+`fetcher.py`:
+<pre><code class="language-diff-python diff-highlight">
+class FileManagementFrame(ttk.Labelframe):
+-   pass
++   def __init__(self, parent, *args, **kwargs):
++       super().__init__(parent, *args, **kwargs)
++       tk.Label(master=self, text="file management").grid()
+        
+class ArtworkCriteriaFrame(ttk.Labelframe):
+-   pass
++   def __init__(self, parent, *args, **kwargs):
++       super().__init__(parent, *args, **kwargs)    
++       tk.Label(master=self, text="artwork").grid()
+
+class LogPaneFrame(ttk.Labelframe):
+-   pass
++   def __init__(self, parent, *args, **kwargs):
++       super().__init__(parent, *args, **kwargs)   
++       tk.Label(master=self, text="log").grid()
+ 
+class FetchButtonFrame(ttk.Frame):   
+-   pass
++   def __init__(self, parent, *args, **kwargs):
++       super().__init__(parent, *args, **kwargs)    
++       tk.Label(master=self, text="fetch art").grid()
+</code></pre>
+
+<span class="row">
+    <span class="captioned-image">
+        ![Empty Labelframes](/assets\images\blog-images\art-fetcher\basic-gui-window-with-empty-labelframes.png)
+Before
+    </span>
+    <span class="captioned-image">
+        ![Labelframes with placeholder widgets](/assets\images\blog-images\art-fetcher\basic-gui-with-filled-labelframes.png)
+After
+    </span>
 </span>
 
 ---
 
 ## <a id="handling-resize"></a>Handling Resize
 
-At this point, resizing the GUI is unsightly:
+If we try to resize our nice little window, things look bad:
 
-<span class="captioned-image">
-![Resized GUI](/assets\images\blog-images\art-fetcher\basic-gui-window-bad-resize.png)
-Gross
+<span class="row">
+    <span class="captioned-image">
+        ![Initial window](/assets\images\blog-images\art-fetcher\basic-gui-with-filled-labelframes.png)
+Initial
+    </span>
+    <span class="captioned-image">
+        ![Poorly Resized GUI](/assets\images\blog-images\art-fetcher\basic-gui-window-bad-resize.png)
+Resized
+    </span>
 </span>
 
-Again from [tkdocs](https://tkdocs.com/tutorial/grid.html#resize):
+What's wrong here? lets turn to the [tkdocs](https://tkdocs.com/tutorial/grid.html#resize):
 
 > It looks like sticky may tell Tk *how* to react if the cell's row or column does resize but doesn't actually say that the row or columns *should* resize if any extra room becomes available.
 >
@@ -229,139 +296,59 @@ For posterity - `columnconfigure` and `rowconfigure` also take a `minsize` grid 
 
 By adding a couple config lines, we get a resizable GUI that is looking ever closer to the mockup:
 
-`view.py`:
+`fetcher.py`:
 <pre><code class="language-diff-python diff-highlight">
-import tkinter as tk
-from tkinter.constants import ANCHOR    # Standard binding to tk
-import tkinter.ttk as ttk   # Binding to ttk submodule for new/prettier themed widgets
+...
 
-# Create window 
-window = tk.Tk()
-window.title("ArticArtFetcher")
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+    window.title("ArticArtFetcher")
+    window.columnconfigure(index=0, weight=1)
+    window.rowconfigure(index=0, weight=1)
+    window.minsize(200, 200)
 
-# Create Main Content Frame
-mainframe = ttk.Frame(master=window)
-mainframe.grid(column=0, row=0, sticky=(tk.NSEW))
+    # Create frame for window
+    main_application = MainApplication(parent=window)
+    main_application.grid(column=0, row=0, sticky=(tk.NSEW))
 
-# Handle resize proportions
-+ mainframe.columnconfigure(index=0, weight=1)
-+ mainframe.columnconfigure(index=1, weight=1)
-+ mainframe.rowconfigure(index=0, weight=3)
-+ mainframe.rowconfigure(index=1, weight=1)
+    # Configure resize
++   main_application.columnconfigure(index=0, weight=1)
++   main_application.columnconfigure(index=1, weight=1)
++   main_application.rowconfigure(index=0, weight=1)
++   main_application.rowconfigure(index=1, weight=1)
++   main_application.rowconfigure(index=2, weight=1)
 
-window.columnconfigure(index=0, weight=1)
-window.rowconfigure(index=0, weight=1)
-
-
-# Set up Frames
-file_management_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
-file_management_frame.grid(column=0, row=0, sticky=(tk.NSEW))
-
-artwork_criteria_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
-artwork_criteria_frame.grid(column=1, row=0, sticky=(tk.NSEW))
-
-log_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
-log_frame.grid(column=0, row=1, sticky=(tk.NSEW))
-
-button_frame = ttk.Frame(master=mainframe)
-button_frame.grid(column=1, row=1)
-
-
-
-# Populate frames with labels
-ttk.Label(master=file_management_frame, text="File Management").grid()
-ttk.Label(master=artwork_criteria_frame, text="Artwork Criteria").grid()
-ttk.Label(master=log_frame, text="Log").grid()
-ttk.Button(master=button_frame, text="Fetch Art").grid()
-
-
-
-window.mainloop()
+    window.mainloop()
 
 </code></pre>
 
+
+In fact, we don't even need placeholder labels now that the geometry manager has been configured:
 
 <span class="row">
     <span class="captioned-image">
-        ![Poorly Resized GUI](/assets\images\blog-images\art-fetcher\basic-gui-window-bad-resize.png)
-Before
+        ![Initial window](/assets\images\blog-images\art-fetcher\basic-gui-with-filled-labelframes.png)
+Initial
     </span>
     <span class="captioned-image">
-        ![Appropriately Resized GUI](/assets\images\blog-images\art-fetcher\basic-gui-window-good-resize.png)
-After
+        ![Poorly Resized GUI](/assets\images\blog-images\art-fetcher\basic-gui-window-bad-resize.png)
+Resized without weight configuration
+    </span>
+        <span class="captioned-image">
+        ![Properly Resized GUI](/assets\images\blog-images\art-fetcher\basic-gui-window-good-resize.png)
+Resized with weight configuration
+    </span> 
+    <span class="captioned-image">
+        ![Properly Resized GUI](/assets\images\blog-images\art-fetcher\basic-gui-window-good-resize-labels-removed.png)
+Resized with placeholder labels removed
     </span>
 </span>
 
-## <a id="changing-frames-to-labelframes"></a>Changing Frames to Labelframes
-I just found out there are built-in [LabelFrame](https://tkdocs.com/tutorial/complex.html#labelframe) widgets to group compononts together. So I'll use 'em (I also changed some padding/column/row values).
 
-`view.py`:
-<pre><code class="language-diff-python diff-highlight">
-import tkinter as tk
-from tkinter.constants import ANCHOR    # Standard binding to tk
-import tkinter.ttk as ttk   # Binding to ttk submodule for new/prettier themed widgets
-
-# Create window 
-window = tk.Tk()
-window.title("ArticArtFetcher")
-
-# Create Main Content Frame
-mainframe = ttk.Frame(master=window)
-mainframe.grid(column=0, row=0, sticky=(tk.NSEW))
-
-# Handle resize proportions
-+ mainframe.columnconfigure(index=0, weight=1)
-+ mainframe.columnconfigure(index=1, weight=1)
-+ mainframe.rowconfigure(index=0, weight=3)
-+ mainframe.rowconfigure(index=1, weight=1)
-
-window.columnconfigure(index=0, weight=1)
-window.rowconfigure(index=0, weight=1)
+---
 
 
-- # Set up Label Frames
-- file_management_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
-- file_management_frame.grid(column=0, row=0, sticky=(tk.NSEW))
-- 
-- artwork_criteria_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
-- artwork_criteria_frame.grid(column=1, row=0, sticky=(tk.NSEW))
-- 
-- log_frame = ttk.Frame(master=mainframe, borderwidth=5, relief=tk.RIDGE)
-- log_frame.grid(column=0, row=1, sticky=(tk.NSEW))
-- 
-- button_frame = ttk.Frame(master=mainframe)
-- button_frame.grid(column=1, row=1)
--
--
--
-- # Populate frames with labels
-- ttk.Label(master=file_management_frame, text="File Management").grid()
-- ttk.Label(master=artwork_criteria_frame, text="Artwork Criteria").grid()
-- ttk.Label(master=log_frame, text="Log").grid()
-
-+ # Set up Labelframes
-+ file_management_frame = ttk.Labelframe(master=mainframe, text="File Management", borderwidth=5, relief=tk.RIDGE)
-+ file_management_frame.grid(column=0, row=0, sticky=(tk.NSEW), padx=10, pady=10)
-+ 
-+ artwork_criteria_frame = ttk.Labelframe(master=mainframe, text="Artwork Criteria")
-+ artwork_criteria_frame.grid(column=1, row=0, sticky=(tk.NSEW), padx=10, pady=10)
-+ 
-+ log_frame = ttk.Labelframe(master=mainframe, text="Log", borderwidth=5, relief=tk.RIDGE)
-+ log_frame.grid(column=0, columnspan=2, row=1, sticky=(tk.NSEW), padx=10, pady=10)
-+ 
-+ button_frame = ttk.Frame(master=mainframe)
-+ button_frame.grid(column=1, row=2, padx=10, pady=5, sticky=tk.SE)
-
-
-ttk.Button(master=button_frame, text="Fetch Art").grid()
-
-
-window.mainloop()
-
-</code></pre>
-
-The result:
-![Prettier GUI with padding & Labelframes](/assets\images\blog-images\art-fetcher\basic-gui-with-labelframes.png)
 
 ## <a id="the-file-management-section"></a>The File Management Section
 
@@ -374,64 +361,75 @@ There are a few things I know I want the user to be able to control in regards t
 - Download frequency
 - Description (either as .txt file on desktop or by finding a way to incorporate text into image)
 
-Here's the code to set up a dummy version of what I want:
+Here's the code to set up a dummy version of what I want within the `FileManagementFrame` class:
 
 
-`view.py`:
+`fetcher.py`:
 <pre><code class="language-diff-python diff-highlight">
-...
+
+import tkinter as tk    # Standard binding to tk
+import tkinter.ttk as ttk    # Binding to ttk submodule for new/prettier themed widgets
+from tkinter.constants import NSEW, NE, NW, SE, SW, N, S, E, W   # Standard binding to tk
++ import tkinter.filedialog as filedialog
 
 
-# Populate file management section
+class FileManagementFrame(ttk.Labelframe):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
-# Directory selection
-output_directory="Placeholder Directory"
-ttk.Label(master=file_management_frame, text=f"Artwork Directory: {output_directory}").grid(column=0, row=0, sticky=W, padx=5, pady=5)
-ttk.Button(master=file_management_frame, text="Choose Directory", command=filedialog.askdirectory).grid(column=1, row=0, padx=5, pady=5, sticky=E)
-
-# 'Max size' options
-ttk.Label(master=file_management_frame, text="Max Picture Count").grid(column=0, row=1, sticky=W, padx=5, pady=5)
-ttk.Entry(master=file_management_frame).grid(column=1, row=1, padx=5, pady=5, sticky=E)
-
-ttk.Label(master=file_management_frame, text="Max Folder Size").grid(column=0, row=2, sticky=W, padx=5, pady=5)
-ttk.Entry(master=file_management_frame).grid(column=1, row=2, padx=5, pady=5, sticky=tk.W)
-folder_size_units_combobox = ttk.Combobox(master=file_management_frame)
-folder_size_units_combobox['values'] = ('MB', 'GB', 'TB')
-folder_size_units_combobox.state(['readonly'])
-folder_size_units_combobox.grid(column=2, row=2, padx=5, pady=5, sticky=W)
-
-# Auto Delete option
-ttk.Checkbutton(master=file_management_frame, text="Auto-delete old files").grid(column=0, row=3, padx=5, pady=5, sticky=W)
-
-# Update frequency option
-ttk.Label(master=file_management_frame, text="Download new files every: ").grid(column=0, row=4, sticky=W, padx=5, pady=5)
-ttk.Entry(master=file_management_frame).grid(column=1, row=4, padx=5, pady=5, sticky=tk.W)
-art_check_frequency_combobox = ttk.Combobox(master=file_management_frame)
-art_check_frequency_combobox['values'] = ('Hours', 'Days', 'Weeks', 'Months')
-art_check_frequency_combobox.state(['readonly'])
-art_check_frequency_combobox.grid(column=2, row=4, padx=5, pady=5, sticky=W)
-
-# Description file option
-ttk.Checkbutton(master=file_management_frame, text="Create artwork description file on desktop").grid(column=0, row=5, sticky=W, padx=5, pady=5)
-
-
-
-
-
-
-
-# Configure resizing for file management columns
-file_management_frame.columnconfigure(index=0, weight=0)
-file_management_frame.columnconfigure(index=1, weight=0)
-
-for row in range(file_management_frame.grid_size()[1]):
-    file_management_frame.rowconfigure(row, weight=1, minsize=30)
++        # Populate file management section
++
++        # Directory selection
++        output_directory="Placeholder Directory"
++        ttk.Label(self, text=f"Artwork Directory: {output_directory}").grid(column=0, row=0, sticky=W, padx=5, pady=5)
++        ttk.Button(self, text="Choose Directory", command=filedialog.askdirectory).grid(column=1, row=0, padx=5, pady=5, sticky=E)
++
++        # 'Max size' options
++        ttk.Label(self, text="Max Picture Count").grid(column=0, row=1, sticky=W, padx=5, pady=5)
++        ttk.Entry(self).grid(column=1, row=1, padx=5, pady=5, sticky=E)
++
++        ttk.Label(self, text="Max Folder Size").grid(column=0, row=2, sticky=W, padx=5, pady=5)
++        ttk.Entry(self).grid(column=1, row=2, padx=5, pady=5, sticky=tk.W)
++        folder_size_units_combobox = ttk.Combobox(self)
++        folder_size_units_combobox['values'] = ('MB', 'GB', 'TB')
++        folder_size_units_combobox.state(['readonly'])
++        folder_size_units_combobox.grid(column=2, row=2, padx=5, pady=5, sticky=W)
++
++        # Auto Delete option
++        ttk.Checkbutton(self, text="Auto-delete old files").grid(column=0, row=3, padx=5, pady=5, sticky=W)
++
++        # Update frequency option
++        ttk.Label(self, text="Download new files every: ").grid(column=0, row=4, sticky=W, padx=5, pady=5)
++        ttk.Entry(self).grid(column=1, row=4, padx=5, pady=5, sticky=tk.W)
++        art_check_frequency_combobox = ttk.Combobox(self)
++        art_check_frequency_combobox['values'] = ('Hours', 'Days', 'Weeks', 'Months')
++        art_check_frequency_combobox.state(['readonly'])
++        art_check_frequency_combobox.grid(column=2, row=4, padx=5, pady=5, sticky=W)
++
++        # Description file option
++        ttk.Checkbutton(self, text="Create artwork description file on desktop").grid(column=0, row=5, sticky=W, padx=5, pady=5)
++
++
++
++
++
++
++
++        # Configure resizing for file management columns
++        self.columnconfigure(index=0, weight=0)
++        self.columnconfigure(index=1, weight=0)
++
++        for row in range(self.grid_size()[1]):
++            self.rowconfigure(row, weight=1, minsize=30)
 
 ...
 
 </code></pre>
 
-We'll hook up everything with callbacks further down the line. Since this is a pretty small project, I don't feel too bad about 'organizing' the view code declaritively, because the view setup is only going to happen once, and the controller is going to do the heavy lifting.
+<span class="half-sized-image">
+![Dummy file management section](\assets\images\blog-images\art-fetcher\dummy-file-management-section.png)
+
+As will be the case with the other sections, we'll hook up everything with callbacks further down the line.
 
 
 
