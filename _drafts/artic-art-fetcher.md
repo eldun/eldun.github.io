@@ -439,14 +439,22 @@ As will be the case with the other sections, we'll hook up everything with callb
 Here's a short list of some criteria that may be worth filtering by:
 
 - time period
-- type of art
+- artist
+- type of art (e.g. painting, sculpture, book)
 - predominant color
 - popularity
-- medium
+- style (e.g. impressionist, abstract)
+- theme
 
-More may come later. I think it'd also be neat to choose images based on the weather and time - but that may belong in the file management section, once they're already downloaded. I'm getting ahead of myself - let's populate our art section in our GUI with dummy widgets!
+More may come later. I think it'd also be neat to choose images based on the current weather and time - but that may belong in the file management section, once they're already downloaded. I'm getting ahead of myself - let's populate our art section in our GUI with dummy widgets!
 
 
+
+`fetcher.py`:
+<pre><code class="language-diff-python diff-highlight">
+
+
+</code></pre>
 
 
 
