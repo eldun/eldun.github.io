@@ -592,4 +592,19 @@ class LogPaneFrame(ttk.Labelframe):
 </code></pre>
 
 ## <a id="the-fetch-button"></a>The Fetch Button
-I probably don't need to include
+
+`fetcher.py`:
+<pre><code class="language-python">
+class FetchButtonFrame(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        ttk.Button(self, text="Fetch", ).grid(column=0, row=0, sticky=NSEW)
+
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+</code></pre>
+
+<span class="captioned-image">
+![Dummy GUI](\assets\images\blog-images\art-fetcher\dummy-gui.png)
+Our dummy GUI
+</span>
