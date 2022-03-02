@@ -22,35 +22,28 @@ I've had the [same desktop wallpaper](/assets\images\blog-images\art-fetcher\old
 <ul class="table-of-contents">
     <li><a href="#the-idea">The Idea</a></li>
     <li><a href="#the-gui">The GUI</a></li>
+    <ul>
+        <li><a href="#the-big-picture">The Big Picture</a></li>
         <ul>
-            <li><a href="#the-big-picture">The Big Picture</a></li>
-                <ul>
-                    <li><a href="#creating-a-window">Creating a Window</a></li>
-                    <li><a href="#creating-a-frame-for-our-window">Creating a Frame for Our Window</a></li>
-                    <li><a href="#setting-up-frames-within-our-main-frame">Setting Up Frames Within Our Main Frame</a></li>
-                    <li><a href="#handling-resize">Handling Resize</a></li>
-                    <li><a href="#changing-frames-to-labelframes">Changing Frames to Labelframes</a></li>
-                </ul>
-            </li>
+            <li><a href="#creating-a-window">Creating a Window</a></li>
+            <li><a href="#creating-a-frame-for-our-window">Creating a Frame for Our Window</a></li>
+            <li><a href="#setting-up-frames-within-our-main-frame">Setting Up Frames Within Our Main Frame</a></li>
+            <li><a href="#handling-resize">Handling Resize</a></li>
+            <li><a href="#changing-frames-to-labelframes">Changing Frames to Labelframes</a></li>
+        </ul>
+        <li><a href="#creating-the-gui-sections">Creating the GUI Sections</a></li>
+        <ul>
             <li><a href="#the-file-management-section">The File Management Section</a></li>
-            <li><a href="#the-artwork-criteria-section">The File Management Section</a></li>
-            </li>
+            <li><a href="#the-artwork-criteria-section">The Artwork Criteria Section</a></li>
             <li><a href="#the-logging-pane">The Logging Pane</a></li>
-            </li>
+            <li><a href="#the-fetch-button">The Fectch Button</a></li>
         </ul>
-        <!-- <ul>
-            <li><a href="#adapting-our-ray-class">Adapting our Ray Class</a></li>
-            <li><a href="#adapting-our-camera-class">Adapting our Camera Class</a></li>
-			<li><a href="#creating-moving-spheres">Creating Moving Spheres</a></li>
-            <li><a href="#adapting-our-material-class">Adapting our Material Class</a></li>
-            <li><a href="#setting-our-scene">Setting our Scene</a></li>
+        <li><a href="#creating-the-model">Creating the Model</a></li>
+        <ul>
+            <li><a href="#hooking-up-the-file-management-section">The File Management Section</a></li>
         </ul>
-    <li><a href="#bounding-volume-hierarchies">Bounding Volume Hierarchies</a></li>
-		<ul>
-            <li><a href="#establishing-a-hierarchy">Establishing a Hierarchy</a></li>
-			<li><a href="#implementing-a-hierarchy-using-axis-aligned-bounding-boxes">Implementing a Hierarchy Using Axis-Aligned Bounding Boxes</a></li>
-        </ul> -->
 
+    </ul>
 
 </ul>
 
@@ -58,7 +51,7 @@ I've had the [same desktop wallpaper](/assets\images\blog-images\art-fetcher\old
 
 ## <a id="the-idea"></a>The Idea
 
-My plan is to create a simple python3 GUI for automatically downloading and managing images in a folder to be used by Windows' slideshow feature. I'd like to allow the user to perform robust queries with parameters such as:
+My plan is to create a simple python GUI for automatically downloading and managing images in a folder to be used by Windows' slideshow feature. I'd like to allow the user to perform robust queries with parameters such as:
 
 - time period
 - type of art
@@ -429,7 +422,7 @@ from tkinter.constants import NSEW, NE, NW, SE, SW, N, S, E, W   # Standard bind
 + 
 + def configure_frame_row_resize(frame):
 +     for row in range(frame.grid_size()[1]):
-+         frame.rowconfigure(row, weight=1, minsize=30)
++         frame.rowconfigure(row, weight=1)
 + 
 + def add_widget_padding(frame):
 +    for widget in frame.winfo_children():
@@ -531,7 +524,7 @@ class ArtworkCriteriaFrame(ttk.Labelframe):
 
 def configure_frame_row_resize(frame):
     for row in range(frame.grid_size()[1]):
-        frame.rowconfigure(row, weight=1, minsize=30)
+        frame.rowconfigure(row, weight=1)
 
 def add_widget_padding(frame):
     for widget in frame.winfo_children():
@@ -547,18 +540,18 @@ if __name__ == "__main__":
     window.title("ArticArtFetcher")
     window.columnconfigure(index=0, weight=1)
     window.rowconfigure(index=0, weight=1)
-    window.minsize(200, 200)
++    window.minsize(800, 800)
 
     # Create frame for window
     main_application = MainApplication(parent=window)
     main_application.grid(column=0, row=0, sticky=(tk.NSEW))
 
     # Configure resize
-    main_application.columnconfigure(index=0, weight=1, minsize=50)
-    main_application.columnconfigure(index=1, weight=1, minsize=50)
-    main_application.rowconfigure(index=0, weight=1, minsize=50)
-    main_application.rowconfigure(index=1, weight=1, minsize=50)
-    main_application.rowconfigure(index=2, weight=1, minsize=50)
+    main_application.columnconfigure(index=0, weight=1)
+    main_application.columnconfigure(index=1, weight=1)
+    main_application.rowconfigure(index=0, weight=1)
+    main_application.rowconfigure(index=1, weight=1)
+    main_application.rowconfigure(index=2, weight=1)
 
 
 
@@ -598,7 +591,7 @@ class LogPaneFrame(ttk.Labelframe):
 class FetchButtonFrame(ttk.Frame):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        ttk.Button(self, text="Fetch", ).grid(column=0, row=0, sticky=NSEW)
+        ttk.Button(self, text="Fetch").grid(column=0, row=0, sticky=NSEW)
 
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
@@ -608,3 +601,85 @@ class FetchButtonFrame(ttk.Frame):
 ![Dummy GUI](\assets\images\blog-images\art-fetcher\dummy-gui.png)
 Our dummy GUI
 </span>
+
+## <a id="creating-the-model"></a>Creating the Model
+
+As you may know, the view component of the [Model-View-Controller (MVC) design pattern](https://developer.mozilla.org/en-US/docs/Glossary/MVC) is "dumb" - it doesn't store any data - it merely represents the data stored within the model. First, let's refactor our files to more closely follow the principles of MVC.
+
+We'll move all of our `fetcher.py` code into `view.py` except for the `__main__` section.
+
+`view.py`:
+<pre><code class="language-python diff-highlight">
+import tkinter as tk    # Standard binding to tk
+import tkinter.ttk as ttk    # Binding to ttk submodule for new/prettier themed widgets
+from tkinter.constants import CENTER, EW, NSEW, NE, NW, SE, SW, N, S, E, W   # Standard binding to tk
+import tkinter.filedialog as filedialog
+import tkinter.colorchooser as colorchooser
+import tkinter.scrolledtext as scrolledtext
+
+class FileManagementFrame(ttk.Labelframe):
+    ...
+
+class ArtworkCriteriaFrame(ttk.Labelframe):
+
+    ...
+  
+class LogPaneFrame(ttk.Labelframe):
+
+    ...
+
+class FetchButtonFrame(ttk.Frame):
+    ...
+
+class MainApplication(ttk.Frame):
+    ...
+</code></pre>
+
+That leaves `fetcher.py` (with a few minor changes):
+<pre><code class="language-diff-python diff-highlight">
++ import tkinter as tk
++ import view
+
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+    window.title("ArticArtFetcher")
+    window.columnconfigure(index=0, weight=1)
+    window.rowconfigure(index=0, weight=1)
+    window.minsize(800,400)
+
+    # Create frame for window
++   main_application = view.MainApplication(parent=window)
+    main_application.grid(column=0, row=0, sticky=(tk.NSEW))
+
+    # Configure resize
+    main_application.columnconfigure(index=0, weight=1)
+    main_application.columnconfigure(index=1, weight=1)
+    # Log pane should be the only row that shrinks/resizes
+    main_application.rowconfigure(index=1, weight=1)
+
+
+    window.mainloop()
+</code></pre>
+
+This will be our point of entry. The model, view, and (eventually) the controller will be conveniently separated from here onwards.
+
+Now we can get to work designing our model. Create a file by the name of `model.py` in the root folder, and we'll continue on section by section.
+
+`model.py`:
+<pre><code class="language-python">
+class FetcherModel():
+    pass
+</code></pre>
+
+### <a id="the-file-management-section"></a>The File Management Section
+Let's take a look at our GUI and build our model accordingly.
+![Dummy GUI](\assets\images\blog-images\art-fetcher\dummy-gui.png)
+
+Our first task will be to model the artwork directory.
+
+
+
+
+## <a id="hooking-up-the-artwork-criteria-section"></a>Hooking up the Artwork Criteria Section
+
