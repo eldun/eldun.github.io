@@ -37,7 +37,10 @@ function createRandomWord(length) {
 function startSearch() {
   let searchCount = 0;
   let randomWord = () => createRandomWord(Math.ceil(Math.random() * 7) + 3);
+
   let tab = window.open(`https://www.bing.com/search?q=${randomWord()}`);
+  let tab2 = window.open(`https://www.bing.com/search?q=${randomWord()}`);
+
   setTimeout(continueSearch, 2000, searchCount);
 
 
@@ -45,7 +48,10 @@ function startSearch() {
 
     if (searchCount < MAX_BING_SEARCHES) {
 
+
+
       tab.location = `https://www.bing.com/search?q=${randomWord()}`;
+      tab2.location = `https://www.bing.com/search?q=${randomWord()}`;
       searchCount++;
 
       setTimeout(continueSearch, (Math.random() * 3) + 6000, searchCount);

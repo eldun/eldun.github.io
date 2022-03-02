@@ -88,18 +88,25 @@ function init() {
   let searchCount = 0;
   let randomWord = () => createRandomWord(Math.ceil(Math.random() * 14) + 3);
   let tab = window.open(`https://www.bing.com/search?q=${randomWord()}`);
+  let tab2 = window.open(`https://www.bing.com/search?q=${randomWord()}`);
+
   setTimeout(continueSearch, 2000, searchCount);
   
 
   function continueSearch(searchCount) {
     if (searchCount < MAX_BING_SEARCHES) {
       tab.location = `https://www.bing.com/search?q=${randomWord()}`;
+      tab2.location = `https://www.bing.com/search?q=${randomWord()}`;
       searchCount++;
 
       setTimeout(continueSearch, 5000, searchCount);
     }
   }
 }</code></pre>
+
+Note that two tabs are opened - one for desktop searches, and one for mobile. I couldn't find a simpler way to mock a mobile [user agent](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent) than just hitting F12 and toggling mobile device emulation (if you're on desktop) or requesting the desktop site (if you're on mobile).
+
+![Toggling Mobile Device Emulation](\assets\images\blog-images\automating-edge-searches\device-emulation.png)
 
 ---
 
