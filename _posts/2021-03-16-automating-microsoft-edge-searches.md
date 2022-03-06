@@ -108,6 +108,8 @@ Note that two tabs are opened - one for desktop searches, and one for mobile. I 
 
 ![Toggling Mobile Device Emulation](\assets\images\blog-images\automating-edge-searches\device-emulation.png)
 
+In order for both tabs to open, you'll have to allow pop-ups from eldun.github.io.
+
 ---
 
 ## <a id="the-result"></a>The Result
