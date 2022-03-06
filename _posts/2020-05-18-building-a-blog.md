@@ -62,9 +62,7 @@ One solution is to build the site locally and push the generated site files to G
 
 The better solution, of course, is to automate. Big thanks to Josh Frankel and [his post](https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/) detailing the process.
 
-<span class="highlight-yellow">Update: "Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on." This includes a brand new subscription fee! And re-configuring!
-
-I don't feel like dealing with that (or looking into other options right now), so for the time being, I'll just be `jekyll build`-ing `source` and pushing the updated directory to `master`.</span>
+<span class="highlight-yellow">Update: "Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on." This includes a brand new subscription fee! And re-configuring!<br>I don't feel like dealing with that (or looking into other options right now), so for the time being, I'll just be `jekyll build`-ing `source` and pushing the updated directory `_site` to `master`.</span>
 
 The basic idea is as follows:
 ![Workflow for using custom plugins on GitHub Pages](/assets/images/blog-images/howdy/github-pages-build-process.png)
