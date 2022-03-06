@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-14T23:23:49+00:00</updated><id>/feed.xml</id><entry><title type="html">Semi-Automating Microsoft Edge Searches</title><link href="/2021/03/16/automating-microsoft-edge-searches.html" rel="alternate" type="text/html" title="Semi-Automating Microsoft Edge Searches" /><published>2021-03-16T00:00:00+00:00</published><updated>2021-03-16T00:00:00+00:00</updated><id>/2021/03/16/automating-microsoft-edge-searches</id><content type="html" xml:base="/2021/03/16/automating-microsoft-edge-searches.html">&lt;script src=&quot;/js/post-scripts/automating-edge-searches/search.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-03-06T15:20:30-05:00</updated><id>/feed.xml</id><entry><title type="html">Semi-Automating Microsoft Edge Searches</title><link href="/2021/03/16/automating-microsoft-edge-searches.html" rel="alternate" type="text/html" title="Semi-Automating Microsoft Edge Searches" /><published>2021-03-16T00:00:00-04:00</published><updated>2021-03-16T00:00:00-04:00</updated><id>/2021/03/16/automating-microsoft-edge-searches</id><content type="html" xml:base="/2021/03/16/automating-microsoft-edge-searches.html">&lt;script src=&quot;/js/post-scripts/automating-edge-searches/search.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
 
 &lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
 Microsoft has a suprisingly worthwhile rewards program - in addition to their three daily tasks (which range in value from 5 to 50 points each), there are a possible 250 points(~$1.25) to be earned from Bing searches within the Edge browser. This is my quick and dirty solution for snagging those points without manually searching 50 queries in Edge every day.
@@ -69,19 +69,21 @@ function init() {
   button.addEventListener(&quot;click&quot;, startSearch, true);
 }&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;startSearch&lt;/code&gt; is called, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;continueSearch&lt;/code&gt; is called until the new tab is closed, or has reached the max number of searches (typically 50ish):&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;startSearch&lt;/code&gt; is called, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;continueSearch&lt;/code&gt; is called until the max number of searches is reached (typically 50ish):&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;function startSearch() {
   let searchCount = 0;
   let randomWord = () =&amp;gt; createRandomWord(Math.ceil(Math.random() * 14) + 3);
   let tab = window.open(`https://www.bing.com/search?q=${randomWord()}`);
-  window.focus();
+  let tab2 = window.open(`https://www.bing.com/search?q=${randomWord()}`);
+
   setTimeout(continueSearch, 2000, searchCount);
   
 
   function continueSearch(searchCount) {
-    if (searchCount &amp;lt; MAX_BING_SEARCHES &amp;amp;&amp;amp; !tab.closed) {
+    if (searchCount &amp;lt; MAX_BING_SEARCHES) {
       tab.location = `https://www.bing.com/search?q=${randomWord()}`;
+      tab2.location = `https://www.bing.com/search?q=${randomWord()}`;
       searchCount++;
 
       setTimeout(continueSearch, 5000, searchCount);
@@ -89,13 +91,17 @@ function init() {
   }
 }&lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;Note that two tabs are opened - one for desktop searches, and one for mobile. I couldn’t find a simpler way to mock a mobile &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent&quot;&gt;user agent&lt;/a&gt; than just hitting F12 and toggling mobile device emulation (if you’re on desktop) or requesting the desktop site (if you’re on mobile).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\automating-edge-searches\device-emulation.png&quot; alt=&quot;Toggling Mobile Device Emulation&quot; /&gt;&lt;/p&gt;
+
 &lt;hr /&gt;
 
 &lt;h2 id=&quot;the-result&quot;&gt;&lt;a id=&quot;the-result&quot;&gt;&lt;/a&gt;The Result&lt;/h2&gt;
 
 &lt;p&gt;I try to click this button everyday:&lt;/p&gt;
 
-&lt;p&gt;&lt;button class=&quot;btn&quot; id=&quot;bing-search-button&quot;&gt;Start Auto-Search&lt;/button&gt;&lt;/p&gt;</content><author><name>Evan</name></author><category term="web" /><category term="javascript" /><category term="automation" /><summary type="html">Microsoft has a suprisingly worthwhile rewards program - in addition to their three daily tasks (which range in value from 5 to 50 points each), there are a possible 250 points(~$1.25) to be earned from Bing searches within the Edge browser. This is my quick and dirty solution for snagging those points without manually searching 50 queries in Edge every day.</summary></entry><entry><title type="html">Ray Tracing in One Weekend:</title><link href="/2020/06/19/ray-tracing-in-one-weekend-part-two.html" rel="alternate" type="text/html" title="Ray Tracing in One Weekend:" /><published>2020-06-19T00:00:00+00:00</published><updated>2020-06-19T00:00:00+00:00</updated><id>/2020/06/19/ray-tracing-in-one-weekend-part-two</id><content type="html" xml:base="/2020/06/19/ray-tracing-in-one-weekend-part-two.html">&lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
+&lt;p&gt;&lt;button class=&quot;btn&quot; id=&quot;bing-search-button&quot;&gt;Start Auto-Search&lt;/button&gt;&lt;/p&gt;</content><author><name>Evan</name></author><category term="web" /><category term="javascript" /><category term="automation" /><summary type="html">Microsoft has a suprisingly worthwhile rewards program - in addition to their three daily tasks (which range in value from 5 to 50 points each), there are a possible 250 points(~$1.25) to be earned from Bing searches within the Edge browser. This is my quick and dirty solution for snagging those points without manually searching 50 queries in Edge every day.</summary></entry><entry><title type="html">Ray Tracing in One Weekend:</title><link href="/2020/06/19/ray-tracing-in-one-weekend-part-two.html" rel="alternate" type="text/html" title="Ray Tracing in One Weekend:" /><published>2020-06-19T00:00:00-04:00</published><updated>2020-06-19T00:00:00-04:00</updated><id>/2020/06/19/ray-tracing-in-one-weekend-part-two</id><content type="html" xml:base="/2020/06/19/ray-tracing-in-one-weekend-part-two.html">&lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
 Now that we’re familiar with ray tracing through &lt;a href=&quot;/2020/05/20/ray-tracing-in-one-weekend-part-one#post-title&quot;&gt;my introduction&lt;/a&gt;, we can delve into the titular first section of Peter Shirley’s book.&lt;/p&gt;
 
 &lt;!--end-excerpt--&gt;
@@ -108,6 +114,8 @@ Now that we’re familiar with ray tracing through &lt;a href=&quot;/2020/05/20/
 &lt;h2 id=&quot;contents&quot;&gt;Contents&lt;/h2&gt;
 
 &lt;ul class=&quot;part-navigator&quot;&gt;
+    
+        
     
         
     
@@ -125,8 +133,6 @@ Now that we’re familiar with ray tracing through &lt;a href=&quot;/2020/05/20/
                     &lt;a href=&quot;/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title&quot; class=&quot;btn inactive&quot;&gt;Part Two - The First Weekend&lt;/a&gt;
 
                 &lt;/li&gt;
-        
-    
         
     
 &lt;/ul&gt;
@@ -2589,7 +2595,7 @@ double aperture = 0.2; // bigger = blurrier
 }
 ...&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\final-render-1.png&quot; alt=&quot;Final render&quot; /&gt;&lt;/p&gt;</content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing" /><category term="ray-tracing-in-one-weekend" /><category term="c++" /><summary type="html">Now that we’re familiar with ray tracing through my introduction, we can delve into the titular first section of Peter Shirley’s book.</summary></entry><entry><title type="html">Ray Tracing in One Weekend:</title><link href="/2020/05/20/ray-tracing-in-one-weekend-part-one.html" rel="alternate" type="text/html" title="Ray Tracing in One Weekend:" /><published>2020-05-20T00:00:00+00:00</published><updated>2020-05-20T00:00:00+00:00</updated><id>/2020/05/20/ray-tracing-in-one-weekend-part-one</id><content type="html" xml:base="/2020/05/20/ray-tracing-in-one-weekend-part-one.html">&lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\final-render-1.png&quot; alt=&quot;Final render&quot; /&gt;&lt;/p&gt;</content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing" /><category term="ray-tracing-in-one-weekend" /><category term="c++" /><summary type="html">Now that we’re familiar with ray tracing through my introduction, we can delve into the titular first section of Peter Shirley’s book.</summary></entry><entry><title type="html">Ray Tracing in One Weekend:</title><link href="/2020/05/20/ray-tracing-in-one-weekend-part-one.html" rel="alternate" type="text/html" title="Ray Tracing in One Weekend:" /><published>2020-05-20T00:00:00-04:00</published><updated>2020-05-20T00:00:00-04:00</updated><id>/2020/05/20/ray-tracing-in-one-weekend-part-one</id><content type="html" xml:base="/2020/05/20/ray-tracing-in-one-weekend-part-one.html">&lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
 It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.&lt;/p&gt;
 
 &lt;!--end-excerpt--&gt;
@@ -2598,6 +2604,8 @@ It took me long enough, but I finally dipped my toes into the temperate waters o
 &lt;h2 id=&quot;contents&quot;&gt;Contents&lt;/h2&gt;
 
 &lt;ul class=&quot;part-navigator&quot;&gt;
+    
+        
     
         
     
@@ -2615,8 +2623,6 @@ It took me long enough, but I finally dipped my toes into the temperate waters o
                     &lt;a href=&quot;/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title&quot; class=&quot;btn&quot;&gt;Part Two - The First Weekend&lt;/a&gt;
 
                 &lt;/li&gt;
-        
-    
         
     
 &lt;/ul&gt;
@@ -2936,7 +2942,7 @@ Melee(2001)&quot; /&gt;
       &lt;li&gt;Ray tracing is applicable in more fields than just CGI, like optical design and acoustic modeling.&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing" /><category term="ray-tracing-in-one-weekend" /><summary type="html">It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.</summary></entry><entry><title type="html">Building a Blog:</title><link href="/2020/05/18/building-a-blog.html" rel="alternate" type="text/html" title="Building a Blog:" /><published>2020-05-18T00:00:00+00:00</published><updated>2020-05-18T00:00:00+00:00</updated><id>/2020/05/18/building-a-blog</id><content type="html" xml:base="/2020/05/18/building-a-blog.html">&lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
+&lt;/ul&gt;</content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing" /><category term="ray-tracing-in-one-weekend" /><summary type="html">It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.</summary></entry><entry><title type="html">Building a Blog:</title><link href="/2020/05/18/building-a-blog.html" rel="alternate" type="text/html" title="Building a Blog:" /><published>2020-05-18T00:00:00-04:00</published><updated>2020-05-18T00:00:00-04:00</updated><id>/2020/05/18/building-a-blog</id><content type="html" xml:base="/2020/05/18/building-a-blog.html">&lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
 They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.&lt;/p&gt;
 
 &lt;!--end-excerpt--&gt;
@@ -2990,6 +2996,10 @@ They say the best time to start a technical blog is twenty years ago, and that t
 &lt;p&gt;One solution is to build the site locally and push the generated site files to GitHub. In this way, GitHub would interpret the site as static files and not as a Jekyll project - skipping the build process. However, doing so would require a lot of manual file management and would be prone to human error.&lt;/p&gt;
 
 &lt;p&gt;The better solution, of course, is to automate. Big thanks to Josh Frankel and &lt;a href=&quot;https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/&quot;&gt;his post&lt;/a&gt; detailing the process.&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;highlight-yellow&quot;&gt;Update: “Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on.” This includes a brand new subscription fee! And re-configuring!&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;I don’t feel like dealing with that (or looking into other options right now), so for the time being, I’ll just be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll build&lt;/code&gt;-ing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source&lt;/code&gt; and pushing the updated directory to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;master&lt;/code&gt;.&amp;lt;/span&amp;gt;&lt;/p&gt;
 
 &lt;p&gt;The basic idea is as follows:
 &lt;img src=&quot;/assets/images/blog-images/howdy/github-pages-build-process.png&quot; alt=&quot;Workflow for using custom plugins on GitHub Pages&quot; /&gt;&lt;/p&gt;

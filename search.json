@@ -5,7 +5,7 @@
       "title"    : "Semi-Automating Microsoft Edge Searches",
       "subtitle"    : " ",
       "tags"     : "web, javascript, automation",
-      "date"     : "2021-03-16 00:00:00 +0000",
+      "date"     : "2021-03-16 00:00:00 -0400",
       "url"      : "/2021/03/16/automating-microsoft-edge-searches.html"
 
     } ,
@@ -15,7 +15,7 @@
       "title"    : "Ray Tracing in One Weekend:",
       "subtitle"    : "Part Two - The First Weekend",
       "tags"     : "graphics, ray-tracing, ray-tracing-in-one-weekend, c++",
-      "date"     : "2020-06-19 00:00:00 +0000",
+      "date"     : "2020-06-19 00:00:00 -0400",
       "url"      : "/2020/06/19/ray-tracing-in-one-weekend-part-two.html"
 
     } ,
@@ -25,7 +25,7 @@
       "title"    : "Ray Tracing in One Weekend:",
       "subtitle"    : "Part One - An Introduction",
       "tags"     : "graphics, ray-tracing, ray-tracing-in-one-weekend",
-      "date"     : "2020-05-20 00:00:00 +0000",
+      "date"     : "2020-05-20 00:00:00 -0400",
       "url"      : "/2020/05/20/ray-tracing-in-one-weekend-part-one.html"
 
     } ,
@@ -35,7 +35,7 @@
       "title"    : "Building a Blog:",
       "subtitle"    : "Howdy!",
       "tags"     : "web, jekyll, github-pages, ruby",
-      "date"     : "2020-05-18 00:00:00 +0000",
+      "date"     : "2020-05-18 00:00:00 -0400",
       "url"      : "/2020/05/18/building-a-blog.html"
 
     } 
