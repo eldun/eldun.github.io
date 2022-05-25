@@ -676,10 +676,90 @@ class FetcherModel():
 Let's take a look at our GUI and build our model accordingly.
 ![Dummy GUI](\assets\images\blog-images\art-fetcher\dummy-gui.png)
 
-Our first task will be to model the artwork directory.
+We'll start with some placeholders for all of our options:
+
+`model.py`:
+<pre><code class="language-python">
+class FetcherModel():
+    pass
+
+class FileManagementModel():
+    def __init__(self):
+        self.directory = None
+        self.max_picture_count = None
+        self.max_folder_size = None
+        self.max_folder_size_units = None
+        self.auto_delete = None
+        self.download_frequency = None
+        self.download_frequency_units = None
+        self.create_description = None
 
 
+class ArtworkCriteriaModel():
+    def __init__(self):
+        self.date_start = None
+        self.date_start_era = None
+        self.date_end = None
+        self.date_end_era = None
+        self.artist = None
+        self.type = None
+        self.predominant_color = None
+        self.fetch_rare_art = None
+        self.style = None
+</code></pre>
 
+We'll need a way to change these values when the user interacts with the view, which we can accomplish by using tkinter's `bind()` function - covered in the next section.
 
-## <a id="hooking-up-the-artwork-criteria-section"></a>Hooking up the Artwork Criteria Section
+### <a id="binding-view-interactions-to-the-model"></a>Binding View Interactions to the Model
+
+![MVC Pattern](\assets\images\blog-images\art-fetcher\model-view-controller.png)
+
+The first order of business is allowing the view to reference the controller:
+
+`view.py`:
+<pre><code class="language-diff-python diff-highlight">
+class MainApplication(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.parent = parent
++       self.controller = None
+
+        ...
+
++   def set_controller(self, controller):
++       self.controller = controller
+</code></pre>
+
+`controller.py`:
+<pre><code class="language-diff-python diff-highlight">
+class Controller():
+    def __init__(self, view):
+        self.view = view
+</code></pre>
+
+`fetcher.py`:
+<pre><code class="language-diff-python diff-highlight">
+import tkinter as tk
++ import model, view, controller
+
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+
+    ...
+
+    # Log pane should be the only row that shrinks/resizes
+    main_application.rowconfigure(index=1, weight=1)
+
++   view = main_application
++   controller = controller.Controller()
++   view.set_controller(controller)
+
+    window.mainloop()
+</code></pre>
+
+At this point, we can use [tkinter's `bind` function](https://docs.python.org/3/library/tkinter.html?highlight=bind#bindings-and-events) to invoke certain functions upon certain actions. Some widgets have binding as a keyword parameter(called `command`), like `Button`. However, we can just use `bind()` on whichever widget we desire.
+
+Alternatively, we could use [tkinter's validation](https://www.pythontutorial.net/tkinter/tkinter-validation/) in the view, but we'll do our validation in the model. I like the explanation given [here](https://stackoverflow.com/a/5607545) as to why it's a better idea.
 
