@@ -710,7 +710,7 @@ class ArtworkCriteriaModel():
 
 We'll need a way to change these values when the user interacts with the view, which we can accomplish by using tkinter's `bind()` function - covered in the next section.
 
-### <a id="binding-view-interactions-to-the-model"></a>Binding View Interactions to the Model
+### <a id="binding-view-interactions-to-the-conntroller"></a>Binding View Interactions to the Controller
 
 ![MVC Pattern](\assets\images\blog-images\art-fetcher\model-view-controller.png)
 
@@ -761,5 +761,46 @@ if __name__ == "__main__":
 
 At this point, we can use [tkinter's `bind` function](https://docs.python.org/3/library/tkinter.html?highlight=bind#bindings-and-events) to invoke certain functions upon certain actions. Some widgets have binding as a keyword parameter(called `command`), like `Button`. However, we can just use `bind()` on whichever widget we desire.
 
-Alternatively, we could use [tkinter's validation](https://www.pythontutorial.net/tkinter/tkinter-validation/) in the view, but we'll do our validation in the model. I like the explanation given [here](https://stackoverflow.com/a/5607545) as to why it's a better idea.
+I believe in our situation, it makes the most sense to simply send all the values from the view to the model when the user clicks fetch (We'll cover validation later). Let's bind the fetch button to a controller function:
 
+`controller.py`:
+<pre><code class="language-diff-python diff-highlight">
+class Controller():
+    def __init__(self, view):
+        self.view = view
+
++    def on_fetch_button_clicked(self, event):
++        print("fetch clicked")
+
+</code></pre>
+
+`view.py`:
+<pre><code class="language-diff-python diff-highlight">
+...
+
+class FetchButtonFrame(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+-        tk.Button(self, text="Fetch", bg='light green').grid(column=0, row=0, sticky=NSEW)
++        self.fetch_button = tk.Button(self, text="Fetch", bg='light green')
++        self.fetch_button.grid(column=0, row=0, sticky=NSEW)
+
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+
+...
+
+class MainApplication(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        ...
+
++    def configure_bindings(self):
++        self.fetch_button_frame.fetch_button.bind(sequence="&ltButtonPress&gt", func=self.controller.on_fetch_button_clicked)
+</code></pre>
+
+Note that we had to split up the instantiation and `grid()`ing of `fetch_button`. This is because grid always returns `None`, which is no good because we're going to want to reference the button in `configure_bindings`.
+
+<!-- I figure it's best to do basic UI validation in the view (e.g. only integers in the "Max Picture Count" field), and anything more complicated/important("Business Logic")c  -->
+
+<!-- 
+Alternatively, we could use [tkinter's validation](https://www.pythontutorial.net/tkinter/tkinter-validation/) in the view, but we'll do our validation in the model. I like the explanation given [here](https://stackoverflow.com/a/5607545) as to why it's a better idea. -->
