@@ -42,6 +42,10 @@ I've had the [same desktop wallpaper](/assets\images\blog-images\art-fetcher\old
         <ul>
             <li><a href="#hooking-up-the-file-management-section">The File Management Section</a></li>
         </ul>
+        <li><a href="#creating-the-backend">Creating the Backend</a></li>
+        <ul>
+            <li><a href="#forming a connection">The File Management Section</a></li>
+        </ul>
 
     </ul>
 
@@ -356,7 +360,7 @@ There are a few things I know I want the user to be able to control in regards t
 - Download frequency
 - Description (either as .txt file on desktop or by finding a way to incorporate text into image)
 
-Here's the code to set up a dummy version of what I want within the `FileManagementFrame` class:
+Here's the code to set up a dummy version of what I want within the `FileManagementFrame` class. The widgets we're using are assigned to a variable so that we can later retrieve their values in `controller.py`.
 
 
 `fetcher.py`:
@@ -365,7 +369,7 @@ Here's the code to set up a dummy version of what I want within the `FileManagem
 import tkinter as tk    # Standard binding to tk
 import tkinter.ttk as ttk    # Binding to ttk submodule for new/prettier themed widgets
 from tkinter.constants import NSEW, NE, NW, SE, SW, N, S, E, W   # Standard binding to tk
-+ import tkinter.filedialog as filedialog
+import tkinter.filedialog as filedialog
 
 
 + class FileManagementFrame(ttk.Labelframe):
@@ -373,63 +377,74 @@ from tkinter.constants import NSEW, NE, NW, SE, SW, N, S, E, W   # Standard bind
 +         super().__init__(parent, *args, **kwargs)
 + 
 +         # Populate file management section
-+ 
-+         # Directory selection
-+         output_directory="Placeholder Directory"
-+         ttk.Label(self, text=f"Artwork Directory: {output_directory}").grid(column=0, row=0, sticky=W, columnspan=2)
-+         ttk.Button(self, text="Choose Directory", command=filedialog.askdirectory).grid(column=2, row=0)
-+ 
-+         # 'Max pic count' options
-+         ttk.Label(self, text="Max Picture Count:").grid(column=0, row=1, sticky=W)
-+         ttk.Entry(self, width=7).grid(column=2, row=1)
-+ 
-+         # Max folder size
-+         ttk.Label(self, text="Max Folder Size:").grid(column=0, row=2, sticky=W)
-+         max_size_frame = ttk.Frame(self)
-+         ttk.Entry(max_size_frame, width=4).grid(column=0, row=0)
-+         folder_size_units_combobox = ttk.Combobox(max_size_frame, width=2)
-+         folder_size_units_combobox['values'] = ('MB', 'GB', 'TB')
-+         folder_size_units_combobox.state(['readonly'])
-+         folder_size_units_combobox.grid(column=1, row=0)
-+         max_size_frame.grid(column=2, row=2)
-+ 
-+         # Auto Delete option
-+         ttk.Label(self, text="Auto-delete old files:").grid(column=0, row=3, sticky=W)
-+         tk.Checkbutton(self, anchor=CENTER).grid(column=2, row=3, sticky=EW)
-+ 
-+         # Update frequency option
-+         ttk.Label(self, text="Download new files every:").grid(column=0, row=4, sticky=W)
-+ 
-+         update_frequency_frame = ttk.Frame(self)
-+         ttk.Entry(update_frequency_frame, width=3).grid(column=0, row=0)
-+         art_check_frequency_combobox = ttk.Combobox(update_frequency_frame, width=5)
-+         art_check_frequency_combobox['values'] = ('Hours', 'Days', 'Weeks', 'Months')
-+         art_check_frequency_combobox.state(['readonly'])
-+         art_check_frequency_combobox.grid(column=1, row=0)
-+         update_frequency_frame.grid(column=2,row=4)
-+ 
-+         # Description file option
-+         ttk.Label(self, text="Create artwork description file on desktop:").grid(column=0, row=5, sticky=W, columnspan=2)
-+         tk.Checkbutton(self, anchor=CENTER).grid(column=2, row=5, sticky=EW)
-+ 
-+         self.columnconfigure(index=0, weight=2, minsize=200)
-+         self.columnconfigure(index=1, weight=1, minsize=100)
-+         self.columnconfigure(index=2, weight=1, minsize=150)
-+         configure_frame_row_resize(self)
-+         add_widget_padding(self)
-+ 
-+ ...
-+ 
-+ def configure_frame_row_resize(frame):
-+     for row in range(frame.grid_size()[1]):
-+         frame.rowconfigure(row, weight=1)
-+ 
-+ def add_widget_padding(frame):
-+    for widget in frame.winfo_children():
-+        widget.grid_configure(padx=5, pady=5)
-+        add_widget_padding(widget)
-+
-+ 
+
+         # Directory selection
+        self.output_directory = tk.StringVar()
+        self.output_directory.set("No Directory Selected")
+        tk.Label(self, text="Artwork Directory: ").grid(column=0, row=0, sticky=W)
+        tk.Label(self, textvariable=self.output_directory).grid(column=1, row=0, sticky=W)
+        ttk.Button(self, text="Choose Directory", command=self.choose_directory).grid(column=2, row=0)
+
+
+        # 'Max pic count' options
+        ttk.Label(self, text="Max Picture Count:").grid(column=0, row=1, sticky=W)
+        self.max_picture_count_entry = ttk.Entry(self, width=7)
+        self.max_picture_count_entry.grid(column=2, row=1)
+
+
+        # Max folder size
+        ttk.Label(self, text="Max Folder Size:").grid(column=0, row=2, sticky=W)
+        max_size_frame = ttk.Frame(self)
+
+        self.max_folder_size_entry = ttk.Entry(max_size_frame, width=4)
+        self.max_folder_size_entry.grid(column=0, row=0)
+
+        self.folder_size_units_combobox = ttk.Combobox(max_size_frame, width=2)
+        self.folder_size_units_combobox['values'] = ('MB', 'GB', 'TB')
+        self.folder_size_units_combobox.state(['readonly'])
+        self.folder_size_units_combobox.grid(column=1, row=0)
+
+        max_size_frame.grid(column=2, row=2)
+
+        # Auto Delete option
+        ttk.Label(self, text="Auto-delete old files:").grid(column=0, row=3, sticky=W)
+        # For whatever reason, I have to create a variable to hold the value of the checkbox instead of just getting the widget itself
+        self.auto_delete_checkbutton_var = tk.BooleanVar()
+        self.auto_delete_checkbutton = tk.Checkbutton(self, anchor=CENTER, variable=self.auto_delete_checkbutton_var)
+        self.auto_delete_checkbutton.grid(column=2, row=3, sticky=EW)
+
+        # Update frequency option
+        ttk.Label(self, text="Download new files every:").grid(column=0, row=4, sticky=W)
+
+        update_frequency_frame = ttk.Frame(self)
+        self.update_frequency_entry = ttk.Entry(update_frequency_frame, width=3)
+        self.update_frequency_entry.grid(column=0, row=0)
+        self.art_check_frequency_combobox = ttk.Combobox(update_frequency_frame, width=5)
+        self.art_check_frequency_combobox['values'] = ('Hours', 'Days', 'Weeks', 'Months')
+        self.art_check_frequency_combobox.state(['readonly'])
+        self.art_check_frequency_combobox.grid(column=1, row=0)
+        update_frequency_frame.grid(column=2,row=4)
+
+        # Description file option
+        
+        ttk.Label(self, text="Create artwork description file on desktop:").grid(column=0, row=5, sticky=W, columnspan=2)
+        # For whatever reason, I have to create a variable to hold the value of the checkbox instead of just getting the widget itself
+        self.create_description_checkbutton_var = tk.BooleanVar()
+        self.create_description_checkbutton = tk.Checkbutton(self, anchor=CENTER, variable=self.create_description_checkbutton_var)
+        self.create_description_checkbutton.grid(column=2, row=5, sticky=EW)
+
+        self.columnconfigure(index=0, weight=1)
+        self.columnconfigure(index=1, weight=0)
+        self.columnconfigure(index=2, weight=1)
+
+        configure_frame_row_resize(self)
+        
+        add_widget_padding(self)
+
+    def choose_directory(self):
+        dir = filedialog.askdirectory(mustexist=True)
+
+        self.output_directory.set(dir)
 
 </code></pre>
 
@@ -474,51 +489,66 @@ class ArtworkCriteriaFrame(ttk.Labelframe):
         current_row = 0
         ttk.Label(self, text="Date Range (Inclusive)").grid(column=0, row=current_row, sticky=W)
         date_range = ttk.Frame(master=self)
-        ttk.Entry(date_range, width=5).grid(column=0, row=current_row)
-        ttk.Combobox(date_range, width=2).grid(column=1, row=current_row)
+        self.date_start_entry = ttk.Entry(date_range, width=5)
+        self.date_start_entry.grid(column=0, row=current_row)
+
+        self.date_start_age = ttk.Combobox(date_range, width=3)
+        self.date_start_age['values'] = ('BC','AD')
+        self.date_start_age.current(0)
+        self.date_start_age.grid(column=1, row=current_row)
         ttk.Label(date_range, text="-").grid(column=2, row=current_row)
-        ttk.Entry(date_range, width=5).grid(column=3, row=current_row)
-        ttk.Combobox(date_range, width=2).grid(column=4, row=current_row)
+
+        self.date_end_entry = ttk.Entry(date_range, width=5)
+        self.date_end_entry.grid(column=3, row=current_row)
+        self.date_end_age = ttk.Combobox(date_range, width=3)
+        self.date_end_age['values'] = ('BC','AD')
+        self.date_end_age.current(0)
+        self.date_end_age.grid(column=4, row=current_row)
         date_range.grid(column=2, row=current_row)
 
         # Artist
         current_row += 1
         ttk.Label(self, text="Artist").grid(column=0, row=current_row, sticky=W)
-        ttk.Combobox(self, width=12).grid(column=2, row=current_row)
+        self.artist_combobox = ttk.Combobox(self, width=12)
+        self.artist_combobox.grid(column=2, row=current_row)
 
         # Art type(e.g. painting, sculpture, etc.)
         current_row += 1
         ttk.Label(self, text="Type").grid(column=0, row=current_row, sticky=W)
-        ttk.Combobox(self, width=12).grid(column=2, row=current_row)
+        self.art_type_combobox = ttk.Combobox(self, width=12)
+        self.art_type_combobox.grid(column=2, row=current_row)
 
         # Color
         current_row += 1        
         ttk.Label(self, text="Predominant Color").grid(column=0, row=current_row, sticky=W)
         color_frame = ttk.Frame(self)
         ttk.Button(color_frame, command=self.on_choose_color).grid(column=0, row=0, sticky=EW)
-        ttk.Entry(color_frame, width=7).grid(column=1, row=0, sticky=E)
+        self.choose_color_entry = ttk.Entry(color_frame, width=7)
+        self.choose_color_entry.grid(column=1, row=0, sticky=E)
         color_frame.grid(column=2, row=current_row)
 
         # Rarity
         current_row += 1
         ttk.Label(self, text="Fetch rarely viewed art").grid(column=0, row=current_row, sticky=W)
-        tk.Checkbutton(self).grid(column=2, row=current_row, sticky=EW)
+        self.rarity_checkbutton_var = tk.BooleanVar()
+        tk.Checkbutton(self, variable=self.rarity_checkbutton_var).grid(column=2, row=current_row, sticky=EW)
 
         # Style (e.g. impressionist, abstract, etc.)
         current_row += 1
         ttk.Label(self, text="Style").grid(column=0, row=current_row, sticky=W)
-        ttk.Combobox(self, width=12).grid(column=2, row=current_row)
+        self.style_combobox = ttk.Combobox(self, width=12)
+        self.style_combobox.grid(column=2, row=current_row)
 
-        # configure_frame_column_resize(self)
 
 
-        self.columnconfigure(index=0, weight=2, minsize= 200)
-        self.columnconfigure(index=1, weight=1, minsize=100)
-        self.columnconfigure(index=2, weight=1, minsize=150)
+        self.columnconfigure(index=0, weight=1)
+        self.columnconfigure(index=1, weight=0)
+        self.columnconfigure(index=2, weight=1)
+
 
         configure_frame_row_resize(self)
-        add_widget_padding(self)
 
+        add_widget_padding(self)
 
 ...
 
@@ -570,17 +600,23 @@ class LogPaneFrame(ttk.Labelframe):
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+
         self.scrolled_text = scrolledtext.ScrolledText(master=self)
         self.scrolled_text.configure(state=tk.DISABLED, background='light gray')
+        self.scrolled_text.tag_config('warning', background='black', foreground='red')
+        self.scrolled_text.tag_config('success', background='black', foreground='green')
+
         self.scrolled_text.grid(column=0, row=0, sticky=NSEW)
 
 
         self.columnconfigure(index=0, weight=1)
-        self.rowconfigure(index=0, weight=1)
+        self.rowconfigure(index=0, weight=1, minsize=10)
+        configure_frame_row_resize(self)
 
-    def log_message(self, message):
+    def log_message(self, message, tag=None):
+        
         self.scrolled_text.configure(state=tk.NORMAL)
-        self.scrolled_text.insert(tk.END, 'hey')
+        self.scrolled_text.insert(tk.END,"\n" + message + "\n", tag)
         self.scrolled_text.configure(state=tk.DISABLED)
 </code></pre>
 
@@ -666,12 +702,6 @@ This will be our point of entry. The model, view, and (eventually) the controlle
 
 Now we can get to work designing our model. Create a file by the name of `model.py` in the root folder, and we'll continue on section by section.
 
-`model.py`:
-<pre><code class="language-python">
-class FetcherModel():
-    pass
-</code></pre>
-
 ### <a id="the-file-management-section"></a>The File Management Section
 Let's take a look at our GUI and build our model accordingly.
 ![Dummy GUI](\assets\images\blog-images\art-fetcher\dummy-gui.png)
@@ -680,8 +710,12 @@ We'll start with some placeholders for all of our options:
 
 `model.py`:
 <pre><code class="language-python">
-class FetcherModel():
-    pass
+
+class Model():
+    def __init__(self):
+        self.file_management_model = FileManagementModel()
+        self.artwork_criteria_model = ArtworkCriteriaModel()
+
 
 class FileManagementModel():
     def __init__(self):
@@ -799,6 +833,185 @@ class MainApplication(ttk.Frame):
 </code></pre>
 
 Note that we had to split up the instantiation and `grid()`ing of `fetch_button`. This is because grid always returns `None`, which is no good because we're going to want to reference the button in `configure_bindings`.
+
+If you run the program and click fetch, you'll see "fetch clicked" in the console.
+
+### <a id="performing-preliminary-validation-in-the-view"></a>Performing Preliminary Validation in the View
+
+It's a good idea - before sending our user's input to the controller - to do some simple validation in the view - such as only allowing integers in the "Max Picture Count" field. Let's follow the [doc](https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/entry-validation.html).
+
+(Sculpting the data for the API will take place in the controller, and ensuring that the data "makes sense"(business logic) will take place in the model.)
+
+> 1. Write a callback function that checks the text in the Entry and returns `True` if the text is valid, or `False` if not. If the callback returns `False`, the user's attempt to edit the text will be refused, and the text will be unchanged.
+
+Let's create a function for validating int-only entries. We'll just make it a [module function](https://stackoverflow.com/a/11788267), like `configure_frame_row_resize` and `add_widget_padding`, since it'll be used across frames.
+
+
+`view.py`:
+<pre><code class="language-diff-python diff-highlight">
+
+def on_int_entry_edited(text):
+    if str.isdigit(text) or text == "":
+        return True
+    else:
+        return False
+</code></pre>
+
+> 2. Register the callback function. In this step, you will produce a Tcl wrapper around a Python function.
+>
+> Suppose your callback function is a function named `isOkay`. To register this function, use the universal widget method `.register(isOkay)`. This method returns a character string that Tkinter can use to call your function.
+
+`view.py`:
+<pre><code class="language-diff-python diff-highlight">
+
+class FileManagementFrame(ttk.Labelframe):
+    def __init__(self, parent, *args, **kwargs):
+
+        ...
+
+        # 'Max pic count' options
+        ttk.Label(self, text="Max Picture Count:").grid(column=0, row=1, sticky=W)
+        self.max_picture_count_entry = ttk.Entry(self, width=7)
+        self.max_picture_count_entry.grid(column=2, row=1)
+
++       int_validaiton_command = self.max_picture_count_entry.register(on_int_entry_edited)
+
+</code></pre>
+
+> 3. When you call the Entry constructor, use the `validatecommand` option in the Entry constructor to specify your callback, and use the `validate` option to specify when the callback will be called to validate the text in the callback.
+
+See [here](https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/entry-validation.html) for a list of options. We'll just be using 'all'.
+
+`view.py`:
+<pre><code class="language-diff-python diff-highlight">
+
+class FileManagementFrame(ttk.Labelframe):
+    def __init__(self, parent, *args, **kwargs):
+
+        ...
+
+        # 'Max pic count' options
+        ttk.Label(self, text="Max Picture Count:").grid(column=0, row=1, sticky=W)
+        self.max_picture_count_entry = ttk.Entry(self, width=7)
+        self.max_picture_count_entry.grid(column=2, row=1)
+
+        self.max_picture_count_entry.register(on_int_entry_edited)
+        self.max_picture_count_entry.config(validate='all', validatecommand=(int_validaiton_command, '%P'))
+
+</code></pre>
+
+Note the `'%P'` in our `validatecommand` argument. This is a substituiton code describing the value that the text will have if the change is allowed. You can find all the substituiton codes and how to use them [here](https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/entry-validation.html).
+
+You can now use this validation method with other int-only fields, like "Max Folder Size":
+
+`view.py`:
+<pre><code class="language-diff-python diff-highlight">
+    ...
+
+    # Max folder size
+    ttk.Label(self, text="Max Folder Size:").grid(column=0, row=2, sticky=W)
+    max_size_frame = ttk.Frame(self)
+
+    self.max_folder_size_entry = ttk.Entry(max_size_frame, width=4)
+    self.max_folder_size_entry.grid(column=0, row=0)
++   self.max_folder_size_entry.config(validate='all', validatecommand=(int_validaiton_command, '%P'))
+
+...
+</code></pre>
+
+
+### <a id="sending-view-data-to-the-model"></a>Sending View Data to the Model
+
+Let's start by passing the instance of our model to our controller:
+
+`fetcher.py`:
+<pre><code class="language-diff-python diff-highlight">
+
+...
+
++    model = model.Model()
+    view = main_application
++    controller = controller.Controller(model, view)
+
+    view.set_controller(controller)
+    view.configure_bindings()
+
+    window.mainloop()
+</code></pre>
+
+And then setting our model attributes to the values entered in the view:
+
+`controller.py`:
+<pre><code class="language-diff-python diff-highlight">
+
+class Controller():
+    def __init__(self, model, view):
++        self.model = model
+        self.view = view
+
+    def on_fetch_button_clicked(self, event):
+
++        self.update_file_management_model()
++        self.update_file_artwork_criteria_model()
+        
+
+    def update_file_management_model(self):
+        model = self.model.file_management_model
+        view = self.view.file_management_frame
+
+
+        try:
+
+            model.output_directory = view.output_directory
+            model.max_picture_count = view.max_picture_count_entry.get()
+            model.max_folder_size = view.max_folder_size_entry.get()
+            model.max_folder_size_units = view.folder_size_units_combobox.get()
+            model.auto_delete = view.auto_delete_checkbutton_var.get()
+            model.download_frequency = view.update_frequency_entry.get()
+            model.download_frequency_units = view.art_check_frequency_combobox.get()
+            model.create_description = view.create_description_checkbutton_var.get()
+        
+        except Exception as e:
+            self.log_message("Error updating File Management Model:\n" + str(e), 'warning')
+
+        else:
+            self.log_model_fields(model)            
+
+    def update_file_artwork_criteria_model(self):
+
+        model = self.model.artwork_criteria_model
+        view = self.view.artwork_criteria_frame
+
+        try:
+
+            model.date_start = view.date_start_entry.get()
+            model.date_start_age = view.date_start_age.get()
+            model.date_end = view.date_end_entry.get()
+            model.date_end_age = view.date_end_age.get()
+            model.artist = view.artist_combobox.get()
+            model.type = view.art_type_combobox.get()
+            model.predominant_color = view.choose_color_entry.get()
+            model.fetch_rare_art = view.rarity_checkbutton_var.get()
+            model.style = view.style_combobox.get()
+
+        except Exception as e:
+            self.log_message("Error updating File Management Model:\n" + str(e), 'warning')
+
+        else:
+            self.log_model_fields(model)
+
+</code></pre>
+
+## <a id="creating-the-backend"></a>Creating the Backend
+
+### <a id="binding-view-interactions-to-the-conntroller"></a>Forming a Connection
+
+
+
+- validating new values in model, updating view accordingly
+- creating backend to communicate with artic
+- populating comboboxes with artic options
+- implementing file management options
 
 <!-- I figure it's best to do basic UI validation in the view (e.g. only integers in the "Max Picture Count" field), and anything more complicated/important("Business Logic")c  -->
 
