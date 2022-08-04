@@ -17,6 +17,7 @@ I've had the [same desktop wallpaper](/assets\images\blog-images\art-fetcher\old
 <!--end-excerpt-->
 
 ---
+
 ## Contents
 
 <ul class="table-of-contents">
@@ -38,7 +39,7 @@ I've had the [same desktop wallpaper](/assets\images\blog-images\art-fetcher\old
             <li><a href="#the-logging-pane">The Logging Pane</a></li>
             <li><a href="#the-fetch-button">The Fectch Button</a></li>
         </ul>
-        <li><a href="#creating-the-model">Creating the Model</a></li>
+    <li><a href="#creating-the-model">Creating the Model</a></li>
         <ul>
             <li><a href="#hooking-up-the-file-management-section">The File Management Section</a></li>
         </ul>
@@ -742,6 +743,8 @@ class ArtworkCriteriaModel():
         self.style = None
 </code></pre>
 
+We can later turn these attributes into [properties](https://www.programiz.com/python-programming/property) to implement business logic/constraints.
+
 We'll need a way to change these values when the user interacts with the view, which we can accomplish by using tkinter's `bind()` function - covered in the next section.
 
 ### <a id="binding-view-interactions-to-the-conntroller"></a>Binding View Interactions to the Controller
@@ -920,7 +923,7 @@ You can now use this validation method with other int-only fields, like "Max Fol
 </code></pre>
 
 
-### <a id="sending-view-data-to-the-model"></a>Sending View Data to the Model
+### <a id="getting-view-data-to-the-model"></a>Getting View Data to the Model
 
 Let's start by passing the instance of our model to our controller:
 
@@ -975,7 +978,7 @@ class Controller():
             self.log_message("Error updating File Management Model:\n" + str(e), 'warning')
 
         else:
-            self.log_model_fields(model)            
+            self.log_model_fields(model)
 
     def update_file_artwork_criteria_model(self):
 
@@ -1004,7 +1007,27 @@ class Controller():
 
 ## <a id="creating-the-backend"></a>Creating the Backend
 
-### <a id="binding-view-interactions-to-the-conntroller"></a>Forming a Connection
+Let's create a new file in the root directory named `api.py`. This is where we'll be making a connection with Artic's servers. To accomplish this, we'll use the `requests` library:
+
+`api.py`:
+```python
+import requests
+
+web_api = 'https://api.artic.edu/api/v1/'
+local_archive = './artic-api-data/json/'
+
+data_source = web_api
+
+r = requests.get(data_source + 'artworks/9614')
+print(r.json())
+```
+`requests` is not a built-in library, so you may have to install it: `pip install requests`. Once you run `api.py`, you should get a fat chunk of JSON in your output. And that's pretty much the basic idea! We can check out the [documentation](https://api.artic.edu/docs/#introduction) for more functionality.
+
+## <a id="populating-our-gui-fields-with-api-data"></a>Populating our GUI Fields with API Data
+
+
+
+### <a id="forming-a-connection"></a>Forming a Connection
 
 
 
