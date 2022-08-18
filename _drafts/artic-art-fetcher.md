@@ -1012,18 +1012,65 @@ Let's create a new file in the root directory named `api.py`. This is where we'l
 `api.py`:
 ```python
 import requests
+import os
 
 web_api = 'https://api.artic.edu/api/v1/'
-local_archive = './artic-api-data/json/'
+local_api = os.getcwd() + '/artic-api-data/json/'
+url = "not specified"
 
-data_source = web_api
 
-r = requests.get(data_source + 'artworks/9614')
-print(r.json())
+def get(endpoint):
+
+    return requests.get(url + endpoint)
+
+
+def post(endpoint, query):
+
+    # example_query = {
+    #     'q': 'cats',
+    #     'query': {
+    #         'term': {
+    #             'is_public_domain': True,
+    #         },
+    #     },
+    # }
+
+    return requests.post(url, json=query)
+
+
+
+if __name__ == "__main__":
+    url = web_api
+
+    response = get('artworks')
+
+    print(response.json())
+
+
 ```
-`requests` is not a built-in library, so you may have to install it: `pip install requests`. Once you run `api.py`, you should get a fat chunk of JSON in your output. And that's pretty much the basic idea! We can check out the [documentation](https://api.artic.edu/docs/#introduction) for more functionality.
+
+`requests` is not a built-in library, so you may have to install it: `pip install requests`. Once you run `api.py`, you should get a fat chunk of JSON in your output. And that's pretty much the basic idea! We can check out the [documentation](https://api.artic.edu/docs/#introduction) to learn more. Later on, we can add support for images stored locally.
 
 ## <a id="populating-our-gui-fields-with-api-data"></a>Populating our GUI Fields with API Data
+Right now, our GUI dropdowns (artist, type, style) are empty. ARTIC's search is powered by [ElasticSearch](https://www.elastic.co/what-is/elasticsearch), and we'll need to formulate a query using ElasticSearch's [Query DSL](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) to get possible field values.
+
+We'll import `api.py` into `model.py` and send our query from there. 
+
+`model.py`:
+```python
++ import api
+class Model():
+    def __init__(self):
+        self.file_management_model = FileManagementModel()
+        self.artwork_criteria_model = ArtworkCriteriaModel()
+
+    def populate_artists(self):
+        api.get('query goes here')
+    
+    ...
+```
+
+
 
 
 
