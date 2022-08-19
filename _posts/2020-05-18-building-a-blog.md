@@ -1,6 +1,7 @@
 ---
 title: "Building a Blog:"
 subtitle: "Howdy!"
+toc: true
 layout: post
 author: Evan
 # header-image: /assets/images/blog-images/howdy/howdy.png
@@ -17,7 +18,7 @@ They say the best time to start a technical blog is twenty years ago, and that t
 
 ## Contents
 
-<ul class="table-of-contents">
+<!-- <ul class="table-of-contents">
 <li><a href="#humble-beginnings">Humble Beginnings</a></li>
 <li><a href="#github-pages">GitHub Pages</a></li>
 <li><a href="#jekyll">Jekyll</a></li>
@@ -27,11 +28,11 @@ They say the best time to start a technical blog is twenty years ago, and that t
 <li><a href="#search-function">Search Function</a></li>
 <li><a href="#the-future">The Future</a></li>
 <li><a href="#updates">Updates</a></li>
-</ul>
+</ul> -->
 
 ---
 
-## <a id="humble-beginnings"></a>Humble Beginnings
+## Humble Beginnings
 I really decided on building a blog when I started working on Peter Shirley's [Ray Tracing in One Weekend](https://raytracing.github.io/) series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to [Victor Li's Blog](http://viclw17.github.io/). Inspired by the clarity, variety, and layout of Victor's blog, I constructed a similar site for myself to document my work and personal excursions as a developer.
 
 ---
@@ -422,5 +423,47 @@ All I had to do was generate js and css files from their site, plop them into my
     └── ...</code></pre>
 </details>
 
+### <time>2022-08</time>
+
+<details>
+
+<summary>
+Dynamic (& prettier) Table of Contents
+</summary>
+<br>
 
 
+Manual tables of content are time intensive and prone to authoring errors, I've come to find. Thankfully there's a <a href='https://stackoverflow.com/a/5233948'>gem</a> for <a href='https://github.com/toshimaru/jekyll-toc'>generating a 'toc' dynamically</a>, so I don't have to do too much work.
+
+The instructions are as follows:
+<img src="/assets\images\blog-images\howdy\jekyll-toc-install.png">
+
+After following these steps, I only need to change a few things in <code>_layouts/post.html`</code>:
+<pre><code class='language-diff-markup diff-highlight'>
+{% raw %}
+&lt;div class="post-header inactive"&gt;
+&lt;h1 id="post-title"&gt;{{ page.title }}&lt;/h1&gt;
+&lt;h3 id="post-subtitle"&gt;{{ page.subtitle }}&lt;/h3&gt;
+&lt;div class="post-date"&gt;
+    &lt;i class="fas fa-calendar"&gt;&lt;/i&gt; &lt;time&gt;{{ page.date | date_to_string }}&lt;/time&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;img src="{{ page.header-image }}" alt="{{ page.header-image-alt }}" title="{{ post.header-image-description }}"&gt;
+
++ &lt;div class='table-of-contents'&gt;{{ content | toc_only }}&lt;/div&gt;
+
++ {{ content | inject_anchors }}
+
+&lt;hr&gt;
+&lt;h1&gt;&lt;i class="fas fa-hand-peace"&gt;&lt;/i&gt;&lt;/h1&gt;
+&lt;div class="post-tags"&gt;
+    {% include post-tags.html %}
+&lt;/div&gt;
+
+{% endraw %}
+</code></pre>
+
+Now I can just use regular headers instead of clumsy anchors, and my table of contents will be generated automatically.
+
+</details>

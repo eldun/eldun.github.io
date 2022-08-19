@@ -12,6 +12,7 @@ plugins:
   - jekyll-sitemap
   - jekyll-paginate-v2
   - jekyll-seo-tag
+  - jekyll-toc
 
 # Exclude these files from the build process results.
 # Prevents them from showing up in the master branch which 
