@@ -436,7 +436,7 @@ Dynamic (& prettier) Table of Contents
 Manual tables of content are time intensive and prone to authoring errors, I've come to find. Thankfully there's a <a href='https://stackoverflow.com/a/5233948'>gem</a> for <a href='https://github.com/toshimaru/jekyll-toc'>generating a 'toc' dynamically</a>, so I don't have to do too much work.
 
 The instructions are as follows:
-<img src="/assets\images\blog-images\howdy\jekyll-toc-install.png">
+<img src="/assets/images/blog-images/howdy/jekyll-toc-install.png">
 
 After following these steps, I only need to change a few things in <code>_layouts/post.html`</code>:
 <pre><code class='language-diff-markup diff-highlight'>
