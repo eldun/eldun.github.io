@@ -1,0 +1,3421 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-08-19T15:20:02-04:00</updated><id>/feed.xml</id><entry><title type="html">Semi-Automating Microsoft Edge Searches</title><link href="/2021/03/16/automating-microsoft-edge-searches.html" rel="alternate" type="text/html" title="Semi-Automating Microsoft Edge Searches" /><published>2021-03-16T00:00:00-04:00</published><updated>2021-03-16T00:00:00-04:00</updated><id>/2021/03/16/automating-microsoft-edge-searches</id><content type="html" xml:base="/2021/03/16/automating-microsoft-edge-searches.html">&lt;script src=&quot;/js/post-scripts/automating-edge-searches/search.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
+Microsoft has a suprisingly worthwhile rewards program - in addition to their three daily tasks (which range in value from 5 to 50 points each), there are a possible 250 points(~$1.25) to be earned from Bing searches within the Edge browser. This is my quick and dirty solution for snagging those points without manually searching 50 queries in Edge every day.
+&lt;!--end-excerpt--&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;h2 id=&quot;contents&quot;&gt;Contents&lt;/h2&gt;
+
+&lt;ul class=&quot;table-of-contents&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;#introduction&quot;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#word-generation&quot;&gt;Word Generation&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#searching&quot;&gt;Searching&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#the-result&quot;&gt;The Result&lt;/a&gt;&lt;/li&gt;
+
+
+&lt;/ul&gt;
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;introduction&quot;&gt;&lt;a id=&quot;introduction&quot;&gt;&lt;/a&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;First off, I’d like to say that I have nothing against Edge. It’s beautiful and zippy. However, when I attempted to accrue search points naturally, I found myself cursing Bing’s algorithm (StackOverflow on the second page?? GeeksForGeeks at the top?!??). And so here we are, automatically search made-up words in pursuit of the ultimate hypothetical prize:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\automating-edge-searches\goal.png&quot; alt=&quot;The ultimate hypothetical prize.&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;word-generation&quot;&gt;&lt;a id=&quot;word-generation&quot;&gt;&lt;/a&gt;Word Generation&lt;/h2&gt;
+
+&lt;p&gt;The first order of business was generating plausible words. I’m not sure if Bing ignores nonsense words. In fact, I don’t know if there’s any critera that Bing filters by. Anyway, to generate words, I just sampled a bit of code from &lt;a href=&quot;https://j11y.io/javascript/random-word-generator/&quot;&gt;here&lt;/a&gt;, which simply alternates vowels and consonants.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;// From https://j11y.io/javascript/random-word-generator/
+function createRandomWord(length) {
+  var consonants = &quot;bcdfghjklmnpqrstvwxyz&quot;,
+    vowels = &quot;aeiou&quot;,
+    rand = function (limit) {
+      return Math.floor(Math.random() * limit);
+    },
+    i,
+    word = &quot;&quot;,
+    length = parseInt(length, 10),
+    consonants = consonants.split(&quot;&quot;),
+    vowels = vowels.split(&quot;&quot;);
+  for (i = 0; i &amp;lt; length / 2; i++) {
+    var randConsonant = consonants[rand(consonants.length)],
+      randVowel = vowels[rand(vowels.length)];
+    word += i === 0 ? randConsonant.toUpperCase() : randConsonant;
+    word += i * 2 &amp;lt; length - 1 ? randVowel : &quot;&quot;;
+  }
+  return word;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;console.log(createRandomWord(5));
+console.log(createRandomWord(10));
+console.log(createRandomWord(20));
+
+Xajiq
+Sexetelufa
+Vazocolebaboxugosiqi&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;searching&quot;&gt;&lt;a id=&quot;searching&quot;&gt;&lt;/a&gt;Searching&lt;/h2&gt;
+
+&lt;p&gt;Well, we’re almost done. Add the listener to the search button that’s in the html:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;document.addEventListener(&quot;DOMContentLoaded&quot;, init, false);
+function init() {
+  var button = document.getElementById(&quot;bing-search-button&quot;);
+  button.addEventListener(&quot;click&quot;, startSearch, true);
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;startSearch&lt;/code&gt; is called, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;continueSearch&lt;/code&gt; is called until the max number of searches is reached (typically 50ish):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;function startSearch() {
+  let searchCount = 0;
+  let randomWord = () =&amp;gt; createRandomWord(Math.ceil(Math.random() * 14) + 3);
+  let tab = window.open(`https://www.bing.com/search?q=${randomWord()}`);
+  let tab2 = window.open(`https://www.bing.com/search?q=${randomWord()}`);
+
+  setTimeout(continueSearch, 2000, searchCount);
+  
+
+  function continueSearch(searchCount) {
+    if (searchCount &amp;lt; MAX_BING_SEARCHES) {
+      tab.location = `https://www.bing.com/search?q=${randomWord()}`;
+      tab2.location = `https://www.bing.com/search?q=${randomWord()}`;
+      searchCount++;
+
+      setTimeout(continueSearch, 5000, searchCount);
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Note that two tabs are opened - one for desktop searches, and one for mobile. I couldn’t find a simpler way to mock a mobile &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent&quot;&gt;user agent&lt;/a&gt; than just hitting F12 and toggling mobile device emulation (if you’re on desktop) or requesting the desktop site (if you’re on mobile).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\automating-edge-searches\device-emulation.png&quot; alt=&quot;Toggling Mobile Device Emulation&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In order for both tabs to open, you’ll have to allow pop-ups from eldun.github.io.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;the-result&quot;&gt;&lt;a id=&quot;the-result&quot;&gt;&lt;/a&gt;The Result&lt;/h2&gt;
+
+&lt;p&gt;I try to click this button everyday:&lt;/p&gt;
+
+&lt;p&gt;&lt;button class=&quot;btn&quot; id=&quot;bing-search-button&quot;&gt;Start Auto-Search&lt;/button&gt;&lt;/p&gt;</content><author><name>Evan</name></author><category term="web" /><category term="javascript" /><category term="automation" /><summary type="html">Microsoft has a suprisingly worthwhile rewards program - in addition to their three daily tasks (which range in value from 5 to 50 points each), there are a possible 250 points(~$1.25) to be earned from Bing searches within the Edge browser. This is my quick and dirty solution for snagging those points without manually searching 50 queries in Edge every day.</summary></entry><entry><title type="html">Ray Tracing in One Weekend:</title><link href="/2020/06/19/ray-tracing-in-one-weekend-part-two.html" rel="alternate" type="text/html" title="Ray Tracing in One Weekend:" /><published>2020-06-19T00:00:00-04:00</published><updated>2020-06-19T00:00:00-04:00</updated><id>/2020/06/19/ray-tracing-in-one-weekend-part-two</id><content type="html" xml:base="/2020/06/19/ray-tracing-in-one-weekend-part-two.html">&lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
+Now that we’re familiar with ray tracing through &lt;a href=&quot;/2020/05/20/ray-tracing-in-one-weekend-part-one#post-title&quot;&gt;my introduction&lt;/a&gt;, we can delve into the titular first section of Peter Shirley’s book.&lt;/p&gt;
+
+&lt;!--end-excerpt--&gt;
+
+&lt;p&gt;&lt;span class=&quot;highlight-yellow&quot;&gt;
+    I started this path tracer months ago, and only started this blog in late May. The version of Shirley’s book that I used is from some time in 2018 (Version 1.54), and I have found that there is a recently updated version (3.1.2) on &lt;a href=&quot;https://raytracing.github.io/&quot;&gt;his website&lt;/a&gt; from June 6th, 2020! I also supplemented Shirley’s book with &lt;a href=&quot;http://viclw17.github.io/tag/#/Ray%20Tracing%20in%20One%20Weekend&quot;&gt;Victor Li’s posts on the subject&lt;/a&gt;. As such, there may be differences in implementation compared to the most recent version of Ray Tracing in One Weekend. &lt;br /&gt;&lt;br /&gt;I am trying to keep things easy-to-follow, mostly sticking with my original code and only changing or adding what I deem to be necessary for readability, clarity, or image rendering purposes. If you are reading this to build your own ray tracer, I highly recommend Shirley’s book as a main source.
+    &lt;/span&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;h2 id=&quot;contents&quot;&gt;Contents&lt;/h2&gt;
+
+&lt;ul class=&quot;part-navigator&quot;&gt;
+    
+        
+    
+        
+    
+        
+
+        &lt;li&gt;
+                    &lt;a href=&quot;/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title&quot; class=&quot;btn&quot;&gt;Part One - An Introduction&lt;/a&gt;
+
+                &lt;/li&gt;
+        
+    
+        
+
+        &lt;li&gt;
+                    &lt;a href=&quot;/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title&quot; class=&quot;btn inactive&quot;&gt;Part Two - The First Weekend&lt;/a&gt;
+
+                &lt;/li&gt;
+        
+    
+&lt;/ul&gt;
+
+&lt;ul class=&quot;table-of-contents&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;#image-output&quot;&gt;Image Output&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#timing-execution&quot;&gt;Timing Execution&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#vec3-class&quot;&gt;Vec3 Class&lt;/a&gt;&lt;/li&gt;
+	&lt;ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#vector-refresher&quot;&gt;Vector Refresher&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#vec3-definitions&quot;&gt;Vec3 Definitions&lt;/a&gt;&lt;/li&gt;
+	&lt;/ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#rays&quot;&gt;Rays&lt;/a&gt;&lt;/li&gt;
+	&lt;ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#sending-rays-from-the-camera&quot;&gt;Sending Rays from the Camera&lt;/a&gt;&lt;/li&gt;
+	&lt;/ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#introducing-spheres&quot;&gt;Introducing Spheres&lt;/a&gt;&lt;/li&gt;
+	&lt;ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#describing-a-sphere&quot;&gt;Describing a Sphere&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#placing-a-sphere&quot;&gt;Placing a Sphere&lt;/a&gt;&lt;/li&gt;
+	&lt;/ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#surface-normals&quot;&gt;Surface Normals&lt;/a&gt;&lt;/li&gt;
+	&lt;ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#simplifying-ray-sphere-intersection&quot;&gt;Simplifying Ray-Sphere Intersection&lt;/a&gt;&lt;/li&gt;
+	&lt;/ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#multiple-spheres&quot;&gt;Multiple Spheres&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#front-faces-versus-back-faces&quot;&gt;Front Faces versus Back Faces&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#anti-aliasing&quot;&gt;Anti-Aliasing&lt;/a&gt;&lt;/li&gt;
+	&lt;ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#adding-anti-aliasing-to-the-camera&quot;&gt;Adding Anti-Aliasing to the Camera&lt;/a&gt;&lt;/li&gt;
+	&lt;/ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#diffuse-materials&quot;&gt;Diffuse Materials&lt;/a&gt;&lt;/li&gt;
+	&lt;ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#the-math-of-diffuse-materials&quot;&gt;The Math of Diffuse Materials&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#gamma-correction&quot;&gt;Gamma Correction&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#shadow-acne&quot;&gt;Shadow Acne&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#true-lambertian-reflection&quot;&gt;True Lambertian Reflection&lt;/a&gt;&lt;/li&gt;
+	&lt;/ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#common-constants-and-utilities&quot;&gt;Common Constants and Utilities&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#metal&quot;&gt;Metal&lt;/a&gt;&lt;/li&gt;
+	&lt;ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#abstract-class-for-materials&quot;&gt;Abstract Class for Materials&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#describing-ray-object-intersections&quot;&gt;Describing Ray-Object Intersections&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#light-scatter&quot;&gt;Light Scatter&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#metal-reflection&quot;&gt;Metal Reflection&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#adding-metal-spheres-to-the-scene&quot;&gt;Adding Metal Spheres to the Scene&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#fuzzy-metal&quot;&gt;Fuzzy Metal&lt;/a&gt;&lt;/li&gt;
+	&lt;/ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#dielectrics&quot;&gt;Dielectrics&lt;/a&gt;&lt;/li&gt;
+	&lt;ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#refraction&quot;&gt;Refraction&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#snells-law&quot;&gt;Snell's Law&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#calculating-the-refraction-vector&quot;&gt;Calculating the Refraction Vector&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#coding-the-refraction-vector&quot;&gt;Coding the Refraction Vector&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#dielectric-reflections&quot;&gt;Dielectric Reflections&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#hollow-dielectric-spheres&quot;&gt;Hollow Dielectric Spheres&lt;/a&gt;&lt;/li&gt;
+	&lt;/ul&gt;
+	&lt;li&gt;&lt;a href=&quot;#camera-modeling&quot;&gt;Camera Modeling&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#depth-of-field&quot;&gt;Depth of Field&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;#final-scene&quot;&gt;Final Scene&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;image-output&quot;&gt;&lt;a id=&quot;image-output&quot;&gt;&lt;/a&gt;Image Output&lt;/h2&gt;
+&lt;p&gt;Of course, the first step with producing a pretty path traced image is to produce an image. The method suggested by Peter is a simple plaintext &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.ppm&lt;/code&gt; file. The following is an example snippet and image from &lt;a href=&quot;https://en.wikipedia.org/wiki/Netpbm#PPM_example&quot;&gt;Wikipedia&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;row&quot;&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;P3
+3 2
+255
+# The part above is the header
+# &quot;P3&quot; means this is an RGB color image in ASCII
+# &quot;3 2&quot; is the width and height of the image in pixels
+# &quot;255&quot; is the maximum value for each color
+# The part below is image data: RGB triplets
+255   0   0  # red
+  0 255   0  # green
+  0   0 255  # blue
+255 255   0  # yellow
+255 255 255  # white
+  0   0   0  # black&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\ppm-example-output.png&quot; /&gt;
+&lt;!-- ![PPM Output](\assets\images\blog-images\path-tracer\the-first-weekend\ppm-example-output.png) --&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;The code for creating a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.ppm&lt;/code&gt; file is as follows:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#include &amp;lt;iostream&amp;gt;
+
+int main() {
+	int nx = 200; // Number of horizontal pixels
+	int ny = 100; // Number of vertical pixels
+	std::cout &amp;lt;&amp;lt; &quot;P3\n&quot; &amp;lt;&amp;lt; nx &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ny &amp;lt;&amp;lt; &quot;\n255\n&quot;; // P3 signifies ASCII, 255 signifies max color value
+	for (int j = ny - 1; j &amp;gt;= 0; j--) { // Navigate canvas
+	    std::cerr &amp;lt;&amp;lt; &quot;\rScanlines remaining: &quot; &amp;lt;&amp;lt; j &amp;lt;&amp;lt; ' ' &amp;lt;&amp;lt; std::flush;
+		for (int i = 0; i &amp;lt; nx; i++) {
+			float r = float(i) / float(nx);
+			float g = float(j) / float(ny);
+			float b = 0.2;
+			int ir = int(255.99 * r);
+			int ig = int(255.99 * g);
+			int ib = int(255.99 * b);
+			std::cout &amp;lt;&amp;lt; ir &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ig &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ib &amp;lt;&amp;lt; &quot;\n&quot;;
+		}
+	}
+	std::cerr &amp;lt;&amp;lt; &quot;\nDone.\n&quot;;
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Note:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Pixels are written from left to right.&lt;/li&gt;
+  &lt;li&gt;Rows of pixels are written top to bottom.&lt;/li&gt;
+  &lt;li&gt;In this simple example, from left to right, red goes from 0 to 255. Green goes from 0 to 255, bottom to top. As such, the top right corner should be yellow.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now to compile and redirect the output of our program to a file:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;g++ main.cpp
+./a.out &amp;gt; hello.ppm&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You may have to use a &lt;a href=&quot;http://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html&quot;&gt;web tool&lt;/a&gt; or download a file viewer (I use &lt;a href=&quot;https://www.irfanview.com/&quot;&gt;IrfanView&lt;/a&gt;) to view the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.ppm&lt;/code&gt; file as an image. Here’s my resulting image and raw contents of the file:&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;row&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\hello-world-ppm.png&quot; alt=&quot;The &amp;quot;Hello World&amp;quot; of our path tracer&quot; /&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\hello-world-ppm-raw.png&quot; alt=&quot;The &amp;quot;Hello World&amp;quot; of our path tracer&quot; /&gt;
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;timing-execution&quot;&gt;&lt;a id=&quot;timing-execution&quot;&gt;&lt;/a&gt;Timing Execution&lt;/h2&gt;
+&lt;p&gt;Eventually, our program is going to chug when it comes to producing an image. It’s nice to have a total running time output. This is optional, and you can &lt;a href=&quot;#vec3-class&quot;&gt;skip&lt;/a&gt; it if you please.&lt;/p&gt;
+
+&lt;p&gt;If you want, you could just run our program in the terminal prepended with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;time&lt;/code&gt;. Here’s an example of the utility:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;shell&quot;&gt;eldun@Evan:/mnt/c/Users/Ev/source/Projects/PathTracer/PathTracer$ time sleep 1
+
+real    0m1.019s
+user    0m0.016s
+sys     0m0.000s&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Otherwise, you can &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#include &amp;lt;chrono&amp;gt;&lt;/code&gt; (for timing) and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#include &amp;lt;iomanip&amp;gt;&lt;/code&gt; (for formatting) in main (or anywhere) to time more specific parts of the program:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#include &amp;lt;iostream&amp;gt;
+&lt;span class=&quot;highlight-green&quot;&gt;#include &amp;lt;chrono&amp;gt;
+#include &amp;lt;iomanip&amp;gt;
+&lt;/span&gt;
+
+int main() {
+	int nx = 200; // Number of horizontal pixels
+	int ny = 100; // Number of vertical pixels
+	std::cout &amp;lt;&amp;lt; &quot;P3\n&quot; &amp;lt;&amp;lt; nx &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ny &amp;lt;&amp;lt; &quot;\n255\n&quot;; // P3 signifies ASCII, 255 signifies max color value
+
+   	&lt;span class=&quot;highlight-green&quot;&gt;	auto start = std::chrono::high_resolution_clock::now();	   &lt;/span&gt;
+
+	for (int j = ny - 1; j &amp;gt;= 0; j--) { // Navigate canvas
+	    std::cerr &amp;lt;&amp;lt; &quot;\rScanlines remaining: &quot; &amp;lt;&amp;lt; j &amp;lt;&amp;lt; ' ' &amp;lt;&amp;lt; std::flush;
+		for (int i = 0; i &amp;lt; nx; i++) {
+			float r = float(i) / float(nx);
+			float g = float(j) / float(ny);
+			float b = 0.2;
+			int ir = int(255.99 * r);
+			int ig = int(255.99 * g);
+			int ib = int(255.99 * b);
+			std::cout &amp;lt;&amp;lt; ir &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ig &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ib &amp;lt;&amp;lt; &quot;\n&quot;;
+		}
+	}
+	&lt;span class=&quot;highlight-green&quot;&gt;	auto stop = std::chrono::high_resolution_clock::now(); 
+
+
+	auto hours = std::chrono::duration_cast&amp;lt;std::chrono::hours&amp;gt;(stop - start);
+	auto minutes = std::chrono::duration_cast&amp;lt;std::chrono::minutes&amp;gt;(stop - start) - hours;
+	auto seconds = std::chrono::duration_cast&amp;lt;std::chrono::seconds&amp;gt;(stop - start) - hours - minutes;
+    	std::cerr &amp;lt;&amp;lt; std::fixed &amp;lt;&amp;lt; std::setprecision(2) &amp;lt;&amp;lt; &quot;\nDone in:&quot; &amp;lt;&amp;lt; std::endl &amp;lt;&amp;lt; 
+	&quot;\t&quot; &amp;lt;&amp;lt; hours.count() &amp;lt;&amp;lt; &quot; hours&quot; &amp;lt;&amp;lt; std::endl &amp;lt;&amp;lt;
+	&quot;\t&quot; &amp;lt;&amp;lt; minutes.count() &amp;lt;&amp;lt; &quot; minutes&quot; &amp;lt;&amp;lt; std::endl &amp;lt;&amp;lt;
+	&quot;\t&quot; &amp;lt;&amp;lt; seconds.count() &amp;lt;&amp;lt; &quot; seconds.&quot; &amp;lt;&amp;lt; std::endl; &lt;/span&gt;
+
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;vec3-class&quot;&gt;&lt;a id=&quot;vec3-class&quot;&gt;&lt;/a&gt;Vec3 Class&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\vectors\vector.png&quot; alt=&quot;Vector&quot; /&gt;
+Vectors! I feel like I haven’t used these since high school math but they are &lt;strong&gt;lovely&lt;/strong&gt;. If you need or want a refresher on vectors, make sure to read &lt;a href=&quot;#vector-refresher&quot;&gt;this section&lt;/a&gt;. According to Peter Shirley, almost all graphics programs have some class(es) for storing geometric vectors and colors. In many cases, the vectors are four-dimensional to represent homogenous coordinates for geometry, or to represent the alpha transparency channel for color values. We’ll be using three-dimensional coordinates, as that’s all we need to represent direction, color, location, offset, etc.&lt;/p&gt;
+
+&lt;h3 id=&quot;vector-refresher&quot;&gt;&lt;a id=&quot;vector-refresher&quot;&gt;&lt;/a&gt;Vector Refresher&lt;/h3&gt;
+&lt;p&gt;Need a vector refresher? If so, check out &lt;a href=&quot;https://www.mathsisfun.com/algebra/vectors.html&quot;&gt;this rundown&lt;/a&gt; at mathisfun.com. It’s the best I’ve found.
+All the operations within the code above are covered the mathisfun post. Take particular note of &lt;a href=&quot;https://www.mathsisfun.com/algebra/vector-unit.html&quot;&gt;make_unit_vector()&lt;/a&gt;, &lt;a href=&quot;https://www.mathsisfun.com/algebra/vectors-dot-product.html&quot;&gt;dot()&lt;/a&gt;, and &lt;a href=&quot;https://www.mathsisfun.com/algebra/vectors-cross-product.html&quot;&gt;cross()&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Here are the constructors and declarations of the functions we’ll be using within &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vec3.h&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vec3.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef VEC3H
+#define VEC3H
+
+#include &amp;lt;math.h&amp;gt;
+#include &amp;lt;stdlib.h&amp;gt;
+#include &amp;lt;iostream&amp;gt;
+
+// 3 dimensional vectors will be used for colors, locations, directions, offsets, etc.
+class vec3 {
+public:
+	vec3() {}
+	vec3(double e0, double e1, double e2) { e[0] = e0; e[1] = e1; e[2] = e2; }
+
+	inline double x() const { return e[0]; }
+	inline double y() const { return e[1]; }
+	inline double z() const { return e[2]; }
+	inline double r() const { return e[0]; }
+	inline double g() const { return e[1]; }
+	inline double b() const { return e[2]; }
+
+	// return reference to current vec3 object
+	inline const vec3&amp;amp; operator+() const { return *this; }
+
+	// return opposite of vector when using '-'
+	inline vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
+
+	// return value or reference to value of vec3 at index i ( I believe)
+	inline double operator[](int i) const { return e[i]; }
+	inline double&amp;amp; operator[](int i) { return e[i]; };
+
+	inline vec3&amp;amp; operator+=(const vec3&amp;amp; v2);
+	inline vec3&amp;amp; operator-=(const vec3&amp;amp; v2);
+	inline vec3&amp;amp; operator*=(const vec3&amp;amp; v2);
+	inline vec3&amp;amp; operator/=(const vec3&amp;amp; v2);
+	inline vec3&amp;amp; operator*=(const double t);
+	inline vec3&amp;amp; operator/=(const double t);
+
+	inline double length() const {
+		return sqrt(e[0]*e[0] + e[1]*e[1] + e[2]*e[2]);
+	}
+	inline double squared_length() const {
+		return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
+	}
+	inline void make_unit_vector();
+
+	double e[3];
+};
+
+...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;vec3-definitions&quot;&gt;&lt;a id=&quot;vec3-definitions&quot;&gt;&lt;/a&gt;Vec3 Definitions&lt;/h3&gt;
+&lt;p&gt;The next step in our vector class is to define our functions. Be very careful here! This is where I had a few minor typo issues that mangled the final image later in the project. It’s not hard to see why; these are the lowest-level operations of vectors, which will simulate our light rays and their properties.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vec3.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;...
+
+// input output overloading
+inline std::istream&amp;amp; operator&amp;gt;&amp;gt;(std::istream&amp;amp; is, vec3&amp;amp; t) {
+	is &amp;gt;&amp;gt; t.e[0] &amp;gt;&amp;gt; t.e[1] &amp;gt;&amp;gt; t.e[2];
+	return is;
+}
+
+inline std::ostream&amp;amp; operator&amp;lt;&amp;lt;(std::ostream&amp;amp; os, const vec3&amp;amp; t) {
+	os &amp;lt;&amp;lt; t.e[0] &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; t.e[1] &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; t.e[2];
+	return os;
+}
+
+
+inline void vec3::make_unit_vector() {
+	double k = 1.0 / sqrt(e[0]*e[0] + e[1]*e[1] + e[2]*e[2]);
+	e[0] *= k;
+	e[1] *= k;
+	e[2] *= k;
+}
+
+inline vec3 operator+(const vec3&amp;amp; v1, const vec3&amp;amp; v2) {
+	return vec3(v1.e[0] + v2.e[0], v1.e[1] + v2.e[1], v1.e[2] + v2.e[2]);
+}
+
+inline vec3 operator-(const vec3&amp;amp; v1, const vec3&amp;amp; v2) {
+	return vec3(v1.e[0] - v2.e[0], v1.e[1] - v2.e[1], v1.e[2] - v2.e[2]);
+}
+
+inline vec3 operator*(const vec3&amp;amp; v1, const vec3&amp;amp; v2) {
+	return vec3(v1.e[0] * v2.e[0], v1.e[1] * v2.e[1], v1.e[2] * v2.e[2]);
+}
+
+inline vec3 operator/(const vec3&amp;amp; v1, const vec3&amp;amp; v2) {
+	return vec3(v1.e[0] / v2.e[0], v1.e[1] / v2.e[1], v1.e[2] / v2.e[2]);
+}
+
+inline vec3 operator*(double t, const vec3&amp;amp; v) {
+	return vec3(t * v.e[0], t * v.e[1], t * v.e[2]);
+}
+
+inline vec3 operator/(const vec3 v, double t) {
+	return vec3(v.e[0] / t, v.e[1] / t, v.e[2] / t);
+}
+
+inline vec3 operator*(const vec3&amp;amp; v, double t) {
+	return vec3(t * v.e[0], t * v.e[1], t * v.e[2]);
+}
+
+// Dot product
+inline double dot(const vec3&amp;amp; v1, const vec3&amp;amp; v2) {
+	return
+		v1.e[0] * v2.e[0]
+		+ v1.e[1] * v2.e[1]
+		+ v1.e[2] * v2.e[2];
+}
+
+// Cross product
+inline vec3 cross(const vec3&amp;amp; v1, const vec3&amp;amp; v2) {
+	return vec3(v1.e[1] * v2.e[2] - v1.e[2] * v2.e[1],
+				v1.e[2] * v2.e[0] - v1.e[0] * v2.e[2],
+				v1.e[0] * v2.e[1] - v1.e[1] * v2.e[0]);
+}
+
+inline vec3&amp;amp; vec3::operator+=(const vec3&amp;amp; v) {
+	e[0] += v.e[0];
+	e[1] += v.e[1];
+	e[2] += v.e[2];
+	return *this;
+}
+inline vec3&amp;amp; vec3::operator-=(const vec3&amp;amp; v) {
+	e[0] -= v.e[0];
+	e[1] -= v.e[1];
+	e[2] -= v.e[2];
+	return *this;
+}
+
+inline vec3&amp;amp; vec3::operator*=(const vec3&amp;amp; v) {
+	e[0] *= v.e[0];
+	e[1] *= v.e[1];
+	e[2] *= v.e[2];
+	return *this;
+}
+
+inline vec3&amp;amp; vec3::operator/=(const vec3&amp;amp; v) {
+	e[0] /= v.e[0];
+	e[1] /= v.e[1];
+	e[2] /= v.e[2];
+	return *this;
+}
+
+inline vec3&amp;amp; vec3::operator*=(const double t) {
+	e[0] *= t;
+	e[1] *= t;
+	e[2] *= t;
+	return *this;
+}
+
+inline vec3&amp;amp; vec3::operator/=(const double t) {
+	double k = 1.0 / t;
+
+	e[0] *= k;
+	e[1] *= k;
+	e[2] *= k;
+	return *this;
+}
+
+inline vec3 unit_vector(vec3 v) {
+	return v / v.length();
+}
+
+#endif // !VEC3H&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Make sure to include our new vec3.h in main.cpp.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#include &amp;lt;iostream&amp;gt;
+
+&lt;span class=&quot;highlight-green&quot;&gt;
+#include &quot;vec3.h&quot;
+&lt;/span&gt;
+
+int main() {
+	int nx = 200; // Number of horizontal pixels
+	int ny = 100; // Number of vertical pixels
+	std::cout &amp;lt;&amp;lt; &quot;P3\n&quot; &amp;lt;&amp;lt; nx &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ny &amp;lt;&amp;lt; &quot;\n255\n&quot;; // P3 signifies ASCII, 255 signifies max color value
+	for (int j = ny - 1; j &amp;gt;= 0; j--) { // Navigate canvas
+	    std::cerr &amp;lt;&amp;lt; &quot;\rScanlines remaining: &quot; &amp;lt;&amp;lt; j &amp;lt;&amp;lt; ' ' &amp;lt;&amp;lt; std::flush;
+		for (int i = 0; i &amp;lt; nx; i++) {
+			&lt;span class=&quot;highlight-green&quot;&gt;
+			vec3 col(float(i) / float(nx), float(j) / float(ny), 0.2);
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			&lt;/span&gt;
+			std::cout &amp;lt;&amp;lt; ir &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ig &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ib &amp;lt;&amp;lt; &quot;\n&quot;;
+		}
+	}
+    std::cerr &amp;lt;&amp;lt; &quot;\nDone.\n&quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;rays&quot;&gt;&lt;a id=&quot;rays&quot;&gt;&lt;/a&gt;Rays&lt;/h2&gt;
+&lt;p&gt;Ray tracers need rays! These are what will be colliding with objects in the scene. Rays have an origin, a direction, and can be described by the following formula:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;P&lt;/em&gt;&lt;/strong&gt;(&lt;em&gt;t&lt;/em&gt;) = &lt;strong&gt;&lt;em&gt;A&lt;/em&gt;&lt;/strong&gt; + &lt;em&gt;t&lt;/em&gt;&lt;strong&gt;&lt;em&gt;B&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;em&gt;p&lt;/em&gt;&lt;/strong&gt; is a point on the ray.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;em&gt;A&lt;/em&gt;&lt;/strong&gt; is the ray origin.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;em&gt;B&lt;/em&gt;&lt;/strong&gt; is the direction of the ray.&lt;/li&gt;
+  &lt;li&gt;The ray parameter &lt;em&gt;t&lt;/em&gt; is a real number (positive or negative) that moves &lt;strong&gt;&lt;em&gt;p&lt;/em&gt;&lt;/strong&gt;(t) along the ray.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.lerp.png&quot; alt=&quot;Our Ray (Illustration from Peter Shirley's book)&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here’s the header file for our ray class:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ray.h:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef RAYH
+#define RAYH
+#include &quot;Vec3.h&quot;
+
+class ray
+{
+public:
+	ray() {}
+	ray(const vec3&amp;amp; a, const vec3&amp;amp; b) { A = a; B = b; }
+	vec3 origin() const		{ return A; }
+	vec3 direction() const	{ return B; }
+	vec3 point_at_parameter(double t) const { return A + t * B; }
+
+	vec3 A;
+	vec3 B;
+};
+
+#endif // !RAYH&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;sending-rays-from-the-camera&quot;&gt;&lt;a id=&quot;sending-rays-from-the-camera&quot;&gt;&lt;/a&gt;Sending Rays from the Camera&lt;/h3&gt;
+&lt;p&gt;Put simply, our ray tracer will send rays through pixels and compute the color seen for each ray. The steps for doing so are as follows:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Calculate the ray from camera to pixel.&lt;/li&gt;
+  &lt;li&gt;Determine which objects the ray intersects.&lt;/li&gt;
+  &lt;li&gt;Compute a color for the intersection.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;We will need a “viewport” of sorts to pass rays through from our “camera.” Since we’re using standard square pixel spacing, the viewport will have the same aspect ratio as our rendered image. Shirley sets the height of the viewport to two units in his book, and we’ll do the same.&lt;/p&gt;
+
+&lt;p&gt;Using Peter Shirley’s example, we’re going to set the camera at (0,0,0), and look towards the negative z-axis. The viewport will be traversed with rays from left-to-right, bottom-to-top. Variables u and v will be the offset vectors used to move the camera ray along the viewport:
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.cam-geom.png&quot; alt=&quot;Camera Geometry (Illustration from Peter Shirley's book)&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here’s our code for the camera, as well as rendering a blue-to-white gradient:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#include &amp;lt;iostream&amp;gt;
+#include &quot;ray.h&quot;
+
+/*
+* Linearly blends white and blue depending on the value of y coordinate (Linear Blend/Linear Interpolation/lerp).
+* Lerps are always of the form: blended_value = (1-t)*start_value + t*end_value.
+* t = 0.0 = White
+* t = 1.0 = Blue
+*/
+vec3 color(const ray&amp;amp; r) {
+	vec3 unit_direction = unit_vector(r.direction());
+	double t = 0.5 * (unit_direction.y() + 1.0);
+	return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+
+}
+
+int main() {
+	int nx = 200; // Number of horizontal pixels
+	int ny = 100; // Number of vertical pixels
+	std::cout &amp;lt;&amp;lt; &quot;P3\n&quot; &amp;lt;&amp;lt; nx &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ny &amp;lt;&amp;lt; &quot;\n255\n&quot;; // P3 signifies ASCII, 255 signifies max color value
+
+	// The values below are derived from making the &quot;camera&quot;/ray origin coordinates (0, 0, 0) relative to the canvas.
+	vec3 lower_left_corner(-2.0, -1.0, -1.0);
+	vec3 horizontal(4.0, 0.0, 0.0);
+	vec3 vertical(0.0, 2.0, 0.0);
+	vec3 origin(0.0, 0.0, 0.0);
+	for (int j = ny - 1; j &amp;gt;= 0; j--) {
+		std::cerr &amp;lt;&amp;lt; &quot;\rScanlines remaining: &quot; &amp;lt;&amp;lt; j &amp;lt;&amp;lt; ' ' &amp;lt;&amp;lt; std::flush;
+		for (int i = 0; i &amp;lt; nx; i++) {
+			double u = double(i) / double(nx);
+			double v = double(j) / double(ny);
+
+			// Approximate pixel centers on the canvas for each ray r
+			ray r(origin, lower_left_corner + u * horizontal + v * vertical);
+
+			vec3 col = color(r);
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			std::cout &amp;lt;&amp;lt; ir &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ig &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ib &amp;lt;&amp;lt; &quot;\n&quot;;
+		}
+	}
+	std::cerr &amp;lt;&amp;lt; &quot;\nDone.\n&quot;;
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The result:
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\gradient.png&quot; alt=&quot;Linear Gradient&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We can move the camera code into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;camera.h&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;camera.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;
+#ifndef CAMERAH
+#define CAMERAH
+
+#include &quot;ray.h&quot;
+
+class camera {
+public:
+
+	// The values below are derived from making the &quot;camera&quot; / ray origin coordinates(0, 0, 0) relative to the canvas.
+	camera() {
+		lower_left_corner = vec3(-2.0, -1.0, -1.0);
+		horizontal = vec3(4.0, 0.0, 0.0);
+		vertical = vec3(0.0, 2.0, 0.0);
+		origin = vec3(0.0, 0.0, 0.0);
+	}
+	ray get_ray(double u, double v) { return ray(origin, lower_left_corner + u * horizontal + v * vertical - origin); }
+
+	vec3 origin;
+	vec3 lower_left_corner;
+	vec3 horizontal;
+	vec3 vertical;
+};
+
+#endif // !CAMERAH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;introducing-spheres&quot;&gt;&lt;a id=&quot;introducing-spheres&quot;&gt;&lt;/a&gt;Introducing Spheres&lt;/h2&gt;
+&lt;h3 id=&quot;describing-a-sphere&quot;&gt;&lt;a id=&quot;describing-a-sphere&quot;&gt;&lt;/a&gt;Describing a Sphere&lt;/h3&gt;
+&lt;p&gt;We have a beautiful sky-like gradient. Let’s add a sphere! Spheres are popular in ray tracers because they’re mathematically simple.&lt;/p&gt;
+
+&lt;p&gt;A sphere centered at the origin of radius $R$ is $x^2 + y^2 + z^2 = R^2$.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;This means that if a point $(x,y,z)$ is on a sphere, $x^2 + y^2 + z^2 = R^2$.&lt;/li&gt;
+  &lt;li&gt;If the point is inside the sphere, $x^2 + y^2 + z^2 &amp;lt; R^2$.&lt;/li&gt;
+  &lt;li&gt;If the point is outside the sphere, $x^2 + y^2 + z^2 &amp;gt; R^2$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If the sphere center isn’t at the origin, the formula is:&lt;/p&gt;
+
+\[(x - C_x)^2 + (y - C_y)^2 + (z - C_z)^2 = r^2\]
+
+&lt;p&gt;It’s best if formulas are kept under the hood in the vec3 class.&lt;/p&gt;
+
+&lt;p&gt;The vector from center $\mathbf{C} = (C_x,C_y,C_z)$ to point $\mathbf{P} = (x,y,z)$ is $(\mathbf{P} - \mathbf{C})$, and therefore&lt;/p&gt;
+
+\[(\mathbf{P} - \mathbf{C}) \cdot (\mathbf{P} - \mathbf{C}) = (x - C_x)^2 + (y - C_y)^2 + (z - C_z)^2\]
+
+&lt;p&gt;Therefore, the equation of a sphere in vector form is:&lt;/p&gt;
+
+\[(\mathbf{P} - \mathbf{C}) \cdot (\mathbf{P} - \mathbf{C}) = r^2\]
+
+&lt;p&gt;Any point $\mathbf{P}$ that satisfies this equation is on the sphere.
+We’re going to find out if a given ray &lt;em&gt;ever&lt;/em&gt; hits the sphere. If it does, there is a value &lt;em&gt;t&lt;/em&gt; for which P(t) satisfies this equation:&lt;/p&gt;
+
+\[(\mathbf{P}(t) - \mathbf{C}) \cdot (\mathbf{P}(t) - \mathbf{C}) = r^2\]
+
+&lt;p&gt;The same formula, expanded:&lt;/p&gt;
+
+\[(\mathbf{A} + t \mathbf{b} - \mathbf{C}) \cdot (\mathbf{A} + t \mathbf{b} - \mathbf{C}) = r^2\]
+
+&lt;p&gt;and again:&lt;/p&gt;
+
+\[t^2 \mathbf{b} \cdot \mathbf{b} + 2t \mathbf{b} \cdot (\mathbf{A}-\mathbf{C}) + (\mathbf{A}-\mathbf{C}) \cdot (\mathbf{A}-\mathbf{C}) - r^2 = 0\]
+
+&lt;p&gt;The unknown variable is &lt;em&gt;t&lt;/em&gt;, and this is a quadratic equation. Solving for &lt;em&gt;t&lt;/em&gt; will lead to a square root operation (aka the discriminant) that is either positive (two real solutions), negative (no real solutions), or zero (one real solution):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.ray-sphere.png&quot; alt=&quot;Ray-Sphere Intersections(Illustration from Peter Shirley's book)&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;placing-a-sphere&quot;&gt;&lt;a id=&quot;placing-a-sphere&quot;&gt;&lt;/a&gt;Placing a Sphere&lt;/h3&gt;
+
+&lt;p&gt;Prepend &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp&lt;/code&gt;’s main function with the following to mathematically hard-code a sphere to be hit by rays:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;...
+
+bool hit_sphere(const vec3&amp;amp; center, double radius, const ray&amp;amp; r) {
+	vec3 oc = r.origin() - center;
+	double a = dot(r.direction(), r.direction());
+	double b = 2.0 * dot(oc, r.direction());
+	double c = dot(oc, oc) - radius * radius;
+	double discriminant = b*b - 4*a*c;
+	return (discriminant &amp;gt; 0);
+}
+
+/*
+* Linearly blends white and blue depending on the value of y coordinate (Linear Blend/Linear Interpolation/lerp).
+* Lerps are always of the form: blended_value = (1-t)*start_value + t*end_value.
+* t = 0.0 = White
+* t = 1.0 = Blue
+*/
+vec3 color(const ray&amp;amp; r) {
+	if (hit_sphere(vec3(0, 0, -1), 0.5, r))
+		return vec3(1, 0, 0);
+	vec3 unit_direction = unit_vector(r.direction());
+	double t = 0.5 * (unit_direction.y() + 1.0);
+	return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+}
+
+...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The result:
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\red-sphere.png&quot; alt=&quot;Ray traced sphere&quot; /&gt;&lt;/p&gt;
+
+&lt;!-- Be aware that if the sphere center is change to z= +1, we'll still see the same image. We should not be seeing objects behind us. This will be fixed in the next section. --&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;surface-normals&quot;&gt;&lt;a id=&quot;surface-normals&quot;&gt;&lt;/a&gt;Surface Normals&lt;/h2&gt;
+
+&lt;p&gt;Our sphere looks like a circle. To make it more obvious that it &lt;em&gt;is&lt;/em&gt; a sphere, we’ll add surface normals to the face. Surface normals are simply vectors that are perpendicular to the surface of an object.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\Normal_vectors_on_a_curved_surface.svg&quot; alt=&quot;Surface Normal&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In our case, the outward normal is the hitpoint minus the center:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.sphere-normal.png&quot; alt=&quot;Surface Normal(from Shirley's book)&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Since we don’t have any lights, we can visualize the normals with a color map.&lt;/p&gt;
+
+&lt;p&gt;Our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp&lt;/code&gt; file will now look something like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#include &amp;lt;iostream&amp;gt;
+#include &quot;ray.h&quot;
+
+double hit_sphere(const vec3&amp;amp; center, double radius, const ray&amp;amp; r) {
+	vec3 oc = r.origin() - center;
+	double a = dot(r.direction(), r.direction());
+	double b = 2.0 * dot(oc, r.direction());
+	double c = dot(oc, oc) - radius * radius;
+	double discriminant = (b*b) - (4*a*c);
+	if (discriminant &amp;lt; 0) {
+		return -1.0;
+	}
+
+&lt;span class=&quot;highlight-green&quot;&gt;
+	else {
+		return (-b - sqrt(discriminant)) / (2.0 * a);
+&lt;/span&gt;}
+}
+
+/*
+* Assign colors to pixels
+*
+* Background -
+* Linearly blends white and blue depending on the value of y coordinate (Linear Blend/Linear Interpolation/lerp).
+* Lerps are always of the form: blended_value = (1-t)*start_value + t*end_value.
+* t = 0.0 = White
+* t = 1.0 = Blue
+* 
+* Draw sphere and surface normals
+*/
+vec3 color(const ray&amp;amp; r) {
+	double t = hit_sphere(vec3(0, 0, -1), 0.5, r); // does the ray hit the values of a sphere placed at (0,0,-1) with a radius of .5?
+	if (t &amp;gt; 0.0) { // sphere hit
+		vec3 N = unit_vector(r.point_at_parameter(t) - vec3(0, 0, -1)); // N (the normal) is calculated
+		return 0.5 * (vec3(N.x() + 1, N.y() + 1, N.z() + 1)); // RGB values assigned based on xyz values
+	}
+	vec3 unit_direction = unit_vector(r.direction());
+	t = 0.5 * (unit_direction.y() + 1.0);
+	return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+
+}
+
+...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Our resulting image:
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\surface-normals-render.png&quot; alt=&quot;Sphere with Normals&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;simplifying-ray-sphere-intersection&quot;&gt;&lt;a id=&quot;simplifying-ray-sphere-intersection&quot;&gt;&lt;/a&gt;Simplifying Ray-Sphere Intersection&lt;/h3&gt;
+
+&lt;p&gt;As it turns out, we can simplify ray-sphere intersection. Here’s our original equation:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;
+vec3 oc = r.origin() - center;
+auto a = dot(r.direction(), r.direction());
+auto b = 2.0 * dot(oc, r.direction());
+auto c = dot(oc, oc) - radius*radius;
+auto discriminant = b*b - 4*a*c;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The dot product of a vector with itself is equal to the squared length of that vector.&lt;/p&gt;
+
+&lt;p&gt;Additionally, the equation for b has a factor of two in it. Consider the quadratic equation if b = 2h:&lt;/p&gt;
+
+\[\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}\]
+
+\[= \frac{-2h \pm \sqrt{(2h)^2 - 4ac}}{2a}\]
+
+\[= \frac{-2h \pm 2\sqrt{h^2 - ac}}{2a}\]
+
+\[= \frac{-h \pm \sqrt{h^2 - ac}}{a}\]
+
+&lt;p&gt;As such, we can refactor our code like so:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;vec3 oc = r.origin() - center;
+auto a = r.direction().length_squared();
+auto half_b = dot(oc, r.direction());
+auto c = oc.length_squared() - radius*radius;
+auto discriminant = half_b*half_b - a*c;
+
+if (discriminant &amp;lt; 0) {
+    return -1.0;
+} else {
+    return (-half_b - sqrt(discriminant) ) / a;
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Cool! But it could be cooler. We need more spheres. The cleanest way to accomplish this is to create an abstract class - a class that must be overwritten by derived classes - of hittable objects.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;multiple-spheres-with-the-hittable-class&quot;&gt;&lt;a id=&quot;multiple-spheres&quot;&gt;&lt;/a&gt;Multiple Spheres with the Hittable Class&lt;/h2&gt;
+
+&lt;p&gt;Our hittable abstract class will have a “hit” function that will be passed a ray and a record containing information about the hit, such as the time(which will be added with motion blur later in this series), position, and the surface normal:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hittable.h:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef HITTABLEH
+#define HITTABLEH
+
+#include &quot;ray.h&quot;
+
+
+struct hit_record {
+	double t;
+	vec3 p;
+	vec3 normal;
+};
+
+/* 
+* A class for objects rays can hit.
+*/
+class hittable {
+public:
+	virtual bool hit(const ray&amp;amp; r, double t_min, double t_max, hit_record&amp;amp; rec) const = 0;
+};
+
+#endif // !HITTABLEH&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;front-faces-versus-back-faces&quot;&gt;&lt;a id=&quot;front-faces-versus-back-faces&quot;&gt;&lt;/a&gt;Front Faces Versus Back Faces&lt;/h2&gt;
+&lt;p&gt;A question we have to ask ourselves about our normals is whether they should always point outward. Right now, the normal will always be in the &lt;em&gt;direction of the center to the intersection point&lt;/em&gt; - outward. So if the ray intersects from the outside, the normal is against the ray. If the ray intersects from the inside (like in a glass ball), the normal would be pointing in the same direction of the ray. The alternative option is to have the normal always point against the ray.&lt;/p&gt;
+
+&lt;p&gt;If we decide to always have the normal point outward, we need to determine what side the ray is on when we color it. If they face the same direction, the ray is inside the object traveling outward. If they’re opposite, the ray is outside traveling inward. We can determine this by taking the dot product of the ray and the normal - if the dot is positive, the ray is inside traveling outward.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;if (dot(ray_direction, outward_normal) &amp;gt; 0.0) {
+    // ray is inside the sphere
+    ...
+} else {
+    // ray is outside the sphere
+    ...
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Suppose we take the other option: always having the normals point against the ray. We would have to store what side of the surface the ray is on:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;bool front_face;
+if (dot(ray_direction, outward_normal) &amp;gt; 0.0) {
+    // ray is inside the sphere
+    normal = -outward_normal;
+    front_face = false;
+}
+else {
+    // ray is outside the sphere
+    normal = outward_normal;
+    front_face = true;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can choose whichever method you please, but Shirley’s book recommends the “outward” boolean method, as we will have more material types than geometric types for the time being.&lt;/p&gt;
+
+&lt;p&gt;Following the suggestion of Shirley, we’ll add a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;front_face&lt;/code&gt; boolean to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hittable.h&lt;/code&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hit_record&lt;/code&gt; struct, as well as a function to solve the calculation:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hittable.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef HITTABLEH
+#define HITTABLEH
+
+#include &quot;ray.h&quot;
+
+
+struct hit_record {
+	double t; // parameter of the ray that locates the intersection point
+	vec3 p; // intersection point
+	vec3 normal;
+	&lt;span class=&quot;highlight-green&quot;&gt;bool front_face;
+	
+	inline void set_face_normal(const ray&amp;amp; r, const vec3&amp;amp; outward_normal) {
+    		front_face = dot(r.direction(), outward_normal) &amp;lt; 0;
+    		normal = front_face ? outward_normal :-outward_normal;
+	} &lt;/span&gt;
+};
+
+class hittable {
+public: 
+	virtual bool hit(const ray&amp;amp; r, double t_min, double t_max, hit_record&amp;amp; rec) const = 0;
+};
+
+#endif // !HITTABLEH&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And now to update our sphere header with the simplified ray intersection and the outward normal calculations):&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sphere.h:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef SPHEREH
+#define SPHEREH
+
+#include &quot;hittable.h&quot;
+
+class sphere : public hittable {
+public:
+	sphere() {}
+	sphere(vec3 cen, float r) : center(cen), radius(r) {};
+	virtual bool hit(const ray&amp;amp; r, double tmin, double tmax, hit_record&amp;amp; rec) const;
+	vec3 center;
+	double radius;
+};
+
+bool sphere::hit(const ray&amp;amp; r, double t_min, double t_max, hit_record&amp;amp; rec) const {
+	vec3 oc = r.origin() - center; // Vector from center to ray origin
+	double a = r.direction().length_squared();
+	double halfB = dot(oc, r.direction());
+	double c = oc.length_squared() - radius*radius;
+	double discriminant = (halfB * halfB) - (a * c);
+	if (discriminant &amp;gt; 0.0) {
+        auto root = sqrt(discriminant);
+
+		auto temp = (-halfB - root)/a;
+
+		if (temp &amp;lt; t_max &amp;amp;&amp;amp; temp &amp;gt; t_min) {
+			rec.t = temp;
+			rec.p = r.point_at_parameter(rec.t);
+&lt;span class=&quot;highlight-green&quot;&gt;vec3 outward_normal = (rec.p - center) / radius;
+            rec.set_face_normal(r, outward_normal);&lt;/span&gt;
+			return true;
+		}
+		temp = (-halfB + root / a;
+		if (temp &amp;lt; t_max &amp;amp;&amp;amp; temp &amp;gt; t_min) {
+			rec.t = temp;
+			rec.p = r.point_at_parameter(rec.t);
+&lt;span class=&quot;highlight-green&quot;&gt;vec3 outward_normal = (rec.p - center) / radius;
+            rec.set_face_normal(r, outward_normal);&lt;/span&gt;
+			return true;
+		}
+	}
+	return false;
+}
+
+#endif // !SPHEREH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As well as a new file for a list of hittable objects:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hittableList.h:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef HITTABLELISTH
+#define HITTABLELISTH
+
+#include &quot;hittable.h&quot;
+
+class hittable_list : public hittable {
+public:
+	hittable_list() {}
+	hittable_list(hittable** l, int n) { list = l; list_size = n; }
+	virtual bool hit(const ray&amp;amp; r, double tmin, double tmax, hit_record&amp;amp; rec) const;
+	hittable** list;
+	int list_size;
+};
+
+bool hittable_list::hit(const ray&amp;amp; r, double t_min, double t_max, hit_record&amp;amp; rec) const {
+	hit_record temp_rec;
+	bool hit_anything = false;
+	double closest_so_far = t_max;
+	for (int i = 0; i &amp;lt; list_size; i++) {
+		if (list[i]-&amp;gt;hit(r, t_min, closest_so_far, temp_rec)) {
+			hit_anything = true;
+			closest_so_far = temp_rec.t;
+			rec = temp_rec;
+		}
+	}
+	return hit_anything;
+}
+
+#endif // !HITTABLELISTH&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And the modified &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#include &amp;lt;iostream&amp;gt;
+#include &quot;sphere.h&quot;
+#include &quot;hittableList.h&quot;
+#include &quot;float.h&quot;
+
+
+/*
+* Assign colors to pixels
+*
+* Background -
+* Linearly blends white and blue depending on the value of y coordinate (Linear Blend/Linear Interpolation/lerp).
+* Lerps are always of the form: blended_value = (1-t)*start_value + t*end_value.
+* t = 0.0 = White
+* t = 1.0 = Blue
+* 
+* Draw sphere and surface normals
+*/
+vec3 color(const ray&amp;amp; r, hittable * world) {
+	hit_record rec;
+	if (world-&amp;gt;hit(r, 0.0, DBL_MAX, rec)) {
+		return 0.5 * vec3(rec.normal.x() + 1, rec.normal.y() + 1, rec.normal.z() + 1); // return a vector with values between 0 and 1 (based on xyz) to be converted to rgb values
+	}
+	else { // background
+		vec3 unit_direction = unit_vector(r.direction());
+		double t = 0.5 * (unit_direction.y() + 1.0);
+		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	}
+}
+
+int main() {
+	int nx = 200; // Number of horizontal pixels
+	int ny = 100; // Number of vertical pixels
+	std::cout &amp;lt;&amp;lt; &quot;P3\n&quot; &amp;lt;&amp;lt; nx &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ny &amp;lt;&amp;lt; &quot;\n255\n&quot;; // P3 signifies ASCII, 255 signifies max color value
+
+	// The values below are derived from making the &quot;camera&quot;/ray origin coordinates (0, 0, 0) relative to the canvas. 
+	// See the included file &quot;TracingIllustration.png&quot; for a visual representation.
+	vec3 lower_left_corner(-2.0, -1.0, -1.0);
+	vec3 horizontal(4.0, 0.0, 0.0);
+	vec3 vertical(0.0, 2.0, 0.0);
+	vec3 origin(0.0, 0.0, 0.0);
+
+	// Create spheres
+	hittable *list[2];
+	list[0] = new sphere(vec3(0, 0, -1), 0.5);
+	list[1] = new sphere(vec3(0, -100.5, -1), 100);
+	hittable* world = new hittable_list(list, 2);
+
+	for (int j = ny - 1; j &amp;gt;= 0; j--) { // Navigate canvas
+	    std::cerr &amp;lt;&amp;lt; &quot;\rScanlines remaining: &quot; &amp;lt;&amp;lt; j &amp;lt;&amp;lt; ' ' &amp;lt;&amp;lt; std::flush;
+		for (int i = 0; i &amp;lt; nx; i++) {
+			double u = double(i) / double(nx);
+			double v = double(j) / double(ny);
+
+			// Approximate pixel centers on the canvas for each ray r
+			ray r(origin, lower_left_corner + u * horizontal + v * vertical);
+
+			vec3 p = r.point_at_parameter(2.0);
+			vec3 col = color(r, world);
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			std::cout &amp;lt;&amp;lt; ir &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ig &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ib &amp;lt;&amp;lt; &quot;\n&quot;;
+		}
+	}
+	std::cerr &amp;lt;&amp;lt; &quot;\nDone.\n&quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The result:
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables.png&quot; alt=&quot;Sphere hittables&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Stunning. A little bit jaggedy, though, don’t you think? This effect is known as “aliasing.” If you wanted to, you could increase the resolution of our scene for higher fidelity. Another interesting method for better image quality falls under the umbrella term “anti-aliasing.”&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;anti-aliasing&quot;&gt;&lt;a id=&quot;anti-aliasing&quot;&gt;&lt;/a&gt;Anti-Aliasing&lt;/h2&gt;
+&lt;p&gt;Anti-aliasing encompasses a whole slew of methods to combat “jaggies” - from multi-sampling to super-sampling, approximation(FXAA) to temporal, or - more recently - deep learning anti-aliasing. Each of these methods has pros and cons depending on the type of scene portrayed, performance targets, and even scene movement. Usually, there’s a trade-off between image quality and speed. We’ve entered a fascinating time for graphics where raw pixel count (True 4K this! Real 4K that!) is becoming less important - thanks to some incredible leaps in upscaling and anti-aliasing.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\anti-aliasing.png&quot; alt=&quot;Small sample of anti-aliasing methods&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you want to learn more, I highly suggest watching &lt;a href=&quot;https://www.youtube.com/watch?v=NbrA4Nxd8Vo&quot;&gt;this video&lt;/a&gt; from one of my favorite YouTube channels(&lt;a href=&quot;https://www.youtube.com/user/DigitalFoundry&quot;&gt;Digital Foundry&lt;/a&gt;), or reading &lt;a href=&quot;https://techguided.com/what-is-anti-aliasing/&quot;&gt;this blog post&lt;/a&gt; from techguided.com.&lt;/p&gt;
+
+&lt;p&gt;We’re going to be using multisample anti-aliasing (MSAA) in our ray tracer. As you may have supposed, multisampling, in this case, means taking multiple sub-pixel samples from each pixel and averaging the color across the whole pixel. Here’s an example - the raw triangle on the left, and the triangle with four samples per pixel on the right:&lt;/p&gt;
+
+&lt;div class=&quot;captioned-image&quot;&gt;
+&lt;span class=&quot;row&quot;&gt;
+![No MSAA](\assets\images\blog-images\path-tracer\the-first-weekend\no-msaa.png)
+![MSAA 4x](\assets\images\blog-images\path-tracer\the-first-weekend\msaa.png)
+&lt;/span&gt;
+[Source](https://developer.apple.com/documentation/metal/gpu_features/understanding_gpu_family_4/about_enhanced_msaa_and_imageblock_sample_coverage_control)
+&lt;/div&gt;
+
+&lt;p&gt;Instead of taking perfectly spaced samples of pixels like in the example above, we’ll be taking random samples of pixels. For that, we’ll need a way of generating random numbers (you can do it however you please):&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random.h:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef RANDOMH
+#define RANDOMH
+
+#include &amp;lt;cstdlib&amp;gt;
+
+inline double random_double() {
+    // Returns a random real in [0,1).
+    return rand() / (RAND_MAX + 1.0);
+}
+
+inline double random_double(double min, double max) {
+    // Returns a random real in [min,max).
+    return min + (max-min)*random_double();
+}
+
+#endif // !RANDOMH&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;adding-anti-aliasing-to-the-camera&quot;&gt;&lt;a id=&quot;adding-anti-aliasing-to-the-camera&quot;&gt;&lt;/a&gt;Adding Anti-Aliasing to the Camera&lt;/h3&gt;
+
+&lt;p&gt;Next, we’ll create a camera class to manage the virtual camera and scene sampling:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef CAMERAH
+#define CAMERAH
+
+#include &quot;ray.h&quot;
+
+class camera {
+public:
+
+	// The values below are derived from making the &quot;camera&quot; / ray origin coordinates(0, 0, 0) relative to the canvas.
+	camera() {
+		lower_left_corner = vec3(-2.0, -1.0, -1.0);
+		horizontal = vec3(4.0, 0.0, 0.0);
+		vertical = vec3(0.0, 2.0, 0.0);
+		origin = vec3(0.0, 0.0, 0.0);
+	}
+	ray get_ray(double u, double v) { return ray(origin, lower_left_corner + u * horizontal + v * vertical - origin); }
+
+	vec3 origin;
+	vec3 lower_left_corner;
+	vec3 horizontal;
+	vec3 vertical;
+};
+
+#endif // !CAMERAH&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And our resulting main method:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#include &amp;lt;iostream&amp;gt;
+#include &quot;sphere.h&quot;
+#include &quot;hittableList.h&quot;
+#include &quot;camera.h&quot;
+#include &quot;random.h&quot;
+
+
+/*
+* Assign colors to pixels
+*
+* Background -
+* Linearly blends white and blue depending on the value of y coordinate (Linear Blend/Linear Interpolation/lerp).
+* Lerps are always of the form: blended_value = (1-t)*start_value + t*end_value.
+* t = 0.0 = White
+* t = 1.0 = Blue
+* 
+*/
+vec3 color(const ray&amp;amp; r, hittable * world) {
+	hit_record rec;
+	if (world-&amp;gt;hit(r, 0.0, DBL, rec)) {
+		return 0.5 * vec3(rec.normal.x() + 1, rec.normal.y() + 1, rec.normal.z() + 1); // return a vector with values between 0 and 1 (based on xyz) to be converted to rgb values
+	}
+	else { // background
+		vec3 unit_direction = unit_vector(r.direction());
+		double t = 0.5 * (unit_direction.y() + 1.0);
+		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	}
+}
+
+int main() {
+
+	int nx = 200; // Number of horizontal pixels
+	int ny = 100; // Number of vertical pixels
+	int ns = 100; // Number of samples for each pixel for anti-aliasing
+	std::cout &amp;lt;&amp;lt; &quot;P3\n&quot; &amp;lt;&amp;lt; nx &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ny &amp;lt;&amp;lt; &quot;\n255\n&quot;; // P3 signifies ASCII, 255 signifies max color value
+
+	// Create spheres
+	hittable *list[2];
+	list[0] = new sphere(vec3(0, 0, -1), 0.5);
+	list[1] = new sphere(vec3(0, -100.5, -1), 100);
+	hittable* world = new hittable_list(list, 2);
+	camera cam;
+
+	for (int j = ny - 1; j &amp;gt;= 0; j--) { // Navigate canvas
+	    std::cerr &amp;lt;&amp;lt; &quot;\rScanlines remaining: &quot; &amp;lt;&amp;lt; j &amp;lt;&amp;lt; ' ' &amp;lt;&amp;lt; std::flush;
+		for (int i = 0; i &amp;lt; nx; i++) {
+			vec3 col(0, 0, 0);
+			for (int s = 0; s &amp;lt; ns; s++) { // Anti-aliasing - get ns samples for each pixel
+				double u = (i + random_double(0.0, 1)) / double(nx);
+				double v = (j + random_double(0.0, 1)) / double(ny);
+				ray r = cam.get_ray(u, v);
+				vec3 p = r.point_at_parameter(2.0);
+				col += color(r, world);
+			}
+
+			col /= double(ns); // Average the color between objects/background
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			std::cout &amp;lt;&amp;lt; ir &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ig &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ib &amp;lt;&amp;lt; &quot;\n&quot;;
+		}
+	}
+    std::cerr &amp;lt;&amp;lt; &quot;\nDone.\n&quot;;
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Keep in mind - these images are only 200x100.
+The difference is clear. And blurry. Haha:&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;row&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables.png&quot; alt=&quot;Sphere hittables&quot; /&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables-msaa.png&quot; alt=&quot;Sphere hittables&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables-zoom.png&quot; alt=&quot;Sphere hittables&quot; /&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables-msaa-zoom.png&quot; alt=&quot;Sphere hittables&quot; /&gt;
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;diffuse-materials&quot;&gt;&lt;a id=&quot;diffuse-materials&quot;&gt;&lt;/a&gt;Diffuse Materials&lt;/h2&gt;
+
+&lt;p&gt;Our ball is pretty, but lacks texture. Let’s add diffuse materials!&lt;/p&gt;
+
+&lt;p&gt;Diffuse materials reflect light from their surface such that an incident ray is scattered ay many angles, rather than just one (which is the case with specular reflection):&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\diffuse.png&quot; alt=&quot;Diffuse reflection&quot; /&gt;
+&lt;em&gt;An example of light reflecting off of a diffuse surface (&lt;a href=&quot;https://en.wikipedia.org/wiki/Diffuse_reflection&quot;&gt;source&lt;/a&gt;)&lt;/em&gt;
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;From Wikipedia:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;The visibility of objects, excluding light-emitting ones, is primarily caused by diffuse reflection of light: it is diffusely-scattered light that forms the image of the object in the observer’s eye.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Diffuse materials also modulate the color of their surroundings with their intrinsic color. In our ray tracer, we’re going to simulate diffuse materials by randomizing ray reflections upon hitting a diffuse object. For example, if we were to shoot three rays into the space between two diffuse surfaces, we might see a result like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\shirley\diffuse.png&quot; alt=&quot;Diffuse reflection&quot; /&gt;
+&lt;em&gt;How rays might behave in our ray tracer upon hitting a diffuse surface (&lt;a href=&quot;https://raytracing.github.io/books/RayTracingInOneWeekend.html&quot;&gt;source&lt;/a&gt;)&lt;/em&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;In addition to being reflected, some rays could also be absorbed. Naturally, the darker the surface of a given object, the more likely absorption will take place… which is why that object looks dark. Take Vantablack, one of the darkest substances known. It’s made up of carbon nanotubes, and is essentially a very fine shag carpet. Light gets lost (or diffused) within this forest of tubes to create a pretty striking diffuse material:&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;row&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\vantablack-zoom.png&quot; alt=&quot;Vantablack&quot; /&gt;
+&lt;!-- *[source](https://en.wikipedia.org/wiki/Vantablack)* --&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\vantablack.png&quot; alt=&quot;Vantablack&quot; /&gt;
+&lt;!-- *[source](https://www.techbriefs.com/component/content/article/tb/supplements/pit/features/applications/27558)* --&gt;
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;When I was originally reading Peter Shirley’s guide, he described an incorrect (but close) approximation of ideal Lambertian reflectance(think unfinished wood or charcoal - no shiny specular highlights). We’ll go through how I originally did it, and then modify the code to make matte surfaces more true-to-life, thanks to an update to his book.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-math-of-diffuse-materials&quot;&gt;&lt;a id=&quot;the-math-of-diffuse-materials&quot;&gt;&lt;/a&gt;The Math of Diffuse Materials&lt;/h3&gt;
+
+&lt;p&gt;First of all, we need to form a unit sphere tangent to the hitpoint &lt;strong&gt;p&lt;/strong&gt; on the scene object. The center of this sphere will be the coordinates at the end of the surface normal &lt;strong&gt;n&lt;/strong&gt;. Be aware that there are two spheres tangential to the collided sphere - one inside the object(&lt;strong&gt;p&lt;/strong&gt; - &lt;strong&gt;n&lt;/strong&gt;), and one outside(&lt;strong&gt;p&lt;/strong&gt; + &lt;strong&gt;n&lt;/strong&gt;). we’ll pick the tangent sphere that’s on the same side of the surface as the ray origin. Next, we’ll select a random point &lt;strong&gt;s&lt;/strong&gt; in the tangent unit sphere and send a ray from the hit point &lt;strong&gt;p&lt;/strong&gt; to the random point &lt;strong&gt;s&lt;/strong&gt; - which results in the vector &lt;strong&gt;s&lt;/strong&gt; - &lt;strong&gt;p&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\shirley\ray-tracing-diffuse.png&quot; alt=&quot;Diffuse material illustration&quot; /&gt;
+&lt;em&gt;Generation of random diffuse bounce ray (&lt;a href=&quot;https://raytracing.github.io/books/RayTracingInOneWeekend.html&quot;&gt;source&lt;/a&gt;)&lt;/em&gt;
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Now we need a way to pick the aforementioned random point &lt;strong&gt;s&lt;/strong&gt;. Following Shirley’s lead, we’ll use a rejection method; picking a random point in the unit cube where x, y, and z all range from -1 to 1. If the point is outside the sphere (x&lt;sup&gt;2&lt;/sup&gt; + y&lt;sup&gt;2&lt;/sup&gt; + z&lt;sup&gt;2&lt;/sup&gt; &amp;gt; 1), we reject it and try again:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vec3.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;vec3 random_unit_sphere_coordinate() {
+	vec3 p;
+	do {
+		p = 2.0 * vec3(random_double(0, 1), random_double(0, 1), random_double(0, 1)) - vec3(1, 1, 1);
+	} while (p.squared_length() &amp;gt;= 1.0);
+	return p;
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we have to update our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;color&lt;/code&gt; function to use the random coordinates:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;vec3 color(const ray&amp;amp; r, hittable * world) {
+	hit_record rec;
+	// Light that reflects off a diffuse surface has its direction randomized.
+	// Light may also be absorbed.
+	if (world-&amp;gt;hit(r, 0.0, DBL_MAX, rec)) {
+		&lt;span class=&quot;highlight-green&quot;&gt;
+		vec3 target = rec.p + rec.normal + random_unit_sphere_coordinate(); 
+		return 0.5 * color(ray(rec.p, target - rec.p), world); // light is absorbed continually by the sphere or reflected into the world.
+		&lt;/span&gt;
+	}
+	else { // background
+		vec3 unit_direction = unit_vector(r.direction());
+		double t = 0.5 * (unit_direction.y() + 1.0);
+		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	}
+}
+...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Notice that our new code is recursive and will only stop recursing when the ray fails to hit any object. In some scenes (or some unlucky sequences of random numbers), this could wreak havoc on performance. For that reason, we’ll enforce a bounce limit:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;&lt;span class=&quot;highlight-green&quot;&gt; vec3 color(const ray&amp;amp; r, hittable * world, int depth) {&lt;/span&gt;
+	hit_record rec;
+
+&lt;span class=&quot;highlight-green&quot;&gt;	if (depth &amp;lt;= 0)
+        return vec3(0,0,0); // Bounce limit reached - return darkness&lt;/span&gt;
+
+	// Light that reflects off a diffuse surface has its direction randomized.
+	// Light may also be absorbed.
+	if (world-&amp;gt;hit(r, 0.0, DBL_MAX, rec)) {
+		&lt;span class=&quot;highlight-green&quot;&gt;	vec3 target = rec.p + rec.normal + random_unit_sphere_coordinate();
+
+	// light is absorbed continually by the sphere or reflected into the world.
+	return 0.5 * color(ray(rec.p, target - rec.p), world, depth-1);&lt;/span&gt;
+
+	}
+	else { // background
+		vec3 unit_direction = unit_vector(r.direction());
+		double t = 0.5 * (unit_direction.y() + 1.0);
+		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	}
+}
+
+int main() {
+
+	int nx = 200; // Number of horizontal pixels
+	int ny = 100; // Number of vertical pixels
+	int ns = 100; // Number of samples for each pixel for anti-aliasing
+	&lt;span class=&quot;highlight-green&quot;&gt;	int maxDepth = 50; // Bounce limit&lt;/span&gt;
+	std::cout &amp;lt;&amp;lt; &quot;P3\n&quot; &amp;lt;&amp;lt; nx &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ny &amp;lt;&amp;lt; &quot;\n255\n&quot;; // P3 signifies ASCII, 255 signifies max color value
+
+	// Create spheres
+	hittable *list[2];
+	list[0] = new sphere(vec3(0, 0, -1), 0.5);
+	list[1] = new sphere(vec3(0, -100.5, -1), 100);
+	hittable* world = new hittable_list(list, 2);
+	camera cam;
+
+	for (int j = ny - 1; j &amp;gt;= 0; j--) { // Navigate canvas
+	    std::cerr &amp;lt;&amp;lt; &quot;\rScanlines remaining: &quot; &amp;lt;&amp;lt; j &amp;lt;&amp;lt; ' ' &amp;lt;&amp;lt; std::flush;
+		for (int i = 0; i &amp;lt; nx; i++) {
+			vec3 col(0, 0, 0);
+			for (int s = 0; s &amp;lt; ns; s++) { // Anti-aliasing - get ns samples for each pixel
+				double u = (i + random_double(0.0, 1)) / double(nx);
+				double v = (j + random_double(0.0, 1)) / double(ny);
+				ray r = cam.get_ray(u, v);
+				vec3 p = r.point_at_parameter(2.0);
+				&lt;span class=&quot;highlight-green&quot;&gt;
+				col += color(r, world, maxDepth);
+				&lt;/span&gt;
+			}
+
+			col /= double(ns); // Average the color between objects/background
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			std::cout &amp;lt;&amp;lt; ir &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ig &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ib &amp;lt;&amp;lt; &quot;\n&quot;;
+		}
+	}
+    std::cerr &amp;lt;&amp;lt; &quot;\nDone.\n&quot;;
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The result:
+&lt;span class=&quot;captioned-image&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse.png&quot; alt=&quot;Diffuse sphere&quot; /&gt;
+&lt;em&gt;Diffuse sphere&lt;/em&gt;
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;gamma-correction&quot;&gt;&lt;a id=&quot;gamma-correction&quot;&gt;&lt;/a&gt;Gamma Correction&lt;/h3&gt;
+
+&lt;p&gt;Our spheres are reflecting 50% of each bounce, so why is our picture so dark? Most image viewers assume images to be “gamma-corrected”. Ours is not. Here’s an explanation of gamma correction from &lt;a href=&quot;https://en.wikipedia.org/wiki/Gamma_correction&quot;&gt;Wikipedia&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Gamma correction, or often simply gamma, is a nonlinear operation used to encode and decode luminance or tristimulus values in video or still image systems.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;You can read more about gamma correction &lt;a href=&quot;https://www.cambridgeincolour.com/tutorials/gamma-correction.htm&quot;&gt;here&lt;/a&gt; if you feel so compelled.&lt;/p&gt;
+
+&lt;p&gt;So basically, we need to transform our values before storing them. For a start, we’ll use gamma 2 - which would mean raising the colors to the power of 1/&lt;em&gt;gamma&lt;/em&gt; (or.5) - mathematically identical to the square root:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;...
+
+int main() {
+
+	int nx = 200; // Number of horizontal pixels
+	int ny = 100; // Number of vertical pixels
+	int ns = 10; // Number of samples for each pixel for anti-aliasing
+	int maxDepth = 50; // Bounce limit
+	std::cout &amp;lt;&amp;lt; &quot;P3\n&quot; &amp;lt;&amp;lt; nx &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ny &amp;lt;&amp;lt; &quot;\n255\n&quot;; // P3 signifies ASCII, 255 signifies max color value
+
+	// Create spheres
+	hittable *list[2];
+	list[0] = new sphere(vec3(0, 0, -1), 0.5);
+	list[1] = new sphere(vec3(0, -100.5, -1), 100);
+	hittable* world = new hittable_list(list, 2);
+	camera cam;
+
+	for (int j = ny - 1; j &amp;gt;= 0; j--) { // Navigate canvas
+	    std::cerr &amp;lt;&amp;lt; &quot;\rScanlines remaining: &quot; &amp;lt;&amp;lt; j &amp;lt;&amp;lt; ' ' &amp;lt;&amp;lt; std::flush;
+		for (int i = 0; i &amp;lt; nx; i++) {
+			vec3 col(0, 0, 0);
+			for (int s = 0; s &amp;lt; ns; s++) { // Anti-aliasing - get ns samples for each pixel
+				double u = (i + random_double(0.0, 1)) / double(nx);
+				double v = (j + random_double(0.0, 1)) / double(ny);
+				ray r = cam.get_ray(u, v);
+				vec3 p = r.point_at_parameter(2.0);
+				col += color(r, world, maxDepth);
+			}
+
+			col /= double(ns); // Average the color between objects/background
+&lt;span class=&quot;highlight-green&quot;&gt;			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));  // set gamma to 2&lt;/span&gt;
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			std::cout &amp;lt;&amp;lt; ir &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ig &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ib &amp;lt;&amp;lt; &quot;\n&quot;;
+		}
+	}
+    std::cerr &amp;lt;&amp;lt; &quot;\nDone.\n&quot;;
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-gamma.png&quot; alt=&quot;Diffuse sphere with gamma correction&quot; /&gt;
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;shadow-acne&quot;&gt;&lt;a id=&quot;shadow-acne&quot;&gt;&lt;/a&gt;Shadow Acne&lt;/h3&gt;
+
+&lt;p&gt;There’s one small issue left to fix, known as shadow acne. Some of the rays hit the sphere (or any object, really) not at t = 0, but rather at something like t = ±0.0000001 due to floating-point approximation. In that case, we’ll just change our hit detection specs in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;if (world.hit(r, 0.001, DBL_MAX, rec)) {&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&quot;captioned-image&quot;&gt;
+&lt;div class=&quot;container&quot;&gt;
+  &lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-shadow-acne.png&quot; alt=&quot;Shadow acne sphere&quot; /&gt;
+  &lt;div class=&quot;overlay&quot;&gt;
+    &lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png&quot; alt=&quot;Sphere no shadow acne&quot; /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+  (Mouseover) Fix shadow acne
+&lt;/div&gt;
+
+&lt;p&gt;You can view the images separately, as well. Here’s &lt;a href=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-shadow-acne.png&quot;&gt;the one with shadow acne&lt;/a&gt; and &lt;a href=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png&quot;&gt;the one without&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;true-lambertian-reflection&quot;&gt;&lt;a id=&quot;true-lambertian-reflection&quot;&gt;&lt;/a&gt;True Lambertian Reflection&lt;/h3&gt;
+&lt;p&gt;Recall that Lambertian reflectance is the “ideal” matte surface - the apparent brightness of a Lambertian surface to an observer is the same regardless of the observer’s angle of view.&lt;/p&gt;
+
+&lt;p&gt;Here’s Shirley’s explanation of the implementation of true Lambertian reflectance:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The rejection method presented here produces random points in the unit ball offset along the surface normal. This corresponds to picking directions on the hemisphere with high probability close to the normal, and a lower probability of scattering rays at grazing angles. This distribution scales by the cos3(ϕ) where ϕ is the angle from the normal. This is useful since light arriving at shallow angles spreads over a larger area, and thus has a lower contribution to the final color.
+However, we are interested in a Lambertian distribution, which has a distribution of cos(ϕ). True Lambertian has the probability higher for ray scattering close to the normal, but the distribution is more uniform. This is achieved by picking points on the surface of the unit sphere, offset along the surface normal. Picking points on the sphere can be achieved by picking points in the unit ball, and then normalizing those.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\shirley\rand-unit-vector.png&quot; alt=&quot;Generation of random unit vector&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;And our total replacement for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random_unit_sphere_coordinate()&lt;/code&gt;:
+(use 3.14 as pi for now, we’ll address it in the next section)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;vec3 random_unit_vector() {
+    auto a = random_double(0, 2*pi);
+    auto z = random_double(-1, 1);
+    auto r = sqrt(1 - z*z);
+    return vec3(r*cos(a), r*sin(a), z);
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The result:&lt;/p&gt;
+&lt;div class=&quot;captioned-image&quot;&gt;
+&lt;div class=&quot;container&quot;&gt;
+  &lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png&quot; alt=&quot;Lambertian approximation&quot; /&gt;
+  &lt;div class=&quot;overlay&quot;&gt;
+    &lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\lambertian.png&quot; alt=&quot;True lambertian reflection&quot; /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+  (Mouseover)True lambertian reflectance
+&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png&quot;&gt;Lambertian approximation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\lambertian.png&quot;&gt;True Lambertian&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It’s a subtle difference, but a difference nonetheless. Notice that the shadows are not as pronounced and that both spheres are lighter.&lt;/p&gt;
+
+&lt;p&gt;These changes are both due to the more uniform scattering toward the normal. For diffuse objects, they appear lighter because more light bounces toward the camera. For shadows, less light bounces straight up.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;common-constants-and-utilities&quot;&gt;&lt;a id=&quot;common-constants-and-utilities&quot;&gt;&lt;/a&gt;Common Constants and Utilities&lt;/h2&gt;
+
+&lt;p&gt;You may have noticed in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random_unit_vector()&lt;/code&gt; that &lt;em&gt;pi&lt;/em&gt; is not defined. That’s because in Shirley’s newer edition, he creates a general main header file with some constants and utilities:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef RTWEEKEND_H
+#define RTWEEKEND_H
+
+#include &amp;lt;cmath&amp;gt;
+#include &amp;lt;cstdlib&amp;gt;
+#include &amp;lt;limits&amp;gt;
+#include &amp;lt;memory&amp;gt;
+
+
+// Usings
+using std::shared_ptr;
+using std::make_shared;
+using std::sqrt;
+
+// Constants
+const double infinity = std::numeric_limits&amp;lt;double&amp;gt;::infinity();
+const double pi = 3.1415926535897932385;
+
+// Utility Functions
+inline double degrees_to_radians(double degrees) {
+    return degrees * pi / 180;
+}
+
+// Common Headers
+#include &quot;ray.h&quot;
+#include &quot;vec3.h&quot;
+
+#endif
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And uses it in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#include &amp;lt;iostream&amp;gt;
+#include &amp;lt;cfloat&amp;gt;
+
+&lt;span class=&quot;highlight-green&quot;&gt;
+#include &quot;rtweekend.h&quot;
+&lt;/span&gt;
+
+#include &quot;sphere.h&quot;
+#include &quot;hittableList.h&quot;
+#include &quot;camera.h&quot;
+#include &quot;random.h&quot;
+
+vec3 random_unit_vector() {
+	auto a = random_double(0, 2*pi);
+    auto z = random_double(-1, 1);
+    auto r = sqrt(1 - z*z);
+    return vec3(r*cos(a), r*sin(a), z);
+}
+
+/*
+* Assign colors to pixels
+*
+* Background -
+* Linearly blends white and blue depending on the value of y coordinate (Linear Blend/Linear Interpolation/lerp).
+* Lerps are always of the form: blended_value = (1-t)*start_value + t*end_value.
+* t = 0.0 = White
+* t = 1.0 = Blue
+* 
+* Draw sphere and surface normals
+*/
+vec3 color(const ray&amp;amp; r, hittable * world, int depth) {
+	hit_record rec;
+
+	if (depth &amp;lt;= 0)
+        return vec3(0,0,0); // Bounce limit reached - return darkness
+
+&lt;span class=&quot;highlight-green&quot;&gt;	if (world-&amp;gt;hit(r, 0.001, infinity, rec)) { &lt;/span&gt;
+		vec3 target = rec.p + rec.normal + random_unit_vector(); 
+		return 0.5 * color(ray(rec.p, target - rec.p), world, depth-1); // light is absorbed continually by the sphere or reflected into the world.
+	}
+	else { // background
+		vec3 unit_direction = unit_vector(r.direction());
+		double t = 0.5 * (unit_direction.y() + 1.0);
+		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	}
+}
+
+int main() {
+
+	int nx = 1600; // Number of horizontal pixels
+	int ny = 800; // Number of vertical pixels
+	int ns = 10; // Number of samples for each pixel for anti-aliasing
+	int maxDepth = 50; // Bounce limit
+
+	std::cout &amp;lt;&amp;lt; &quot;P3\n&quot; &amp;lt;&amp;lt; nx &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ny &amp;lt;&amp;lt; &quot;\n255\n&quot;; // P3 signifies ASCII, 255 signifies max color value
+
+	// Create spheres
+	hittable *list[2];
+	list[0] = new sphere(vec3(0, 0, -1), 0.5);
+	list[1] = new sphere(vec3(0, -100.5, -1), 100);
+	hittable* world = new hittable_list(list, 2);
+	camera cam;
+
+	for (int j = ny - 1; j &amp;gt;= 0; j--) { // Navigate canvas
+	        std::cerr &amp;lt;&amp;lt; &quot;\rScanlines remaining: &quot; &amp;lt;&amp;lt; j &amp;lt;&amp;lt; ' ' &amp;lt;&amp;lt; std::flush;
+
+		for (int i = 0; i &amp;lt; nx; i++) {
+			vec3 col(0, 0, 0);
+			for (int s = 0; s &amp;lt; ns; s++) { // Anti-aliasing - get ns samples for each pixel
+				double u = (i + random_double(0.0, 0.999)) / double(nx);
+				double v = (j + random_double(0.0, 0.999)) / double(ny);
+				ray r = cam.get_ray(u, v);
+				vec3 p = r.point_at_parameter(2.0);
+				col += color(r, world, maxDepth);
+			}
+
+			col /= double(ns); // Average the color between objects/background
+			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));  // set gamma to 2
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			std::cout &amp;lt;&amp;lt; ir &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ig &amp;lt;&amp;lt; &quot; &quot; &amp;lt;&amp;lt; ib &amp;lt;&amp;lt; &quot;\n&quot;;
+		}
+	}
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;While we’re here making changes, let’s clean things up a bit by:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Moving &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random_unit_vector()&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vec3.h&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Moving our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random number generator&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rtweekend.h&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;metal&quot;&gt;&lt;a id=&quot;metal&quot;&gt;&lt;/a&gt;Metal&lt;/h2&gt;
+
+&lt;h3 id=&quot;abstract-class-for-materials&quot;&gt;&lt;a id=&quot;abstract-class-for-materials&quot;&gt;&lt;/a&gt;Abstract Class for Materials&lt;/h3&gt;
+&lt;p&gt;We’re going to use an abstract material class that encapsulates behavior which will do two things:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Produce a scattered ray (or absorb the incident ray)&lt;/li&gt;
+  &lt;li&gt;Determine attenuation (reduction of magnitude) of a scattered ray&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;material.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef MATERIAL_H
+#define MATERIAL_H
+
+class material {
+    public:
+        virtual bool scatter(
+            const ray&amp;amp; r_in, const hit_record&amp;amp; rec, color&amp;amp; attenuation, ray&amp;amp; scattered
+        ) const = 0;
+};
+
+#endif&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;describing-ray-object-intersections&quot;&gt;&lt;a id=&quot;describing-ray-object-intersections&quot;&gt;&lt;/a&gt;Describing Ray-Object Intersections&lt;/h3&gt;
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hit_record&lt;/code&gt; struct in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hittable.h&lt;/code&gt; is where we’ll be storing whatever information we want about hits. We’ll be adding material to the struct.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hittable.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef HITTABLEH
+#define HITTABLEH
+
+#include &quot;ray.h&quot;
+
+&lt;span class=&quot;highlight-green&quot;&gt;class material; // forward declaration&lt;/span&gt;
+
+struct hit_record {
+	double t; // parameter of the ray that locates the intersection point
+	vec3 p; // intersection point
+	vec3 normal;
+	bool front_face;
+&lt;span class=&quot;highlight-green&quot;&gt;	material* material_ptr;&lt;/span&gt;
+
+	inline void set_face_normal(const ray&amp;amp; r, const vec3&amp;amp; outward_normal) {
+        front_face = dot(r.direction(), outward_normal) &amp;lt; 0;
+        normal = front_face ? outward_normal : -outward_normal;
+    }
+};
+
+/* 
+* A class for objects rays can hit.
+*/
+class hittable {
+public: 
+	virtual bool hit(const ray&amp;amp; r, double t_min, double t_max, hit_record&amp;amp; rec) const = 0;
+};
+
+#endif // !HITTABLEH&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;When a ray hits a surface, the material pointer within the hit struct will point to the material the object was instantiated with. As such, we’ll have to reference the material within our sphere class to be included with the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hit_record&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sphere.h:&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef SPHEREH
+#define SPHEREH
+
+#include &quot;hittable.h&quot;
+
+class sphere : public hittable {
+public:
+	sphere() {}
+&lt;span class=&quot;highlight-green&quot;&gt;	sphere(vec3 cen, float r, material* material) : center(cen), radius(r), material_ptr(material) {};&lt;/span&gt;
+	virtual bool hit(const ray&amp;amp; r, double tmin, double tmax, hit_record&amp;amp; rec) const;
+	vec3 center;
+	double radius;
+&lt;span class=&quot;highlight-green&quot;&gt;	material* material_ptr;&lt;/span&gt;
+};
+
+bool sphere::hit(const ray&amp;amp; r, double t_min, double t_max, hit_record&amp;amp; rec) const {
+	vec3 oc = r.origin() - center; // Vector from center to ray origin
+	double a = r.direction().length_squared();
+	double halfB = dot(oc, r.direction());
+	double c = oc.length_squared() - radius*radius;
+	double discriminant = (halfB * halfB) - (a * c);
+	if (discriminant &amp;gt; 0.0) {
+        auto root = sqrt(discriminant);
+
+		auto temp = (-halfB - root) / a;
+
+		if (temp &amp;lt; t_max &amp;amp;&amp;amp; temp &amp;gt; t_min) {
+			rec.t = temp;
+			rec.p = r.point_at_parameter(rec.t);
+			vec3 outward_normal = (rec.p - center) / radius;
+            rec.set_face_normal(r, outward_normal);
+&lt;span class=&quot;highlight-green&quot;&gt;			rec.material_ptr = material_ptr;&lt;/span&gt;
+			return true;
+		}
+		temp = (-halfB + root) / a;
+		if (temp &amp;lt; t_max &amp;amp;&amp;amp; temp &amp;gt; t_min) {
+			rec.t = temp;
+			rec.p = r.point_at_parameter(rec.t);
+			vec3 outward_normal = (rec.p - center) / radius;
+            rec.set_face_normal(r, outward_normal);
+&lt;span class=&quot;highlight-green&quot;&gt;			rec.material_ptr = material_ptr;&lt;/span&gt;
+			return true;
+		}
+	}
+	return false;
+}
+
+#endif // !SPHEREH&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;light-scatter&quot;&gt;&lt;a id=&quot;light-scatter&quot;&gt;&lt;/a&gt;Light Scatter&lt;/h3&gt;
+&lt;p&gt;The Lambertian material we modeled previously would either scatter and attenuate by its reflectance &lt;em&gt;R&lt;/em&gt;, or scatter with no attenuation but absorb 1 - &lt;em&gt;R&lt;/em&gt; of rays, or somewhere in between. This is represented in code as follows:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;material.h&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;...
+class lambertian : public material {
+    public:
+        lambertian(const vec3&amp;amp; a) : albedo(a){};
+        virtual bool scatter(const ray&amp;amp; ray_in,
+                            const hit_record&amp;amp; rec,
+                            vec3&amp;amp; attenuation,
+                            ray&amp;amp; scattered) const {
+            vec3 scatter_direction = rec.p + rec.normal + random_unit_vector();
+            scattered = ray(rec.p, target - rec.p);
+            attenuation = albedo;
+            return true;
+        }
+    vec3 albedo; // reflectivity
+
+};
+...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;metal-reflection&quot;&gt;&lt;a id=&quot;metal-reflection&quot;&gt;&lt;/a&gt;Metal Reflection&lt;/h3&gt;
+&lt;p&gt;Metal is definitely NOT Lambertian - here’s a simple sketch depecting a general mirrored reflection:&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt; &lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\metal-reflect.png&quot; alt=&quot;Mirrored Reflection&quot; /&gt;&lt;em&gt;Metal Reflection (&lt;a href=&quot;http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/&quot;&gt;source&lt;/a&gt;)&lt;/em&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;div class=&quot;math-block&quot;&gt;
+$$
+\vec r = \vec v - (-2 * \vert \vec a\vert  * \vec n)
+$$
+
+where 
+
+$$
+\vert \vec a\vert  = \vert \vec v\vert  * cos(\theta)
+$$
+
+since 
+
+$$
+dot(\vec v, \vec n) = \vert \vec v\vert \vert \vec n\vert cos(\pi - \theta) = -\vert \vec v\vert cos(\theta)
+$$
+
+that means
+
+$$
+\vert \vec a\vert  = -dot(\vec v, \vec n)
+$$
+
+and
+
+$$
+\vec r = \vec v - (2 * dot(\vec v, \vec n) * \vec n)
+$$
+&lt;/div&gt;
+
+&lt;p&gt;In other words, the reflected ray is v + 2a. N is a unit vector, but that might not be the case for v. Also, because v points inward, we’re going have to flip it by negating it. This yields the following formula:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;vec3 reflect(const vec3&amp;amp; v, const vec3&amp;amp; n){
+    return v - 2*dot(v,n)*n;
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can go ahead and incorporate this formula into our metal material:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;material.h&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;vec3 reflect(const vec3&amp;amp; v, const vec3&amp;amp; n){
+    return v - 2*dot(v,n)*n; // v enters the hittable, which is why subtraction is required.
+}
+
+class material {
+    public:
+    virtual bool scatter(const ray&amp;amp; ray_in, const hit_record&amp;amp; rec, vec3&amp;amp; attenuation, ray&amp;amp; scattered) const = 0;
+};
+
+// Matte surface
+// Light that reflects off a diffuse surface has its direction randomized.
+// Light may also be absorbed. See Diffuse.png for illustration and detailed description
+class lambertian : public material {
+    public:
+        lambertian(const vec3&amp;amp; a) : albedo(a){};
+        virtual bool scatter(const ray&amp;amp; ray_in, const hit_record&amp;amp; rec, vec3&amp;amp; attenuation, ray&amp;amp; scattered) const {
+            vec3 target = rec.p + rec.normal + random_unit_sphere_coordinate();
+            scattered = ray(rec.p, target - rec.p);
+            attenuation = albedo;
+            return true;
+        }
+    vec3 albedo; // reflectivity
+
+};
+
+class metal : public material {
+    public:
+        metal(const vec3&amp;amp; a) : albedo(a) {}
+        virtual bool scatter(const ray&amp;amp; ray_in, const hit_record&amp;amp; rec, vec3&amp;amp; attenuation, ray&amp;amp; scattered) const {
+        vec3 reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
+        scattered = ray(rec.p, reflected);
+        attenuation = albedo;
+        return dot(scattered.direction(), rec.normal) &amp;gt; 0.0;
+    }
+
+    vec3 albedo;
+};&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And of course, we’re going to need to update our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;color&lt;/code&gt;() function to use our new material:
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;vec3 color(const ray&amp;amp; r, hittable *world, int depth) {
+    hit_record rec;
+
+    if (depth &amp;lt;= 0) {
+        return vec3(0,0,0);
+    }  
+    if (world-&amp;gt;hit(r, 0.001, DBL_MAX, rec)) {
+        ray scattered;
+        vec3 attenuation;
+		// Scatter formulas vary based on material
+        if (rec.material_ptr-&amp;gt;scatter(r, rec, attenuation, scattered)) {
+            return attenuation*color(scattered, world, depth-1);
+        }
+        else {
+            return vec3(0,0,0);
+        }
+    }
+    else {
+        vec3 unit_direction = unit_vector(r.direction());
+        double t = 0.5*(unit_direction.y() + 1.0);
+        return (1.0-t)*vec3(1.0, 1.0, 1.0) + t*vec3(0.5, 0.7, 1.0);
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;adding-metal-spheres-to-the-scene&quot;&gt;&lt;a id=&quot;adding-metal-spheres-to-the-scene&quot;&gt;&lt;/a&gt;Adding Metal Spheres to the Scene&lt;/h3&gt;
+
+&lt;p&gt;Now that we’ve got some shiny new spheres, let’s add ‘em to the scene, render ‘em, and check ‘em out:
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;int main {
+	...
+
+	hittable *list[4];
+		hittable *list[4];
+    	list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.8, 0.3, 0.3)));
+		list[1] = new sphere(vec3(0,-100.5,-1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
+		list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(0.8, 0.6, 0.2)));
+		list[3] = new sphere(vec3(-1,0,-1), 0.5, new metal(vec3(0.8, 0.8, 0.8)));
+		hittable *world = new hittable_list(list,4);
+
+		camera cam(lookFrom, lookAt, vec3(0,1,0), 20,double(nx)/double(ny), aperture, distToFocus);	
+
+		auto start = std::chrono::high_resolution_clock::now();
+
+
+		for (int j = ny - 1; j &amp;gt;= 0; j--) { // Navigate canvas
+
+		...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You’ll get something like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal.png&quot; alt=&quot;Metal and Lambertian spheres&quot; /&gt;&lt;em&gt;Metal and Lambertian spheres&lt;/em&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Feel free to mess around with the color, positioning, and material, as well:&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal-edit.png&quot; alt=&quot;Metal spheres&quot; /&gt;&lt;em&gt;Your new album cover&lt;/em&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;fuzzy-metal&quot;&gt;&lt;a id=&quot;fuzzy-metal&quot;&gt;&lt;/a&gt;Fuzzy Metal&lt;/h3&gt;
+
+&lt;p&gt;In addition to perfectly polished metal spheres, we can simulate rough metal as well, with some “fuzziness”. To do so, we just need to append a random vector to the reflected rays:&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\shirley\reflect-fuzzy.png&quot; alt=&quot;Fuzzy metal reflections&quot; /&gt;&lt;em&gt;Generating fuzzy reflections&lt;/em&gt; (&lt;a href=&quot;https://raytracing.github.io/books/RayTracingInOneWeekend.html&quot;&gt;&lt;em&gt;source&lt;/em&gt;&lt;/a&gt;)&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;The larger the sphere, the fuzzier the reflections will be. If the sphere is too large, we may scatter below the surface of an object. If that happens, we can just have the surface absorb those rays.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;material.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;class metal : public material {
+    public:
+        metal(const vec3&amp;amp; a, double f) : albedo(a) {
+&lt;span class=&quot;highlight-green&quot;&gt;            if (f&amp;lt;1) fuzz = f; else fuzz = 1;&lt;/span&gt;
+        }
+        virtual bool scatter(const ray&amp;amp; ray_in, const hit_record&amp;amp; rec, vec3&amp;amp; attenuation, ray&amp;amp; scattered) const {
+        vec3 reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
+        scattered = ray(rec.p, reflected);
+        attenuation = albedo;
+        return dot(scattered.direction(), rec.normal) &amp;gt; 0.0;
+    }
+
+    vec3 albedo;
+&lt;span class=&quot;highlight-green&quot;&gt;	double fuzz;&lt;/span&gt;
+};&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&quot;captioned-image&quot;&gt;
+&lt;div class=&quot;container&quot;&gt;
+  &lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\all-metal-no-fuzz.png&quot; alt=&quot;Metal - no fuzz&quot; /&gt;
+  &lt;div class=&quot;overlay&quot;&gt;
+    &lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal-fuzz.png&quot; alt=&quot;Fuzzy Metal&quot; /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+(Mouseover) Fuzziness from left to right: .5, 0, and 1
+&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\all-metal-no-fuzz.png&quot;&gt;No fuzz&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal-fuzz.png&quot;&gt;Fuzz&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;dielectrics&quot;&gt;&lt;a id=&quot;dielectrics&quot;&gt;&lt;/a&gt;Dielectrics&lt;/h2&gt;
+&lt;p&gt;Dielectrics are materials like glass. When a light ray hits one, the ray splits into a reflected ray and a refracted ray. In this path tracer, we’ll be randomly choosing which ray to simulate, only generating one ray per interaction.&lt;/p&gt;
+
+&lt;h3 id=&quot;refraction&quot;&gt;&lt;a id=&quot;refraction&quot;&gt;&lt;/a&gt;Refraction&lt;/h3&gt;
+&lt;p&gt;Refraction is the deflection of a ray from a straight path due to passing obliquely from one medium to another.&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\refraction.png&quot; alt=&quot;Refraction&quot; /&gt;
+Notice both the reflected beam (top right) and the refracted beam (bottom right) (&lt;a href=&quot;https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/F%C3%A9nyt%C3%B6r%C3%A9s.jpg/1200px-F%C3%A9nyt%C3%B6r%C3%A9s.jpg&quot;&gt;source&lt;/a&gt;)
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;The refractive index describes the angle that light propagates through different mediums and is defined as:&lt;/p&gt;
+
+\[n={\frac {c}{v}}\]
+
+&lt;p&gt;where &lt;em&gt;c&lt;/em&gt; is the speed of light in a vacuum and v is the speed of light in the medium.&lt;/p&gt;
+
+&lt;p&gt;For reference, here are some refractive indices:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Material&lt;/th&gt;
+      &lt;th&gt;Refractive Index&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Vacuum&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Air&lt;/td&gt;
+      &lt;td&gt;1.000293&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Carbon Dioxide&lt;/td&gt;
+      &lt;td&gt;1.001&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Ice&lt;/td&gt;
+      &lt;td&gt;1.31&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Water&lt;/td&gt;
+      &lt;td&gt;1.333&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Kerosene&lt;/td&gt;
+      &lt;td&gt;1.39&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Vegetable Oil&lt;/td&gt;
+      &lt;td&gt;1.47&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Window Glass&lt;/td&gt;
+      &lt;td&gt;1.52&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Amber&lt;/td&gt;
+      &lt;td&gt;1.55&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Diamond&lt;/td&gt;
+      &lt;td&gt;2.417&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Germanium&lt;/td&gt;
+      &lt;td&gt;4.05&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;snells-law&quot;&gt;&lt;a id=&quot;snells-law&quot;&gt;&lt;/a&gt;Snell’s Law&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\snells-law.svg&quot; alt=&quot;Snell's Law&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Snell’s law states that the ratio of the sines of the angles of incidence and refraction is equivalent to the ratio of phase velocities in the two media, or equivalent to the reciprocal of the ratio of the indices of refraction:&lt;/p&gt;
+
+\[{\frac {\sin \theta _{2}}{\sin \theta _{1}}}={\frac {v_{2}}{v_{1}}}={\frac {n_{1}}{n_{2}}}\]
+
+&lt;p&gt;with each θ as the angle measured from the normal of the boundary, v as the velocity of light in the respective medium, n as the refractive index (which is unitless) of the respective medium.&lt;/p&gt;
+
+&lt;p&gt;If we render a dielectric object with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ref_index&lt;/code&gt; in a vacuum, (since the refractive index is 1 in a vacuum) we get this:&lt;/p&gt;
+
+\[\frac {n_{1}}{n_{2}} = \frac {1}{ref\_index}\]
+
+&lt;p&gt;and when the ray shoots back out into the vacuum:&lt;/p&gt;
+
+\[\frac {n_{1}}{n_{2}} = {ref\_index}\]
+
+&lt;h3 id=&quot;total-internal-reflection&quot;&gt;&lt;a id=&quot;total-internal-reflection&quot;&gt;&lt;/a&gt;Total Internal Reflection&lt;/h3&gt;
+&lt;p&gt;Total internal reflection is an optical phenomenon that occurs when light travels from a medium with a higher refractive index to a lower one, and the angle of incidence is greater than a certain angle (known as the “critical angle”).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\total-internal-reflection.svg&quot; alt=&quot;Total internal reflection&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;calculating-the-refraction-vector&quot;&gt;&lt;a id=&quot;calculating-the-refraction-vector&quot;&gt;&lt;/a&gt;Calculating the Refraction Vector&lt;/h3&gt;
+&lt;p&gt;Now that we’re familiar with the components of refraction, we can calculate the refraction vector geometrically.&lt;/p&gt;
+
+&lt;!--
+![Refraction geometry](\assets\images\blog-images\path-tracer\the-first-weekend\refraction-geometry.png)
+
+We already know [Snell's law](#snells-law):
+
+$$
+{\frac {\sin \theta _{2}}{\sin \theta _{1}}}={\frac {v_{2}}{v_{1}}}={\frac {n_{1}}{n_{2}}}
+$$
+
+To determine the direction of the refracted ray, we'll have to solve for $\sin\theta_2$.
+
+So we'll re-arrange Snell's law:
+
+$$
+\sin\theta_2 = \frac{n_1}{n_2} \cdot \sin\theta
+$$
+
+On the side of the surface with the refracted ray, there's a refracted ray $\vec R_2$ and a normal $n_2$, with an angle $theta_2$ between them. What we can do is split $R_2$ into components that are parallel, and components that are perpendicular to $n_2$.
+
+$$
+\mathbf{R_2} = \mathbf{R_2}_{\parallel} + \mathbf{R_2}_{\bot}
+$$
+
+Solving for $\mathbf{R_2}_{\parallel}$:
+
+$$
+
+$$ --&gt;
+
+&lt;p&gt;We can model the relationships of the vectors with a unit circle to make things easier.&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\refraction-vector-circle.png&quot; alt=&quot;Refraction unit circle&quot; /&gt;
+(&lt;em&gt;&lt;a href=&quot;http://viclw17.github.io/2018/08/05/raytracing-dielectric-materials/&quot;&gt;source&lt;/a&gt;&lt;/em&gt;)
+&lt;/span&gt;&lt;/p&gt;
+
+\[\vec r = \vec A + \vec B\]
+
+&lt;p&gt;We’ll project $\vec r$ onto $\vec M$ to get $\vec A$:&lt;/p&gt;
+
+\[\vec A = sin\theta_{2} \cdot \vec M\]
+
+&lt;p&gt;Similarly, we’ll project $\vec r$ onto $- \vec N$ to get $\vec B$:&lt;/p&gt;
+
+\[\vec B = cos\theta_{2} \cdot -\vec N\]
+
+&lt;p&gt;We’ll define $\vec M$ as perpendicular($\bot$) to $\vec N$:&lt;/p&gt;
+
+\[\vec M = Normalize(\vec C + \vec v) = \frac {(\vec C + \vec v)}{sin\theta_{1}}\]
+
+&lt;p&gt;And we’ll project $\vec r$ onto $- \vec N$ to get $\vec C$:&lt;/p&gt;
+
+\[\vec C = cos\theta_{1} \cdot \vec N\]
+
+&lt;p&gt;So, with terms expanded, we go from:&lt;/p&gt;
+
+\[\vec r = \vec A + \vec B\]
+
+&lt;p&gt;to:&lt;/p&gt;
+
+\[\vec r = sin\theta_{2} \cdot \vec M - cos\theta_{2} \cdot \vec N\]
+
+&lt;p&gt;If we expand and re-arrange the equation, we’ll end up with this:&lt;/p&gt;
+
+\[\vec r = \frac {n_{1}}{n_{2}} \cdot (\vec v + cos\theta_{1} \cdot \vec N) - cos\theta_{2} \cdot \vec N\]
+
+&lt;p&gt;After normalizing incidence ray direction $\vec v$ , we can calculate $cos\theta_{1}$ by $dot(\vec v, \vec n) = \vert \vec v\vert \vert \vec n\vert cos\theta_{1} = cos\theta_{1}$.&lt;/p&gt;
+
+&lt;p&gt;Since Snell’s law can also be interpreted as:&lt;/p&gt;
+
+\[sin\theta_{2} = \frac {n_{1}}{n_{2}} \cdot sin\theta_{1},\]
+
+\[cos^2\theta_{2} = 1 - sin^2\theta_{2} = 1 - \frac {(n_1)^2}{(n_2)^2} \cdot sin^2\theta_{1} = 1 - \frac {n_{1}^2}{n_{2}^2} \cdot (1 - cos^2\theta_{1}) = 1 - \frac {n_{1}^2}{n_{2}^2} \cdot (1 - dot(\vec v, \vec n))\]
+
+&lt;p&gt;and the equation can be written as:&lt;/p&gt;
+
+\[\vec r = \frac {n_{1}}{n_{2}} \cdot (\vec v - dot(\vec v, \vec n) \cdot \vec N) - \sqrt{1 - \frac {n_{1}^2}{n_{2}^2} \cdot (1 - dot(\vec v, \vec n))} \cdot \vec N\]
+
+&lt;p&gt;Which means that:&lt;/p&gt;
+
+\[cos^2\theta_{2} = 1 - \frac {n_{1}^2}{n_{2}^2} \cdot (1 - dot(\vec v, \vec n))\]
+
+&lt;p&gt;is the discriminant.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Discriminant&lt;/th&gt;
+      &lt;th&gt;Ray Behavior&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;$&amp;lt;0$&lt;/td&gt;
+      &lt;td&gt;Total internal reflection&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;$=0$&lt;/td&gt;
+      &lt;td&gt;Boundary of total reflection - no resultant ray&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;$&amp;gt;0$&lt;/td&gt;
+      &lt;td&gt;Refracted ray $\vec r$&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;coding-the-refraction-vector&quot;&gt;&lt;a id=&quot;coding-the-refraction-vector&quot;&gt;&lt;/a&gt;Coding the Refraction Vector&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;$\frac {n_{1}}{n_{2}}$ is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;n1_over_n2&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;v is the incidence ray&lt;/li&gt;
+  &lt;li&gt;n is the surface normal&lt;/li&gt;
+  &lt;li&gt;refracted is the refracted ray’s direction&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;bool refract(const vec3&amp;amp; v, const vec3&amp;amp; n, float n1_over_n2, vec3&amp;amp; refracted) {
+    vec3 uv = unit_vector(v);
+    float dt = dot(uv, n);
+    float discriminat = 1.0 - ni_over_nt * ni_over_nt * (1-dt*dt);
+    if(discriminat &amp;gt; 0){
+        refracted = ni_over_nt * (uv-n*dt) - n*sqrt(discriminat);
+        return true;
+    }
+    else
+        return false; // no refracted ray
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;dielectric-reflections&quot;&gt;&lt;a id=&quot;dielectric-reflections&quot;&gt;&lt;/a&gt;Dielectric Reflections&lt;/h3&gt;
+&lt;p&gt;When light strikes a dielectric object, both reflection and refraction may occur. Looking at a puddle at a sharp enough angle makes it look almost like a mirror!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\fresnel.png&quot; alt=&quot;Fresnel puddle&quot; /&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\partial-transmittance.gif&quot; alt=&quot;Patrial transmittance&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;For low-precision applications that don’t involve polarized light, &lt;a href=&quot;https://en.wikipedia.org/wiki/Schlick%27s_approximation&quot;&gt;Schlick’s approximation&lt;/a&gt; will serve our purposes just fine, rather than computing the effective reflection coefficient for every angle.&lt;/p&gt;
+
+&lt;p&gt;Schlick’s model states that the specular reflection coefficient can be approximated by:&lt;/p&gt;
+
+&lt;p&gt;\(R(\theta_{1})=R_{0}+(1-R_{0})(1-\cos \theta_{1} )^{5}\)
+\(R_{0}=\left({\frac {n_{1}-n_{2}}{n_{1}+n_{2}}}\right)^{2}\)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;$\theta_1$ is the incident angle.&lt;/li&gt;
+  &lt;li&gt;$n_1$ and $n_2$ are the refractive indices of the two media.&lt;/li&gt;
+  &lt;li&gt;$R_0$ is the reflection coefficient for light incoming parallel to the normal.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The refractive index of air(1.000293) is often approximated as 1.&lt;/p&gt;
+
+\[\frac {n_{1}}{n_{2}} = \frac {1}{n_{dielectric}} \Rightarrow {n_{dielectric}} = \frac {n_{2}}{n_{1}}\]
+
+\[cos\theta_{1} = dot(\vec v, \vec n)\]
+
+&lt;p&gt;We can add Schlick’s approximation to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;material.h&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;material.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;float schlick(float cosine, float ref_idx) {
+    float r0 = (1 - ref_index) / (1 + ref_index); // ref_index = n2/n1
+    r0 = r0 * r0;
+    return r0 + (1 - r0) * pow((1 - cosine), 5);
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If the incident ray produces a refraction ray (which we can check by seeing if &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;refract()&lt;/code&gt; returns true), we are going to calculate the reflective coefficient &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reflect_probability&lt;/code&gt;. Otherwise, the ray exhibits total internal reflection and the reflective coefficient should be 1.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\refraction-reflection.gif&quot; alt=&quot;Refraction and reflection gif&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We do this by getting whichever value is smaller between:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;the dot product of flipped unit incident ray and the normal of the hit point OR&lt;/li&gt;
+  &lt;li&gt;1.0 (Total internal reflection)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;You may be wondering how we are to represent the refraction and reflection of light if we can only pick one scattered ray. The answer is multi-sampling - averaging the color between samples that may have been reflected or refracted.&lt;/p&gt;
+
+&lt;p&gt;To get an accurate result, we’ll use our random number generator. We’ll generate a number between 0.0 and 1.0. If the resulting number is smaller than the reflective coefficient, the ray will be reflected. Otherwise, it will be refracted.&lt;/p&gt;
+
+&lt;p&gt;We can now bundle everything up into our dielectric material’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scatter()&lt;/code&gt; method:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;material.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;...
+
+class dielectric : public material {
+    public:
+        dielectric(vec3 a, double ri) : albedo(a), ref_idx(ri) {}
+
+        virtual bool scatter(
+            const ray&amp;amp; r_in, const hit_record&amp;amp; rec, vec3&amp;amp; attenuation, ray&amp;amp; scattered
+        ) const {
+
+            attenuation = albedo; // color
+
+            double n1_over_n2 = (rec.front_face) ? (1.0 / ref_idx) : (ref_idx);
+
+            vec3 unit_direction = unit_vector(r_in.direction());
+            
+            double cosine = dot(-unit_direction, rec.normal);
+            double reflect_random = random_double(0,1);
+            double reflect_probability;
+
+            vec3 refracted;
+            vec3 reflected;
+
+			// refracted ray exists
+            if (refract(unit_direction, rec.normal, n1_over_n2, refracted)) {
+                reflect_probability = schlick(cosine, ref_idx);
+
+                if (reflect_random &amp;lt; reflect_probability) {
+                    vec3 reflected = reflect(unit_direction, rec.normal);
+                    scattered = ray(rec.p, reflected);
+                    return true;
+                }
+                scattered = ray(rec.p, refracted);
+                return true;
+            }
+
+            else {
+                reflected = reflect(unit_direction, rec.normal);
+                scattered = ray(rec.p, reflected);
+                return true;
+            }
+        }
+    public:
+        double ref_idx;
+        vec3 albedo;
+};&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&quot;captioned-image&quot;&gt;
+&lt;div class=&quot;container&quot;&gt;
+  &lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\no-fresnel.png&quot; alt=&quot;Dielectric without Fresnel&quot; /&gt;
+  &lt;div class=&quot;overlay&quot;&gt;
+    &lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\fresnel.png&quot; alt=&quot;Dielectric with Fresnel&quot; /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+  (Mouseover) Implementation of Fresnel reflections
+&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\no-fresnel.png&quot;&gt;No fresnel&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\fresnel.png&quot;&gt;Fresnel&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;hollow-dielectric-spheres&quot;&gt;&lt;a id=&quot;hollow-dielectric-spheres&quot;&gt;&lt;/a&gt;Hollow Dielectric Spheres&lt;/h3&gt;
+
+&lt;p&gt;Bonus fun fact! We can create a hollow glass sphere by creating a smaller sphere with a &lt;em&gt;negative&lt;/em&gt; radius &lt;em&gt;inside&lt;/em&gt; our existing sphere! The geometry is unaffected, but the normal points inward.&lt;/p&gt;
+
+&lt;div class=&quot;captioned-image&quot;&gt;
+&lt;div class=&quot;container&quot;&gt;
+  &lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-solid.png&quot; alt=&quot;Solid Dielectric&quot; /&gt;
+  &lt;div class=&quot;overlay&quot;&gt;
+    &lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-hollow.png&quot; alt=&quot;Hollow Dielectric&quot; /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+  (Mouseover) Hollow dielectric sphere
+&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-solid.png&quot;&gt;Solid&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-hollow.png&quot;&gt;Hollow&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;And of course, you can change the color of your pretty new dielectric sphere if you please.
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\purple-dielectric.png&quot; alt=&quot;Purple dielectric&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;camera-modeling&quot;&gt;&lt;a id=&quot;camera-modeling&quot;&gt;&lt;/a&gt;Camera Modeling&lt;/h2&gt;
+&lt;p&gt;Up until now, we’ve been using a very simple camera (though I have changed framing a little bit for illustrating certain renders). Our simple camera was described way back in chapter 4 of Shirley’s book, and it had fixed world position at the origin (0, 0, 0), a fixed image plane (or near-clipping plane) size, and the plane was position at (0, 0, -1), effectively setting our sights along the negative z-axis.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;camera.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;#ifndef CAMERAH
+#define CAMERAH
+
+#include &quot;ray.h&quot;
+
+class camera {
+public:
+
+	// The values below are derived from making the &quot;camera&quot; / ray origin coordinates(0, 0, 0) relative to the canvas.
+	camera() {
+		lower_left_corner = vec3(-2.0, -1.0, -1.0);
+		horizontal = vec3(4.0, 0.0, 0.0);
+		vertical = vec3(0.0, 2.0, 0.0);
+		origin = vec3(0.0, 0.0, 0.0);
+	}
+	ray get_ray(double u, double v) { return ray(origin, lower_left_corner + u * horizontal + v * vertical - origin); }
+
+	vec3 origin;
+	vec3 lower_left_corner;
+	vec3 horizontal;
+	vec3 vertical;
+};
+
+#endif // !CAMERAH&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We’re going to expand the capability of the camera and make it more flexible by defining a few different variables:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Camera position &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;look_from&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Camera objective &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;look_at&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Vector describing which way is “up” &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vup&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Vertical field-of-view &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vfov&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Image plane aspect ratio &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aspect_ratio&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Camera lens size &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aperture&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Image plane to camera distance &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;focus_distance&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\camera-model.png&quot; alt=&quot;Camera visualization&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If the angle of the camera lens is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;theta&lt;/code&gt;, we can see that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;half_height&lt;/code&gt; = &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tan(theta/2)&lt;/code&gt;.&lt;/p&gt;
+
+\[tan(\frac {\theta}{2}) = \frac{opposite}{adjacent} = \frac {half\_height}{1}\]
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;theta&lt;/code&gt; is the vertical field of view &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vfov&lt;/code&gt;. For the convenience of calculation, we can convert theta to radians and define it as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vfov * pi / 180&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Keeping other camera settings the same, we can rewrite our camera:
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;camera.h&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;...
+lower_left_corner(-half_width, -half_height,-1.0);
+horizontal(2*half_width, 0.0, 0.0); // horizontal range
+vertical(0.0, 2*half_height, 0.0);  // vertical range
+origin = (0,0,0);
+...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In world space(three dimensions), the vectors&lt;/p&gt;
+
+\[e1 = (1,0,0),\]
+
+\[e2 = (0,1,0),\]
+
+\[e3 = (0,0,1)\]
+
+&lt;p&gt;form the &lt;a href=&quot;https://en.wikipedia.org/wiki/Standard_basis&quot;&gt;standard basis&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The standard basis (for a Euclidean space) is an &lt;a href=&quot;https://en.wikipedia.org/wiki/Orthonormal_basis&quot;&gt;orthonormal basis&lt;/a&gt;, where the relevant inner product is the dot product of vectors. Put simply, this means the vectors are orthogonal: at right angles to each other; and normal: all of the same length 1.&lt;/p&gt;
+
+&lt;p&gt;All vectors (x,y,z) in world space can be expressed as a sum of the scaled basis vectors.&lt;/p&gt;
+
+\[{\displaystyle (x,y,z)=xe_{1}+ye_{2}+ze_{3}}\]
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\standard-basis.svg&quot; alt=&quot;Standard basis&quot; /&gt;
+Every vector $a$ in three dimensions is a linear combination of the standard basis vectors $i$, $j$, and $k$.
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Therefore, the previous camera code should be revised to&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;camera.h&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;lower_left_corner= origin - half_width * e1 - half_height * e2 - e3
+horizontal = 2 * half_width * e1
+vertical = 2 *half_height * e2&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;However, if we want to move our “camera” to position &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;look_from&lt;/code&gt; pointing to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;look_at&lt;/code&gt;, we have to build a new orthonormal basis for camera space with vectors u, v, and w:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;w = unit_vector(lookfrom - lookat) // similar to the Z axis
+u = unit_vector(cross(vup, w)) // similar to the X axis
+v = cross(w, u) // similar to the Y axis&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\orthonormal-basis.png&quot; alt=&quot;New orthonormal basis&quot; /&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\shirley\orthonormal-basis.png&quot; alt=&quot;Shirley orthonormal basis&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vup&lt;/code&gt; vector describes which direction is up for the camera. You can also think of this as tilt in any (x,y,z).&lt;/p&gt;
+
+&lt;div class=&quot;row-fill&quot;&gt;
+	&lt;div class=&quot;captioned-image&quot;&gt;
+	&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\vup-010.png&quot; /&gt;
+	vup (0,1,0)
+	&lt;/div&gt;
+	&lt;div class=&quot;captioned-image&quot;&gt;
+	&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\vup-0neg10.png&quot; /&gt;
+	vup (0,-1,0)
+	&lt;/div&gt;
+	&lt;div class=&quot;captioned-image&quot;&gt;
+	&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\vup-110.png&quot; /&gt;
+	vup (1,1,0)
+	&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\shirley\orthonormal-vup.png&quot; alt=&quot;Shirley vector-up&quot; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;class camera {
+public:
+    camera(vec3 look_from, vec3 look_at, vec3 vup, float vfov, float aspect_ratio) {
+        vec3 u, v, w;
+
+        float theta = vfov*pi/180;
+        float half_height = tan(theta/2);
+        float half_width = aspect_ratio * half_height;
+        origin = lookfrom;
+
+        w = unit_vector(look_from - look_at);
+        u = unit_vector(cross(vup, w));
+        v = cross(w, u);
+
+        lower_left_corner = origin - half_width*u - half_height*v -w;
+        horizontal = 2*half_width*u;
+        vertical = 2*half_height*v;
+    }
+    ray get_ray(float s, float t) {return ray(origin, lower_left_corner + s*horizontal + t*vertical - origin);}
+
+    vec3 lower_left_corner;
+    vec3 horizontal;
+    vec3 vertical;
+    vec3 origin;
+};&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;depth-of-field&quot;&gt;&lt;a id=&quot;depth-of-field&quot;&gt;&lt;/a&gt;Depth of Field&lt;/h2&gt;
+
+&lt;p&gt;Depth of field! If you have eyes that kind of work, you’re familiar with it. You can read more about DOF at &lt;a href=&quot;https://en.wikipedia.org/wiki/Depth_of_field&quot;&gt;Wikipedia&lt;/a&gt;. Depth of field (DOF) is the distance between the nearest and farthest objects that are acceptably sharp in an image. The subjects outside the DOF are subject to blur.&lt;/p&gt;
+
+&lt;p&gt;From Wikipedia:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;DOF can be calculated based on focal length, distance to subject, the acceptable “circle of confusion size”, and aperture.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;span class=&quot;captioned-image&quot;&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\depth-of-field.png&quot; alt=&quot;Depth of field (PBR!)&quot; /&gt;
+&lt;em&gt;PBR!&lt;/em&gt; (&lt;a href=&quot;https://www.joepylephotography.com/depth-of-field-joe-pyle-photography/&quot;&gt;&lt;em&gt;source&lt;/em&gt;&lt;/a&gt;)
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In optics, an aperture is a hole or an opening through which light travels. More specifically, the aperture and focal length of an optical system determine the cone angle of a bundle of rays that come to a focus in the image plane.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\aperture-diagram.gif&quot; alt=&quot;Aperture diagram&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;From the beginning, all scene rays have originated from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;look_from&lt;/code&gt;. To simulate a variable aperature, we’ll generate rays randomly originating from inside a disk centered at &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;look_from&lt;/code&gt;. The larger we make this disc, the stronger the blur will be. With a disk radius of zero, the rays all originate from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;look_from&lt;/code&gt;, eliminating blur. One such method for generating a point inside a unit disk is as follows:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vec3.h&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;vec3 random_unit_disk_coordinate() {
+    while (true) {
+        auto p = vec3(random_double(-1,1), random_double(-1,1), 0);
+        if (p.length_squared() &amp;gt;= 1) continue;
+        return p;
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Up until now, the focus distance was -1 on the z (or w) axes. We’ll now make it &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;focus_distance&lt;/code&gt; and define our image plane accordingly:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;lower_left_corner = origin - half_width*focus_distance*u - half_height*focus_distance*v - focus_distance*w;
+horizontal = 2 * half_width*focus_distance*u;
+vertical = 2 * half_height*focus_distance*v;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\camera-model-summary-aperture.png&quot; alt=&quot;Aperture diagram&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;With that, we have a complete camera class:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;camera.h&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;class camera {
+    public:
+        camera(vec3 look_from, vec3 look_at, vec3 vUp, double vFov, double aspect_ratio, double aperture, double focus_distance) {
+            
+            lens_radius = aperture / 2;
+            
+            double theta = vFov*pi/180;
+            double half_height = tan(theta/2);
+            double half_width = aspect_ratio * half_height;
+            origin = look_from;
+            
+            w = unit_vector(look_from - look_at);
+            u = unit_vector(cross(vUp, w));
+            v = cross(w, u);
+
+            lowerLeftCorner = origin
+                              - half_width * focus_distance * u
+                              - half_height * focus_distance * v
+                              - focus_distance * w;
+            horizontal = 2*half_width*focus_distance*u;
+            vertical = 2*half_height*focus_distance*v;
+        }
+
+        ray get_ray(double s, double t) {
+            vec3 rd = lens_radius*random_unit_disk_coordinate();
+            vec3 offset = u * rd.x() + v * rd.y();
+
+            return ray(origin + offset,
+                       lowerLeftCorner + s*horizontal + t*vertical - origin - offset);
+        }
+
+        vec3 origin;
+        vec3 lowerLeftCorner;
+        vec3 horizontal;
+        vec3 vertical;
+        vec3 u, v, w;
+        double lens_radius;
+};&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\dof-0.png&quot; alt=&quot;Aperture 0&quot; /&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\dof-point-2.png&quot; alt=&quot;Aperture 0.2&quot; /&gt;
+&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\dof-point-5.png&quot; alt=&quot;Aperture 0.5&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;final-scene&quot;&gt;&lt;a id=&quot;final-scene&quot;&gt;&lt;/a&gt;Final Scene&lt;/h2&gt;
+
+&lt;p&gt;Lastly, we’ll create a random scene of spheres. Feel free to customize. And be aware - this may take some time to render!&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cpp&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;...
+hittable *random_scene() {
+    int n = 500;
+    hittable **list = new hittable*[n+1];
+    list[0] =  new sphere(vec3(0,-1000,0), 1000, new lambertian(vec3(0.5, 0.5, 0.5))); // &quot;Ground&quot;
+    int i = 1;
+    for (int a = -11; a &amp;lt; 11; a++) {
+        for (int b = -11; b &amp;lt; 11; b++) {
+            double randomMaterial = random_double(0,1);
+            vec3 center(a+0.9*random_double(0,1),0.2,b+0.9*random_double(0,1));
+            if ((center-vec3(4,0.2,0)).length() &amp;gt; 0.9) {
+                if (randomMaterial &amp;lt; 0.68) {  // diffuse
+                    list[i++] = new sphere(center, 0.2,
+                        new lambertian(vec3(random_double(0,1)*random_double(0,1),
+                                            random_double(0,1)*random_double(0,1),
+                                            random_double(0,1)*random_double(0,1))
+                        )
+                    );
+                }
+                else if (randomMaterial &amp;lt; 0.87) { // metal
+                    list[i++] = new sphere(center, 0.2,
+                            new metal(vec3(0.5*(1 + random_double(0,1)),
+                                           0.5*(1 + random_double(0,1)),
+                                           0.5*(1 + random_double(0,1))),
+                                      0.5*random_double(0,1)));
+                }
+                else {  // glass
+                    list[i++] = new sphere(center, 0.2, new dielectric(vec3(random_double(0,1),random_double(0,1),random_double(0,1)), 1.5));
+                }
+            }
+        }
+    }
+
+    list[i++] = new sphere(vec3(0, 1, 0), 1.0, new dielectric(vec3(1.0,1.0,1.0), 1.5));
+    list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(vec3(0.4, 0.2, 0.1)));
+    list[i++] = new sphere(vec3(4, 1, 0), 1.0, new metal(vec3(1.0, 1.0, 1.0), 0.0));
+
+    return new hittable_list(list,i);
+}
+
+int main() {
+
+...
+
+double aperture = 0.2; // bigger = blurrier
+
+    hittable *world = random_scene();
+
+	camera cam(lookFrom, lookAt, vec3(0,1,0), 20,double(nx)/double(ny), aperture, distToFocus);
+...
+}
+...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\path-tracer\the-first-weekend\renders\final-render-1.png&quot; alt=&quot;Final render&quot; /&gt;&lt;/p&gt;</content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing" /><category term="ray-tracing-in-one-weekend" /><category term="c++" /><summary type="html">Now that we’re familiar with ray tracing through my introduction, we can delve into the titular first section of Peter Shirley’s book.</summary></entry><entry><title type="html">Ray Tracing in One Weekend:</title><link href="/2020/05/20/ray-tracing-in-one-weekend-part-one.html" rel="alternate" type="text/html" title="Ray Tracing in One Weekend:" /><published>2020-05-20T00:00:00-04:00</published><updated>2020-05-20T00:00:00-04:00</updated><id>/2020/05/20/ray-tracing-in-one-weekend-part-one</id><content type="html" xml:base="/2020/05/20/ray-tracing-in-one-weekend-part-one.html">&lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
+It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.&lt;/p&gt;
+
+&lt;!--end-excerpt--&gt;
+
+&lt;hr /&gt;
+&lt;h2 id=&quot;contents&quot;&gt;Contents&lt;/h2&gt;
+
+&lt;ul class=&quot;part-navigator&quot;&gt;
+    
+        
+    
+        
+    
+        
+
+        &lt;li&gt;
+                    &lt;a href=&quot;/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title&quot; class=&quot;btn inactive&quot;&gt;Part One - An Introduction&lt;/a&gt;
+
+                &lt;/li&gt;
+        
+    
+        
+
+        &lt;li&gt;
+                    &lt;a href=&quot;/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title&quot; class=&quot;btn&quot;&gt;Part Two - The First Weekend&lt;/a&gt;
+
+                &lt;/li&gt;
+        
+    
+&lt;/ul&gt;
+
+&lt;ul class=&quot;table-of-contents&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;#what-is-ray-tracing&quot;&gt;What is Ray Tracing?&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#what-is-path-tracing&quot;&gt;What is Path Tracing?&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#what-is-rasterization&quot;&gt;What is Rasterization?&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#a-happy-medium&quot;&gt;A Happy Medium (For Now)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#practical-applications-of-ray-tracing&quot;&gt;Practical Applications of Ray Tracing&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#an-abbreviated-graphics-timeline&quot;&gt;An Abbreviated Graphics Timeline&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#why-explore-ray-tracing&quot;&gt;Why Explore Ray Tracing?&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;what-is-ray-tracing&quot;&gt;&lt;a id=&quot;what-is-ray-tracing&quot;&gt;&lt;/a&gt;What is Ray Tracing?&lt;/h2&gt;
+
+&lt;div class=&quot;row-fill&quot;&gt;
+&lt;img alt=&quot;Minecraft (2011 Initial Release, 2020 Path Tracing Update)&quot; src=&quot;/assets/images/blog-images/path-tracer/introduction/minecraft-ray-tracing-off.png&quot; /&gt;
+&lt;img alt=&quot;Minecraft (2011 Initial Release, 2020 Path Tracing Update)&quot; src=&quot;/assets/images/blog-images/path-tracer/introduction/minecraft-ray-tracing-on.png&quot; /&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Put simply, ray tracing is a rendering technique that can accurately simulate the lighting of a scene.&lt;/p&gt;
+
+&lt;p&gt;Ray tracing generates an image by determining the color of each pixel of the image in a mathematically formulated scene. In the simplest example, the color of each one of these pixels is determined by sending a ray from the camera into the scene, and back to its light source.&lt;/p&gt;
+
+&lt;p&gt;The ray will potentially collide with - and bounce off of - scene objects. Each of these scene objects has intrinsic properties, such as reflectivity, refractive index, and roughness. The interactions of the ray among all these objects are combined with the light source to determine the final color and intensity of the pixel. This process is repeated for the whole image, pixel by pixel.&lt;/p&gt;
+
+&lt;p&gt;You may be thinking: “Why send a ray from the camera instead of from the light source?”
+The reason is a matter of efficiency; rather than sending rays out from the light in all directions, it’s much more effective to only trace the bare minimum - which in our simplistic example - is one ray for each pixel of the image.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/ray-tracing-put-simply.png&quot; alt=&quot;Ray Tracing Illustration&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;what-is-path-tracing&quot;&gt;&lt;a id=&quot;what-is-path-tracing&quot;&gt;&lt;/a&gt;What is Path Tracing?&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/path-traced-dragon.png&quot; alt=&quot;Path traced glass dragon&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Path tracing is similar to ray tracing, but much more intensive. Hundreds to thousands of rays are traced through each pixel of the image, with numerous bounces off of - or through - objects, before reaching the light source (or hitting a specified “bounce limit”) to generate more accurate color and lighting information.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/minecraft-ray-tracing-on-compilation.png&quot; alt=&quot;Minecraft (2011 Initial Release, 2020 Path Tracing Update)&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Path tracing, as you may have guessed, is more accurate a simulation than ray tracing, simulating soft shadows, caustics, and global illumination. However, it is more “brute-force”. Without enough rays through each pixel or simulated bounces for each ray, the final image will be ridden with noise.&lt;/p&gt;
+
+&lt;p&gt;Also - fun fact: I learned recently path tracing requires light sources to have physical size instead of “point lights” used in ray tracing or rasterized graphics… which brings me to my next point…&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;what-is-rasterization&quot;&gt;&lt;a id=&quot;what-is-rasterization&quot;&gt;&lt;/a&gt;What is Rasterization?&lt;/h2&gt;
+&lt;p&gt;Rasterization is the &lt;a href=&quot;#an-abbreviated-graphics-timeline&quot;&gt;vast majority of games&lt;/a&gt; have used in to display 3D scenes on 2D screens. Using rasterization, objects are represented with virtual triangles (aka polygons). These triangles all have corners, and these vertices contain data of such attributes as position, color, texture, and the surface normal (orientation).&lt;/p&gt;
+
+&lt;p&gt;The triangles are eventually converted to pixels when being rendered. Each pixel can be assigned an initial color value from the data stored in the triangle vertices. Further pixel processing or “shading” including changing color based on how lights in the scene hit, and applying one or more textures, combine to generate the final color applied to a pixel.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/raster.png&quot; alt=&quot;Vertices being converted to pixels&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Rasterization is used in real-time computer graphics and while still computationally intensive, it is less so compared to ray tracing.&lt;/p&gt;
+
+&lt;div class=&quot;captioned-image&quot;&gt;
+The following images are from rasterized game engines
+&lt;div class=&quot;row-fill three-images&quot;&gt;
+    &lt;!-- ![Nintendo 64 (1996 (North America))](/assets/images/blog-images/path-tracer/introduction/n64.png) --&gt;
+    &lt;img alt=&quot;Super Mario 64 (1996)&quot; src=&quot;/assets/images/blog-images/path-tracer/introduction/mario.png&quot; /&gt;
+    &lt;img alt=&quot;F-Zero X (1998)&quot; src=&quot;/assets/images/blog-images/path-tracer/introduction/f-zero-x.png&quot; /&gt;
+    &lt;img alt=&quot;The Legend of Zelda: Ocarina of Time (1998)&quot; src=&quot;/assets/images/blog-images/path-tracer/introduction/zelda.png&quot; /&gt;
+&lt;/div&gt;
+&lt;div class=&quot;row-fill&quot;&gt;
+    &lt;img alt=&quot;Solid Snake of Metal Gear Solid (1998)&quot; src=&quot;/assets/images/blog-images/path-tracer/introduction/metal-gear-solid.png&quot; /&gt;
+    &lt;img alt=&quot;Crash Bandicoot (1996)&quot; src=&quot;/assets/images/blog-images/path-tracer/introduction/crash-bandicoot.png&quot; /&gt;
+    &lt;img alt=&quot;Tekken (1995)&quot; src=&quot;/assets/images/blog-images/path-tracer/introduction/tekken.png&quot; /&gt;
+&lt;/div&gt;
+&lt;img alt=&quot;Assassin's Creed Unity (2015)&quot; src=&quot;/assets/images/blog-images/path-tracer/introduction/ac-unity-rasterized.png&quot; /&gt;
+&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;a-happy-medium-for-now&quot;&gt;&lt;a id=&quot;a-happy-medium&quot;&gt;&lt;/a&gt;A Happy Medium (For Now)&lt;/h2&gt;
+&lt;p&gt;Rasterization and ray tracing can be combined! Rasterization can determine visible objects relatively quickly, while ray tracing can be used to improve the quality of reflections, refractions, and shadows.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/hybrid-ray-tracing.png&quot; alt=&quot;Hybrid ray tracing&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;practical-applications-of-ray-tracing&quot;&gt;&lt;a id=&quot;practical-applications-of-ray-tracing&quot;&gt;&lt;/a&gt;Practical Applications of Ray Tracing&lt;/h2&gt;
+&lt;p&gt;Applications of ray tracing are many and varied:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Real-time rendering (video games)&lt;/li&gt;
+  &lt;li&gt;Non-real-time rendering (film and television)&lt;/li&gt;
+  &lt;li&gt;Architecture / lighting design&lt;/li&gt;
+  &lt;li&gt;Engineering&lt;/li&gt;
+  &lt;li&gt;Acoustics modeling&lt;/li&gt;
+  &lt;li&gt;Radio propagation modeling&lt;/li&gt;
+  &lt;li&gt;Physics simulations&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;span class=&quot;row-fill&quot;&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/control-boots.png&quot; alt=&quot;Control(2019)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/battlefield-five-lobby.png&quot; alt=&quot;Battlefield V(2018)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/battlefield-five-street.png&quot; alt=&quot;Battlefield V(2018)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill&quot;&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/toy-story-four.png&quot; alt=&quot;(2019)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/building.png&quot; alt=&quot;(Ray traced building)&quot; /&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/room-acoustics.png&quot; alt=&quot;Ray traced acoustics&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill&quot;&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/couch.png&quot; alt=&quot;(Ray traced building)&quot; /&gt;
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;an-abbreviated-graphics-timeline&quot;&gt;&lt;a id=&quot;an-abbreviated-graphics-timeline&quot;&gt;&lt;/a&gt;An Abbreviated Graphics Timeline&lt;/h2&gt;
+&lt;p&gt;I was born in 1995 - an exciting year for computer graphics. &lt;em&gt;Toy Story&lt;/em&gt; - the first entirely
+computer-animated feature film - would be released. Homer Simpson, of &lt;em&gt;The Simpsons&lt;/em&gt; fame, would be computer-animated for a &lt;em&gt;Treehouse of Horror&lt;/em&gt; Halloween episode. The Sony Playstation would be released in the United States.&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/toy-story.png&quot; alt=&quot;Toy Story&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/homer.png&quot; alt=&quot;Homer Simpson&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill&quot;&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/playstation-1.png&quot; alt=&quot;Playstation&quot; /&gt;
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Technology had come a long way since 1980’s &lt;em&gt;Battlezone&lt;/em&gt;, which with its wireframe vector graphics, was one of the first
+big “3D” successes in any medium. Thankfully, I was able to play a version of Battlezone at a young age, and naturally
+noticed (and took a major interest in) the increasing fidelity of computer-generated graphics growing up.&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;row-fill&quot;&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/battlezone.png&quot; alt=&quot;Battlezone(1980)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill five-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/missle-command.png&quot; alt=&quot;Missle Command(1980)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/donkey-kong.png&quot; alt=&quot;Donkey Kong(1981)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/tempest.png&quot; alt=&quot;Tempest(1981)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/pole-position.png&quot; alt=&quot;Pole Position(1982)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/mario-bros.png&quot; alt=&quot;Mario Bros.(1983)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill five-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/dragons-lair.png&quot; alt=&quot;Dragon's Lair(1983)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/marble-madness.png&quot; alt=&quot;Marble Madness(1984)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/paperboy.png&quot; alt=&quot;Paperboy(1985)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/smb.png&quot; alt=&quot;Super Mario Bros.(1985)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/legend-of-zelda.png&quot; alt=&quot;The Legend of Zelda(1986)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill five-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/metroid.png&quot; alt=&quot;Metroid(1986)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/castlevania.png&quot; alt=&quot;Castlevania II: Simon's Quest(1987)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/punch-out.png&quot; alt=&quot;Mike Tyson's Punch-Out(1987)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/mega-man.png&quot; alt=&quot;Mega Man 2(1988)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/madden.png&quot; alt=&quot;John Madden Football(1988)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill four-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/sim-city.png&quot; alt=&quot;SimCity(1989)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/smb-3.png&quot; alt=&quot;Super Mario Bros. 3(1990)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/super-mario-world.png&quot; alt=&quot;Super Mario World(1990)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/f-zero.png&quot; alt=&quot;F-Zero(1990)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/another-world.png&quot; alt=&quot;Another World(1991)&quot; /&gt;
+    &lt;/span&gt;
+&lt;span class=&quot;row-fill four-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/wolfenstein.png&quot; alt=&quot;Wolfenstein 3D(1992)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/virtua-racing.png&quot; alt=&quot;Virtua Racing(1992)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/mortal-kombat.png&quot; alt=&quot;Mortal Kombat(1992)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/alone-in-the-dark.png&quot; alt=&quot;Alone in the Dark(1992)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill three-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/virtua-fighter.png&quot; alt=&quot;Virtua Fighter(1993)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/aladdin.png&quot; alt=&quot;Aladdin(1993)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/doom.png&quot; alt=&quot;Doom(1993)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill three-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/donkey-kong-country.png&quot; alt=&quot;Donkey Kong Country(1994)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/panzer-dragoon.png&quot; alt=&quot;Panzer Dragoon(1995)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/quake.png&quot; alt=&quot;Quake(1996)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/super-mario-64.png&quot; alt=&quot;Super Mario 64(1996)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/crash.png&quot; alt=&quot;Crash Bandicoot(1996)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill three-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/star-fox-64.png&quot; alt=&quot;Star Fox 64(1997)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/gran-turismo.png&quot; alt=&quot;Gran Turismo(1997)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/half-life-one.png&quot; alt=&quot;Half-Life(1998)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/metal-gear-solid-2.png&quot; alt=&quot;Metal Gear Solid(1998)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/sonic-adventure.png&quot; alt=&quot;Sonic Adventure(1998)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/shenmue.png&quot; alt=&quot;Shenmue(1999)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/madden.png&quot; alt=&quot;Madden 2001(2000)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/gran-turismo-three.png&quot; alt=&quot;Gran Turismo 3: A-Spec(2001)&quot; /&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/grand-theft-auto-three.png&quot; alt=&quot;Grand Theft Auto III(2001)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill three-images&quot;&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/metal-gear-solid-two.png&quot; alt=&quot;Metal Gear Solid 2: Sons of
+Liberty(2001)&quot; /&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/melee.png&quot; alt=&quot;Super Smash Brothers
+Melee(2001)&quot; /&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/jet-set.png&quot; alt=&quot;Jet Set Radio Future(2002)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill five-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/super-mario-sunshine.png&quot; alt=&quot;Super Mario Sunshine(2002)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/splinter-cell.png&quot; alt=&quot;Splinter Cell(2002)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/wind-waker.png&quot; alt=&quot;The legend of Zelda: The Wind
+    Waker(2003)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/viewtiful-joe.png&quot; alt=&quot;Viewtiful Joe(2003)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/far-cry.png&quot; alt=&quot;Far Cy(2004)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill three-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/half-life-two.png&quot; alt=&quot;Half-Life 2(2004)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/fear.png&quot; alt=&quot;F.E.A.R.(2005)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/call-of-duty-two.png&quot; alt=&quot;Call of Duty 2(2005)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/table-tennis.png&quot; alt=&quot;Rockstar Games Presents Table
+    Tennis(2006)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/dead-rising.png&quot; alt=&quot;Dead Rising(2006)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/crysis.png&quot; alt=&quot;Crysis(2007)&quot; /&gt;
+    &lt;/span&gt;
+    &lt;span class=&quot;row-fill&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/heavenly-sword.png&quot; alt=&quot;Heavenly Sword(2007)&quot; /&gt;
+    &lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/halo-three.png&quot; alt=&quot;Halo 3(2007)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/team-fortress-two.png&quot; alt=&quot;Team Fortress 2(2007)&quot; /&gt;
+&lt;/span&gt;
+    &lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/grand-theft-auto-four.png&quot; alt=&quot;Grand Theft Auto 4(2008)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/mirrors-edge.png&quot; alt=&quot;Mirror's Edge(2008)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill&quot;&gt;
+&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/flower.png&quot; alt=&quot;Flower(2009)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill three-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/uncharted-two.png&quot; alt=&quot;Uncharted 2: Among
+    Thieves(2009)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/god-of-war-three.png&quot; alt=&quot;God of War III(2010)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/gran-turismo-five.png&quot; alt=&quot;Gran Turismo 5(2010)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;&lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/red-dead-redemption.png&quot; alt=&quot;Red Dead
+    Redemption(2010)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/witcher-two.png&quot; alt=&quot;Witcher 2: Assassin of
+    Kings(2011)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill three-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/uncharted-three.png&quot; alt=&quot;Uncharted 3: Drake's
+    Deception(2011)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/rage.png&quot; alt=&quot;Rage(2011)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/journey.png&quot; alt=&quot;Journey(2012)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill three-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/max-payne-three.png&quot; alt=&quot;Max Payne 3(2012)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/killzone-shadow-fall.png&quot; alt=&quot;Killzone: Shadow Fall(2013)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/ryse.png&quot; alt=&quot;Ryse: Son of Rome(2013)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/sunset-overdrive.png&quot; alt=&quot;Sunset Overdrive(2014)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/far-cry-four.png&quot; alt=&quot;Far Cry 4(2014)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/the-order.png&quot; alt=&quot;The Order: 1886(2015)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/star-wars-battlefront.png&quot; alt=&quot;Star Wars: Battlefront(2015)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/firewatch.png&quot; alt=&quot;Firewatch(2016)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/uncharted-four.png&quot; alt=&quot;Uncharted 4: A Thief's End(2016)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/resident-evil-seven.png&quot; alt=&quot;Resident Evil 7(2017)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/horizon-zero-dawn.png&quot; alt=&quot;Horizon: Zero Dawn(2017)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/hellblade.png&quot; alt=&quot;Hellblade: Senua's Sacrifice(2017)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/shadow-of-the-colossus.png&quot; alt=&quot;Shadow of the Colossus(2018)&quot; /&gt;
+    &lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/god-of-war.png&quot; alt=&quot;God of War(2018)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/red-dead-two.png&quot; alt=&quot;Red Dead Redemption 2(2018)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/ace-combat.png&quot; alt=&quot;Ace Combat 7: Skies Unknown(2019)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/control.png&quot; alt=&quot;Control(2019)&quot; /&gt;
+&lt;/span&gt;
+&lt;span class=&quot;row-fill two-images&quot;&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/call-of-duty-modern-warfare.png&quot; alt=&quot;Call of Duty: Modern Warfare(2019)&quot; /&gt;
+    &lt;img src=&quot;/assets/images/blog-images/path-tracer/introduction/graphics-timeline/death-stranding.png&quot; alt=&quot;Death Stranding(2019)&quot; /&gt;
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;why-explore-ray-tracing&quot;&gt;&lt;a id=&quot;why-explore-ray-tracing&quot;&gt;&lt;/a&gt;Why Explore Ray Tracing?&lt;/h2&gt;
+&lt;p&gt;To put it succinctly, I chose to learn more about ray tracing for the following reasons:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Graphics are neat.&lt;/strong&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Ray tracing is &lt;em&gt;very&lt;/em&gt; hot right now.&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Despite having been first described algorithmically by &lt;a href=&quot;http://graphics.stanford.edu/courses/Appel.pdf&quot;&gt;Arthur Appel in 1968&lt;/a&gt;, ray tracing has only recently made its way to the mainstream (like the Nvidia 20 Series (2018), the first in the industry to implement realtime hardware ray tracing in a consumer product.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Ray tracing will likely play a huge role in rendering for years to come.&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Ray tracing is applicable in more fields than just CGI, like optical design and acoustic modeling.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing" /><category term="ray-tracing-in-one-weekend" /><summary type="html">It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.</summary></entry><entry><title type="html">Building a Blog:</title><link href="/2020/05/18/building-a-blog.html" rel="alternate" type="text/html" title="Building a Blog:" /><published>2020-05-18T00:00:00-04:00</published><updated>2020-05-18T00:00:00-04:00</updated><id>/2020/05/18/building-a-blog</id><content type="html" xml:base="/2020/05/18/building-a-blog.html">&lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
+They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.&lt;/p&gt;
+
+&lt;!--end-excerpt--&gt;
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;contents&quot;&gt;Contents&lt;/h2&gt;
+
+&lt;!-- &lt;ul class=&quot;table-of-contents&quot;&gt;
+&lt;li&gt;&lt;a href=&quot;#humble-beginnings&quot;&gt;Humble Beginnings&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#github-pages&quot;&gt;GitHub Pages&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#jekyll&quot;&gt;Jekyll&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#custom-ruby-plugins&quot;&gt;Custom Ruby Plugins&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#archive-page&quot;&gt;Archive Page&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#tag-system&quot;&gt;Tag System&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#search-function&quot;&gt;Search Function&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#the-future&quot;&gt;The Future&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#updates&quot;&gt;Updates&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt; --&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;humble-beginnings&quot;&gt;Humble Beginnings&lt;/h2&gt;
+&lt;p&gt;I really decided on building a blog when I started working on Peter Shirley’s &lt;a href=&quot;https://raytracing.github.io/&quot;&gt;Ray Tracing in One Weekend&lt;/a&gt; series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to &lt;a href=&quot;http://viclw17.github.io/&quot;&gt;Victor Li’s Blog&lt;/a&gt;. Inspired by the clarity, variety, and layout of Victor’s blog, I constructed a similar site for myself to document my work and personal excursions as a developer.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;github-pages&quot;&gt;&lt;a id=&quot;github-pages&quot;&gt;&lt;/a&gt;GitHub Pages&lt;/h2&gt;
+
+&lt;p&gt;As you may have surmised from the URL, this site is hosted by GitHub Pages. Originally, I was going to register a domain from Hostinger, but GitHub Pages is FREE. Additionally, GitHub is probably the most sensible place to expand my portfolio, and a static site is all I really needed for a technical blog… for now.&lt;/p&gt;
+
+&lt;p&gt;The only real trouble I ran into was trying to use custom plugins. More on this issue and how I went about solving it &lt;a href=&quot;#ruby-plugins&quot;&gt;below&lt;/a&gt;.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;jekyll&quot;&gt;&lt;a id=&quot;jekyll&quot;&gt;&lt;/a&gt;Jekyll&lt;/h2&gt;
+
+&lt;p&gt;Straight from Jekyll’s GitHub page…&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Jekyll is a simple, blog-aware, static site generator perfect for personal, project, or organization sites. Think of it like a file-based CMS, without all the complexity. Jekyll takes your content, renders Markdown and Liquid templates, and spits out a complete, static website ready to be served by Apache, Nginx or another web server. Jekyll is the engine behind GitHub Pages, which you can use to host sites right from your GitHub repositories.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;For the most part, Jekyll has been a breeze to work with. I would recommend it to anyone looking to build a static site.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;custom-ruby-plugins&quot;&gt;&lt;a id=&quot;custom-ruby-plugins&quot;&gt;&lt;/a&gt;Custom Ruby Plugins&lt;/h2&gt;
+
+&lt;p&gt;When constructing the site, this is where I ran into the most trouble. It turns out that when using the github-pages gem, the site is generated in safe mode and the plugins directory is a random string. Additionally, only a few Jekyll plugins are whitelisted by GitHub Pages. When constructing the tag feature, tags worked fine locally, but when pushing to the master branch, the live site had broken elements. Same with the archive page.&lt;/p&gt;
+
+&lt;p&gt;One solution is to build the site locally and push the generated site files to GitHub. In this way, GitHub would interpret the site as static files and not as a Jekyll project - skipping the build process. However, doing so would require a lot of manual file management and would be prone to human error.&lt;/p&gt;
+
+&lt;p&gt;The better solution, of course, is to automate. Big thanks to Josh Frankel and &lt;a href=&quot;https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/&quot;&gt;his post&lt;/a&gt; detailing the process.&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;highlight-yellow&quot;&gt;Update: “Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on.” This includes a brand new subscription fee! And re-configuring!&lt;br /&gt;I don’t feel like dealing with that (or looking into other options right now), so for the time being, I’ll just be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll build&lt;/code&gt;-ing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source&lt;/code&gt; and pushing the updated directory &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_site&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;master&lt;/code&gt;.&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;The basic idea is as follows:
+&lt;img src=&quot;/assets/images/blog-images/howdy/github-pages-build-process.png&quot; alt=&quot;Workflow for using custom plugins on GitHub Pages&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Create a new branch off of master (in my case, it’s called &lt;em&gt;source&lt;/em&gt;).&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;p&gt;The &lt;em&gt;source&lt;/em&gt; branch is where my changes take place from here on out.
+&lt;em&gt;Source&lt;/em&gt; will contain the entire Jekyll project, but master will only contain the static &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_site&lt;/code&gt; folder.
+It’s also recommended to make &lt;em&gt;source&lt;/em&gt; the default branch, as well as protecting it.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Generate a GitHub &lt;em&gt;Personal Access Token&lt;/em&gt; for Travis CI and give it repo scope/access.&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;p&gt;This will allow Travis CI to perform pushes.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Configure the Jekyll site to work with Travis CI.&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;p&gt;Buckle in, becuase the next part of the process introduces a lot of changes to the Jekyll site.&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;&lt;strong&gt;Add the following to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;:&lt;/strong&gt;&lt;/p&gt;
+
+        &lt;pre&gt;&lt;code class=&quot;language-ruby&quot;&gt;source &quot;https://rubygems.org&quot;
+  ruby RUBY_VERSION
+
+  # We'll need rake to build our site in TravisCI
+  gem &quot;rake&quot;, &quot;~&amp;gt; 12&quot;
+  gem &quot;jekyll&quot;
+
+  # Optional: Add any custom plugins here.
+  # Some useful examples are listed below
+  group :jekyll_plugins do
+  gem &quot;jekyll-feed&quot;
+  gem &quot;jekyll-sitemap&quot;
+  gem &quot;jekyll-paginate-v2&quot;
+  gem &quot;jekyll-seo-tag&quot;
+  gem &quot;jekyll-compose&quot;, &quot;~&amp;gt; 0.5&quot;
+  gem &quot;jekyll-redirect-from&quot;
+  end&lt;/code&gt;&lt;/pre&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;&lt;strong&gt;Ensure any Gemfiles used in the Gemfile are in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt; as well.&lt;/strong&gt;&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;&lt;strong&gt;Exclude certain files to ensure they don’t end up in &lt;em&gt;master&lt;/em&gt; after Travis CI builds &lt;em&gt;source&lt;/em&gt;.&lt;/strong&gt;&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;&lt;strong&gt;Sample &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;:&lt;/strong&gt;&lt;/p&gt;
+
+        &lt;pre&gt;&lt;code class=&quot;language-yaml&quot;&gt;title: Your blog title
+email: your.email@gmail.com
+
+# many other settings
+# ...
+
+# Any plugins within jekyll_plugin group from Gemfile
+plugins:
+- jekyll-feed
+- jekyll-sitemap
+- jekyll-paginate-v2
+- jekyll-seo-tag
+- jekyll-compose
+- jekyll-redirect-from
+
+# Exclude these files from the build process results.
+# Prevents them from showing up in the master branch which 
+# is the live site.
+exclude:
+- vendor
+- Gemfile
+- Gemfile.lock
+- LICENSE
+- README.md
+- Rakefile&lt;/code&gt;&lt;/pre&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;&lt;strong&gt;Since &lt;em&gt;master&lt;/em&gt; will be used to display the static site, we need git to ignore changes to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_site&lt;/code&gt;. Add the following to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.gitignore&lt;/code&gt;:&lt;/strong&gt;&lt;/p&gt;
+
+        &lt;pre&gt;&lt;code class=&quot;language-git&quot;&gt;.sass-cache
+.jekyll-metadata
+_site&lt;/code&gt;&lt;/pre&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;&lt;strong&gt;A &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.travis.yml&lt;/code&gt; file is needed to inform Travis CI how to run:&lt;/strong&gt;&lt;/p&gt;
+
+        &lt;pre&gt;&lt;code class=&quot;language-yaml&quot;&gt;#All of this together basically says, “Using the source branch from this repo, push all the files found within the site directory to the master branch of the repo”.
+
+language: ruby #Use Ruby
+rvm:
+    - 2.3.1 #Use RVM to set ruby version to 2.3.1
+install:
+    - bundle install #Run bundle install to install all gems.
+deploy:
+    provider: pages #Use TravisCI’s Github Pages provider
+    skip_cleanup: true #Preserve files created during build phase.
+    github_token: $GITHUB_TOKEN # Our personal access token. This is currently a reference to an environment variable which will be added in the TravisCI setup section below.
+    local_dir: _site #Use all files found in this directory for deployment.
+    target_branch: master #Push resulting build files to this branch on Github.
+on:
+    branch: source #Only run TravisCI for this branch.&lt;/code&gt;&lt;/pre&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;&lt;strong&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.travis.yml&lt;/code&gt; only works by using the following &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Rakefile&lt;/code&gt; to manually build the site:&lt;/strong&gt;&lt;/p&gt;
+
+        &lt;pre&gt;&lt;code class=&quot;language-ruby&quot;&gt;# filename: Rakefile
+task :default do
+puts &quot;Running CI tasks...&quot;
+
+# Runs the jekyll build command for production
+# TravisCI will now have a site directory with our
+# statically generated files.
+sh(&quot;JEKYLL_ENV=production bundle exec jekyll build&quot;)
+puts &quot;Jekyll successfully built&quot;
+end&lt;/code&gt;&lt;/pre&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;&lt;strong&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Rakefile&lt;/code&gt; runs on every build. All checks must be passed before Travis CI will deploy the build.&lt;/strong&gt;&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;&lt;strong&gt;Set up Travis CI.&lt;/strong&gt;&lt;/p&gt;
+
+        &lt;p&gt;Sign in to Travis CI.
+Find the appropriate repository and enable it.
+Create a new environment variable named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GITHUB_TOKEN&lt;/code&gt; from the repository settings page and enter the &lt;em&gt;Personal Access Token&lt;/em&gt; from way back when.&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;&lt;strong&gt;Cross fingers and PUSH (to &lt;em&gt;source&lt;/em&gt;).&lt;/strong&gt;&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The Travis CI build should start, complete, and the site will be live!&lt;/p&gt;
+
+&lt;p&gt;WOW! Quite a bit of work for some custom plugins! Namely, my archive page and tag system. Again, HUGE thanks to &lt;a href=&quot;https://joshfrankel.me&quot;&gt;Josh Frankel&lt;/a&gt; for &lt;a href=&quot;https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/&quot;&gt;his post&lt;/a&gt;!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;archive-page&quot;&gt;&lt;a id=&quot;archive-page&quot;&gt;&lt;/a&gt;Archive Page&lt;/h2&gt;
+&lt;p&gt;The archive page I have on my site at the time of this post is adapted from &lt;a href=&quot;https://github.com/Sodaware/jekyll-archive-page&quot;&gt;Sodaware’s Repository&lt;/a&gt;. There’s not much to it, just some basic ruby data collection and a simple layout file. I would eventually like to style it in a way that is more pleasing on mobile devices.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;tag-system&quot;&gt;&lt;a id=&quot;tag-system&quot;&gt;&lt;/a&gt;Tag System&lt;/h2&gt;
+&lt;p&gt;For post tagging, I followed an &lt;a href=&quot;https://blog.lunarlogic.io/2019/managing-tags-in-jekyll-blog-easily/&quot;&gt;example from Lunar Logic&lt;/a&gt;. In the Lunar Logic post, the author, &lt;a href=&quot;https://blog.lunarlogic.io/author/anna/&quot;&gt;Anna Ślimak&lt;/a&gt;, details using Jekyll hooks - which allow for fine-grained control over various aspects of the build process. For example, one could execute custom functionality every time Jekyll renders a post. That’s exactly what I’m doing on my site for the tags.&lt;/p&gt;
+
+&lt;p&gt;While tags can simply be entered in the Front Matter of posts, no html is generated for that specific tag. I could manually create a file for said tag in the tags directory, but the hook automatically does that work for me.&lt;/p&gt;
+
+&lt;p&gt;Here’s the code:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ruby&quot;&gt;Jekyll::Hooks.register :posts, :post_write do |post|
+    all_existing_tags = Dir.entries(&quot;tags&quot;)
+      .map { |t| t.match(/(.*).md/) }
+      .compact.map { |m| m[1] }
+  
+    tags = post['tags'].reject { |t| t.empty? }
+    tags.each do |tag|
+      generate_tag_file(tag) if !all_existing_tags.include?(tag)
+    end
+  end
+  
+  def generate_tag_file(tag)
+    File.open(&quot;tags/#{tag}.md&quot;, &quot;wb&quot;) do |file|
+      file &amp;lt;&amp;lt; &quot;---\nlayout: tag-page\ntag: #{tag}\n---\n&quot;
+    end
+  end&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;search-function&quot;&gt;&lt;a id=&quot;search-function&quot;&gt;&lt;/a&gt;Search Function&lt;/h2&gt;
+&lt;p&gt;The search function was adapted from &lt;a href=&quot;https://github.com/christian-fei/Simple-Jekyll-Search&quot;&gt;Christian Fei’s Simple Jekyll Search&lt;/a&gt;. Here’s the rundown:&lt;/p&gt;
+
+&lt;p&gt;Jekyll is all client-side, so the required content for a search must be stored in a file on the site itself.&lt;/p&gt;
+
+&lt;p&gt;Within the root of the Jekyll project, a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.json&lt;/code&gt; file is created from existing posts containing data to search through:&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&quot;search-json&quot;&gt;&lt;/a&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;search.json&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-json&quot;&gt;---
+---
+[
+  {% for post in site.posts %}
+    {
+
+      &quot;title&quot;    : &quot;{{ post.title | escape }}&quot;,
+      &quot;subtitle&quot;    : &quot;{{ post.subtitle | escape }}&quot;,
+      &quot;tags&quot;     : &quot;{{ post.tags | join: ', ' }}&quot;,
+      &quot;date&quot;     : &quot;{{ post.date }}&quot;,
+      &quot;url&quot;      : &quot;{{ site.baseurl }}{{ post.url }}&quot;
+
+    } {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+]&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This code generates a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;search.json&lt;/code&gt; file in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_site&lt;/code&gt; directory. Don’t forget to add escape characters to prevent the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.json&lt;/code&gt; file from getting messed up. &lt;a href=&quot;https://shopify.github.io/liquid/&quot;&gt;Liquid has some useful filters that can help out&lt;/a&gt;. Here’s a snippet of my generated &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;search.json&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-json&quot;&gt;...
+{
+
+      &quot;title&quot;    : &quot;Building a Blog:&quot;,
+      &quot;subtitle&quot;    : &quot;Howdy!&quot;,
+      &quot;tags&quot;     : &quot;web, jekyll, github-pages, ruby&quot;,
+      &quot;date&quot;     : &quot;2020-05-18 00:00:00 -0400&quot;,
+      &quot;url&quot;      : &quot;/2020/05/18/building-a-blog.html&quot;
+
+    } 
+...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If we wanted to include other aspects of the post in our search, such as the excerpt, content, or custom variables, we could easily follow the &lt;a href=&quot;#search-json&quot;&gt;template above&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Save the &lt;a href=&quot;https://github.com/christian-fei/Simple-Jekyll-Search/blob/master/dest/simple-jekyll-search.js&quot;&gt;search script&lt;/a&gt; in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/js/simple-jekyll-search.js&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I placed the necessary HTML elements for the search function inside &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/_includes/search-bar.html&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-html&quot;&gt;&amp;lt;!-- Html Elements for Search --&amp;gt;
+&amp;lt;div id=&quot;search-container&quot; style=&quot;visibility: hidden;&quot;&amp;gt;
+  &amp;lt;input type=&quot;text&quot; id=&quot;search-input&quot; placeholder=&quot;Search...&quot; /&amp;gt;
+  &amp;lt;ul id=&quot;results-container&quot;&amp;gt;&amp;lt;/ul&amp;gt;
+&amp;lt;/div&amp;gt;
+
+&amp;lt;!-- Script pointing to search-script.js --&amp;gt;
+&amp;lt;script src=&quot;/js/site-scripts/search-script.js&quot; type=&quot;text/javascript&quot;&amp;gt;&amp;lt;/script&amp;gt;
+
+&amp;lt;!-- Configuration --&amp;gt;
+&amp;lt;script&amp;gt;
+  SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '&amp;lt;li&amp;gt;&amp;lt;a href=&quot;{url}&quot;&amp;gt;{title}&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;'
+  })&amp;lt;/script&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and included it right below the nav bar in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/_layouts/default.html&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;searchResultTemplate&lt;/code&gt; variable above determines what is included in the dropdown search results.&lt;/p&gt;
+
+&lt;p&gt;Lastly, I added some javascript to toggle the search bar from visible to hidden.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;the-future&quot;&gt;&lt;a id=&quot;the-future&quot;&gt;&lt;/a&gt;The Future&lt;/h2&gt;
+&lt;p&gt;From here onwards, I plan to document as concisely and as compellingly as possible every personal project I undertake.&lt;/p&gt;
+
+&lt;p&gt;Oh, and to reformat my &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;style.css&lt;/code&gt;. It’s a little sloppy.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;updates&quot;&gt;&lt;a id=&quot;updates&quot;&gt;&lt;/a&gt;Updates&lt;/h2&gt;
+
+&lt;h3 id=&quot;2021-04&quot;&gt;&lt;time&gt;2021-04&lt;/time&gt;&lt;/h3&gt;
+
+&lt;details&gt;
+&lt;summary&gt;Refactored my CSS into multiple files&lt;/summary&gt;
+&lt;br /&gt;
+I used to have one monolithic style.scss file. After some refactoring, this is the result:
+&lt;pre&gt;&lt;code class=&quot;language-treeview&quot;&gt;eldun.github.io/
+    ├── assets/
+    │   ├── css/
+    │   │   └── style.scss
+    │   ├── images/
+    │   └── webfonts/
+    ├── _sass/
+    │   ├── fontawesome/
+    │   └── site/
+    │       ├── about-me.scss
+    │       ├── archive.scss
+    │       ├── header.scss
+    │       ├── images.scss
+    │       ├── mathjax.scss
+    │       ├── nav.scss
+    │       ├── post-navigation.scss
+    │       ├── posts.scss
+    │       ├── search.scss
+    │       └── tags.scss
+    └── ...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;code&gt;style.scss&lt;/code&gt; is now mostly imports and high-level stylings:
+&lt;pre&gt;&lt;code class=&quot;language-scss&quot;&gt;---
+---
+$color-primary: {{ site.data.colors[&quot;primary&quot;][&quot;dark-theme&quot;] }};
+$color-secondary:  {{ site.data.colors[&quot;secondary&quot;][&quot;dark-theme&quot;] }};
+$color-accent: {{ site.data.colors[&quot;accent&quot;][&quot;dark-theme&quot;] }};
+$color-clickable: {{ site.data.colors[&quot;clickable&quot;][&quot;dark-theme&quot;] }};
+$color-text: {{ site.data.colors[&quot;text&quot;][&quot;dark-theme&quot;] }};
+
+/* This file extends/overrides the CSS file used by &quot;jekyll-theme-cayman&quot; (_site\assets\css\style.css)
+  https://help.github.com/en/github/working-with-github-pages/adding-a-theme-to-your-github-pages-site-using-jekyll#customizing-your-themes-css 
+*/
+
+
+// I took this out for a second, but putting it back in is easier than writing a bunch of responive css
+@import &quot;jekyll-theme-cayman&quot;;
+
+// The default folder for scss files is _sass (this can be changed in config.yml)
+// Was having a lot of trouble trying to use fontawesome icons with their relative paths
+// before creating the_sass directory and moving the scss files there.
+@import &quot;fontawesome/fontawesome.scss&quot;;
+@import &quot;fontawesome/solid.scss&quot;;
+@import &quot;fontawesome/brands.scss&quot;;
+@import &quot;fontawesome/regular.scss&quot;;
+
+
+@import &quot;site/header.scss&quot;;
+@import &quot;site/nav.scss&quot;;
+
+@import &quot;site/posts.scss&quot;;
+@import &quot;site/post-navigation.scss&quot;;
+@import &quot;site/images.scss&quot;;
+
+@import &quot;site/mathjax.scss&quot;;
+
+@import &quot;site/about-me.scss&quot;;
+@import &quot;site/archive.scss&quot;;
+@import &quot;site/tags.scss&quot;;
+@import &quot;site/search.scss&quot;;
+
+// CSS rules here&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+
+&lt;details&gt;
+&lt;summary&gt;Started using &lt;a class=&quot;btn&quot; href=&quot;https://prismjs.com/&quot; target=&quot;_blank&quot;&gt;Prism Syntax highlighter&lt;/a&gt;
+&lt;/summary&gt;
+&lt;br /&gt;
+All I had to do was generate js and css files from their site, plop them into my site directory, and link 'em. To use a specific language, all I need to do is specify a code block like so:
+&lt;code&gt;&amp;lt;pre&amp;gt;&amp;lt;code class=&quot;language-xxxx&quot;&amp;gt;&lt;/code&gt;
+&lt;pre&gt;&lt;code class=&quot;language-treeview&quot;&gt;eldun.github.io
+    ├── assets/
+    │   ├── css/
+    │   │   └── style.scss // import generated prism css here
+    │   ├── images/
+    │   └── webfonts/
+    ├── _config.yml
+    ├── _data/
+    ├── downloads/
+    ├── _drafts/
+    ├── Gemfile
+    ├── Gemfile.lock
+    ├── _includes/
+    ├── index.md
+    ├── js/
+    │   ├── post-scripts/
+    │   └── site-scripts/
+    │       ├── prism.js // generated by prism
+    │       ├── search-script.js
+    │       ├── toggle-search.js
+    │       └── vanilla-back-to-top.min.js
+    ├── _layouts/
+    │   ├── archive-page.html
+    │   ├── default.html // link to generated prism js here 
+    │   ├── post.html
+    │   └── tag-page.html
+    ├── _plugins/
+    ├── _posts/
+    ├── Rakefile
+    ├── _sass/
+    │   ├── fontawesome/
+    │   └── site/
+    │       ├── about-me.scss
+    │       ├── archive.scss
+    │       ├── header.scss
+    │       ├── images.scss
+    │       ├── mathjax.scss
+    │       ├── nav.scss
+    │       ├── post-navigation.scss
+    │       ├── posts.scss
+    │       ├── prism.scss // generated by prism
+    │       ├── search.scss
+    │       └── tags.scss
+    └── ...&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+
+&lt;h3 id=&quot;2022-08&quot;&gt;&lt;time&gt;2022-08&lt;/time&gt;&lt;/h3&gt;
+
+&lt;details&gt;
+
+&lt;summary&gt;
+Dynamic (&amp;amp; prettier) Table of Contents
+&lt;/summary&gt;
+&lt;br /&gt;
+
+
+Manual tables of content are time intensive and prone to authoring errors, I've come to find. Thankfully there's a &lt;a href=&quot;https://stackoverflow.com/a/5233948&quot;&gt;gem&lt;/a&gt; for &lt;a href=&quot;https://github.com/toshimaru/jekyll-toc&quot;&gt;generating a 'toc' dynamically&lt;/a&gt;, so I don't have to do too much work.
+
+The instructions are as follows:
+&lt;img src=&quot;/assets\images\blog-images\howdy\jekyll-toc-install.png&quot; /&gt;
+
+After following these steps, I only need to change a few things in &lt;code&gt;_layouts/post.html`&lt;/code&gt;:
+&lt;pre&gt;&lt;code class=&quot;language-diff-markup diff-highlight&quot;&gt;
+
+&amp;lt;div class=&quot;post-header inactive&quot;&amp;gt;
+&amp;lt;h1 id=&quot;post-title&quot;&amp;gt;{{ page.title }}&amp;lt;/h1&amp;gt;
+&amp;lt;h3 id=&quot;post-subtitle&quot;&amp;gt;{{ page.subtitle }}&amp;lt;/h3&amp;gt;
+&amp;lt;div class=&quot;post-date&quot;&amp;gt;
+    &amp;lt;i class=&quot;fas fa-calendar&quot;&amp;gt;&amp;lt;/i&amp;gt; &amp;lt;time&amp;gt;{{ page.date | date_to_string }}&amp;lt;/time&amp;gt;
+&amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;
+
+&amp;lt;img src=&quot;{{ page.header-image }}&quot; alt=&quot;{{ page.header-image-alt }}&quot; title=&quot;{{ post.header-image-description }}&quot;&amp;gt;
+
++ &amp;lt;div class='table-of-contents'&amp;gt;{{ content | toc_only }}&amp;lt;/div&amp;gt;
+
++ {{ content | inject_anchors }}
+
+&amp;lt;hr&amp;gt;
+&amp;lt;h1&amp;gt;&amp;lt;i class=&quot;fas fa-hand-peace&quot;&amp;gt;&amp;lt;/i&amp;gt;&amp;lt;/h1&amp;gt;
+&amp;lt;div class=&quot;post-tags&quot;&amp;gt;
+    {% include post-tags.html %}
+&amp;lt;/div&amp;gt;
+
+
+&lt;/code&gt;&lt;/pre&gt;
+
+Now I can just use regular headers instead of clumsy anchors, and my table of contents will be generated automatically.
+
+&lt;/details&gt;</content><author><name>Evan</name></author><category term="web" /><category term="jekyll" /><category term="github-pages" /><category term="ruby" /><summary type="html">They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.</summary></entry></feed>
