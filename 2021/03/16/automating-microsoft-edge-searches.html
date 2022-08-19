@@ -71,7 +71,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Semi-Automating Microsoft Edge Searches" />
 <script type="application/ld+json">
-{"@type":"BlogPosting","headline":"Semi-Automating Microsoft Edge Searches","url":"/2021/03/16/automating-microsoft-edge-searches.html","dateModified":"2021-03-16T00:00:00-04:00","datePublished":"2021-03-16T00:00:00-04:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2021/03/16/automating-microsoft-edge-searches.html"},"author":{"@type":"Person","name":"Evan"},"description":"Microsoft has a suprisingly worthwhile rewards program - in addition to their three daily tasks (which range in value from 5 to 50 points each), there are a possible 250 points(~$1.25) to be earned from Bing searches within the Edge browser. This is my quick and dirty solution for snagging those points without manually searching 50 queries in Edge every day.","@context":"https://schema.org"}</script>
+{"@type":"BlogPosting","datePublished":"2021-03-16T00:00:00-04:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2021/03/16/automating-microsoft-edge-searches.html"},"url":"/2021/03/16/automating-microsoft-edge-searches.html","author":{"@type":"Person","name":"Evan"},"description":"Microsoft has a suprisingly worthwhile rewards program - in addition to their three daily tasks (which range in value from 5 to 50 points each), there are a possible 250 points(~$1.25) to be earned from Bing searches within the Edge browser. This is my quick and dirty solution for snagging those points without manually searching 50 queries in Edge every day.","headline":"Semi-Automating Microsoft Edge Searches","dateModified":"2021-03-16T00:00:00-04:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -202,6 +202,8 @@
 
 <img src="/assets\images\blog-images\automating-edge-searches\ms-rewards.jpg" alt="Microsoft Rewards medal." title="">
 
+<div class='table-of-contents'></div>
+
 <script src="/js/post-scripts/automating-edge-searches/search.js" type="text/javascript"></script>
 
 <p><a id="continue-reading-point"></a>
@@ -298,6 +300,8 @@ function init() {
 <p>Note that two tabs are opened - one for desktop searches, and one for mobile. I couldn’t find a simpler way to mock a mobile <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent">user agent</a> than just hitting F12 and toggling mobile device emulation (if you’re on desktop) or requesting the desktop site (if you’re on mobile).</p>
 
 <p><img src="\assets\images\blog-images\automating-edge-searches\device-emulation.png" alt="Toggling Mobile Device Emulation" /></p>
+
+<p>In order for both tabs to open, you’ll have to allow pop-ups from eldun.github.io.</p>
 
 <hr />
 

@@ -47,7 +47,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Building a Blog:" />
 <script type="application/ld+json">
-{"@type":"BlogPosting","headline":"Building a Blog:","url":"/2020/05/18/building-a-blog.html","dateModified":"2020-05-18T00:00:00-04:00","datePublished":"2020-05-18T00:00:00-04:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/05/18/building-a-blog.html"},"author":{"@type":"Person","name":"Evan"},"description":"They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.","@context":"https://schema.org"}</script>
+{"@type":"BlogPosting","datePublished":"2020-05-18T00:00:00-04:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/05/18/building-a-blog.html"},"url":"/2020/05/18/building-a-blog.html","author":{"@type":"Person","name":"Evan"},"description":"They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.","headline":"Building a Blog:","dateModified":"2020-05-18T00:00:00-04:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -178,15 +178,34 @@
 
 <img src="" alt="" title="">
 
+<div class='table-of-contents'><ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#contents">Contents</a></li>
+<li class="toc-entry toc-h2"><a href="#humble-beginnings">Humble Beginnings</a></li>
+<li class="toc-entry toc-h2"><a href="#github-pages">GitHub Pages</a></li>
+<li class="toc-entry toc-h2"><a href="#jekyll">Jekyll</a></li>
+<li class="toc-entry toc-h2"><a href="#custom-ruby-plugins">Custom Ruby Plugins</a></li>
+<li class="toc-entry toc-h2"><a href="#archive-page">Archive Page</a></li>
+<li class="toc-entry toc-h2"><a href="#tag-system">Tag System</a></li>
+<li class="toc-entry toc-h2"><a href="#search-function">Search Function</a></li>
+<li class="toc-entry toc-h2"><a href="#the-future">The Future</a></li>
+<li class="toc-entry toc-h2"><a href="#updates">Updates</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#2021-04">2021-04</a></li>
+<li class="toc-entry toc-h3"><a href="#2022-08">2022-08</a></li>
+</ul>
+</li>
+</ul></div>
+
 <p><a id="continue-reading-point"></a>
 They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.</p>
 
 <!--end-excerpt-->
-<hr />
+<hr>
 
-<h2 id="contents">Contents</h2>
+<h2 id="contents">
+<a class="anchor" href="#contents" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contents</h2>
 
-<ul class="table-of-contents">
+<!-- <ul class="table-of-contents">
 <li><a href="#humble-beginnings">Humble Beginnings</a></li>
 <li><a href="#github-pages">GitHub Pages</a></li>
 <li><a href="#jekyll">Jekyll</a></li>
@@ -196,24 +215,27 @@ They say the best time to start a technical blog is twenty years ago, and that t
 <li><a href="#search-function">Search Function</a></li>
 <li><a href="#the-future">The Future</a></li>
 <li><a href="#updates">Updates</a></li>
-</ul>
+</ul> -->
 
-<hr />
+<hr>
 
-<h2 id="humble-beginnings"><a id="humble-beginnings"></a>Humble Beginnings</h2>
+<h2 id="humble-beginnings">
+<a class="anchor" href="#humble-beginnings" aria-hidden="true"><span class="octicon octicon-link"></span></a>Humble Beginnings</h2>
 <p>I really decided on building a blog when I started working on Peter Shirley’s <a href="https://raytracing.github.io/">Ray Tracing in One Weekend</a> series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to <a href="http://viclw17.github.io/">Victor Li’s Blog</a>. Inspired by the clarity, variety, and layout of Victor’s blog, I constructed a similar site for myself to document my work and personal excursions as a developer.</p>
 
-<hr />
+<hr>
 
-<h2 id="github-pages"><a id="github-pages"></a>GitHub Pages</h2>
+<h2 id="github-pages">
+<a class="anchor" href="#github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="github-pages"></a>GitHub Pages</h2>
 
 <p>As you may have surmised from the URL, this site is hosted by GitHub Pages. Originally, I was going to register a domain from Hostinger, but GitHub Pages is FREE. Additionally, GitHub is probably the most sensible place to expand my portfolio, and a static site is all I really needed for a technical blog… for now.</p>
 
 <p>The only real trouble I ran into was trying to use custom plugins. More on this issue and how I went about solving it <a href="#ruby-plugins">below</a>.</p>
 
-<hr />
+<hr>
 
-<h2 id="jekyll"><a id="jekyll"></a>Jekyll</h2>
+<h2 id="jekyll">
+<a class="anchor" href="#jekyll" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="jekyll"></a>Jekyll</h2>
 
 <p>Straight from Jekyll’s GitHub page…</p>
 
@@ -223,9 +245,10 @@ They say the best time to start a technical blog is twenty years ago, and that t
 
 <p>For the most part, Jekyll has been a breeze to work with. I would recommend it to anyone looking to build a static site.</p>
 
-<hr />
+<hr>
 
-<h2 id="custom-ruby-plugins"><a id="custom-ruby-plugins"></a>Custom Ruby Plugins</h2>
+<h2 id="custom-ruby-plugins">
+<a class="anchor" href="#custom-ruby-plugins" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="custom-ruby-plugins"></a>Custom Ruby Plugins</h2>
 
 <p>When constructing the site, this is where I ran into the most trouble. It turns out that when using the github-pages gem, the site is generated in safe mode and the plugins directory is a random string. Additionally, only a few Jekyll plugins are whitelisted by GitHub Pages. When constructing the tag feature, tags worked fine locally, but when pushing to the master branch, the live site had broken elements. Same with the archive page.</p>
 
@@ -233,14 +256,12 @@ They say the best time to start a technical blog is twenty years ago, and that t
 
 <p>The better solution, of course, is to automate. Big thanks to Josh Frankel and <a href="https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/">his post</a> detailing the process.</p>
 
-<p><span class="highlight-yellow">Update: “Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on.” This includes a brand new subscription fee! And re-configuring!</span></p>
-
-<p>I don’t feel like dealing with that (or looking into other options right now), so for the time being, I’ll just be <code class="language-plaintext highlighter-rouge">jekyll build</code>-ing <code class="language-plaintext highlighter-rouge">source</code> and pushing the updated directory to <code class="language-plaintext highlighter-rouge">master</code>.&lt;/span&gt;</p>
+<p><span class="highlight-yellow">Update: “Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on.” This includes a brand new subscription fee! And re-configuring!<br>I don’t feel like dealing with that (or looking into other options right now), so for the time being, I’ll just be <code class="language-plaintext highlighter-rouge">jekyll build</code>-ing <code class="language-plaintext highlighter-rouge">source</code> and pushing the updated directory <code class="language-plaintext highlighter-rouge">_site</code> to <code class="language-plaintext highlighter-rouge">master</code>.</span></p>
 
 <p>The basic idea is as follows:
-<img src="/assets/images/blog-images/howdy/github-pages-build-process.png" alt="Workflow for using custom plugins on GitHub Pages" /></p>
+<img src="/assets/images/blog-images/howdy/github-pages-build-process.png" alt="Workflow for using custom plugins on GitHub Pages"></p>
 
-<hr />
+<hr>
 
 <ul>
   <li>
@@ -378,14 +399,16 @@ Create a new environment variable named <code class="language-plaintext highligh
 
 <p>WOW! Quite a bit of work for some custom plugins! Namely, my archive page and tag system. Again, HUGE thanks to <a href="https://joshfrankel.me">Josh Frankel</a> for <a href="https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/">his post</a>!</p>
 
-<hr />
+<hr>
 
-<h2 id="archive-page"><a id="archive-page"></a>Archive Page</h2>
+<h2 id="archive-page">
+<a class="anchor" href="#archive-page" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="archive-page"></a>Archive Page</h2>
 <p>The archive page I have on my site at the time of this post is adapted from <a href="https://github.com/Sodaware/jekyll-archive-page">Sodaware’s Repository</a>. There’s not much to it, just some basic ruby data collection and a simple layout file. I would eventually like to style it in a way that is more pleasing on mobile devices.</p>
 
-<hr />
+<hr>
 
-<h2 id="tag-system"><a id="tag-system"></a>Tag System</h2>
+<h2 id="tag-system">
+<a class="anchor" href="#tag-system" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="tag-system"></a>Tag System</h2>
 <p>For post tagging, I followed an <a href="https://blog.lunarlogic.io/2019/managing-tags-in-jekyll-blog-easily/">example from Lunar Logic</a>. In the Lunar Logic post, the author, <a href="https://blog.lunarlogic.io/author/anna/">Anna Ślimak</a>, details using Jekyll hooks - which allow for fine-grained control over various aspects of the build process. For example, one could execute custom functionality every time Jekyll renders a post. That’s exactly what I’m doing on my site for the tags.</p>
 
 <p>While tags can simply be entered in the Front Matter of posts, no html is generated for that specific tag. I could manually create a file for said tag in the tags directory, but the hook automatically does that work for me.</p>
@@ -408,9 +431,10 @@ Create a new environment variable named <code class="language-plaintext highligh
     end
   end</code></pre>
 
-<hr />
+<hr>
 
-<h2 id="search-function"><a id="search-function"></a>Search Function</h2>
+<h2 id="search-function">
+<a class="anchor" href="#search-function" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="search-function"></a>Search Function</h2>
 <p>The search function was adapted from <a href="https://github.com/christian-fei/Simple-Jekyll-Search">Christian Fei’s Simple Jekyll Search</a>. Here’s the rundown:</p>
 
 <p>Jekyll is all client-side, so the required content for a search must be stored in a file on the site itself.</p>
@@ -478,22 +502,26 @@ Create a new environment variable named <code class="language-plaintext highligh
 
 <p>Lastly, I added some javascript to toggle the search bar from visible to hidden.</p>
 
-<hr />
+<hr>
 
-<h2 id="the-future"><a id="the-future"></a>The Future</h2>
+<h2 id="the-future">
+<a class="anchor" href="#the-future" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="the-future"></a>The Future</h2>
 <p>From here onwards, I plan to document as concisely and as compellingly as possible every personal project I undertake.</p>
 
 <p>Oh, and to reformat my <code class="language-plaintext highlighter-rouge">style.css</code>. It’s a little sloppy.</p>
 
-<hr />
+<hr>
 
-<h2 id="updates"><a id="updates"></a>Updates</h2>
+<h2 id="updates">
+<a class="anchor" href="#updates" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="updates"></a>Updates</h2>
 
-<h3 id="2021-04"><time>2021-04</time></h3>
+<h3 id="2021-04">
+<a class="anchor" href="#2021-04" aria-hidden="true"><span class="octicon octicon-link"></span></a><time>2021-04</time>
+</h3>
 
 <details>
 <summary>Refactored my CSS into multiple files</summary>
-<br />
+<br>
 I used to have one monolithic style.scss file. After some refactoring, this is the result:
 <pre><code class="language-treeview">eldun.github.io/
     ├── assets/
@@ -562,7 +590,7 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 <details>
 <summary>Started using <a class="btn" href="https://prismjs.com/" target="_blank">Prism Syntax highlighter</a>
 </summary>
-<br />
+<br>
 All I had to do was generate js and css files from their site, plop them into my site directory, and link 'em. To use a specific language, all I need to do is specify a code block like so:
 <code>&lt;pre&gt;&lt;code class="language-xxxx"&gt;</code>
 <pre><code class="language-treeview">eldun.github.io
@@ -611,6 +639,52 @@ All I had to do was generate js and css files from their site, plop them into my
     └── ...</code></pre>
 </details>
 
+<h3 id="2022-08">
+<a class="anchor" href="#2022-08" aria-hidden="true"><span class="octicon octicon-link"></span></a><time>2022-08</time>
+</h3>
+
+<details>
+
+<summary>
+Dynamic (&amp; prettier) Table of Contents
+</summary>
+<br>
+
+
+Manual tables of content are time intensive and prone to authoring errors, I've come to find. Thankfully there's a <a href="https://stackoverflow.com/a/5233948">gem</a> for <a href="https://github.com/toshimaru/jekyll-toc">generating a 'toc' dynamically</a>, so I don't have to do too much work.
+
+The instructions are as follows:
+<img src="/assets%5Cimages%5Cblog-images%5Chowdy%5Cjekyll-toc-install.png">
+
+After following these steps, I only need to change a few things in <code>_layouts/post.html`</code>:
+<pre><code class="language-diff-markup diff-highlight">
+
+&lt;div class="post-header inactive"&gt;
+&lt;h1 id="post-title"&gt;{{ page.title }}&lt;/h1&gt;
+&lt;h3 id="post-subtitle"&gt;{{ page.subtitle }}&lt;/h3&gt;
+&lt;div class="post-date"&gt;
+    &lt;i class="fas fa-calendar"&gt;&lt;/i&gt; &lt;time&gt;{{ page.date | date_to_string }}&lt;/time&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;img src="{{ page.header-image }}" alt="{{ page.header-image-alt }}" title="{{ post.header-image-description }}"&gt;
+
++ &lt;div class='table-of-contents'&gt;{{ content | toc_only }}&lt;/div&gt;
+
++ {{ content | inject_anchors }}
+
+&lt;hr&gt;
+&lt;h1&gt;&lt;i class="fas fa-hand-peace"&gt;&lt;/i&gt;&lt;/h1&gt;
+&lt;div class="post-tags"&gt;
+    {% include post-tags.html %}
+&lt;/div&gt;
+
+
+</code></pre>
+
+Now I can just use regular headers instead of clumsy anchors, and my table of contents will be generated automatically.
+
+</details>
 
 
 <hr>

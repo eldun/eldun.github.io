@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-03-06T15:20:30-05:00</updated><id>/feed.xml</id><entry><title type="html">Semi-Automating Microsoft Edge Searches</title><link href="/2021/03/16/automating-microsoft-edge-searches.html" rel="alternate" type="text/html" title="Semi-Automating Microsoft Edge Searches" /><published>2021-03-16T00:00:00-04:00</published><updated>2021-03-16T00:00:00-04:00</updated><id>/2021/03/16/automating-microsoft-edge-searches</id><content type="html" xml:base="/2021/03/16/automating-microsoft-edge-searches.html">&lt;script src=&quot;/js/post-scripts/automating-edge-searches/search.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-08-19T16:04:16-04:00</updated><id>/feed.xml</id><entry><title type="html">Semi-Automating Microsoft Edge Searches</title><link href="/2021/03/16/automating-microsoft-edge-searches.html" rel="alternate" type="text/html" title="Semi-Automating Microsoft Edge Searches" /><published>2021-03-16T00:00:00-04:00</published><updated>2021-03-16T00:00:00-04:00</updated><id>/2021/03/16/automating-microsoft-edge-searches</id><content type="html" xml:base="/2021/03/16/automating-microsoft-edge-searches.html">&lt;script src=&quot;/js/post-scripts/automating-edge-searches/search.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
 
 &lt;p&gt;&lt;a id=&quot;continue-reading-point&quot;&gt;&lt;/a&gt;
 Microsoft has a suprisingly worthwhile rewards program - in addition to their three daily tasks (which range in value from 5 to 50 points each), there are a possible 250 points(~$1.25) to be earned from Bing searches within the Edge browser. This is my quick and dirty solution for snagging those points without manually searching 50 queries in Edge every day.
@@ -94,6 +94,8 @@ function init() {
 &lt;p&gt;Note that two tabs are opened - one for desktop searches, and one for mobile. I couldn’t find a simpler way to mock a mobile &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent&quot;&gt;user agent&lt;/a&gt; than just hitting F12 and toggling mobile device emulation (if you’re on desktop) or requesting the desktop site (if you’re on mobile).&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;\assets\images\blog-images\automating-edge-searches\device-emulation.png&quot; alt=&quot;Toggling Mobile Device Emulation&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In order for both tabs to open, you’ll have to allow pop-ups from eldun.github.io.&lt;/p&gt;
 
 &lt;hr /&gt;
 
@@ -2950,7 +2952,7 @@ They say the best time to start a technical blog is twenty years ago, and that t
 
 &lt;h2 id=&quot;contents&quot;&gt;Contents&lt;/h2&gt;
 
-&lt;ul class=&quot;table-of-contents&quot;&gt;
+&lt;!-- &lt;ul class=&quot;table-of-contents&quot;&gt;
 &lt;li&gt;&lt;a href=&quot;#humble-beginnings&quot;&gt;Humble Beginnings&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;#github-pages&quot;&gt;GitHub Pages&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;#jekyll&quot;&gt;Jekyll&lt;/a&gt;&lt;/li&gt;
@@ -2960,11 +2962,11 @@ They say the best time to start a technical blog is twenty years ago, and that t
 &lt;li&gt;&lt;a href=&quot;#search-function&quot;&gt;Search Function&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;#the-future&quot;&gt;The Future&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;#updates&quot;&gt;Updates&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;/ul&gt; --&gt;
 
 &lt;hr /&gt;
 
-&lt;h2 id=&quot;humble-beginnings&quot;&gt;&lt;a id=&quot;humble-beginnings&quot;&gt;&lt;/a&gt;Humble Beginnings&lt;/h2&gt;
+&lt;h2 id=&quot;humble-beginnings&quot;&gt;Humble Beginnings&lt;/h2&gt;
 &lt;p&gt;I really decided on building a blog when I started working on Peter Shirley’s &lt;a href=&quot;https://raytracing.github.io/&quot;&gt;Ray Tracing in One Weekend&lt;/a&gt; series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to &lt;a href=&quot;http://viclw17.github.io/&quot;&gt;Victor Li’s Blog&lt;/a&gt;. Inspired by the clarity, variety, and layout of Victor’s blog, I constructed a similar site for myself to document my work and personal excursions as a developer.&lt;/p&gt;
 
 &lt;hr /&gt;
@@ -2997,9 +2999,7 @@ They say the best time to start a technical blog is twenty years ago, and that t
 
 &lt;p&gt;The better solution, of course, is to automate. Big thanks to Josh Frankel and &lt;a href=&quot;https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/&quot;&gt;his post&lt;/a&gt; detailing the process.&lt;/p&gt;
 
-&lt;p&gt;&lt;span class=&quot;highlight-yellow&quot;&gt;Update: “Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on.” This includes a brand new subscription fee! And re-configuring!&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;I don’t feel like dealing with that (or looking into other options right now), so for the time being, I’ll just be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll build&lt;/code&gt;-ing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source&lt;/code&gt; and pushing the updated directory to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;master&lt;/code&gt;.&amp;lt;/span&amp;gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;highlight-yellow&quot;&gt;Update: “Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on.” This includes a brand new subscription fee! And re-configuring!&lt;br /&gt;I don’t feel like dealing with that (or looking into other options right now), so for the time being, I’ll just be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll build&lt;/code&gt;-ing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source&lt;/code&gt; and pushing the updated directory &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_site&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;master&lt;/code&gt;.&lt;/span&gt;&lt;/p&gt;
 
 &lt;p&gt;The basic idea is as follows:
 &lt;img src=&quot;/assets/images/blog-images/howdy/github-pages-build-process.png&quot; alt=&quot;Workflow for using custom plugins on GitHub Pages&quot; /&gt;&lt;/p&gt;
@@ -3373,4 +3373,49 @@ All I had to do was generate js and css files from their site, plop them into my
     │       ├── search.scss
     │       └── tags.scss
     └── ...&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+
+&lt;h3 id=&quot;2022-08&quot;&gt;&lt;time&gt;2022-08&lt;/time&gt;&lt;/h3&gt;
+
+&lt;details&gt;
+
+&lt;summary&gt;
+Dynamic (&amp;amp; prettier) Table of Contents
+&lt;/summary&gt;
+&lt;br /&gt;
+
+
+Manual tables of content are time intensive and prone to authoring errors, I've come to find. Thankfully there's a &lt;a href=&quot;https://stackoverflow.com/a/5233948&quot;&gt;gem&lt;/a&gt; for &lt;a href=&quot;https://github.com/toshimaru/jekyll-toc&quot;&gt;generating a 'toc' dynamically&lt;/a&gt;, so I don't have to do too much work.
+
+The instructions are as follows:
+&lt;img src=&quot;/assets\images\blog-images\howdy\jekyll-toc-install.png&quot; /&gt;
+
+After following these steps, I only need to change a few things in &lt;code&gt;_layouts/post.html`&lt;/code&gt;:
+&lt;pre&gt;&lt;code class=&quot;language-diff-markup diff-highlight&quot;&gt;
+
+&amp;lt;div class=&quot;post-header inactive&quot;&amp;gt;
+&amp;lt;h1 id=&quot;post-title&quot;&amp;gt;{{ page.title }}&amp;lt;/h1&amp;gt;
+&amp;lt;h3 id=&quot;post-subtitle&quot;&amp;gt;{{ page.subtitle }}&amp;lt;/h3&amp;gt;
+&amp;lt;div class=&quot;post-date&quot;&amp;gt;
+    &amp;lt;i class=&quot;fas fa-calendar&quot;&amp;gt;&amp;lt;/i&amp;gt; &amp;lt;time&amp;gt;{{ page.date | date_to_string }}&amp;lt;/time&amp;gt;
+&amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;
+
+&amp;lt;img src=&quot;{{ page.header-image }}&quot; alt=&quot;{{ page.header-image-alt }}&quot; title=&quot;{{ post.header-image-description }}&quot;&amp;gt;
+
++ &amp;lt;div class='table-of-contents'&amp;gt;{{ content | toc_only }}&amp;lt;/div&amp;gt;
+
++ {{ content | inject_anchors }}
+
+&amp;lt;hr&amp;gt;
+&amp;lt;h1&amp;gt;&amp;lt;i class=&quot;fas fa-hand-peace&quot;&amp;gt;&amp;lt;/i&amp;gt;&amp;lt;/h1&amp;gt;
+&amp;lt;div class=&quot;post-tags&quot;&amp;gt;
+    {% include post-tags.html %}
+&amp;lt;/div&amp;gt;
+
+
+&lt;/code&gt;&lt;/pre&gt;
+
+Now I can just use regular headers instead of clumsy anchors, and my table of contents will be generated automatically.
+
 &lt;/details&gt;</content><author><name>Evan</name></author><category term="web" /><category term="jekyll" /><category term="github-pages" /><category term="ruby" /><summary type="html">They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.</summary></entry></feed>
