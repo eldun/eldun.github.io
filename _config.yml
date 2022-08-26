@@ -1,3 +1,4 @@
+url: eldun.github.io
 github-profile: https://github.com/eldun
 title: 
 google_analytics: UA-167888524-1
@@ -13,6 +14,7 @@ plugins:
   - jekyll-paginate-v2
   - jekyll-seo-tag
   - jekyll-toc
+  - jekyll-liquify
 
 # Exclude these files from the build process results.
 # Prevents them from showing up in the master branch which 
