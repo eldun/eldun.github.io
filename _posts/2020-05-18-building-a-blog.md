@@ -1,6 +1,7 @@
 ---
 title: "Building a Blog:"
 subtitle: "Howdy!"
+excerpt: "They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it."
 toc: true
 layout: post
 author: Evan
@@ -10,13 +11,8 @@ author: Evan
 tags: web jekyll github-pages ruby
 ---
 
-<a id="continue-reading-point"></a>
-They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.
 
-<!--end-excerpt-->
----
 
-## Contents
 
 <!-- <ul class="table-of-contents">
 <li><a href="#humble-beginnings">Humble Beginnings</a></li>
@@ -30,7 +26,6 @@ They say the best time to start a technical blog is twenty years ago, and that t
 <li><a href="#updates">Updates</a></li>
 </ul> -->
 
----
 
 ## Humble Beginnings
 I really decided on building a blog when I started working on Peter Shirley's [Ray Tracing in One Weekend](https://raytracing.github.io/) series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to [Victor Li's Blog](http://viclw17.github.io/). Inspired by the clarity, variety, and layout of Victor's blog, I constructed a similar site for myself to document my work and personal excursions as a developer.

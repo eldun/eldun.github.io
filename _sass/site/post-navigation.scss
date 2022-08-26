@@ -15,7 +15,7 @@
   //   border-radius: .1rem;
   }
   
-  .table-of-contents {
+  #toc {
     background-color: $color-secondary;
     border: 1px solid;
     // border-radius: .1rem;
@@ -24,14 +24,13 @@
     padding: 0;
     width: max-content;
     max-width: 100%;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1rem;
+    margin-bottom: .5rem;
   }
 
-  .table-of-contents > li {
-    padding: .5rem .5rem;
-  }
-
-  .table-of-contents > ul {
-    padding-bottom: 1rem;
-    padding-right: 1rem;
+  #toc > li {
+    padding-left: .5rem;
+    padding-right: .5rem;
   }

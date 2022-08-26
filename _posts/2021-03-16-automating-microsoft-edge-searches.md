@@ -4,29 +4,14 @@ subtitle: " "
 use-math: true
 layout: post
 author: Evan
+excerpt: Microsoft has a suprisingly worthwhile rewards program - in addition to their three daily tasks (which range in value from 5 to 50 points each), there are a possible 250 points(~$1.25) to be earned from Bing searches within the Edge browser. This is my quick and dirty solution for snagging those points without manually searching 50 queries in Edge every day.
+toc: true
 header-image: /assets\images\blog-images\automating-edge-searches\ms-rewards.jpg
 header-image-alt: Microsoft Rewards medal.
 header-image-title: Microsoft Rewards medal.
 tags: web javascript automation
 ---
 <script src="/js/post-scripts/automating-edge-searches/search.js" type="text/javascript"></script>
-
-<a id="continue-reading-point"></a>
-Microsoft has a suprisingly worthwhile rewards program - in addition to their three daily tasks (which range in value from 5 to 50 points each), there are a possible 250 points(~$1.25) to be earned from Bing searches within the Edge browser. This is my quick and dirty solution for snagging those points without manually searching 50 queries in Edge every day.
-<!--end-excerpt-->
-
----
-## Contents
-
-<ul class="table-of-contents">
-    <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#word-generation">Word Generation</a></li>
-    <li><a href="#searching">Searching</a></li>
-    <li><a href="#the-result">The Result</a></li>
-
-
-</ul>
----
 
 ## <a id="introduction"></a>Introduction
 

@@ -1,6 +1,9 @@
 ---
 title: "Ray Tracing in One Weekend:"
-subtitle: "Part Two - The First Weekend"
+subtitle: Part Two - The First Weekend
+excerpt: "Now that we're familiar with ray tracing through [my introduction](http://localhost:4000/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title), we can delve into the titular first section of Peter Shirley's book."
+disclaimer: ray-tracing/disclaimer.html
+toc: true
 use-math: true
 use-raw-images: true
 layout: post
@@ -11,78 +14,7 @@ header-image-title: Render of a sphere-filled scene with diffuse, metallic, and 
 tags: graphics ray-tracing ray-tracing-in-one-weekend c++
 ---
 
-<a id="continue-reading-point"></a>
-Now that we're familiar with ray tracing through [my introduction]({{ site.url }}/2020/05/20/ray-tracing-in-one-weekend-part-one#post-title), we can delve into the titular first section of Peter Shirley's book.
 
-<!--end-excerpt-->
-
-{% include ray-tracing/disclaimer.html %}
-
----
-## Contents
-
-
-{% include ray-tracing/part-nav.html %}
-
-<ul class="table-of-contents">
-    <li><a href="#image-output">Image Output</a></li>
-	<li><a href="#timing-execution">Timing Execution</a></li>
-	<li><a href="#vec3-class">Vec3 Class</a></li>
-	<ul>
-	<li><a href="#vector-refresher">Vector Refresher</a></li>
-	<li><a href="#vec3-definitions">Vec3 Definitions</a></li>
-	</ul>
-	<li><a href="#rays">Rays</a></li>
-	<ul>
-	<li><a href="#sending-rays-from-the-camera">Sending Rays from the Camera</a></li>
-	</ul>
-	<li><a href="#introducing-spheres">Introducing Spheres</a></li>
-	<ul>
-	<li><a href="#describing-a-sphere">Describing a Sphere</a></li>
-	<li><a href="#placing-a-sphere">Placing a Sphere</a></li>
-	</ul>
-	<li><a href="#surface-normals">Surface Normals</a></li>
-	<ul>
-	<li><a href="#simplifying-ray-sphere-intersection">Simplifying Ray-Sphere Intersection</a></li>
-	</ul>
-	<li><a href="#multiple-spheres">Multiple Spheres</a></li>
-	<li><a href="#front-faces-versus-back-faces">Front Faces versus Back Faces</a></li>
-	<li><a href="#anti-aliasing">Anti-Aliasing</a></li>
-	<ul>
-	<li><a href="#adding-anti-aliasing-to-the-camera">Adding Anti-Aliasing to the Camera</a></li>
-	</ul>
-	<li><a href="#diffuse-materials">Diffuse Materials</a></li>
-	<ul>
-	<li><a href="#the-math-of-diffuse-materials">The Math of Diffuse Materials</a></li>
-	<li><a href="#gamma-correction">Gamma Correction</a></li>
-	<li><a href="#shadow-acne">Shadow Acne</a></li>
-	<li><a href="#true-lambertian-reflection">True Lambertian Reflection</a></li>
-	</ul>
-	<li><a href="#common-constants-and-utilities">Common Constants and Utilities</a></li>
-	<li><a href="#metal">Metal</a></li>
-	<ul>
-	<li><a href="#abstract-class-for-materials">Abstract Class for Materials</a></li>
-	<li><a href="#describing-ray-object-intersections">Describing Ray-Object Intersections</a></li>
-	<li><a href="#light-scatter">Light Scatter</a></li>
-	<li><a href="#metal-reflection">Metal Reflection</a></li>
-	<li><a href="#adding-metal-spheres-to-the-scene">Adding Metal Spheres to the Scene</a></li>
-	<li><a href="#fuzzy-metal">Fuzzy Metal</a></li>
-	</ul>
-	<li><a href="#dielectrics">Dielectrics</a></li>
-	<ul>
-	<li><a href="#refraction">Refraction</a></li>
-	<li><a href="#snells-law">Snell's Law</a></li>
-	<li><a href="#calculating-the-refraction-vector">Calculating the Refraction Vector</a></li>
-	<li><a href="#coding-the-refraction-vector">Coding the Refraction Vector</a></li>
-	<li><a href="#dielectric-reflections">Dielectric Reflections</a></li>
-	<li><a href="#hollow-dielectric-spheres">Hollow Dielectric Spheres</a></li>
-	</ul>
-	<li><a href="#camera-modeling">Camera Modeling</a></li>
-	<li><a href="#depth-of-field">Depth of Field</a></li>
-	<li><a href="#final-scene">Final Scene</a></li>
-</ul>
-
----
 
 ## <a id="image-output"></a>Image Output
 Of course, the first step with producing a pretty path traced image is to produce an image. The method suggested by Peter is a simple plaintext `.ppm` file. The following is an example snippet and image from [Wikipedia](https://en.wikipedia.org/wiki/Netpbm#PPM_example):
@@ -102,8 +34,8 @@ Of course, the first step with producing a pretty path traced image is to produc
 255 255   0  # yellow
 255 255 255  # white
   0   0   0  # black</code></pre>
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\ppm-example-output.png">
-<!-- ![PPM Output](\assets\images\blog-images\path-tracer\the-first-weekend\ppm-example-output.png) -->
+<!-- <img src="/assets\images\blog-images\path-tracer\the-first-weekend\ppm-example-output.png"> -->
+![PPM Output](/assets\images\blog-images\path-tracer\the-first-weekend\ppm-example-output.png)
 
 </div>
 

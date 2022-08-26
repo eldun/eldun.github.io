@@ -1,33 +1,15 @@
 ---
 title: "Ray Tracing in One Weekend:"
 subtitle: "Part One - An Introduction"
+excerpt: "It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it."
+part-nav: ray-tracing/part-nav.html
+toc: true
 layout: post
 author: Evan
 header-image: /assets/images/blog-images/path-tracer/introduction/ball.png
 header-image-alt: Path traced sphere render.
 header-image-title: Render of a path traced sphere.
 tags: graphics ray-tracing ray-tracing-in-one-weekend
----
-
-<a id="continue-reading-point"></a>
-It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.
-
-<!--end-excerpt-->
-
----
-## Contents
-{% include ray-tracing/part-nav.html %}
-
-<ul class="table-of-contents">
-    <li><a href="#what-is-ray-tracing">What is Ray Tracing?</a></li>
-    <li><a href="#what-is-path-tracing">What is Path Tracing?</a></li>
-    <li><a href="#what-is-rasterization">What is Rasterization?</a></li>
-    <li><a href="#a-happy-medium">A Happy Medium (For Now)</a></li>
-    <li><a href="#practical-applications-of-ray-tracing">Practical Applications of Ray Tracing</a></li>
-    <li><a href="#an-abbreviated-graphics-timeline">An Abbreviated Graphics Timeline</a></li>
-    <li><a href="#why-explore-ray-tracing">Why Explore Ray Tracing?</a></li>
-    </ul>
-
 ---
 
 ## <a id="what-is-ray-tracing"></a>What is Ray Tracing?

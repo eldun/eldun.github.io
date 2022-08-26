@@ -12,9 +12,32 @@ layout: default
 
 <img src="{{ page.header-image }}" alt="{{ page.header-image-alt }}" title="{{ post.header-image-description }}">
 
-<div class='table-of-contents'>{{ content | toc_only }}</div>
 
-{{ content | inject_anchors }}
+
+<a id="continue-reading-point"></a>
+
+{{ page.excerpt | markdownify }}
+<!--end-excerpt-->
+
+
+{% if page.disclaimer %}
+
+{% capture myinclude %}{% include {{ page.disclaimer }} %}{% endcapture %}
+{{ myinclude | markdownify }}
+
+{% endif %}
+
+<h2>Contents</h2>
+{% if page.part-nav %}
+{% include {{ page.part-nav }} %}
+{% endif %}
+{{ content | toc_only }}
+
+<hr>
+
+<div id="markdown-content">
+    {{ content | inject_anchors | markdownify }}
+  </div>
 
 <hr>
 <h1><i class="fas fa-hand-peace"></i></h1>
