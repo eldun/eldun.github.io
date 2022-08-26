@@ -467,3 +467,14 @@ After following these steps, I only need to change a few things in <code>_layout
 Now I can just use regular headers instead of clumsy anchors, and my table of contents will be generated automatically.
 
 </details>
+
+<details>
+
+<summary>
+Add the ability to use Liquid in Front Matter
+</summary>
+<br>
+
+I've started putting more of my post content into the [Front Matter](https://jekyllrb.com/docs/front-matter/) and letting my layout do most of the work. You can't natively use [Liquid](https://jekyllrb.com/docs/liquid/) in Front Matter, but there's a <a href='https://github.com/gemfarmer/jekyll-liquify'>gem</a> for enabling such functionality.
+
+</details>
