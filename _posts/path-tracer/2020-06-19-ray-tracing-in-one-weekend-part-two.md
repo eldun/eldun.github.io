@@ -8,7 +8,7 @@ use-math: true
 use-raw-images: true
 layout: post
 author: Evan
-header-image: /assets\images\blog-images\path-tracer\the-first-weekend\renders\final-render-1.png
+header-image: /assets/images/blog-images/path-tracer/the-first-weekend/renders/final-render-1.png
 header-image-alt: Path traced sphere scene render.
 header-image-title: Render of a sphere-filled scene with diffuse, metallic, and dielectric materials.
 tags: graphics ray-tracing ray-tracing-in-one-weekend c++
@@ -34,8 +34,7 @@ Of course, the first step with producing a pretty path traced image is to produc
 255 255   0  # yellow
 255 255 255  # white
   0   0   0  # black</code></pre>
-<!-- <img src="/assets\images\blog-images\path-tracer\the-first-weekend\ppm-example-output.png"> -->
-![PPM Output](/assets\images\blog-images\path-tracer\the-first-weekend\ppm-example-output.png)
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/ppm-example-output.png">
 
 </div>
 
@@ -77,8 +76,8 @@ Now to compile and redirect the output of our program to a file:
 You may have to use a [web tool](http://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html) or download a file viewer (I use [IrfanView](https://www.irfanview.com/)) to view the `.ppm` file as an image. Here's my resulting image and raw contents of the file:
 
 <span class="row">
-![The "Hello World" of our path tracer](\assets\images\blog-images\path-tracer\the-first-weekend\renders\hello-world-ppm.png)
-![The "Hello World" of our path tracer](\assets\images\blog-images\path-tracer\the-first-weekend\hello-world-ppm-raw.png)
+![The "Hello World" of our path tracer](/assets/images/blog-images/path-tracer/the-first-weekend/renders/hello-world-ppm.png)
+![The "Hello World" of our path tracer](/assets/images/blog-images/path-tracer/the-first-weekend/hello-world-ppm-raw.png)
 </span>
 
 ---
@@ -136,7 +135,7 @@ int main() {
 ---
 
 ## <a id="vec3-class"></a>Vec3 Class
-![Vector](\assets\images\blog-images\path-tracer\the-first-weekend\vectors\vector.png)
+![Vector](/assets/images/blog-images/path-tracer/the-first-weekend/vectors/vector.png)
 Vectors! I feel like I haven't used these since high school math but they are **lovely**. If you need or want a refresher on vectors, make sure to read [this section](#vector-refresher). According to Peter Shirley, almost all graphics programs have some class(es) for storing geometric vectors and colors. In many cases, the vectors are four-dimensional to represent homogenous coordinates for geometry, or to represent the alpha transparency channel for color values. We'll be using three-dimensional coordinates, as that's all we need to represent direction, color, location, offset, etc.
 
 ### <a id="vector-refresher"></a>Vector Refresher
@@ -354,7 +353,7 @@ Ray tracers need rays! These are what will be colliding with objects in the scen
 - ***B*** is the direction of the ray.
 - The ray parameter *t* is a real number (positive or negative) that moves ***p***(t) along the ray.
 
-![Our Ray (Illustration from Peter Shirley's book)](\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.lerp.png)
+![Our Ray (Illustration from Peter Shirley's book)](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/fig.lerp.png)
 
 Here's the header file for our ray class:
 
@@ -388,7 +387,7 @@ Put simply, our ray tracer will send rays through pixels and compute the color s
 We will need a "viewport" of sorts to pass rays through from our "camera." Since we're using standard square pixel spacing, the viewport will have the same aspect ratio as our rendered image. Shirley sets the height of the viewport to two units in his book, and we'll do the same.
 
 Using Peter Shirley's example, we're going to set the camera at (0,0,0), and look towards the negative z-axis. The viewport will be traversed with rays from left-to-right, bottom-to-top. Variables u and v will be the offset vectors used to move the camera ray along the viewport:
-![Camera Geometry (Illustration from Peter Shirley's book)](\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.cam-geom.png)
+![Camera Geometry (Illustration from Peter Shirley's book)](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/fig.cam-geom.png)
 
 Here's our code for the camera, as well as rendering a blue-to-white gradient:
 
@@ -439,7 +438,7 @@ int main() {
 }</code></pre>
 
 The result:
-![Linear Gradient](\assets\images\blog-images\path-tracer\the-first-weekend\renders\gradient.png)
+![Linear Gradient](/assets/images/blog-images/path-tracer/the-first-weekend/renders/gradient.png)
 
 We can move the camera code into `camera.h`.
 
@@ -524,7 +523,7 @@ $$
 
 The unknown variable is *t*, and this is a quadratic equation. Solving for *t* will lead to a square root operation (aka the discriminant) that is either positive (two real solutions), negative (no real solutions), or zero (one real solution):
 
-![Ray-Sphere Intersections(Illustration from Peter Shirley's book)](\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.ray-sphere.png)
+![Ray-Sphere Intersections(Illustration from Peter Shirley's book)](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/fig.ray-sphere.png)
 
 
 ### <a id="placing-a-sphere"></a>Placing a Sphere
@@ -560,7 +559,7 @@ vec3 color(const ray& r) {
 ...</code></pre>
 
 The result:
-![Ray traced sphere](\assets\images\blog-images\path-tracer\the-first-weekend\renders\red-sphere.png)
+![Ray traced sphere](/assets/images/blog-images/path-tracer/the-first-weekend/renders/red-sphere.png)
 
 <!-- Be aware that if the sphere center is change to z= +1, we'll still see the same image. We should not be seeing objects behind us. This will be fixed in the next section. -->
 
@@ -570,11 +569,11 @@ The result:
 
 Our sphere looks like a circle. To make it more obvious that it *is* a sphere, we'll add surface normals to the face. Surface normals are simply vectors that are perpendicular to the surface of an object.
 
-![Surface Normal](\assets\images\blog-images\path-tracer\the-first-weekend\Normal_vectors_on_a_curved_surface.svg)
+![Surface Normal](/assets/images/blog-images/path-tracer/the-first-weekend/Normal_vectors_on_a_curved_surface.svg)
 
 In our case, the outward normal is the hitpoint minus the center:
 
-![Surface Normal(from Shirley's book)](\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.sphere-normal.png)
+![Surface Normal(from Shirley's book)](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/fig.sphere-normal.png)
 
 Since we don't have any lights, we can visualize the normals with a color map.
 
@@ -626,7 +625,7 @@ vec3 color(const ray& r) {
 ...</code></pre>
 
 Our resulting image:
-![Sphere with Normals](\assets\images\blog-images\path-tracer\the-first-weekend\renders\surface-normals-render.png)
+![Sphere with Normals](/assets/images/blog-images/path-tracer/the-first-weekend/renders/surface-normals-render.png)
 
 ### <a id="simplifying-ray-sphere-intersection"></a>Simplifying Ray-Sphere Intersection
 
@@ -922,7 +921,7 @@ int main() {
 </code></pre>
 
 The result:
-![Sphere hittables](\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables.png)
+![Sphere hittables](/assets/images/blog-images/path-tracer/the-first-weekend/renders/hittables.png)
 
 
 Stunning. A little bit jaggedy, though, don't you think? This effect is known as "aliasing." If you wanted to, you could increase the resolution of our scene for higher fidelity. Another interesting method for better image quality falls under the umbrella term "anti-aliasing."
@@ -932,7 +931,7 @@ Stunning. A little bit jaggedy, though, don't you think? This effect is known as
 ## <a id="anti-aliasing"></a>Anti-Aliasing
 Anti-aliasing encompasses a whole slew of methods to combat "jaggies" - from multi-sampling to super-sampling, approximation(FXAA) to temporal, or - more recently - deep learning anti-aliasing. Each of these methods has pros and cons depending on the type of scene portrayed, performance targets, and even scene movement. Usually, there's a trade-off between image quality and speed. We've entered a fascinating time for graphics where raw pixel count (True 4K this! Real 4K that!) is becoming less important - thanks to some incredible leaps in upscaling and anti-aliasing.
 
-![Small sample of anti-aliasing methods](\assets\images\blog-images\path-tracer\the-first-weekend\anti-aliasing.png)
+![Small sample of anti-aliasing methods](/assets/images/blog-images/path-tracer/the-first-weekend/anti-aliasing.png)
 
 If you want to learn more, I highly suggest watching [this video](https://www.youtube.com/watch?v=NbrA4Nxd8Vo) from one of my favorite YouTube channels([Digital Foundry](https://www.youtube.com/user/DigitalFoundry)), or reading [this blog post](https://techguided.com/what-is-anti-aliasing/) from techguided.com.
 
@@ -940,8 +939,8 @@ We're going to be using multisample anti-aliasing (MSAA) in our ray tracer. As y
 
 <div class="captioned-image">
 <span class="row">
-![No MSAA](\assets\images\blog-images\path-tracer\the-first-weekend\no-msaa.png)
-![MSAA 4x](\assets\images\blog-images\path-tracer\the-first-weekend\msaa.png)
+![No MSAA](/assets/images/blog-images/path-tracer/the-first-weekend/no-msaa.png)
+![MSAA 4x](/assets/images/blog-images/path-tracer/the-first-weekend/msaa.png)
 </span>
 [Source](https://developer.apple.com/documentation/metal/gpu_features/understanding_gpu_family_4/about_enhanced_msaa_and_imageblock_sample_coverage_control)
 </div>
@@ -1067,12 +1066,12 @@ Keep in mind - these images are only 200x100.
 The difference is clear. And blurry. Haha:
 
 <span class="row">
-![Sphere hittables](\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables.png)
-![Sphere hittables](\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables-msaa.png)
+![Sphere hittables](/assets/images/blog-images/path-tracer/the-first-weekend/renders/hittables.png)
+![Sphere hittables](/assets/images/blog-images/path-tracer/the-first-weekend/renders/hittables-msaa.png)
 </span>
 <span class="row">
-![Sphere hittables](\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables-zoom.png)
-![Sphere hittables](\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables-msaa-zoom.png)
+![Sphere hittables](/assets/images/blog-images/path-tracer/the-first-weekend/renders/hittables-zoom.png)
+![Sphere hittables](/assets/images/blog-images/path-tracer/the-first-weekend/renders/hittables-msaa-zoom.png)
 </span>
 
 ---
@@ -1084,7 +1083,7 @@ Our ball is pretty, but lacks texture. Let's add diffuse materials!
 Diffuse materials reflect light from their surface such that an incident ray is scattered ay many angles, rather than just one (which is the case with specular reflection):
 
 <span class="captioned-image">
-![Diffuse reflection](\assets\images\blog-images\path-tracer\the-first-weekend\diffuse.png)
+![Diffuse reflection](/assets/images/blog-images/path-tracer/the-first-weekend/diffuse.png)
 *An example of light reflecting off of a diffuse surface ([source](https://en.wikipedia.org/wiki/Diffuse_reflection))*
 </span>
  
@@ -1094,17 +1093,17 @@ From Wikipedia:
 Diffuse materials also modulate the color of their surroundings with their intrinsic color. In our ray tracer, we're going to simulate diffuse materials by randomizing ray reflections upon hitting a diffuse object. For example, if we were to shoot three rays into the space between two diffuse surfaces, we might see a result like this:
 
 <span class="captioned-image">
-![Diffuse reflection](\assets\images\blog-images\path-tracer\the-first-weekend\shirley\diffuse.png)
+![Diffuse reflection](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/diffuse.png)
 *How rays might behave in our ray tracer upon hitting a diffuse surface ([source](https://raytracing.github.io/books/RayTracingInOneWeekend.html))*
 
 In addition to being reflected, some rays could also be absorbed. Naturally, the darker the surface of a given object, the more likely absorption will take place... which is why that object looks dark. Take Vantablack, one of the darkest substances known. It's made up of carbon nanotubes, and is essentially a very fine shag carpet. Light gets lost (or diffused) within this forest of tubes to create a pretty striking diffuse material:
 
 <span class="row">
-![Vantablack](\assets\images\blog-images\path-tracer\the-first-weekend\vantablack-zoom.png)
+![Vantablack](/assets/images/blog-images/path-tracer/the-first-weekend/vantablack-zoom.png)
 <!-- *[source](https://en.wikipedia.org/wiki/Vantablack)* -->
 </span>
 <span class="row">
-![Vantablack](\assets\images\blog-images\path-tracer\the-first-weekend\vantablack.png)
+![Vantablack](/assets/images/blog-images/path-tracer/the-first-weekend/vantablack.png)
 <!-- *[source](https://www.techbriefs.com/component/content/article/tb/supplements/pit/features/applications/27558)* -->
 </span>
 
@@ -1116,7 +1115,7 @@ First of all, we need to form a unit sphere tangent to the hitpoint **p** on the
 
 
 <span class="captioned-image">
-![Diffuse material illustration](\assets\images\blog-images\path-tracer\the-first-weekend\shirley\ray-tracing-diffuse.png)
+![Diffuse material illustration](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/ray-tracing-diffuse.png)
 *Generation of random diffuse bounce ray ([source](https://raytracing.github.io/books/RayTracingInOneWeekend.html))*
 </span>
 
@@ -1219,7 +1218,7 @@ int main() {
 
 The result:
 <span class="captioned-image">
-![Diffuse sphere](\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse.png)
+![Diffuse sphere](/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse.png)
 *Diffuse sphere*
 </span>
 
@@ -1276,7 +1275,7 @@ int main() {
 
 
 <span class="captioned-image">
-![Diffuse sphere with gamma correction](\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-gamma.png)
+![Diffuse sphere with gamma correction](/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-gamma.png)
 </span>
 
 
@@ -1288,16 +1287,16 @@ There's one small issue left to fix, known as shadow acne. Some of the rays hit 
 
 <div class="captioned-image">
 <div class="container">
-  <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-shadow-acne.png" alt="Shadow acne sphere">
+  <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-shadow-acne.png" alt="Shadow acne sphere">
   <div class="overlay">
-    <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png" alt="Sphere no shadow acne">
+    <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-fix-shadow-acne.png" alt="Sphere no shadow acne">
   </div>
 </div>
   (Mouseover) Fix shadow acne
 </div>
 
 
-You can view the images separately, as well. Here's [the one with shadow acne](\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-shadow-acne.png) and [the one without](\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png).
+You can view the images separately, as well. Here's [the one with shadow acne](/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-shadow-acne.png) and [the one without](/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-fix-shadow-acne.png).
 
 ### <a id="true-lambertian-reflection"></a>True Lambertian Reflection
 Recall that Lambertian reflectance is the "ideal" matte surface - the apparent brightness of a Lambertian surface to an observer is the same regardless of the observer's angle of view.
@@ -1307,7 +1306,7 @@ Here's Shirley's explanation of the implementation of true Lambertian reflectanc
 > The rejection method presented here produces random points in the unit ball offset along the surface normal. This corresponds to picking directions on the hemisphere with high probability close to the normal, and a lower probability of scattering rays at grazing angles. This distribution scales by the cos3(ϕ) where ϕ is the angle from the normal. This is useful since light arriving at shallow angles spreads over a larger area, and thus has a lower contribution to the final color.
 However, we are interested in a Lambertian distribution, which has a distribution of cos(ϕ). True Lambertian has the probability higher for ray scattering close to the normal, but the distribution is more uniform. This is achieved by picking points on the surface of the unit sphere, offset along the surface normal. Picking points on the sphere can be achieved by picking points in the unit ball, and then normalizing those.
 
-![Generation of random unit vector](\assets\images\blog-images\path-tracer\the-first-weekend\shirley\rand-unit-vector.png)
+![Generation of random unit vector](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/rand-unit-vector.png)
 
 And our total replacement for `random_unit_sphere_coordinate()`:
 (use 3.14 as pi for now, we'll address it in the next section)
@@ -1322,16 +1321,16 @@ And our total replacement for `random_unit_sphere_coordinate()`:
 The result:
 <div class="captioned-image">
 <div class="container">
-  <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png" alt="Lambertian approximation">
+  <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-fix-shadow-acne.png" alt="Lambertian approximation">
   <div class="overlay">
-    <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\lambertian.png" alt="True lambertian reflection">
+    <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/lambertian.png" alt="True lambertian reflection">
   </div>
 </div>
   (Mouseover)True lambertian reflectance
 </div>
 
-- [Lambertian approximation](\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png)
-- [True Lambertian](\assets\images\blog-images\path-tracer\the-first-weekend\renders\lambertian.png)
+- [Lambertian approximation](/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-fix-shadow-acne.png)
+- [True Lambertian](/assets/images/blog-images/path-tracer/the-first-weekend/renders/lambertian.png)
 
 It's a subtle difference, but a difference nonetheless. Notice that the shadows are not as pronounced and that both spheres are lighter.
 
@@ -1597,7 +1596,7 @@ class lambertian : public material {
 ### <a id="metal-reflection"></a>Metal Reflection
 Metal is definitely NOT Lambertian - here's a simple sketch depecting a general mirrored reflection:
 
-<span class="captioned-image"> ![Mirrored Reflection](\assets\images\blog-images\path-tracer\the-first-weekend\metal-reflect.png)*Metal Reflection ([source](http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/))*</span>
+<span class="captioned-image"> ![Mirrored Reflection](/assets/images/blog-images/path-tracer/the-first-weekend/metal-reflect.png)*Metal Reflection ([source](http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/))*</span>
 
 <div class="math-block">
 $$
@@ -1728,17 +1727,17 @@ Now that we've got some shiny new spheres, let's add 'em to the scene, render 'e
 
 You'll get something like this:
 
-<span class="captioned-image">![Metal and Lambertian spheres](\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal.png)*Metal and Lambertian spheres*</span>
+<span class="captioned-image">![Metal and Lambertian spheres](/assets/images/blog-images/path-tracer/the-first-weekend/renders/metal.png)*Metal and Lambertian spheres*</span>
 
 Feel free to mess around with the color, positioning, and material, as well:
 
-<span class="captioned-image">![Metal spheres](\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal-edit.png)*Your new album cover*</span>
+<span class="captioned-image">![Metal spheres](/assets/images/blog-images/path-tracer/the-first-weekend/renders/metal-edit.png)*Your new album cover*</span>
 
 ### <a id="fuzzy-metal"></a>Fuzzy Metal
 
 In addition to perfectly polished metal spheres, we can simulate rough metal as well, with some "fuzziness". To do so, we just need to append a random vector to the reflected rays:
 
-<span class="captioned-image">![Fuzzy metal reflections](\assets\images\blog-images\path-tracer\the-first-weekend\shirley\reflect-fuzzy.png)*Generating fuzzy reflections* ([*source*](https://raytracing.github.io/books/RayTracingInOneWeekend.html))</span>
+<span class="captioned-image">![Fuzzy metal reflections](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/reflect-fuzzy.png)*Generating fuzzy reflections* ([*source*](https://raytracing.github.io/books/RayTracingInOneWeekend.html))</span>
 
 The larger the sphere, the fuzzier the reflections will be. If the sphere is too large, we may scatter below the surface of an object. If that happens, we can just have the surface absorb those rays.
 
@@ -1746,7 +1745,7 @@ The larger the sphere, the fuzzier the reflections will be. If the sphere is too
 <pre><code class="language-cpp">class metal : public material {
     public:
         metal(const vec3& a, double f) : albedo(a) {
-<span class="highlight-green">            if (f<1) fuzz = f; else fuzz = 1;</span>
+			if (f<1) fuzz = f; else fuzz = 1;
         }
         virtual bool scatter(const ray& ray_in, const hit_record& rec, vec3& attenuation, ray& scattered) const {
         vec3 reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
@@ -1756,21 +1755,21 @@ The larger the sphere, the fuzzier the reflections will be. If the sphere is too
     }
 
     vec3 albedo;
-<span class="highlight-green">	double fuzz;</span>
+	double fuzz;
 };</code></pre>
 
 <div class="captioned-image">
 <div class="container">
-  <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\all-metal-no-fuzz.png" alt="Metal - no fuzz">
+  <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/all-metal-no-fuzz.png" alt="Metal - no fuzz">
   <div class="overlay">
-    <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal-fuzz.png" alt="Fuzzy Metal">
+    <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/metal-fuzz.png" alt="Fuzzy Metal">
   </div>
 </div>
 (Mouseover) Fuzziness from left to right: .5, 0, and 1
 </div>
 
-- [No fuzz](\assets\images\blog-images\path-tracer\the-first-weekend\renders\all-metal-no-fuzz.png)
-- [Fuzz](\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal-fuzz.png)
+- [No fuzz](/assets/images/blog-images/path-tracer/the-first-weekend/renders/all-metal-no-fuzz.png)
+- [Fuzz](/assets/images/blog-images/path-tracer/the-first-weekend/renders/metal-fuzz.png)
 
 ---
 
@@ -1781,7 +1780,7 @@ Dielectrics are materials like glass. When a light ray hits one, the ray splits 
 Refraction is the deflection of a ray from a straight path due to passing obliquely from one medium to another.
 
 <span class="captioned-image">
-![Refraction](\assets\images\blog-images\path-tracer\the-first-weekend\refraction.png)
+![Refraction](/assets/images/blog-images/path-tracer/the-first-weekend/refraction.png)
 Notice both the reflected beam (top right) and the refracted beam (bottom right) ([source](https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/F%C3%A9nyt%C3%B6r%C3%A9s.jpg/1200px-F%C3%A9nyt%C3%B6r%C3%A9s.jpg))
 </span>
 
@@ -1811,7 +1810,7 @@ For reference, here are some refractive indices:
 
 
 ### <a id="snells-law"></a>Snell's Law
-![Snell's Law](\assets\images\blog-images\path-tracer\the-first-weekend\snells-law.svg)
+![Snell's Law](/assets/images/blog-images/path-tracer/the-first-weekend/snells-law.svg)
 
 Snell’s law states that the ratio of the sines of the angles of incidence and refraction is equivalent to the ratio of phase velocities in the two media, or equivalent to the reciprocal of the ratio of the indices of refraction:
 
@@ -1836,13 +1835,12 @@ $$
 ### <a id="total-internal-reflection"></a>Total Internal Reflection
 Total internal reflection is an optical phenomenon that occurs when light travels from a medium with a higher refractive index to a lower one, and the angle of incidence is greater than a certain angle (known as the "critical angle").
 
-![Total internal reflection](\assets\images\blog-images\path-tracer\the-first-weekend\total-internal-reflection.svg)
-
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/total-internal-reflection.svg" alt="Total internal reflection" style="background: wheat;">
 ### <a id="calculating-the-refraction-vector"></a>Calculating the Refraction Vector
 Now that we're familiar with the components of refraction, we can calculate the refraction vector geometrically.
 
-<!--
-![Refraction geometry](\assets\images\blog-images\path-tracer\the-first-weekend\refraction-geometry.png)
+<!-- 
+![Refraction geometry](/assets/images/blog-images/path-tracer/the-first-weekend/refraction-geometry.png)
 
 We already know [Snell's law](#snells-law):
 
@@ -1873,9 +1871,10 @@ $$ -->
 We can model the relationships of the vectors with a unit circle to make things easier.
 
 <span class="captioned-image">
-![Refraction unit circle](\assets\images\blog-images\path-tracer\the-first-weekend\refraction-vector-circle.png)
+![Refraction unit circle](/assets/images/blog-images/path-tracer/the-first-weekend/refraction-vector-circle.png)
 (*[source](http://viclw17.github.io/2018/08/05/raytracing-dielectric-materials/)*)
 </span>
+
 
 $$
 \vec r = \vec A + \vec B
@@ -1982,8 +1981,8 @@ is the discriminant.
 ### <a id="dielectric-reflections"></a>Dielectric Reflections
 When light strikes a dielectric object, both reflection and refraction may occur. Looking at a puddle at a sharp enough angle makes it look almost like a mirror!
 
-![Fresnel puddle](\assets\images\blog-images\path-tracer\the-first-weekend\fresnel.png)
-![Patrial transmittance](\assets\images\blog-images\path-tracer\the-first-weekend\partial-transmittance.gif)
+![Fresnel puddle](/assets/images/blog-images/path-tracer/the-first-weekend/fresnel.png)
+![Patrial transmittance](/assets/images/blog-images/path-tracer/the-first-weekend/partial-transmittance.gif)
 
 For low-precision applications that don't involve polarized light, [Schlick's approximation](https://en.wikipedia.org/wiki/Schlick%27s_approximation) will serve our purposes just fine, rather than computing the effective reflection coefficient for every angle.
 
@@ -2022,7 +2021,7 @@ We can add Schlick's approximation to `material.h`
 
 If the incident ray produces a refraction ray (which we can check by seeing if `refract()` returns true), we are going to calculate the reflective coefficient `reflect_probability`. Otherwise, the ray exhibits total internal reflection and the reflective coefficient should be 1.
 
-![Refraction and reflection gif](\assets\images\blog-images\path-tracer\the-first-weekend\refraction-reflection.gif)
+![Refraction and reflection gif](/assets/images/blog-images/path-tracer/the-first-weekend/refraction-reflection.gif)
 
 We do this by getting whichever value is smaller between:
 - the dot product of flipped unit incident ray and the normal of the hit point OR
@@ -2084,16 +2083,16 @@ class dielectric : public material {
 
 <div class="captioned-image">
 <div class="container">
-  <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\no-fresnel.png" alt="Dielectric without Fresnel">
+  <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/no-fresnel.png" alt="Dielectric without Fresnel">
   <div class="overlay">
-    <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\fresnel.png" alt="Dielectric with Fresnel">
+    <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/fresnel.png" alt="Dielectric with Fresnel">
   </div>
 </div>
   (Mouseover) Implementation of Fresnel reflections
 </div>
 
-- [No fresnel](\assets\images\blog-images\path-tracer\the-first-weekend\renders\no-fresnel.png)
-- [Fresnel](\assets\images\blog-images\path-tracer\the-first-weekend\renders\fresnel.png)
+- [No fresnel](/assets/images/blog-images/path-tracer/the-first-weekend/renders/no-fresnel.png)
+- [Fresnel](/assets/images/blog-images/path-tracer/the-first-weekend/renders/fresnel.png)
 
 ### <a id="hollow-dielectric-spheres"></a>Hollow Dielectric Spheres
 
@@ -2101,19 +2100,19 @@ Bonus fun fact! We can create a hollow glass sphere by creating a smaller sphere
 
 <div class="captioned-image">
 <div class="container">
-  <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-solid.png" alt="Solid Dielectric">
+  <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/dielectric-solid.png" alt="Solid Dielectric">
   <div class="overlay">
-    <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-hollow.png" alt="Hollow Dielectric">
+    <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/dielectric-hollow.png" alt="Hollow Dielectric">
   </div>
 </div>
   (Mouseover) Hollow dielectric sphere
 </div>
 
-- [Solid](\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-solid.png)
-- [Hollow](\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-hollow.png)
+- [Solid](/assets/images/blog-images/path-tracer/the-first-weekend/renders/dielectric-solid.png)
+- [Hollow](/assets/images/blog-images/path-tracer/the-first-weekend/renders/dielectric-hollow.png)
 
 And of course, you can change the color of your pretty new dielectric sphere if you please.
-![Purple dielectric](\assets\images\blog-images\path-tracer\the-first-weekend\renders\purple-dielectric.png)
+![Purple dielectric](/assets/images/blog-images/path-tracer/the-first-weekend/renders/purple-dielectric.png)
 
 ---
 
@@ -2156,7 +2155,7 @@ We're going to expand the capability of the camera and make it more flexible by 
 - Camera lens size `aperture`
 - Image plane to camera distance `focus_distance`
 
-![Camera visualization](\assets\images\blog-images\path-tracer\the-first-weekend\camera-model.png)
+![Camera visualization](/assets/images/blog-images/path-tracer/the-first-weekend/camera-model.png)
 
 If the angle of the camera lens is `theta`, we can see that `half_height` = `tan(theta/2)`. 
 
@@ -2202,7 +2201,7 @@ $$
 $$
 
 <span class="captioned-image">
-![Standard basis](\assets\images\blog-images\path-tracer\the-first-weekend\standard-basis.svg)
+![Standard basis](/assets/images/blog-images/path-tracer/the-first-weekend/standard-basis.svg)
 Every vector $a$ in three dimensions is a linear combination of the standard basis vectors $i$, $j$, and $k$.
 </span>
 
@@ -2219,28 +2218,28 @@ However, if we want to move our "camera" to position `look_from` pointing to `lo
 u = unit_vector(cross(vup, w)) // similar to the X axis
 v = cross(w, u) // similar to the Y axis</code></pre>
 
-![New orthonormal basis](\assets\images\blog-images\path-tracer\the-first-weekend\orthonormal-basis.png)
-![Shirley orthonormal basis](\assets\images\blog-images\path-tracer\the-first-weekend\shirley\orthonormal-basis.png)
+![New orthonormal basis](/assets/images/blog-images/path-tracer/the-first-weekend/orthonormal-basis.png)
+![Shirley orthonormal basis](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/orthonormal-basis.png)
 
 
 The `vup` vector describes which direction is up for the camera. You can also think of this as tilt in any (x,y,z).
 
 <div class="row-fill">
 	<div class= "captioned-image">
-	<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\vup-010.png">
+	<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/vup-010.png">
 	vup (0,1,0)
 	</div>
 	<div class= "captioned-image">
-	<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\vup-0neg10.png">
+	<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/vup-0neg10.png">
 	vup (0,-1,0)
 	</div>
 	<div class= "captioned-image">
-	<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\vup-110.png">
+	<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/vup-110.png">
 	vup (1,1,0)
 	</div>
 </div>
 
-![Shirley vector-up](\assets\images\blog-images\path-tracer\the-first-weekend\shirley\orthonormal-vup.png)
+![Shirley vector-up](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/orthonormal-vup.png)
 
 <pre><code class="language-cpp">class camera {
 public:
@@ -2278,13 +2277,13 @@ From Wikipedia:
 > DOF can be calculated based on focal length, distance to subject, the acceptable "circle of confusion size", and aperture.
 
 <span class="captioned-image">
-![Depth of field (PBR!)](\assets\images\blog-images\path-tracer\the-first-weekend\depth-of-field.png)
+![Depth of field (PBR!)](/assets/images/blog-images/path-tracer/the-first-weekend/depth-of-field.png)
 *PBR!* ([*source*](https://www.joepylephotography.com/depth-of-field-joe-pyle-photography/))
 </span>
 
 > In optics, an aperture is a hole or an opening through which light travels. More specifically, the aperture and focal length of an optical system determine the cone angle of a bundle of rays that come to a focus in the image plane.
 
-![Aperture diagram](\assets\images\blog-images\path-tracer\the-first-weekend\aperture-diagram.gif)
+![Aperture diagram](/assets/images/blog-images/path-tracer/the-first-weekend/aperture-diagram.gif)
 
 From the beginning, all scene rays have originated from `look_from`. To simulate a variable aperature, we'll generate rays randomly originating from inside a disk centered at `look_from`. The larger we make this disc, the stronger the blur will be. With a disk radius of zero, the rays all originate from `look_from`, eliminating blur. One such method for generating a point inside a unit disk is as follows:
 
@@ -2303,7 +2302,7 @@ Up until now, the focus distance was -1 on the z (or w) axes. We'll now make it 
 horizontal = 2 * half_width*focus_distance*u;
 vertical = 2 * half_height*focus_distance*v;</code></pre>
 
-![Aperture diagram](\assets\images\blog-images\path-tracer\the-first-weekend\camera-model-summary-aperture.png)
+![Aperture diagram](/assets/images/blog-images/path-tracer/the-first-weekend/camera-model-summary-aperture.png)
 
 With that, we have a complete camera class:
 
@@ -2347,9 +2346,9 @@ With that, we have a complete camera class:
         double lens_radius;
 };</code></pre>
 
-![Aperture 0](\assets\images\blog-images\path-tracer\the-first-weekend\renders\dof-0.png)
-![Aperture 0.2](\assets\images\blog-images\path-tracer\the-first-weekend\renders\dof-point-2.png)
-![Aperture 0.5](\assets\images\blog-images\path-tracer\the-first-weekend\renders\dof-point-5.png)
+![Aperture 0](/assets/images/blog-images/path-tracer/the-first-weekend/renders/dof-0.png)
+![Aperture 0.2](/assets/images/blog-images/path-tracer/the-first-weekend/renders/dof-point-2.png)
+![Aperture 0.5](/assets/images/blog-images/path-tracer/the-first-weekend/renders/dof-point-5.png)
 
 ---
 
@@ -2411,4 +2410,4 @@ double aperture = 0.2; // bigger = blurrier
 }
 ...</code></pre>
 
-![Final render](\assets\images\blog-images\path-tracer\the-first-weekend\renders\final-render-1.png)
+![Final render](/assets/images/blog-images/path-tracer/the-first-weekend/renders/final-render-1.png)
