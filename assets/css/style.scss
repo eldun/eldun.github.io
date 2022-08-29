@@ -170,7 +170,7 @@ a *:hover // all elements within a
 .row {
   display: flex;
   flex-flow: row nowrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-evenly;
 }
 
