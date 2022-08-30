@@ -19,7 +19,7 @@
 
   
 
-  <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
+  <link href="/assets/css/prism.css" rel="stylesheet" />
 
 
 
@@ -34,12 +34,15 @@
   
   <meta charset="UTF-8">
 
-  <!-- Begin Jekyll SEO tag v2.7.1 -->
-<meta name="generator" content="Jekyll v3.9.1" />
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<meta name="generator" content="Jekyll v4.2.2" />
 <meta property="og:locale" content="en_US" />
+<link rel="canonical" href="eldun.github.io/tags/ray-tracing.html" />
+<meta property="og:url" content="eldun.github.io/tags/ray-tracing.html" />
+<meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
 <script type="application/ld+json">
-{"@type":"WebPage","url":"/tags/ray-tracing.html","@context":"https://schema.org"}</script>
+{"@context":"https://schema.org","@type":"WebPage","url":"eldun.github.io/tags/ray-tracing.html"}</script>
 <!-- End Jekyll SEO tag -->
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -149,7 +152,7 @@
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('results-container'),
     json: '/search.json',
-    searchResultTemplate: '<li><a href="{url}">{title} {subtitle}</a></li>'
+    searchResultTemplate: '<li><a href="eldun.github.io{url}">{title} {subtitle}</a></li>'
   })
   </script>
 
@@ -169,19 +172,13 @@
      
     <li>
       <h2><a href="/2020/06/19/ray-tracing-in-one-weekend-part-two.html">Ray Tracing in One Weekend: Part Two - The First Weekend</a></h2>
-      <p><p><a id="continue-reading-point"></a>
-Now that we’re familiar with ray tracing through <a href="/2020/05/20/ray-tracing-in-one-weekend-part-one#post-title">my introduction</a>, we can delve into the titular first section of Peter Shirley’s book.</p>
-
-</p>
+      <p>Now that we're familiar with ray tracing through [my introduction](http://localhost:4000/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title), we can delve into the titular first section of Peter Shirley's book.</p>
       
     </li>
      
     <li>
       <h2><a href="/2020/05/20/ray-tracing-in-one-weekend-part-one.html">Ray Tracing in One Weekend: Part One - An Introduction</a></h2>
-      <p><p><a id="continue-reading-point"></a>
-It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.</p>
-
-</p>
+      <p>It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.</p>
       
     </li>
      
@@ -198,25 +195,19 @@ It took me long enough, but I finally dipped my toes into the temperate waters o
 
     <!-- prism syntax  -->
     <script src="/js/site-scripts/prism.js"></script>
-
-    <script>
-    // Set path for autoloader languages
-    Prism.plugins.autoloader.languages_path = '/assets/prism-components/';
-
-  // Set tabs-to-spaces (and left-trim false) so that prism's language-diff-xxxx will be more reliable in dealing with unchanged code.
-  Prism.plugins.NormalizeWhitespace.setDefaults({
-	'remove-trailing': true,
-	'remove-indent': true,
-	'left-trim': true,
-	'right-trim': true,
-	// 'break-lines': 80,
-	// 'indent': 1,
-  'tabs-to-spaces': 4,
-	// 'remove-initial-line-feed': false,
-	// 'tabs-to-spaces': 4,
-	// 'spaces-to-tabs': 4
-});
-    </script>
+    <script src ='/assets\prism-components'></script>
+    <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+      'remove-trailing': true,
+      'remove-indent': true,
+      'left-trim': false,
+      'right-trim': true,
+      'break-lines': 80,
+      'indent': 0,
+      'remove-initial-line-feed': true,
+      'tabs-to-spaces': 4,
+      'spaces-to-tabs': 4
+    });</script>
+    
 
       <!-- Back to top -->
     <script src="/js/site-scripts/vanilla-back-to-top.min.js"></script>

@@ -20,7 +20,6 @@
 	 */
 	var PREFIXES = {
 		'deleted-sign': '-',
-		'deleted-arrow': '<',
 		'inserted-sign': '+',
 		'inserted-arrow': '>',
 		'unchanged': ' ',

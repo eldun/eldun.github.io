@@ -43,7 +43,7 @@
   </script>
   
 
-  <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
+  <link href="/assets/css/prism.css" rel="stylesheet" />
 
 
 
@@ -58,20 +58,22 @@
   
   <meta charset="UTF-8">
 
-  <!-- Begin Jekyll SEO tag v2.7.1 -->
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Ray Tracing in One Weekend:</title>
-<meta name="generator" content="Jekyll v3.9.1" />
+<meta name="generator" content="Jekyll v4.2.2" />
 <meta property="og:title" content="Ray Tracing in One Weekend:" />
 <meta name="author" content="Evan" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Now that we’re familiar with ray tracing through my introduction, we can delve into the titular first section of Peter Shirley’s book." />
 <meta property="og:description" content="Now that we’re familiar with ray tracing through my introduction, we can delve into the titular first section of Peter Shirley’s book." />
+<link rel="canonical" href="eldun.github.io/2020/06/19/ray-tracing-in-one-weekend-part-two.html" />
+<meta property="og:url" content="eldun.github.io/2020/06/19/ray-tracing-in-one-weekend-part-two.html" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-06-19T00:00:00-04:00" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Ray Tracing in One Weekend:" />
 <script type="application/ld+json">
-{"@type":"BlogPosting","datePublished":"2020-06-19T00:00:00-04:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/06/19/ray-tracing-in-one-weekend-part-two.html"},"url":"/2020/06/19/ray-tracing-in-one-weekend-part-two.html","author":{"@type":"Person","name":"Evan"},"description":"Now that we’re familiar with ray tracing through my introduction, we can delve into the titular first section of Peter Shirley’s book.","headline":"Ray Tracing in One Weekend:","dateModified":"2020-06-19T00:00:00-04:00","@context":"https://schema.org"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2020-06-19T00:00:00-04:00","datePublished":"2020-06-19T00:00:00-04:00","description":"Now that we’re familiar with ray tracing through my introduction, we can delve into the titular first section of Peter Shirley’s book.","headline":"Ray Tracing in One Weekend:","mainEntityOfPage":{"@type":"WebPage","@id":"eldun.github.io/2020/06/19/ray-tracing-in-one-weekend-part-two.html"},"url":"eldun.github.io/2020/06/19/ray-tracing-in-one-weekend-part-two.html"}</script>
 <!-- End Jekyll SEO tag -->
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -190,7 +192,7 @@
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('results-container'),
     json: '/search.json',
-    searchResultTemplate: '<li><a href="{url}">{title} {subtitle}</a></li>'
+    searchResultTemplate: '<li><a href="eldun.github.io{url}">{title} {subtitle}</a></li>'
   })
   </script>
 
@@ -210,107 +212,101 @@
 </div>
 </div>
 
-<img src="/assets\images\blog-images\path-tracer\the-first-weekend\renders\final-render-1.png" alt="Path traced sphere scene render." title="">
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/final-render-1.png" alt="Path traced sphere scene render." title="">
 
-<div class='table-of-contents'></div>
 
-<p><a id="continue-reading-point"></a>
-Now that we’re familiar with ray tracing through <a href="/2020/05/20/ray-tracing-in-one-weekend-part-one#post-title">my introduction</a>, we can delve into the titular first section of Peter Shirley’s book.</p>
+
+<a id="continue-reading-point"></a>
+
+<p>Now that we’re familiar with ray tracing through <a href="http://localhost:4000/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title">my introduction</a>, we can delve into the titular first section of Peter Shirley’s book.</p>
 
 <!--end-excerpt-->
 
+
+
+
+
 <p><span class="highlight-yellow">
     I started this path tracer months ago, and only started this blog in late May. The version of Shirley’s book that I used is from some time in 2018 (Version 1.54), and I have found that there is a recently updated version (3.1.2) on <a href="https://raytracing.github.io/">his website</a> from June 6th, 2020! I also supplemented Shirley’s book with <a href="http://viclw17.github.io/tag/#/Ray%20Tracing%20in%20One%20Weekend">Victor Li’s posts on the subject</a>. As such, there may be differences in implementation compared to the most recent version of Ray Tracing in One Weekend. <br /><br />I am trying to keep things easy-to-follow, mostly sticking with my original code and only changing or adding what I deem to be necessary for readability, clarity, or image rendering purposes. If you are reading this to build your own ray tracer, I highly recommend Shirley’s book as a main source.
-    </span></p>
+</span></p>
 
-<hr />
-<h2 id="contents">Contents</h2>
 
-<ul class="part-navigator">
-    
-        
-    
-        
-    
-        
 
-        <li>
-                    <a href="/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title" class="btn">Part One - An Introduction</a>
 
-                </li>
-        
-    
-        
+<h2>Contents</h2>
 
-        <li>
-                    <a href="/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title" class="btn inactive">Part Two - The First Weekend</a>
-
-                </li>
-        
-    
+<ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#image-output">Image Output</a></li>
+<li class="toc-entry toc-h2"><a href="#timing-execution">Timing Execution</a></li>
+<li class="toc-entry toc-h2"><a href="#vec3-class">Vec3 Class</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#vector-refresher">Vector Refresher</a></li>
+<li class="toc-entry toc-h3"><a href="#vec3-definitions">Vec3 Definitions</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#rays">Rays</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#sending-rays-from-the-camera">Sending Rays from the Camera</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#introducing-spheres">Introducing Spheres</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#describing-a-sphere">Describing a Sphere</a></li>
+<li class="toc-entry toc-h3"><a href="#placing-a-sphere">Placing a Sphere</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#surface-normals">Surface Normals</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#simplifying-ray-sphere-intersection">Simplifying Ray-Sphere Intersection</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#multiple-spheres-with-the-hittable-class">Multiple Spheres with the Hittable Class</a></li>
+<li class="toc-entry toc-h2"><a href="#front-faces-versus-back-faces">Front Faces Versus Back Faces</a></li>
+<li class="toc-entry toc-h2"><a href="#anti-aliasing">Anti-Aliasing</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#adding-anti-aliasing-to-the-camera">Adding Anti-Aliasing to the Camera</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#diffuse-materials">Diffuse Materials</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#the-math-of-diffuse-materials">The Math of Diffuse Materials</a></li>
+<li class="toc-entry toc-h3"><a href="#gamma-correction">Gamma Correction</a></li>
+<li class="toc-entry toc-h3"><a href="#shadow-acne">Shadow Acne</a></li>
+<li class="toc-entry toc-h3"><a href="#true-lambertian-reflection">True Lambertian Reflection</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#common-constants-and-utilities">Common Constants and Utilities</a></li>
+<li class="toc-entry toc-h2"><a href="#metal">Metal</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#abstract-class-for-materials">Abstract Class for Materials</a></li>
+<li class="toc-entry toc-h3"><a href="#describing-ray-object-intersections">Describing Ray-Object Intersections</a></li>
+<li class="toc-entry toc-h3"><a href="#light-scatter">Light Scatter</a></li>
+<li class="toc-entry toc-h3"><a href="#metal-reflection">Metal Reflection</a></li>
+<li class="toc-entry toc-h3"><a href="#adding-metal-spheres-to-the-scene">Adding Metal Spheres to the Scene</a></li>
+<li class="toc-entry toc-h3"><a href="#fuzzy-metal">Fuzzy Metal</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#dielectrics">Dielectrics</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#refraction">Refraction</a></li>
+<li class="toc-entry toc-h3"><a href="#snells-law">Snell’s Law</a></li>
+<li class="toc-entry toc-h3"><a href="#total-internal-reflection">Total Internal Reflection</a></li>
+<li class="toc-entry toc-h3"><a href="#calculating-the-refraction-vector">Calculating the Refraction Vector</a></li>
+<li class="toc-entry toc-h3"><a href="#coding-the-refraction-vector">Coding the Refraction Vector</a></li>
+<li class="toc-entry toc-h3"><a href="#dielectric-reflections">Dielectric Reflections</a></li>
+<li class="toc-entry toc-h3"><a href="#hollow-dielectric-spheres">Hollow Dielectric Spheres</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#camera-modeling">Camera Modeling</a></li>
+<li class="toc-entry toc-h2"><a href="#depth-of-field">Depth of Field</a></li>
+<li class="toc-entry toc-h2"><a href="#final-scene">Final Scene</a></li>
 </ul>
 
-<ul class="table-of-contents">
-    <li><a href="#image-output">Image Output</a></li>
-	<li><a href="#timing-execution">Timing Execution</a></li>
-	<li><a href="#vec3-class">Vec3 Class</a></li>
-	<ul>
-	<li><a href="#vector-refresher">Vector Refresher</a></li>
-	<li><a href="#vec3-definitions">Vec3 Definitions</a></li>
-	</ul>
-	<li><a href="#rays">Rays</a></li>
-	<ul>
-	<li><a href="#sending-rays-from-the-camera">Sending Rays from the Camera</a></li>
-	</ul>
-	<li><a href="#introducing-spheres">Introducing Spheres</a></li>
-	<ul>
-	<li><a href="#describing-a-sphere">Describing a Sphere</a></li>
-	<li><a href="#placing-a-sphere">Placing a Sphere</a></li>
-	</ul>
-	<li><a href="#surface-normals">Surface Normals</a></li>
-	<ul>
-	<li><a href="#simplifying-ray-sphere-intersection">Simplifying Ray-Sphere Intersection</a></li>
-	</ul>
-	<li><a href="#multiple-spheres">Multiple Spheres</a></li>
-	<li><a href="#front-faces-versus-back-faces">Front Faces versus Back Faces</a></li>
-	<li><a href="#anti-aliasing">Anti-Aliasing</a></li>
-	<ul>
-	<li><a href="#adding-anti-aliasing-to-the-camera">Adding Anti-Aliasing to the Camera</a></li>
-	</ul>
-	<li><a href="#diffuse-materials">Diffuse Materials</a></li>
-	<ul>
-	<li><a href="#the-math-of-diffuse-materials">The Math of Diffuse Materials</a></li>
-	<li><a href="#gamma-correction">Gamma Correction</a></li>
-	<li><a href="#shadow-acne">Shadow Acne</a></li>
-	<li><a href="#true-lambertian-reflection">True Lambertian Reflection</a></li>
-	</ul>
-	<li><a href="#common-constants-and-utilities">Common Constants and Utilities</a></li>
-	<li><a href="#metal">Metal</a></li>
-	<ul>
-	<li><a href="#abstract-class-for-materials">Abstract Class for Materials</a></li>
-	<li><a href="#describing-ray-object-intersections">Describing Ray-Object Intersections</a></li>
-	<li><a href="#light-scatter">Light Scatter</a></li>
-	<li><a href="#metal-reflection">Metal Reflection</a></li>
-	<li><a href="#adding-metal-spheres-to-the-scene">Adding Metal Spheres to the Scene</a></li>
-	<li><a href="#fuzzy-metal">Fuzzy Metal</a></li>
-	</ul>
-	<li><a href="#dielectrics">Dielectrics</a></li>
-	<ul>
-	<li><a href="#refraction">Refraction</a></li>
-	<li><a href="#snells-law">Snell's Law</a></li>
-	<li><a href="#calculating-the-refraction-vector">Calculating the Refraction Vector</a></li>
-	<li><a href="#coding-the-refraction-vector">Coding the Refraction Vector</a></li>
-	<li><a href="#dielectric-reflections">Dielectric Reflections</a></li>
-	<li><a href="#hollow-dielectric-spheres">Hollow Dielectric Spheres</a></li>
-	</ul>
-	<li><a href="#camera-modeling">Camera Modeling</a></li>
-	<li><a href="#depth-of-field">Depth of Field</a></li>
-	<li><a href="#final-scene">Final Scene</a></li>
-</ul>
+<hr>
 
-<hr />
-
-<h2 id="image-output"><a id="image-output"></a>Image Output</h2>
+<div id="markdown-content">
+    <h2 id="image-output">
+<a class="anchor" href="#image-output" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="image-output"></a>Image Output</h2>
 <p>Of course, the first step with producing a pretty path traced image is to produce an image. The method suggested by Peter is a simple plaintext <code class="language-plaintext highlighter-rouge">.ppm</code> file. The following is an example snippet and image from <a href="https://en.wikipedia.org/wiki/Netpbm#PPM_example">Wikipedia</a>:</p>
 
 <div class="row">
@@ -328,8 +324,7 @@ Now that we’re familiar with ray tracing through <a href="/2020/05/20/ray-trac
 255 255   0  # yellow
 255 255 255  # white
   0   0   0  # black</code></pre>
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\ppm-example-output.png" />
-<!-- ![PPM Output](\assets\images\blog-images\path-tracer\the-first-weekend\ppm-example-output.png) -->
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/ppm-example-output.png">
 
 </div>
 
@@ -372,13 +367,14 @@ int main() {
 <p>You may have to use a <a href="http://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html">web tool</a> or download a file viewer (I use <a href="https://www.irfanview.com/">IrfanView</a>) to view the <code class="language-plaintext highlighter-rouge">.ppm</code> file as an image. Here’s my resulting image and raw contents of the file:</p>
 
 <p><span class="row">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\hello-world-ppm.png" alt="The &quot;Hello World&quot; of our path tracer" />
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\hello-world-ppm-raw.png" alt="The &quot;Hello World&quot; of our path tracer" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/hello-world-ppm.png" alt='The "Hello World" of our path tracer'>
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/hello-world-ppm-raw.png" alt='The "Hello World" of our path tracer'>
 </span></p>
 
-<hr />
+<hr>
 
-<h2 id="timing-execution"><a id="timing-execution"></a>Timing Execution</h2>
+<h2 id="timing-execution">
+<a class="anchor" href="#timing-execution" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="timing-execution"></a>Timing Execution</h2>
 <p>Eventually, our program is going to chug when it comes to producing an image. It’s nice to have a total running time output. This is optional, and you can <a href="#vec3-class">skip</a> it if you please.</p>
 
 <p>If you want, you could just run our program in the terminal prepended with <code class="language-plaintext highlighter-rouge">time</code>. Here’s an example of the utility:</p>
@@ -428,13 +424,15 @@ int main() {
 
 }</code></pre>
 
-<hr />
+<hr>
 
-<h2 id="vec3-class"><a id="vec3-class"></a>Vec3 Class</h2>
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\vectors\vector.png" alt="Vector" />
+<h2 id="vec3-class">
+<a class="anchor" href="#vec3-class" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="vec3-class"></a>Vec3 Class</h2>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/vectors/vector.png" alt="Vector">
 Vectors! I feel like I haven’t used these since high school math but they are <strong>lovely</strong>. If you need or want a refresher on vectors, make sure to read <a href="#vector-refresher">this section</a>. According to Peter Shirley, almost all graphics programs have some class(es) for storing geometric vectors and colors. In many cases, the vectors are four-dimensional to represent homogenous coordinates for geometry, or to represent the alpha transparency channel for color values. We’ll be using three-dimensional coordinates, as that’s all we need to represent direction, color, location, offset, etc.</p>
 
-<h3 id="vector-refresher"><a id="vector-refresher"></a>Vector Refresher</h3>
+<h3 id="vector-refresher">
+<a class="anchor" href="#vector-refresher" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="vector-refresher"></a>Vector Refresher</h3>
 <p>Need a vector refresher? If so, check out <a href="https://www.mathsisfun.com/algebra/vectors.html">this rundown</a> at mathisfun.com. It’s the best I’ve found.
 All the operations within the code above are covered the mathisfun post. Take particular note of <a href="https://www.mathsisfun.com/algebra/vector-unit.html">make_unit_vector()</a>, <a href="https://www.mathsisfun.com/algebra/vectors-dot-product.html">dot()</a>, and <a href="https://www.mathsisfun.com/algebra/vectors-cross-product.html">cross()</a>.</p>
 
@@ -491,7 +489,8 @@ public:
 
 ...</code></pre>
 
-<h3 id="vec3-definitions"><a id="vec3-definitions"></a>Vec3 Definitions</h3>
+<h3 id="vec3-definitions">
+<a class="anchor" href="#vec3-definitions" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="vec3-definitions"></a>Vec3 Definitions</h3>
 <p>The next step in our vector class is to define our functions. Be very careful here! This is where I had a few minor typo issues that mangled the final image later in the project. It’s not hard to see why; these are the lowest-level operations of vectors, which will simulate our light rays and their properties.</p>
 
 <p><code class="language-plaintext highlighter-rouge">vec3.h</code>:</p>
@@ -637,21 +636,25 @@ int main() {
 }
 </code></pre>
 
-<hr />
+<hr>
 
-<h2 id="rays"><a id="rays"></a>Rays</h2>
+<h2 id="rays">
+<a class="anchor" href="#rays" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="rays"></a>Rays</h2>
 <p>Ray tracers need rays! These are what will be colliding with objects in the scene. Rays have an origin, a direction, and can be described by the following formula:</p>
 
 <p><strong><em>P</em></strong>(<em>t</em>) = <strong><em>A</em></strong> + <em>t</em><strong><em>B</em></strong></p>
 
 <ul>
-  <li><strong><em>p</em></strong> is a point on the ray.</li>
-  <li><strong><em>A</em></strong> is the ray origin.</li>
-  <li><strong><em>B</em></strong> is the direction of the ray.</li>
+  <li>
+<strong><em>p</em></strong> is a point on the ray.</li>
+  <li>
+<strong><em>A</em></strong> is the ray origin.</li>
+  <li>
+<strong><em>B</em></strong> is the direction of the ray.</li>
   <li>The ray parameter <em>t</em> is a real number (positive or negative) that moves <strong><em>p</em></strong>(t) along the ray.</li>
 </ul>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.lerp.png" alt="Our Ray (Illustration from Peter Shirley's book)" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/shirley/fig.lerp.png" alt="Our Ray (Illustration from Peter Shirley's book)"></p>
 
 <p>Here’s the header file for our ray class:</p>
 
@@ -675,7 +678,8 @@ public:
 
 #endif // !RAYH</code></pre>
 
-<h3 id="sending-rays-from-the-camera"><a id="sending-rays-from-the-camera"></a>Sending Rays from the Camera</h3>
+<h3 id="sending-rays-from-the-camera">
+<a class="anchor" href="#sending-rays-from-the-camera" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="sending-rays-from-the-camera"></a>Sending Rays from the Camera</h3>
 <p>Put simply, our ray tracer will send rays through pixels and compute the color seen for each ray. The steps for doing so are as follows:</p>
 
 <ol>
@@ -687,7 +691,7 @@ public:
 <p>We will need a “viewport” of sorts to pass rays through from our “camera.” Since we’re using standard square pixel spacing, the viewport will have the same aspect ratio as our rendered image. Shirley sets the height of the viewport to two units in his book, and we’ll do the same.</p>
 
 <p>Using Peter Shirley’s example, we’re going to set the camera at (0,0,0), and look towards the negative z-axis. The viewport will be traversed with rays from left-to-right, bottom-to-top. Variables u and v will be the offset vectors used to move the camera ray along the viewport:
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.cam-geom.png" alt="Camera Geometry (Illustration from Peter Shirley's book)" /></p>
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/shirley/fig.cam-geom.png" alt="Camera Geometry (Illustration from Peter Shirley's book)"></p>
 
 <p>Here’s our code for the camera, as well as rendering a blue-to-white gradient:</p>
 
@@ -738,7 +742,7 @@ int main() {
 }</code></pre>
 
 <p>The result:
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\gradient.png" alt="Linear Gradient" /></p>
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/gradient.png" alt="Linear Gradient"></p>
 
 <p>We can move the camera code into <code class="language-plaintext highlighter-rouge">camera.h</code>.</p>
 
@@ -770,10 +774,12 @@ public:
 #endif // !CAMERAH
 </code></pre>
 
-<hr />
+<hr>
 
-<h2 id="introducing-spheres"><a id="introducing-spheres"></a>Introducing Spheres</h2>
-<h3 id="describing-a-sphere"><a id="describing-a-sphere"></a>Describing a Sphere</h3>
+<h2 id="introducing-spheres">
+<a class="anchor" href="#introducing-spheres" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="introducing-spheres"></a>Introducing Spheres</h2>
+<h3 id="describing-a-sphere">
+<a class="anchor" href="#describing-a-sphere" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="describing-a-sphere"></a>Describing a Sphere</h3>
 <p>We have a beautiful sky-like gradient. Let’s add a sphere! Spheres are popular in ray tracers because they’re mathematically simple.</p>
 
 <p>A sphere centered at the origin of radius $R$ is $x^2 + y^2 + z^2 = R^2$.</p>
@@ -813,9 +819,10 @@ We’re going to find out if a given ray <em>ever</em> hits the sphere. If it do
 
 <p>The unknown variable is <em>t</em>, and this is a quadratic equation. Solving for <em>t</em> will lead to a square root operation (aka the discriminant) that is either positive (two real solutions), negative (no real solutions), or zero (one real solution):</p>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.ray-sphere.png" alt="Ray-Sphere Intersections(Illustration from Peter Shirley's book)" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/shirley/fig.ray-sphere.png" alt="Ray-Sphere Intersections(Illustration from Peter Shirley's book)"></p>
 
-<h3 id="placing-a-sphere"><a id="placing-a-sphere"></a>Placing a Sphere</h3>
+<h3 id="placing-a-sphere">
+<a class="anchor" href="#placing-a-sphere" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="placing-a-sphere"></a>Placing a Sphere</h3>
 
 <p>Prepend <code class="language-plaintext highlighter-rouge">main.cpp</code>’s main function with the following to mathematically hard-code a sphere to be hit by rays:</p>
 
@@ -848,21 +855,22 @@ vec3 color(const ray&amp; r) {
 ...</code></pre>
 
 <p>The result:
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\red-sphere.png" alt="Ray traced sphere" /></p>
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/red-sphere.png" alt="Ray traced sphere"></p>
 
 <!-- Be aware that if the sphere center is change to z= +1, we'll still see the same image. We should not be seeing objects behind us. This will be fixed in the next section. -->
 
-<hr />
+<hr>
 
-<h2 id="surface-normals"><a id="surface-normals"></a>Surface Normals</h2>
+<h2 id="surface-normals">
+<a class="anchor" href="#surface-normals" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="surface-normals"></a>Surface Normals</h2>
 
 <p>Our sphere looks like a circle. To make it more obvious that it <em>is</em> a sphere, we’ll add surface normals to the face. Surface normals are simply vectors that are perpendicular to the surface of an object.</p>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\Normal_vectors_on_a_curved_surface.svg" alt="Surface Normal" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/Normal_vectors_on_a_curved_surface.svg" alt="Surface Normal"></p>
 
 <p>In our case, the outward normal is the hitpoint minus the center:</p>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\shirley\fig.sphere-normal.png" alt="Surface Normal(from Shirley's book)" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/shirley/fig.sphere-normal.png" alt="Surface Normal(from Shirley's book)"></p>
 
 <p>Since we don’t have any lights, we can visualize the normals with a color map.</p>
 
@@ -914,9 +922,10 @@ vec3 color(const ray&amp; r) {
 ...</code></pre>
 
 <p>Our resulting image:
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\surface-normals-render.png" alt="Sphere with Normals" /></p>
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/surface-normals-render.png" alt="Sphere with Normals"></p>
 
-<h3 id="simplifying-ray-sphere-intersection"><a id="simplifying-ray-sphere-intersection"></a>Simplifying Ray-Sphere Intersection</h3>
+<h3 id="simplifying-ray-sphere-intersection">
+<a class="anchor" href="#simplifying-ray-sphere-intersection" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="simplifying-ray-sphere-intersection"></a>Simplifying Ray-Sphere Intersection</h3>
 
 <p>As it turns out, we can simplify ray-sphere intersection. Here’s our original equation:</p>
 <pre><code class="language-cpp">
@@ -954,9 +963,10 @@ if (discriminant &lt; 0) {
 
 <p>Cool! But it could be cooler. We need more spheres. The cleanest way to accomplish this is to create an abstract class - a class that must be overwritten by derived classes - of hittable objects.</p>
 
-<hr />
+<hr>
 
-<h2 id="multiple-spheres-with-the-hittable-class"><a id="multiple-spheres"></a>Multiple Spheres with the Hittable Class</h2>
+<h2 id="multiple-spheres-with-the-hittable-class">
+<a class="anchor" href="#multiple-spheres-with-the-hittable-class" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="multiple-spheres"></a>Multiple Spheres with the Hittable Class</h2>
 
 <p>Our hittable abstract class will have a “hit” function that will be passed a ray and a record containing information about the hit, such as the time(which will be added with motion blur later in this series), position, and the surface normal:</p>
 
@@ -983,9 +993,10 @@ public:
 
 #endif // !HITTABLEH</code></pre>
 
-<hr />
+<hr>
 
-<h2 id="front-faces-versus-back-faces"><a id="front-faces-versus-back-faces"></a>Front Faces Versus Back Faces</h2>
+<h2 id="front-faces-versus-back-faces">
+<a class="anchor" href="#front-faces-versus-back-faces" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="front-faces-versus-back-faces"></a>Front Faces Versus Back Faces</h2>
 <p>A question we have to ask ourselves about our normals is whether they should always point outward. Right now, the normal will always be in the <em>direction of the center to the intersection point</em> - outward. So if the ray intersects from the outside, the normal is against the ray. If the ray intersects from the inside (like in a glass ball), the normal would be pointing in the same direction of the ray. The alternative option is to have the normal always point against the ray.</p>
 
 <p>If we decide to always have the normal point outward, we need to determine what side the ray is on when we color it. If they face the same direction, the ray is inside the object traveling outward. If they’re opposite, the ray is outside traveling inward. We can determine this by taking the dot product of the ray and the normal - if the dot is positive, the ray is inside traveling outward.</p>
@@ -1197,16 +1208,17 @@ int main() {
 </code></pre>
 
 <p>The result:
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables.png" alt="Sphere hittables" /></p>
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/hittables.png" alt="Sphere hittables"></p>
 
 <p>Stunning. A little bit jaggedy, though, don’t you think? This effect is known as “aliasing.” If you wanted to, you could increase the resolution of our scene for higher fidelity. Another interesting method for better image quality falls under the umbrella term “anti-aliasing.”</p>
 
-<hr />
+<hr>
 
-<h2 id="anti-aliasing"><a id="anti-aliasing"></a>Anti-Aliasing</h2>
+<h2 id="anti-aliasing">
+<a class="anchor" href="#anti-aliasing" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="anti-aliasing"></a>Anti-Aliasing</h2>
 <p>Anti-aliasing encompasses a whole slew of methods to combat “jaggies” - from multi-sampling to super-sampling, approximation(FXAA) to temporal, or - more recently - deep learning anti-aliasing. Each of these methods has pros and cons depending on the type of scene portrayed, performance targets, and even scene movement. Usually, there’s a trade-off between image quality and speed. We’ve entered a fascinating time for graphics where raw pixel count (True 4K this! Real 4K that!) is becoming less important - thanks to some incredible leaps in upscaling and anti-aliasing.</p>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\anti-aliasing.png" alt="Small sample of anti-aliasing methods" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/anti-aliasing.png" alt="Small sample of anti-aliasing methods"></p>
 
 <p>If you want to learn more, I highly suggest watching <a href="https://www.youtube.com/watch?v=NbrA4Nxd8Vo">this video</a> from one of my favorite YouTube channels(<a href="https://www.youtube.com/user/DigitalFoundry">Digital Foundry</a>), or reading <a href="https://techguided.com/what-is-anti-aliasing/">this blog post</a> from techguided.com.</p>
 
@@ -1214,8 +1226,8 @@ int main() {
 
 <div class="captioned-image">
 <span class="row">
-![No MSAA](\assets\images\blog-images\path-tracer\the-first-weekend\no-msaa.png)
-![MSAA 4x](\assets\images\blog-images\path-tracer\the-first-weekend\msaa.png)
+![No MSAA](/assets/images/blog-images/path-tracer/the-first-weekend/no-msaa.png)
+![MSAA 4x](/assets/images/blog-images/path-tracer/the-first-weekend/msaa.png)
 </span>
 [Source](https://developer.apple.com/documentation/metal/gpu_features/understanding_gpu_family_4/about_enhanced_msaa_and_imageblock_sample_coverage_control)
 </div>
@@ -1240,7 +1252,8 @@ inline double random_double(double min, double max) {
 
 #endif // !RANDOMH</code></pre>
 
-<h3 id="adding-anti-aliasing-to-the-camera"><a id="adding-anti-aliasing-to-the-camera"></a>Adding Anti-Aliasing to the Camera</h3>
+<h3 id="adding-anti-aliasing-to-the-camera">
+<a class="anchor" href="#adding-anti-aliasing-to-the-camera" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="adding-anti-aliasing-to-the-camera"></a>Adding Anti-Aliasing to the Camera</h3>
 
 <p>Next, we’ll create a camera class to manage the virtual camera and scene sampling:</p>
 
@@ -1341,24 +1354,25 @@ int main() {
 The difference is clear. And blurry. Haha:</p>
 
 <p><span class="row">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables.png" alt="Sphere hittables" />
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables-msaa.png" alt="Sphere hittables" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/hittables.png" alt="Sphere hittables">
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/hittables-msaa.png" alt="Sphere hittables">
 </span>
 <span class="row">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables-zoom.png" alt="Sphere hittables" />
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\hittables-msaa-zoom.png" alt="Sphere hittables" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/hittables-zoom.png" alt="Sphere hittables">
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/hittables-msaa-zoom.png" alt="Sphere hittables">
 </span></p>
 
-<hr />
+<hr>
 
-<h2 id="diffuse-materials"><a id="diffuse-materials"></a>Diffuse Materials</h2>
+<h2 id="diffuse-materials">
+<a class="anchor" href="#diffuse-materials" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="diffuse-materials"></a>Diffuse Materials</h2>
 
 <p>Our ball is pretty, but lacks texture. Let’s add diffuse materials!</p>
 
 <p>Diffuse materials reflect light from their surface such that an incident ray is scattered ay many angles, rather than just one (which is the case with specular reflection):</p>
 
 <p><span class="captioned-image">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\diffuse.png" alt="Diffuse reflection" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/diffuse.png" alt="Diffuse reflection">
 <em>An example of light reflecting off of a diffuse surface (<a href="https://en.wikipedia.org/wiki/Diffuse_reflection">source</a>)</em>
 </span></p>
 
@@ -1370,28 +1384,29 @@ The difference is clear. And blurry. Haha:</p>
 <p>Diffuse materials also modulate the color of their surroundings with their intrinsic color. In our ray tracer, we’re going to simulate diffuse materials by randomizing ray reflections upon hitting a diffuse object. For example, if we were to shoot three rays into the space between two diffuse surfaces, we might see a result like this:</p>
 
 <p><span class="captioned-image">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\shirley\diffuse.png" alt="Diffuse reflection" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/shirley/diffuse.png" alt="Diffuse reflection">
 <em>How rays might behave in our ray tracer upon hitting a diffuse surface (<a href="https://raytracing.github.io/books/RayTracingInOneWeekend.html">source</a>)</em></span></p>
 
 <p>In addition to being reflected, some rays could also be absorbed. Naturally, the darker the surface of a given object, the more likely absorption will take place… which is why that object looks dark. Take Vantablack, one of the darkest substances known. It’s made up of carbon nanotubes, and is essentially a very fine shag carpet. Light gets lost (or diffused) within this forest of tubes to create a pretty striking diffuse material:</p>
 
 <p><span class="row">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\vantablack-zoom.png" alt="Vantablack" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/vantablack-zoom.png" alt="Vantablack">
 <!-- *[source](https://en.wikipedia.org/wiki/Vantablack)* -->
 </span>
 <span class="row">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\vantablack.png" alt="Vantablack" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/vantablack.png" alt="Vantablack">
 <!-- *[source](https://www.techbriefs.com/component/content/article/tb/supplements/pit/features/applications/27558)* -->
 </span></p>
 
 <p>When I was originally reading Peter Shirley’s guide, he described an incorrect (but close) approximation of ideal Lambertian reflectance(think unfinished wood or charcoal - no shiny specular highlights). We’ll go through how I originally did it, and then modify the code to make matte surfaces more true-to-life, thanks to an update to his book.</p>
 
-<h3 id="the-math-of-diffuse-materials"><a id="the-math-of-diffuse-materials"></a>The Math of Diffuse Materials</h3>
+<h3 id="the-math-of-diffuse-materials">
+<a class="anchor" href="#the-math-of-diffuse-materials" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="the-math-of-diffuse-materials"></a>The Math of Diffuse Materials</h3>
 
 <p>First of all, we need to form a unit sphere tangent to the hitpoint <strong>p</strong> on the scene object. The center of this sphere will be the coordinates at the end of the surface normal <strong>n</strong>. Be aware that there are two spheres tangential to the collided sphere - one inside the object(<strong>p</strong> - <strong>n</strong>), and one outside(<strong>p</strong> + <strong>n</strong>). we’ll pick the tangent sphere that’s on the same side of the surface as the ray origin. Next, we’ll select a random point <strong>s</strong> in the tangent unit sphere and send a ray from the hit point <strong>p</strong> to the random point <strong>s</strong> - which results in the vector <strong>s</strong> - <strong>p</strong>.</p>
 
 <p><span class="captioned-image">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\shirley\ray-tracing-diffuse.png" alt="Diffuse material illustration" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/shirley/ray-tracing-diffuse.png" alt="Diffuse material illustration">
 <em>Generation of random diffuse bounce ray (<a href="https://raytracing.github.io/books/RayTracingInOneWeekend.html">source</a>)</em>
 </span></p>
 
@@ -1493,11 +1508,12 @@ int main() {
 
 <p>The result:
 <span class="captioned-image">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse.png" alt="Diffuse sphere" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse.png" alt="Diffuse sphere">
 <em>Diffuse sphere</em>
 </span></p>
 
-<h3 id="gamma-correction"><a id="gamma-correction"></a>Gamma Correction</h3>
+<h3 id="gamma-correction">
+<a class="anchor" href="#gamma-correction" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="gamma-correction"></a>Gamma Correction</h3>
 
 <p>Our spheres are reflecting 50% of each bounce, so why is our picture so dark? Most image viewers assume images to be “gamma-corrected”. Ours is not. Here’s an explanation of gamma correction from <a href="https://en.wikipedia.org/wiki/Gamma_correction">Wikipedia</a>:</p>
 
@@ -1551,10 +1567,11 @@ int main() {
 }</code></pre>
 
 <p><span class="captioned-image">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-gamma.png" alt="Diffuse sphere with gamma correction" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-gamma.png" alt="Diffuse sphere with gamma correction">
 </span></p>
 
-<h3 id="shadow-acne"><a id="shadow-acne"></a>Shadow Acne</h3>
+<h3 id="shadow-acne">
+<a class="anchor" href="#shadow-acne" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="shadow-acne"></a>Shadow Acne</h3>
 
 <p>There’s one small issue left to fix, known as shadow acne. Some of the rays hit the sphere (or any object, really) not at t = 0, but rather at something like t = ±0.0000001 due to floating-point approximation. In that case, we’ll just change our hit detection specs in <code class="language-plaintext highlighter-rouge">main.cpp</code>:</p>
 
@@ -1562,17 +1579,18 @@ int main() {
 
 <div class="captioned-image">
 <div class="container">
-  <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-shadow-acne.png" alt="Shadow acne sphere" />
+  <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-shadow-acne.png" alt="Shadow acne sphere">
   <div class="overlay">
-    <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png" alt="Sphere no shadow acne" />
+    <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-fix-shadow-acne.png" alt="Sphere no shadow acne">
   </div>
 </div>
   (Mouseover) Fix shadow acne
 </div>
 
-<p>You can view the images separately, as well. Here’s <a href="\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-shadow-acne.png">the one with shadow acne</a> and <a href="\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png">the one without</a>.</p>
+<p>You can view the images separately, as well. Here’s <a href="/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-shadow-acne.png">the one with shadow acne</a> and <a href="/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-fix-shadow-acne.png">the one without</a>.</p>
 
-<h3 id="true-lambertian-reflection"><a id="true-lambertian-reflection"></a>True Lambertian Reflection</h3>
+<h3 id="true-lambertian-reflection">
+<a class="anchor" href="#true-lambertian-reflection" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="true-lambertian-reflection"></a>True Lambertian Reflection</h3>
 <p>Recall that Lambertian reflectance is the “ideal” matte surface - the apparent brightness of a Lambertian surface to an observer is the same regardless of the observer’s angle of view.</p>
 
 <p>Here’s Shirley’s explanation of the implementation of true Lambertian reflectance:</p>
@@ -1582,7 +1600,7 @@ int main() {
 However, we are interested in a Lambertian distribution, which has a distribution of cos(ϕ). True Lambertian has the probability higher for ray scattering close to the normal, but the distribution is more uniform. This is achieved by picking points on the surface of the unit sphere, offset along the surface normal. Picking points on the sphere can be achieved by picking points in the unit ball, and then normalizing those.</p>
 </blockquote>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\shirley\rand-unit-vector.png" alt="Generation of random unit vector" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/shirley/rand-unit-vector.png" alt="Generation of random unit vector"></p>
 
 <p>And our total replacement for <code class="language-plaintext highlighter-rouge">random_unit_sphere_coordinate()</code>:
 (use 3.14 as pi for now, we’ll address it in the next section)</p>
@@ -1597,26 +1615,27 @@ However, we are interested in a Lambertian distribution, which has a distributio
 <p>The result:</p>
 <div class="captioned-image">
 <div class="container">
-  <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png" alt="Lambertian approximation" />
+  <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-fix-shadow-acne.png" alt="Lambertian approximation">
   <div class="overlay">
-    <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\lambertian.png" alt="True lambertian reflection" />
+    <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/lambertian.png" alt="True lambertian reflection">
   </div>
 </div>
   (Mouseover)True lambertian reflectance
 </div>
 
 <ul>
-  <li><a href="\assets\images\blog-images\path-tracer\the-first-weekend\renders\diffuse-fix-shadow-acne.png">Lambertian approximation</a></li>
-  <li><a href="\assets\images\blog-images\path-tracer\the-first-weekend\renders\lambertian.png">True Lambertian</a></li>
+  <li><a href="/assets/images/blog-images/path-tracer/the-first-weekend/renders/diffuse-fix-shadow-acne.png">Lambertian approximation</a></li>
+  <li><a href="/assets/images/blog-images/path-tracer/the-first-weekend/renders/lambertian.png">True Lambertian</a></li>
 </ul>
 
 <p>It’s a subtle difference, but a difference nonetheless. Notice that the shadows are not as pronounced and that both spheres are lighter.</p>
 
 <p>These changes are both due to the more uniform scattering toward the normal. For diffuse objects, they appear lighter because more light bounces toward the camera. For shadows, less light bounces straight up.</p>
 
-<hr />
+<hr>
 
-<h2 id="common-constants-and-utilities"><a id="common-constants-and-utilities"></a>Common Constants and Utilities</h2>
+<h2 id="common-constants-and-utilities">
+<a class="anchor" href="#common-constants-and-utilities" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="common-constants-and-utilities"></a>Common Constants and Utilities</h2>
 
 <p>You may have noticed in <code class="language-plaintext highlighter-rouge">random_unit_vector()</code> that <em>pi</em> is not defined. That’s because in Shirley’s newer edition, he creates a general main header file with some constants and utilities:</p>
 
@@ -1739,15 +1758,19 @@ int main() {
 
 <p>While we’re here making changes, let’s clean things up a bit by:</p>
 <ul>
-  <li>Moving <code class="language-plaintext highlighter-rouge">random_unit_vector()</code> to <code class="language-plaintext highlighter-rouge">vec3.h</code></li>
-  <li>Moving our <code class="language-plaintext highlighter-rouge">random number generator</code> to <code class="language-plaintext highlighter-rouge">rtweekend.h</code></li>
+  <li>Moving <code class="language-plaintext highlighter-rouge">random_unit_vector()</code> to <code class="language-plaintext highlighter-rouge">vec3.h</code>
+</li>
+  <li>Moving our <code class="language-plaintext highlighter-rouge">random number generator</code> to <code class="language-plaintext highlighter-rouge">rtweekend.h</code>
+</li>
 </ul>
 
-<hr />
+<hr>
 
-<h2 id="metal"><a id="metal"></a>Metal</h2>
+<h2 id="metal">
+<a class="anchor" href="#metal" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="metal"></a>Metal</h2>
 
-<h3 id="abstract-class-for-materials"><a id="abstract-class-for-materials"></a>Abstract Class for Materials</h3>
+<h3 id="abstract-class-for-materials">
+<a class="anchor" href="#abstract-class-for-materials" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="abstract-class-for-materials"></a>Abstract Class for Materials</h3>
 <p>We’re going to use an abstract material class that encapsulates behavior which will do two things:</p>
 <ul>
   <li>Produce a scattered ray (or absorb the incident ray)</li>
@@ -1767,7 +1790,8 @@ class material {
 
 #endif</code></pre>
 
-<h3 id="describing-ray-object-intersections"><a id="describing-ray-object-intersections"></a>Describing Ray-Object Intersections</h3>
+<h3 id="describing-ray-object-intersections">
+<a class="anchor" href="#describing-ray-object-intersections" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="describing-ray-object-intersections"></a>Describing Ray-Object Intersections</h3>
 <p>The <code class="language-plaintext highlighter-rouge">hit_record</code> struct in <code class="language-plaintext highlighter-rouge">hittable.h</code> is where we’ll be storing whatever information we want about hits. We’ll be adding material to the struct.</p>
 
 <p><code class="language-plaintext highlighter-rouge">hittable.h</code>:</p>
@@ -1853,7 +1877,8 @@ bool sphere::hit(const ray&amp; r, double t_min, double t_max, hit_record&amp; r
 
 #endif // !SPHEREH</code></pre>
 
-<h3 id="light-scatter"><a id="light-scatter"></a>Light Scatter</h3>
+<h3 id="light-scatter">
+<a class="anchor" href="#light-scatter" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="light-scatter"></a>Light Scatter</h3>
 <p>The Lambertian material we modeled previously would either scatter and attenuate by its reflectance <em>R</em>, or scatter with no attenuation but absorb 1 - <em>R</em> of rays, or somewhere in between. This is represented in code as follows:</p>
 
 <p><code class="language-plaintext highlighter-rouge">material.h</code></p>
@@ -1875,10 +1900,11 @@ class lambertian : public material {
 };
 ...</code></pre>
 
-<h3 id="metal-reflection"><a id="metal-reflection"></a>Metal Reflection</h3>
+<h3 id="metal-reflection">
+<a class="anchor" href="#metal-reflection" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="metal-reflection"></a>Metal Reflection</h3>
 <p>Metal is definitely NOT Lambertian - here’s a simple sketch depecting a general mirrored reflection:</p>
 
-<p><span class="captioned-image"> <img src="\assets\images\blog-images\path-tracer\the-first-weekend\metal-reflect.png" alt="Mirrored Reflection" /><em>Metal Reflection (<a href="http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/">source</a>)</em></span></p>
+<p><span class="captioned-image"> <img src="/assets/images/blog-images/path-tracer/the-first-weekend/metal-reflect.png" alt="Mirrored Reflection"><em>Metal Reflection (<a href="http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/">source</a>)</em></span></p>
 
 <div class="math-block">
 $$
@@ -1983,7 +2009,8 @@ class metal : public material {
     }
 }</code></pre>
 
-<h3 id="adding-metal-spheres-to-the-scene"><a id="adding-metal-spheres-to-the-scene"></a>Adding Metal Spheres to the Scene</h3>
+<h3 id="adding-metal-spheres-to-the-scene">
+<a class="anchor" href="#adding-metal-spheres-to-the-scene" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="adding-metal-spheres-to-the-scene"></a>Adding Metal Spheres to the Scene</h3>
 
 <p>Now that we’ve got some shiny new spheres, let’s add ‘em to the scene, render ‘em, and check ‘em out:
 <code class="language-plaintext highlighter-rouge">main.cpp</code>:</p>
@@ -2009,17 +2036,18 @@ class metal : public material {
 
 <p>You’ll get something like this:</p>
 
-<p><span class="captioned-image"><img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal.png" alt="Metal and Lambertian spheres" /><em>Metal and Lambertian spheres</em></span></p>
+<p><span class="captioned-image"><img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/metal.png" alt="Metal and Lambertian spheres"><em>Metal and Lambertian spheres</em></span></p>
 
 <p>Feel free to mess around with the color, positioning, and material, as well:</p>
 
-<p><span class="captioned-image"><img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal-edit.png" alt="Metal spheres" /><em>Your new album cover</em></span></p>
+<p><span class="captioned-image"><img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/metal-edit.png" alt="Metal spheres"><em>Your new album cover</em></span></p>
 
-<h3 id="fuzzy-metal"><a id="fuzzy-metal"></a>Fuzzy Metal</h3>
+<h3 id="fuzzy-metal">
+<a class="anchor" href="#fuzzy-metal" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="fuzzy-metal"></a>Fuzzy Metal</h3>
 
 <p>In addition to perfectly polished metal spheres, we can simulate rough metal as well, with some “fuzziness”. To do so, we just need to append a random vector to the reflected rays:</p>
 
-<p><span class="captioned-image"><img src="\assets\images\blog-images\path-tracer\the-first-weekend\shirley\reflect-fuzzy.png" alt="Fuzzy metal reflections" /><em>Generating fuzzy reflections</em> (<a href="https://raytracing.github.io/books/RayTracingInOneWeekend.html"><em>source</em></a>)</span></p>
+<p><span class="captioned-image"><img src="/assets/images/blog-images/path-tracer/the-first-weekend/shirley/reflect-fuzzy.png" alt="Fuzzy metal reflections"><em>Generating fuzzy reflections</em> (<a href="https://raytracing.github.io/books/RayTracingInOneWeekend.html"><em>source</em></a>)</span></p>
 
 <p>The larger the sphere, the fuzzier the reflections will be. If the sphere is too large, we may scatter below the surface of an object. If that happens, we can just have the surface absorb those rays.</p>
 
@@ -2027,7 +2055,7 @@ class metal : public material {
 <pre><code class="language-cpp">class metal : public material {
     public:
         metal(const vec3&amp; a, double f) : albedo(a) {
-<span class="highlight-green">            if (f&lt;1) fuzz = f; else fuzz = 1;</span>
+			if (f&lt;1) fuzz = f; else fuzz = 1;
         }
         virtual bool scatter(const ray&amp; ray_in, const hit_record&amp; rec, vec3&amp; attenuation, ray&amp; scattered) const {
         vec3 reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
@@ -2037,34 +2065,36 @@ class metal : public material {
     }
 
     vec3 albedo;
-<span class="highlight-green">	double fuzz;</span>
+	double fuzz;
 };</code></pre>
 
 <div class="captioned-image">
 <div class="container">
-  <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\all-metal-no-fuzz.png" alt="Metal - no fuzz" />
+  <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/all-metal-no-fuzz.png" alt="Metal - no fuzz">
   <div class="overlay">
-    <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal-fuzz.png" alt="Fuzzy Metal" />
+    <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/metal-fuzz.png" alt="Fuzzy Metal">
   </div>
 </div>
 (Mouseover) Fuzziness from left to right: .5, 0, and 1
 </div>
 
 <ul>
-  <li><a href="\assets\images\blog-images\path-tracer\the-first-weekend\renders\all-metal-no-fuzz.png">No fuzz</a></li>
-  <li><a href="\assets\images\blog-images\path-tracer\the-first-weekend\renders\metal-fuzz.png">Fuzz</a></li>
+  <li><a href="/assets/images/blog-images/path-tracer/the-first-weekend/renders/all-metal-no-fuzz.png">No fuzz</a></li>
+  <li><a href="/assets/images/blog-images/path-tracer/the-first-weekend/renders/metal-fuzz.png">Fuzz</a></li>
 </ul>
 
-<hr />
+<hr>
 
-<h2 id="dielectrics"><a id="dielectrics"></a>Dielectrics</h2>
+<h2 id="dielectrics">
+<a class="anchor" href="#dielectrics" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="dielectrics"></a>Dielectrics</h2>
 <p>Dielectrics are materials like glass. When a light ray hits one, the ray splits into a reflected ray and a refracted ray. In this path tracer, we’ll be randomly choosing which ray to simulate, only generating one ray per interaction.</p>
 
-<h3 id="refraction"><a id="refraction"></a>Refraction</h3>
+<h3 id="refraction">
+<a class="anchor" href="#refraction" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="refraction"></a>Refraction</h3>
 <p>Refraction is the deflection of a ray from a straight path due to passing obliquely from one medium to another.</p>
 
 <p><span class="captioned-image">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\refraction.png" alt="Refraction" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/refraction.png" alt="Refraction">
 Notice both the reflected beam (top right) and the refracted beam (bottom right) (<a href="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/F%C3%A9nyt%C3%B6r%C3%A9s.jpg/1200px-F%C3%A9nyt%C3%B6r%C3%A9s.jpg">source</a>)
 </span></p>
 
@@ -2131,8 +2161,9 @@ Notice both the reflected beam (top right) and the refracted beam (bottom right)
   </tbody>
 </table>
 
-<h3 id="snells-law"><a id="snells-law"></a>Snell’s Law</h3>
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\snells-law.svg" alt="Snell's Law" /></p>
+<h3 id="snells-law">
+<a class="anchor" href="#snells-law" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="snells-law"></a>Snell’s Law</h3>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/snells-law.svg" alt="Snell's Law"></p>
 
 <p>Snell’s law states that the ratio of the sines of the angles of incidence and refraction is equivalent to the ratio of phase velocities in the two media, or equivalent to the reciprocal of the ratio of the indices of refraction:</p>
 
@@ -2148,16 +2179,17 @@ Notice both the reflected beam (top right) and the refracted beam (bottom right)
 
 \[\frac {n_{1}}{n_{2}} = {ref\_index}\]
 
-<h3 id="total-internal-reflection"><a id="total-internal-reflection"></a>Total Internal Reflection</h3>
+<h3 id="total-internal-reflection">
+<a class="anchor" href="#total-internal-reflection" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="total-internal-reflection"></a>Total Internal Reflection</h3>
 <p>Total internal reflection is an optical phenomenon that occurs when light travels from a medium with a higher refractive index to a lower one, and the angle of incidence is greater than a certain angle (known as the “critical angle”).</p>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\total-internal-reflection.svg" alt="Total internal reflection" /></p>
-
-<h3 id="calculating-the-refraction-vector"><a id="calculating-the-refraction-vector"></a>Calculating the Refraction Vector</h3>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/total-internal-reflection.svg" alt="Total internal reflection" style="background: wheat;"></p>
+<h3 id="calculating-the-refraction-vector">
+<a class="anchor" href="#calculating-the-refraction-vector" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="calculating-the-refraction-vector"></a>Calculating the Refraction Vector</h3>
 <p>Now that we’re familiar with the components of refraction, we can calculate the refraction vector geometrically.</p>
 
-<!--
-![Refraction geometry](\assets\images\blog-images\path-tracer\the-first-weekend\refraction-geometry.png)
+<!-- 
+![Refraction geometry](/assets/images/blog-images/path-tracer/the-first-weekend/refraction-geometry.png)
 
 We already know [Snell's law](#snells-law):
 
@@ -2188,7 +2220,7 @@ $$ -->
 <p>We can model the relationships of the vectors with a unit circle to make things easier.</p>
 
 <p><span class="captioned-image">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\refraction-vector-circle.png" alt="Refraction unit circle" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/refraction-vector-circle.png" alt="Refraction unit circle">
 (<em><a href="http://viclw17.github.io/2018/08/05/raytracing-dielectric-materials/">source</a></em>)
 </span></p>
 
@@ -2263,10 +2295,12 @@ $$ -->
   </tbody>
 </table>
 
-<h3 id="coding-the-refraction-vector"><a id="coding-the-refraction-vector"></a>Coding the Refraction Vector</h3>
+<h3 id="coding-the-refraction-vector">
+<a class="anchor" href="#coding-the-refraction-vector" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="coding-the-refraction-vector"></a>Coding the Refraction Vector</h3>
 
 <ul>
-  <li>$\frac {n_{1}}{n_{2}}$ is <code class="language-plaintext highlighter-rouge">n1_over_n2</code></li>
+  <li>$\frac {n_{1}}{n_{2}}$ is <code class="language-plaintext highlighter-rouge">n1_over_n2</code>
+</li>
   <li>v is the incidence ray</li>
   <li>n is the surface normal</li>
   <li>refracted is the refracted ray’s direction</li>
@@ -2284,11 +2318,12 @@ $$ -->
         return false; // no refracted ray
 }</code></pre>
 
-<h3 id="dielectric-reflections"><a id="dielectric-reflections"></a>Dielectric Reflections</h3>
+<h3 id="dielectric-reflections">
+<a class="anchor" href="#dielectric-reflections" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="dielectric-reflections"></a>Dielectric Reflections</h3>
 <p>When light strikes a dielectric object, both reflection and refraction may occur. Looking at a puddle at a sharp enough angle makes it look almost like a mirror!</p>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\fresnel.png" alt="Fresnel puddle" />
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\partial-transmittance.gif" alt="Patrial transmittance" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/fresnel.png" alt="Fresnel puddle">
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/partial-transmittance.gif" alt="Patrial transmittance"></p>
 
 <p>For low-precision applications that don’t involve polarized light, <a href="https://en.wikipedia.org/wiki/Schlick%27s_approximation">Schlick’s approximation</a> will serve our purposes just fine, rather than computing the effective reflection coefficient for every angle.</p>
 
@@ -2320,7 +2355,7 @@ $$ -->
 
 <p>If the incident ray produces a refraction ray (which we can check by seeing if <code class="language-plaintext highlighter-rouge">refract()</code> returns true), we are going to calculate the reflective coefficient <code class="language-plaintext highlighter-rouge">reflect_probability</code>. Otherwise, the ray exhibits total internal reflection and the reflective coefficient should be 1.</p>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\refraction-reflection.gif" alt="Refraction and reflection gif" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/refraction-reflection.gif" alt="Refraction and reflection gif"></p>
 
 <p>We do this by getting whichever value is smaller between:</p>
 <ul>
@@ -2384,44 +2419,46 @@ class dielectric : public material {
 
 <div class="captioned-image">
 <div class="container">
-  <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\no-fresnel.png" alt="Dielectric without Fresnel" />
+  <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/no-fresnel.png" alt="Dielectric without Fresnel">
   <div class="overlay">
-    <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\fresnel.png" alt="Dielectric with Fresnel" />
+    <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/fresnel.png" alt="Dielectric with Fresnel">
   </div>
 </div>
   (Mouseover) Implementation of Fresnel reflections
 </div>
 
 <ul>
-  <li><a href="\assets\images\blog-images\path-tracer\the-first-weekend\renders\no-fresnel.png">No fresnel</a></li>
-  <li><a href="\assets\images\blog-images\path-tracer\the-first-weekend\renders\fresnel.png">Fresnel</a></li>
+  <li><a href="/assets/images/blog-images/path-tracer/the-first-weekend/renders/no-fresnel.png">No fresnel</a></li>
+  <li><a href="/assets/images/blog-images/path-tracer/the-first-weekend/renders/fresnel.png">Fresnel</a></li>
 </ul>
 
-<h3 id="hollow-dielectric-spheres"><a id="hollow-dielectric-spheres"></a>Hollow Dielectric Spheres</h3>
+<h3 id="hollow-dielectric-spheres">
+<a class="anchor" href="#hollow-dielectric-spheres" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="hollow-dielectric-spheres"></a>Hollow Dielectric Spheres</h3>
 
 <p>Bonus fun fact! We can create a hollow glass sphere by creating a smaller sphere with a <em>negative</em> radius <em>inside</em> our existing sphere! The geometry is unaffected, but the normal points inward.</p>
 
 <div class="captioned-image">
 <div class="container">
-  <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-solid.png" alt="Solid Dielectric" />
+  <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/dielectric-solid.png" alt="Solid Dielectric">
   <div class="overlay">
-    <img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-hollow.png" alt="Hollow Dielectric" />
+    <img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/dielectric-hollow.png" alt="Hollow Dielectric">
   </div>
 </div>
   (Mouseover) Hollow dielectric sphere
 </div>
 
 <ul>
-  <li><a href="\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-solid.png">Solid</a></li>
-  <li><a href="\assets\images\blog-images\path-tracer\the-first-weekend\renders\dielectric-hollow.png">Hollow</a></li>
+  <li><a href="/assets/images/blog-images/path-tracer/the-first-weekend/renders/dielectric-solid.png">Solid</a></li>
+  <li><a href="/assets/images/blog-images/path-tracer/the-first-weekend/renders/dielectric-hollow.png">Hollow</a></li>
 </ul>
 
 <p>And of course, you can change the color of your pretty new dielectric sphere if you please.
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\purple-dielectric.png" alt="Purple dielectric" /></p>
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/purple-dielectric.png" alt="Purple dielectric"></p>
 
-<hr />
+<hr>
 
-<h2 id="camera-modeling"><a id="camera-modeling"></a>Camera Modeling</h2>
+<h2 id="camera-modeling">
+<a class="anchor" href="#camera-modeling" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="camera-modeling"></a>Camera Modeling</h2>
 <p>Up until now, we’ve been using a very simple camera (though I have changed framing a little bit for illustrating certain renders). Our simple camera was described way back in chapter 4 of Shirley’s book, and it had fixed world position at the origin (0, 0, 0), a fixed image plane (or near-clipping plane) size, and the plane was position at (0, 0, -1), effectively setting our sights along the negative z-axis.</p>
 
 <p><code class="language-plaintext highlighter-rouge">camera.h</code>:</p>
@@ -2453,16 +2490,23 @@ public:
 <p>We’re going to expand the capability of the camera and make it more flexible by defining a few different variables:</p>
 
 <ul>
-  <li>Camera position <code class="language-plaintext highlighter-rouge">look_from</code></li>
-  <li>Camera objective <code class="language-plaintext highlighter-rouge">look_at</code></li>
-  <li>Vector describing which way is “up” <code class="language-plaintext highlighter-rouge">vup</code></li>
-  <li>Vertical field-of-view <code class="language-plaintext highlighter-rouge">vfov</code></li>
-  <li>Image plane aspect ratio <code class="language-plaintext highlighter-rouge">aspect_ratio</code></li>
-  <li>Camera lens size <code class="language-plaintext highlighter-rouge">aperture</code></li>
-  <li>Image plane to camera distance <code class="language-plaintext highlighter-rouge">focus_distance</code></li>
+  <li>Camera position <code class="language-plaintext highlighter-rouge">look_from</code>
+</li>
+  <li>Camera objective <code class="language-plaintext highlighter-rouge">look_at</code>
+</li>
+  <li>Vector describing which way is “up” <code class="language-plaintext highlighter-rouge">vup</code>
+</li>
+  <li>Vertical field-of-view <code class="language-plaintext highlighter-rouge">vfov</code>
+</li>
+  <li>Image plane aspect ratio <code class="language-plaintext highlighter-rouge">aspect_ratio</code>
+</li>
+  <li>Camera lens size <code class="language-plaintext highlighter-rouge">aperture</code>
+</li>
+  <li>Image plane to camera distance <code class="language-plaintext highlighter-rouge">focus_distance</code>
+</li>
 </ul>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\camera-model.png" alt="Camera visualization" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/camera-model.png" alt="Camera visualization"></p>
 
 <p>If the angle of the camera lens is <code class="language-plaintext highlighter-rouge">theta</code>, we can see that <code class="language-plaintext highlighter-rouge">half_height</code> = <code class="language-plaintext highlighter-rouge">tan(theta/2)</code>.</p>
 
@@ -2496,7 +2540,7 @@ origin = (0,0,0);
 \[{\displaystyle (x,y,z)=xe_{1}+ye_{2}+ze_{3}}\]
 
 <p><span class="captioned-image">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\standard-basis.svg" alt="Standard basis" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/standard-basis.svg" alt="Standard basis">
 Every vector $a$ in three dimensions is a linear combination of the standard basis vectors $i$, $j$, and $k$.
 </span></p>
 
@@ -2513,27 +2557,27 @@ vertical = 2 *half_height * e2</code></pre>
 u = unit_vector(cross(vup, w)) // similar to the X axis
 v = cross(w, u) // similar to the Y axis</code></pre>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\orthonormal-basis.png" alt="New orthonormal basis" />
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\shirley\orthonormal-basis.png" alt="Shirley orthonormal basis" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/orthonormal-basis.png" alt="New orthonormal basis">
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/shirley/orthonormal-basis.png" alt="Shirley orthonormal basis"></p>
 
 <p>The <code class="language-plaintext highlighter-rouge">vup</code> vector describes which direction is up for the camera. You can also think of this as tilt in any (x,y,z).</p>
 
 <div class="row-fill">
 	<div class="captioned-image">
-	<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\vup-010.png" />
+	<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/vup-010.png">
 	vup (0,1,0)
 	</div>
 	<div class="captioned-image">
-	<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\vup-0neg10.png" />
+	<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/vup-0neg10.png">
 	vup (0,-1,0)
 	</div>
 	<div class="captioned-image">
-	<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\vup-110.png" />
+	<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/vup-110.png">
 	vup (1,1,0)
 	</div>
 </div>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\shirley\orthonormal-vup.png" alt="Shirley vector-up" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/shirley/orthonormal-vup.png" alt="Shirley vector-up"></p>
 
 <pre><code class="language-cpp">class camera {
 public:
@@ -2561,9 +2605,10 @@ public:
     vec3 origin;
 };</code></pre>
 
-<hr />
+<hr>
 
-<h2 id="depth-of-field"><a id="depth-of-field"></a>Depth of Field</h2>
+<h2 id="depth-of-field">
+<a class="anchor" href="#depth-of-field" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="depth-of-field"></a>Depth of Field</h2>
 
 <p>Depth of field! If you have eyes that kind of work, you’re familiar with it. You can read more about DOF at <a href="https://en.wikipedia.org/wiki/Depth_of_field">Wikipedia</a>. Depth of field (DOF) is the distance between the nearest and farthest objects that are acceptably sharp in an image. The subjects outside the DOF are subject to blur.</p>
 
@@ -2573,7 +2618,7 @@ public:
 </blockquote>
 
 <p><span class="captioned-image">
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\depth-of-field.png" alt="Depth of field (PBR!)" />
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/depth-of-field.png" alt="Depth of field (PBR!)">
 <em>PBR!</em> (<a href="https://www.joepylephotography.com/depth-of-field-joe-pyle-photography/"><em>source</em></a>)
 </span></p>
 
@@ -2581,7 +2626,7 @@ public:
   <p>In optics, an aperture is a hole or an opening through which light travels. More specifically, the aperture and focal length of an optical system determine the cone angle of a bundle of rays that come to a focus in the image plane.</p>
 </blockquote>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\aperture-diagram.gif" alt="Aperture diagram" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/aperture-diagram.gif" alt="Aperture diagram"></p>
 
 <p>From the beginning, all scene rays have originated from <code class="language-plaintext highlighter-rouge">look_from</code>. To simulate a variable aperature, we’ll generate rays randomly originating from inside a disk centered at <code class="language-plaintext highlighter-rouge">look_from</code>. The larger we make this disc, the stronger the blur will be. With a disk radius of zero, the rays all originate from <code class="language-plaintext highlighter-rouge">look_from</code>, eliminating blur. One such method for generating a point inside a unit disk is as follows:</p>
 
@@ -2600,7 +2645,7 @@ public:
 horizontal = 2 * half_width*focus_distance*u;
 vertical = 2 * half_height*focus_distance*v;</code></pre>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\camera-model-summary-aperture.png" alt="Aperture diagram" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/camera-model-summary-aperture.png" alt="Aperture diagram"></p>
 
 <p>With that, we have a complete camera class:</p>
 
@@ -2644,13 +2689,14 @@ vertical = 2 * half_height*focus_distance*v;</code></pre>
         double lens_radius;
 };</code></pre>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\dof-0.png" alt="Aperture 0" />
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\dof-point-2.png" alt="Aperture 0.2" />
-<img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\dof-point-5.png" alt="Aperture 0.5" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/dof-0.png" alt="Aperture 0">
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/dof-point-2.png" alt="Aperture 0.2">
+<img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/dof-point-5.png" alt="Aperture 0.5"></p>
 
-<hr />
+<hr>
 
-<h2 id="final-scene"><a id="final-scene"></a>Final Scene</h2>
+<h2 id="final-scene">
+<a class="anchor" href="#final-scene" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="final-scene"></a>Final Scene</h2>
 
 <p>Lastly, we’ll create a random scene of spheres. Feel free to customize. And be aware - this may take some time to render!</p>
 
@@ -2708,8 +2754,9 @@ double aperture = 0.2; // bigger = blurrier
 }
 ...</code></pre>
 
-<p><img src="\assets\images\blog-images\path-tracer\the-first-weekend\renders\final-render-1.png" alt="Final render" /></p>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/final-render-1.png" alt="Final render"></p>
 
+  </div>
 
 <hr>
 <h1><i class="fas fa-hand-peace"></i></h1>
@@ -2749,25 +2796,19 @@ double aperture = 0.2; // bigger = blurrier
 
     <!-- prism syntax  -->
     <script src="/js/site-scripts/prism.js"></script>
-
-    <script>
-    // Set path for autoloader languages
-    Prism.plugins.autoloader.languages_path = '/assets/prism-components/';
-
-  // Set tabs-to-spaces (and left-trim false) so that prism's language-diff-xxxx will be more reliable in dealing with unchanged code.
-  Prism.plugins.NormalizeWhitespace.setDefaults({
-	'remove-trailing': true,
-	'remove-indent': true,
-	'left-trim': true,
-	'right-trim': true,
-	// 'break-lines': 80,
-	// 'indent': 1,
-  'tabs-to-spaces': 4,
-	// 'remove-initial-line-feed': false,
-	// 'tabs-to-spaces': 4,
-	// 'spaces-to-tabs': 4
-});
-    </script>
+    <script src ='/assets\prism-components'></script>
+    <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+      'remove-trailing': true,
+      'remove-indent': true,
+      'left-trim': false,
+      'right-trim': true,
+      'break-lines': 80,
+      'indent': 0,
+      'remove-initial-line-feed': true,
+      'tabs-to-spaces': 4,
+      'spaces-to-tabs': 4
+    });</script>
+    
 
       <!-- Back to top -->
     <script src="/js/site-scripts/vanilla-back-to-top.min.js"></script>

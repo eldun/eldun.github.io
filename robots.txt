@@ -1,1 +1,1 @@
-Sitemap: /sitemap.xml
+Sitemap: eldun.github.io/sitemap.xml
