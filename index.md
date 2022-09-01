@@ -16,7 +16,7 @@ title: Home
   </div>
   <img src="{{ post.header-image }}" alt="{{ post.header-image-alt }}" title="{{ post.header-image-title }}">
 
-  {{ post.excerpt }}
+  {{ post.excerpt | markdownify }}
 
   <div class="post-button">
     <a href="{{ post.url }}#continue-reading-point" class="btn">Continue reading »</a>
