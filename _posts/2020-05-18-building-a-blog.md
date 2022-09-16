@@ -332,7 +332,7 @@ $color-accent: {{ site.data.colors["accent"]["dark-theme"] }};
 $color-clickable: {{ site.data.colors["clickable"]["dark-theme"] }};
 $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 
-/* This file extends/overrides the CSS file used by "jekyll-theme-cayman" (_site\assets\css\style.css)
+/* This file extends/overrides the CSS file used by "jekyll-theme-cayman" (_site/assets/css/style.css)
   https://help.github.com/en/github/working-with-github-pages/adding-a-theme-to-your-github-pages-site-using-jekyll#customizing-your-themes-css 
 */
 

@@ -6,7 +6,7 @@ layout: post
 author: Evan
 excerpt: Microsoft has a suprisingly worthwhile rewards program - in addition to their three daily tasks (which range in value from 5 to 50 points each), there are a possible 250 points(~$1.25) to be earned from Bing searches within the Edge browser. This is my quick and dirty solution for snagging those points without manually searching 50 queries in Edge every day.
 toc: true
-header-image: /assets\images\blog-images\automating-edge-searches\ms-rewards.jpg
+header-image: /assets/images/blog-images/automating-edge-searches/ms-rewards.jpg
 header-image-alt: Microsoft Rewards medal.
 header-image-title: Microsoft Rewards medal.
 tags: web javascript automation
@@ -17,7 +17,7 @@ tags: web javascript automation
 
 First off, I'd like to say that I have nothing against Edge. It's beautiful and zippy. However, when I attempted to accrue search points naturally, I found myself cursing Bing's algorithm (StackOverflow on the second page?? GeeksForGeeks at the top?!??). And so here we are, automatically search made-up words in pursuit of the ultimate hypothetical prize:
 
-![The ultimate hypothetical prize.](\assets\images\blog-images\automating-edge-searches\goal.png)
+![The ultimate hypothetical prize.](/assets/images/blog-images/automating-edge-searches/goal.png)
 
 ---
 
@@ -91,7 +91,7 @@ function init() {
 
 Note that two tabs are opened - one for desktop searches, and one for mobile. I couldn't find a simpler way to mock a mobile [user agent](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent) than just hitting F12 and toggling mobile device emulation (if you're on desktop) or requesting the desktop site (if you're on mobile).
 
-![Toggling Mobile Device Emulation](\assets\images\blog-images\automating-edge-searches\device-emulation.png)
+![Toggling Mobile Device Emulation](/assets/images/blog-images/automating-edge-searches/device-emulation.png)
 
 In order for both tabs to open, you'll have to allow pop-ups from eldun.github.io.
 
