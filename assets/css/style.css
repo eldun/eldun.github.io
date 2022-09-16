@@ -3563,7 +3563,7 @@ body { scrollbar-color: #cc773f transparent; color: #ecdac4; background-color: #
 
 .main-content h1, .main-content h2, .main-content h3, .main-content h4, .main-content h5, .main-content h6 { color: inherit; margin: .5rem; text-align: center; }
 
-.main-content code, .main-content pre, .main-content pre > code { color: #ecdac4; background-color: #393e46; border-color: #cc773f; overflow: auto; padding-top: 0; padding-bottom: 0; }
+.main-content code, .main-content pre, .main-content pre > code { font-size: inherit; color: #ecdac4; background-color: #393e46; border-color: #cc773f; overflow: auto; padding-top: 0; padding-bottom: 0; }
 
 .main-content a > code { color: inherit; }
 
@@ -3575,7 +3575,7 @@ code { background-color: #393e46; }
 
 ul { list-style-type: none; }
 
-li { list-style-type: none; }
+li { list-style-type: none; margin-bottom: 1rem; }
 
 a:hover, .btn:hover, a *:hover { color: #222831; text-decoration: none; background-color: #cc773f; border-color: #cc773f; }
 
