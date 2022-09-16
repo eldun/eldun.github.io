@@ -113,6 +113,7 @@ body {
 .main-content code, 
 .main-content pre,
 .main-content pre > code {
+  font-size: inherit;
   color: $color-text;
   background-color: $color-secondary;
   border-color: $color-clickable;
