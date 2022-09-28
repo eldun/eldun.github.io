@@ -11,7 +11,7 @@ author: Evan
 header-image: /assets/images/blog-images/path-tracer/the-first-weekend/renders/final-render-1.png
 header-image-alt: Path traced sphere scene render.
 header-image-title: Render of a sphere-filled scene with diffuse, metallic, and dielectric materials.
-tags: graphics ray-tracing ray-tracing-in-one-weekend c++
+tags: graphics ray-tracing-in-one-weekend c++
 ---
 
 
