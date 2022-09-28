@@ -8,7 +8,7 @@ author: Evan
 header-image: /assets\images\blog-images\path-tracer-part-three\
 header-image-alt: 
 header-image-title: 
-tags: graphics ray-tracing ray-tracing-in-one-weekend c++
+tags: graphics ray-tracing-in-one-weekend c++
 ---
 
 <a id="continue-reading-point"></a>
