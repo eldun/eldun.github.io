@@ -15,9 +15,7 @@ title: Home
     <i class="fas fa-calendar"></i> <time>{{ post.date | date_to_string }}</time>
   </div>
   <img src="{{ post.header-image }}" alt="{{ post.header-image-alt }}" title="{{ post.header-image-title }}">
-
   <p>{{ post.excerpt | markdownify }}</p>
-
   <div class="post-button">
     <a href="{{ post.url }}#continue-reading-point" class="btn">Continue reading »</a>
   </div>
