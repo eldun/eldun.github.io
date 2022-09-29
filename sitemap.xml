@@ -35,9 +35,6 @@
 <loc>eldun.github.io/tags/c++.html</loc>
 </url>
 <url>
-<loc>eldun.github.io/tags/computer-graphics.html</loc>
-</url>
-<url>
 <loc>eldun.github.io/tags/fruit.html</loc>
 </url>
 <url>
@@ -48,6 +45,9 @@
 </url>
 <url>
 <loc>eldun.github.io/</loc>
+</url>
+<url>
+<loc>eldun.github.io/tags/java.html</loc>
 </url>
 <url>
 <loc>eldun.github.io/tags/javascript.html</loc>
@@ -68,9 +68,6 @@
 <loc>eldun.github.io/tags/ray-tracing-in-one-weekend.html</loc>
 </url>
 <url>
-<loc>eldun.github.io/tags/ray-tracing.html</loc>
-</url>
-<url>
 <loc>eldun.github.io/tags/ruby.html</loc>
 </url>
 <url>
@@ -87,6 +84,10 @@
 </url>
 <url>
 <loc>eldun.github.io/downloads/Dunne_resume.pdf</loc>
-<lastmod>2022-09-16T18:58:02-04:00</lastmod>
+<lastmod>2022-09-29T14:47:31-04:00</lastmod>
+</url>
+<url>
+<loc>eldun.github.io/tags/java.html</loc>
+<lastmod>2022-09-29T14:47:07-04:00</lastmod>
 </url>
 </urlset>

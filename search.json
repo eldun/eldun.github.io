@@ -14,7 +14,7 @@
 
       "title"    : "Ray Tracing in One Weekend:",
       "subtitle"    : "Part Two - The First Weekend",
-      "tags"     : "graphics, ray-tracing, ray-tracing-in-one-weekend, c++",
+      "tags"     : "graphics, ray-tracing-in-one-weekend, c++",
       "date"     : "2020-06-19 00:00:00 -0400",
       "url"      : "/2020/06/19/ray-tracing-in-one-weekend-part-two.html"
 
@@ -24,7 +24,7 @@
 
       "title"    : "Ray Tracing in One Weekend:",
       "subtitle"    : "Part One - An Introduction",
-      "tags"     : "graphics, ray-tracing, ray-tracing-in-one-weekend",
+      "tags"     : "graphics, ray-tracing-in-one-weekend",
       "date"     : "2020-05-20 00:00:00 -0400",
       "url"      : "/2020/05/20/ray-tracing-in-one-weekend-part-one.html"
 
