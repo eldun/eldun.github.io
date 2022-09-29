@@ -9,7 +9,7 @@ author: Evan
 header-image: /assets/images/blog-images/path-tracer/introduction/ball.png
 header-image-alt: Path traced sphere render.
 header-image-title: Render of a path traced sphere.
-tags: graphics ray-tracing ray-tracing-in-one-weekend
+tags: graphics ray-tracing-in-one-weekend
 ---
 
 ## <a id="what-is-ray-tracing"></a>What is Ray Tracing?
