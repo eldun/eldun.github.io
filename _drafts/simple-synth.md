@@ -65,21 +65,21 @@ A helpful tutorial on CMake can be found [here](https://cmake.org/cmake/help/lat
  
 
 The next step is to construct our build folder with CMake, which will include some example VSTs.
-```
+</code></pre>
 mkdir build
 cd build
 
 cmake ../VST_SDK/vst3sdk/
 cmake --build .
-```
+</code></pre>
 The resulting `build/VST3/Debug` folder is full of example VSTs:
-```
+</code></pre>
 adelay.vst3                helloworld.vst3            multiple_programchanges.vst3  prefetchable.vst3
 again-sampleaccurate.vst3  helloworldWithVSTGUI.vst3  noteexpressionsynth.vst3      programchange.vst3
 againsimple.vst3           hostchecker.vst3           noteexpressiontext.vst3       syncdelay.vst3
 again.vst3                 legacymidiccout.vst3       panner.vst3
 channelcontext.vst3        mda-vst3.vst3              pitchnames.vst3
-```
+</code></pre>
 Now we need a VST host - I already have Reaper installed, so that's what I'll be using. After setting up the path to our new VSTs in Reaper, we can load some up:
 
 ![Example Steinberg VST Plug-ins loaded up in Reaper](/assets/images/blog-images/simple-synth/vst-examples.png)
@@ -121,23 +121,20 @@ Since there's no GUI for linux, I had to do some digging. Cloning the VST 3 Proj
 >
 > Execute on command line:
 >
-> ```console
-> $ cmake -P GenerateVST3Plugin.cmake
-> ```
+> <pre><code class="language-console">> $ cmake -P GenerateVST3Plugin.cmake
+> </code></pre>
 > 
 > The script will output all variables and its current values. In order to adapt variables, edit
 > 
-> ```console
-> vst3plugingenerator/cmake/modules/SMTG_VendorSpecifics.cmake
-> ```
+> <pre><code class="language-console">> vst3plugingenerator/cmake/modules/SMTG_VendorSpecifics.cmake
+> </code></pre>
 > 
 > file to your needs.
 > 
 > After the script has finished you will find a
 > 
-> ```console
-> vst3plugingenerator/myplugin
-> ```
+> <pre><code class="language-console">> vst3plugingenerator/myplugin
+> </code></pre>
 > 
 > folder in the directory the script was executed in.
 
@@ -180,21 +177,21 @@ A helpful tutorial on CMake can be found [here](https://cmake.org/cmake/help/lat
  
 
 The next step is to construct our build folder with CMake, which will include some example VSTs.
-```
+</code></pre>
 mkdir build
 cd build
 
 cmake ../VST_SDK/vst3sdk/
 cmake --build .
-```
+</code></pre>
 The resulting `build/VST3/Debug` folder is full of example VSTs:
-```
+</code></pre>
 adelay.vst3                helloworld.vst3            multiple_programchanges.vst3  prefetchable.vst3
 again-sampleaccurate.vst3  helloworldWithVSTGUI.vst3  noteexpressionsynth.vst3      programchange.vst3
 againsimple.vst3           hostchecker.vst3           noteexpressiontext.vst3       syncdelay.vst3
 again.vst3                 legacymidiccout.vst3       panner.vst3
 channelcontext.vst3        mda-vst3.vst3              pitchnames.vst3
-```
+</code></pre>
 Now we need a VST host - I already have Reaper installed, so that's what I'll be using. After setting up the path to our new VSTs in Reaper, we can load some up:
 
 ![Example Steinberg VST Plug-ins loaded up in Reaper](/assets/images/blog-images/simple-synth/vst-examples.png)
@@ -213,23 +210,20 @@ Since there's no GUI for linux, I had to do some digging. Cloning the VST 3 Proj
 >
 > Execute on command line:
 >
-> ```console
-> $ cmake -P GenerateVST3Plugin.cmake
-> ```
+> <pre><code class="language-console">> $ cmake -P GenerateVST3Plugin.cmake
+> </code></pre>
 > 
 > The script will output all variables and its current values. In order to adapt variables, edit
 > 
-> ```console
-> vst3plugingenerator/cmake/modules/SMTG_VendorSpecifics.cmake
-> ```
+> <pre><code class="language-console">> vst3plugingenerator/cmake/modules/SMTG_VendorSpecifics.cmake
+> </code></pre>
 > 
 > file to your needs.
 > 
 > After the script has finished you will find a
 > 
-> ```console
-> vst3plugingenerator/myplugin
-> ```
+> <pre><code class="language-console">> vst3plugingenerator/myplugin
+> </code></pre>
 > 
 > folder in the directory the script was executed in.
 
@@ -312,7 +306,7 @@ endfunction(smtg_print_vendor_specifics)
 
 I'm not yet an expert with Cmake, so I looked at the included plugin example CMakeLists.txt at /VST_SDK/my_plugins/helloworld_with_VSTGUI/ for an example:
 
-```
+</code></pre>
 
 if(NOT SMTG_ADD_VSTGUI)
     return()
@@ -378,10 +372,10 @@ smtg_target_add_plugin_snapshots(helloworldWithVSTGUI
         resource/41E3A6A2C1991743A64945DC3FB7D51D_snapshot.png
         resource/41E3A6A2C1991743A64945DC3FB7D51D_snapshot_2.0x.png
 )
-```
+</code></pre>
 
 This only looks slightly different from the script-generated `CMakeLists.txt` for `VST_SDK/my_plugins/SimpleSynth/CMakeLists.txt`:
-```
+</code></pre>
 cmake_minimum_required(VERSION 3.14.0)
 set(CMAKE_OSX_DEPLOYMENT_TARGET  CACHE STRING "")
 The [SMTG option](https://steinbergmedia.github.io/vst3_dev_portal/pages/Tutorials/Using+cmake+for+building+plug-ins.html#available-smtg-cmake-options) "SMTG_ADD_VSTGUI" is on by default.
@@ -397,11 +391,11 @@ Next, you have to
 
 I threw this line in at the end of the "VST_GUI Wanted" section:
 
-```
+</code></pre>
 target_compile_definitions(SimpleSynth 
         PUBLIC
             $<$<CONFIG:Debug>:VSTGUI_LIVE_EDITING=1>)
-```
+</code></pre>
 
 > Finally, you have to modify your edit controller class to overwrite the createView() method
 

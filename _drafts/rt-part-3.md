@@ -609,12 +609,12 @@ Here's the "Key Idea" on BVH's from Shirley's book:
 > The key idea of a bounding volume over a set of primitives is to find a volume that fully encloses (bounds) all the objects. For example, suppose you computed a bounding sphere of 10 objects. Any ray that misses the bounding sphere definitely misses all ten objects. If the ray hits the bounding sphere, then it might hit one of the ten objects.
 
 It follows that the pseudo-code looks like this:
-```
+</code></pre>
 if (ray hits bounding object)
     return whether ray hits bounded objects
 else
     return false
-```
+</code></pre>
 
 One more important aspect of BVH's - any object is in **only one bounding volume**, but **bounding volumes can overlap**.
 
@@ -627,14 +627,14 @@ To make intersection checks sub-linear, we need to establish a hierarchy. If we 
 
 The orange & blue subsets are simply inside the white rectangle and the binary tree has no order. The pseudo-code for this hierarchy would look like:
 
-```
+</code></pre>
 if (hits white)
     hitOrange = hits orange enclosed objects
     hitBlue = hits blue enclosed objects
     if (hitOrange or hitBlue)
         return true and info of closer hit
 return false
-```
+</code></pre>
 
 ### <a id="implementing-a-hierarchy-using-axis-aligned-bounding-boxes"></a>Implementing a Hierarchy Using Axis-Aligned Bounding Boxes
 

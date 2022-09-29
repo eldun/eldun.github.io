@@ -1010,7 +1010,7 @@ class Controller():
 Let's create a new file in the root directory named `api.py`. This is where we'll be making a connection with Artic's servers. To accomplish this, we'll use the `requests` library:
 
 `api.py`:
-```python
+<pre><code class="python">
 import requests
 import os
 
@@ -1047,7 +1047,7 @@ if __name__ == "__main__":
     print(response.json())
 
 
-```
+</code></pre>
 
 `requests` is not a built-in library, so you may have to install it: `pip install requests`. Once you run `api.py`, you should get a fat chunk of JSON in your output. And that's pretty much the basic idea! We can check out the [documentation](https://api.artic.edu/docs/#introduction) to learn more. Later on, we can add support for images stored locally.
 
@@ -1057,7 +1057,7 @@ Right now, our GUI dropdowns (artist, type, style) are empty. ARTIC's search is 
 We'll import `api.py` into `model.py` and send our query from there. 
 
 `model.py`:
-```python
+<pre><code class="python">
 + import api
 class Model():
     def __init__(self):
@@ -1068,7 +1068,7 @@ class Model():
         api.get('query goes here')
     
     ...
-```
+</code></pre>
 
 
 
