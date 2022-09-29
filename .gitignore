@@ -2,4 +2,7 @@ _site
 .sass-cache
 .jekyll-metadata
 .jekyll-cache/
+
+# VIM files
 *.swo
+*.swp
