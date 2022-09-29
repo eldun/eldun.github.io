@@ -10,13 +10,18 @@ git checkout source
  
 # Generate site from branch 'source'
 bundle exec jekyll build
+
+# Create a add directory 'live-site' which is essentially branch 'master'
+git worktree add live-site master
  
-git checkout master
- 
-# Move all generated files in _site to root directory (mv doesn't have a recursive option, so I'm using cp)
-cp -r _site/* .
+# Move all generated files in _site to root directory of live site (mv doesn't have a recursive option, so I'm using cp)
+cp -r _site/* live-site
 rm -r _site
 
+cd live-site
+git add *
+git commit -m "Update live site from branch 'source'"
 git push
 
-git checkout source
+cd ..
+git worktree remove live-site/
