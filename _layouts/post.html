@@ -16,7 +16,9 @@ layout: default
 
 <a id="continue-reading-point"></a>
 
+<div class="excerpt">
 {{ page.excerpt | markdownify }}
+</div>
 <!--end-excerpt-->
 
 
@@ -26,6 +28,8 @@ layout: default
 {{ myinclude | markdownify }}
 
 {% endif %}
+
+<hr>
 
 <h2>Contents</h2>
 {% if page.part-nav %}
