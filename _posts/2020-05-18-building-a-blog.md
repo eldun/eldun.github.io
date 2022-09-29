@@ -60,6 +60,39 @@ The better solution, of course, is to automate. Big thanks to Josh Frankel and [
 
 <span class="highlight-yellow">Update: "Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on." This includes a brand new subscription fee! And re-configuring!<br>I don't feel like dealing with that (or looking into other options right now), so for the time being, I'll just be `jekyll build`-ing `source` and pushing the updated directory `_site` to `master`.</span>
 
+<span class="highlight-yellow">Update(Sep 2022): I wrote a little bash script to update the live site from the source branch. Git worktree is a neat feature! I've never used it before. Here's the script:
+
+<pre><code class="language-bash">
+#!/bin/bash
+ 
+ 
+if [ $(basename $PWD) != eldun.github.io ]
+then
+    exit "Please execute 'update-live-site.sh' from the site's root directory"
+fi
+ 
+git checkout source
+ 
+# Generate site from branch 'source'
+bundle exec jekyll build
+
+# Create a add directory 'live-site' which is essentially branch 'master'
+git worktree add live-site master
+ 
+# Move all generated files in _site to root directory of live site (mv doesn't have a recursive option, so I'm using cp)
+cp -r _site/* live-site
+rm -r _site
+
+cd live-site
+git add *
+git commit -m "Update live site from branch 'source'"
+git push
+
+cd ..
+git worktree remove live-site/
+</code></pre>
+</span>
+
 The basic idea is as follows:
 ![Workflow for using custom plugins on GitHub Pages](/assets/images/blog-images/howdy/github-pages-build-process.png)
 
