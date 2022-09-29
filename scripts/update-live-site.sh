@@ -14,7 +14,7 @@ bundle exec jekyll build
 git checkout master
  
 # Move all generated files in _site to root directory 
-mv _site/* .
+mv -r _site/* .
  
 git push
 
