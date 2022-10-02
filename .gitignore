@@ -6,3 +6,5 @@ _site
 # VIM files
 *.swo
 *.swp
+
+*.log
