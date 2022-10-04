@@ -3382,6 +3382,8 @@ img { display: block; height: auto; max-width: 100%; margin-left: auto; margin-r
 
 .half-sized-image img { width: 50%; }
 
+.post-image { margin-top: 1rem; margin-bottom: 1rem; }
+
 .captioned-image { display: block; text-align: center; font-style: italic; color: #42cad1; margin-bottom: 1rem; }
 
 .container { position: relative; text-align: center; font-style: italic; border: solid 3px #cc773f; border-radius: .2rem; }
