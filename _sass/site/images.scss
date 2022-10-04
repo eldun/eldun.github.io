@@ -14,6 +14,11 @@ img {
     width: 50%;
   }
 
+  .post-image {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
   // .raw {
     // to use raw images, specify "use-raw-images" in the post frontmatter
     // there's a conditional internal stylesheet in "includes/head.html"
