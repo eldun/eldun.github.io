@@ -410,31 +410,3 @@ Running the plugin in our DAW, we can see there's a popup to use the visual edit
 
 Note that we have to save any changes within the editor (which would be the uidesc file), and we have to build our project after any changes to the uidesc file to see our changes.
 
-
----
-title: Writing a Simple Synth VST Plug-in
-subtitle: 
-excerpt: Are synths as fun to write as they are to play with?
-reason: To learn about generating sounds on modern systems && start using vim exclusively.
-disclaimer:
-toc: true
-use-math: true
-use-raw-images: false
-layout: post
-author: Evan
-header-image: /assets/images/blog-images/simple-synth/sine-wave.png
-header-image-alt: "The basis for all sounds: the sine wave."
-header-image-title:"The basis for all sounds: the sine wave."
-tags: audio music c++
----
-
-
-## What is VST? 
-VST stands for "Virtual Studio Technology" - it's an audio plug-in software interface that integrates virtual instruments and effects into digital audio workstations such as [Reaper](reaper.fm) or [Ableton Live](ableton.com). If you'd like to learn more, you can check out [Wikipedia's VST page](https://en.wikipedia.org/wiki/Virtual_Studio_Technology). 
-
-## What Does a VST Plug-in Look Like?
-There are thousands upon thousands of VSTs out there - ranging from minimalist retro synths and complex rhythm sequencers to Karplus-Strong string modelers and destructive bit-crushers. Here are some of my favorites:
-
-<span class="row">
-<span class="captioned-image">
-[Vital](vital.audio)
