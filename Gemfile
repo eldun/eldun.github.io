@@ -31,3 +31,5 @@ gem "kramdown-parser-gfm"
 
 
 # gem "rails"
+
+gem "webrick", "~> 1.7"

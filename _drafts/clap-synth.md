@@ -1,8 +1,8 @@
 ---
-title: Coding a Synth Plugin with CLAP
-subtitle:
-excerpt: Are synths as fun to code as they are to play?
-reason: To learn about audio on modern systems && start using vim exclusively
+title: Learning about CLAP Plugins
+subtitle: Part 1/3
+excerpt: What does it take to build an audio plugin?
+reason: To learn about audio plugins on modern systems && start using vim exclusively
 disclaimer:
 toc: true
 use-math: true
@@ -15,7 +15,7 @@ header-image-title:"The basis for all sounds: the sine wave."
 tags: 
 ---
 
-## An introduction
+## An Introduction
 ### What is an Audio Plugin? 
 An audio plugin is a piece of software (most often a virtual instrument or effect) that integrates into a [Digital Audio Workstation(DAW)](https://en.wikipedia.org/wiki/Digital_audio_workstation) such as [Reaper](reaper.fm) or [Ableton Live](ableton.com). There are quite a few different audio plugin formats - the most popular ones being:
 - [VST3](https://www.steinberg.net/technology/) - Steinberg's closed-source solution turned open-source
@@ -27,12 +27,12 @@ Many developers release their audio plugins under multiple formats - often by us
 
 
 ### Choosing a Format
-[Each format has their pros and cons](https://lwn.net/Articles/890272/). After starting and abandoning [VST3](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md)(Bad documentation... I might revisit VST3 soon.) and [LV2](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-lv2-synth.md)(Plugin GUIs wouldn't show in Reaper) projects on Linux, I'm ready to try [CLAP](https://cleveraudio.org/). Fingers are crossed.
+[Each format has their pros and cons](https://lwn.net/Articles/890272/). After starting and abandoning [VST3](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md)(a pain on Linux... I might revisit VST3 on Windows.) and [LV2](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-lv2-synth.md)(Plugin GUIs wouldn't show in Reaper) projects on Linux, I'm ready to try [CLAP](https://cleveraudio.org/). Fingers are crossed.
 
 #### Why Choose CLAP?
 [So many](https://cleveraudio.org/the-story-and-mission/) [reasons](https://u-he.com/community/clap/). 
-<---
-### What is LV2?
+
+<!--### What is LV2?
 From [lv2pkug.in](https://lv2plug.in/): 
 > LV2 is an extensible open standard for audio plugins. LV2 has a simple core interface, which is accompanied by extensions that add more advanced functionality.
 >
@@ -50,7 +50,7 @@ From [lv2pkug.in](https://lv2plug.in/):
 I originally was going to create a VST3 synth([I even started a blog post :c](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md)), but found Steinberg's [documentation](https://steinbergmedia.github.io/vst3_dev_portal/pages/) to be lacking and poorly organized - especially for the Linux platform, which is where I'm doing most of my coding as of late. LV2, on the other hand is platform-agnostic, [well-documented](https://lv2plug.in/pages/developing.html), and open-source from the start. 
 
 [Here's a list of reasons to use LV2 straight from the source](https://lv2plug.in/pages/why-lv2.html). 
---->
+-->
 
 ### What Does an Audio Plugin Look Like?
 There are thousands upon thousands of plugins out there - ranging from minimalist retro synths and complex rhythm sequencers to Karplus-Strong string modelers and destructive bit-crushers. Here are some of my favorites:
@@ -67,8 +67,7 @@ There are thousands upon thousands of plugins out there - ranging from minimalis
  
 
 
-<---
-## Setting Up LV2
+<!--## Setting Up LV2
 
 ### Resources
 LV2 doesn't have an official guide, but comes with a few well-documented example plugins. There's also a "[book](https://lv2plug.in/book/#_introduction)" that walks through the included examples. 
@@ -133,7 +132,7 @@ standard installation paths.
 > Note that some options, such as strict and werror are for
 developer/maintainer use only.  Please don't file issues about anything that
 happens when they are enabled.
---->
+-->
 
 
 
@@ -144,7 +143,7 @@ happens when they are enabled.
 
 Just to make sure everything was set up correctly, I installed [dexed](https://github.com/asb2m10/dexed) from source and tested it in Reaper.
 
-![The CLAP version of dexed running in Reaper](/assets/images/blog-images/reaper-clap-dexed.png) 
+![The CLAP version of dexed running in Reaper](/assets/images/blog-images/clap-synth/reaper-clap-dexed.png) 
 
 ## Learning to Create CLAP Plugins
 ### Where to Start?
@@ -191,7 +190,183 @@ The repo has a lengthy note about GUIs, builds and symbols:
 > 
 > Dynamic builds will get your started quickly if your system provides Qt6, and you have an host that do not expose the Qt symbols. Static builds will require more time and space.
 
-I'll be building the plugins statically - it's simpler, and I don't really care if it takes a bit more time and space.
-
 Build instructions for different platforms can be found [here](https://github.com/free-audio/clap-plugins#building-on-various-platforms).
 
+I'll be building the plugins [statically](https://stackoverflow.com/a/311889) - it's simpler, and I don't really care if it takes a bit more time and space.
+
+<div class="highlight-yellow">
+I couldn't build the plugins statically - maybe my ancient system doesn't have enough RAM? Dynamic build it is. If I understand correctly from the quote above, this is "very dangerous". I will try building statically on another system when I've finished writing my plugin. 
+</div>
+
+The plugins will be installed to `usr/local/lib` and then you can try them out in your preferred plugin host.
+
+### A Simpler Example
+Oh man, there's a lot going on in the last section. A minimal example (linked to from the official CLAP repository) can be found [here](https://github.com/schwaaa/clap-imgui.git). I highly reccommend reading through [the repo's README](https://github.com/schwaaa/clap-imgui#readme). 
+
+
+Excluding reference and image files, these are the contents of the repo:
+<pre><code class="language-treeview">
+./
+├── build/
+│   ├── lin/
+│   ├── mac/
+│   └── win/
+└── src/
+    ├── clap/
+    ├── glfw/
+    ├── gui.cpp
+    ├── imgui/
+    ├── imgui_base.cpp
+    ├── imgui_lin.cpp
+    ├── imgui_mac.mm
+    ├── imgui_win.cpp
+    ├── main.cpp
+    ├── main.h
+    ├── plugin.cpp
+    ├── plugin_impl_0.cpp
+    └── plugin_impl_1.cpp
+</code></pre> 
+To build these examples, all we have to do(on Linux) is navigate to `build/lin` and execute the makefile there  with `make`.
+
+![Simple CLAP Example 1](/assets/images/blog-images/clap-synth/simple-clap-example-1.gif) 
+![Simple CLAP Example 2](/assets/images/blog-images/clap-synth/simple-clap-example-2.gif) 
+
+The resulting `.clap` file should show up right next to the makefile. If you'd like to try these plugins out, you can add our current directory to your host's CLAP path or copy the generated CLAP file to `usr/local/lib` - the default path for CLAP plugins.
+
+#### Understanding the Examples
+
+##### The `main` File
+You can see in `main.h` that the only `#include` is `clap.h`, which allows us to work with CLAP. This is also where our customized plugin struct is defined (With members `clap_plugin`, `clap_plugin_params`, and `clap_plugin_gui` from the included `clap.h`. If you would like to know more about these 'extensions' (params & gui), check out the well-documented [source code files](https://github.com/free-audio/clap/tree/main/include/clap/ext). 
+
+##### The `plugin` File
+We don't really have to worry about this file - it's where our plugins are constructed and passthroughs are located. Genericized plugin, GUI, and param calls are also set up here.
+
+##### The `plugin_impl` Files
+These are our actual plugins! Here is where we describe our plugins and their parameters, as well as how they behave, and what they look like (at least in this example).
+Let's take a look at the tone generator plugin once more:
+![Simple CLAP Example 2](/assets/images/blog-images/clap-synth/simple-clap-example-2.gif) 
+
+You can see how the turning of knobs is continually processed in the `process` functions. Things are kicked off with this one:
+<pre><code class="language-cpp">
+template &lt;class T>
+  clap_process_status \_plugin\_impl__process(const clap_process &#42;process,
+    int num_channels, int start_frame, int end_frame,
+    double *start_param_values, double *end_param_values,
+    T **out)
+  {
+    if (!out) return CLAP_PROCESS_ERROR;
+
+    double start_vol = start_param_values[PARAM_VOLUME];
+    double end_vol = end_param_values[PARAM_VOLUME];
+    double d_vol = (end_vol-start_vol) / (double)(end_frame-start_frame);
+
+    double start_pitch = start_param_values[PARAM_PITCH];
+    double end_pitch = end_param_values[PARAM_PITCH];
+    double start_phase=m_phase, d_phase=0.0;
+    if (end_pitch >= 0.0)
+    {
+      if (start_pitch &lt; 0.0) start_phase=0.0;
+      else start_pitch += start_param_values[PARAM_DETUNE]*0.01;
+      end_pitch += end_param_values[PARAM_DETUNE]*0.01;
+      double freq = 440.0 * pow(2.0, (end_pitch-57.0)/12.0);
+      d_phase = 2.0 * _PI * freq / (double)m_srate;
+    }
+
+    for (int c=0; c &lt; num_channels; ++c)
+    {
+      T *cout=out[c];
+      if (!cout) return CLAP_PROCESS_ERROR;
+
+      if (d_phase > 0.0)
+      {
+        double vol = start_vol;
+        double phase = start_phase;
+        for (int i=start_frame; i &lt; end_frame; ++i)
+        {
+          cout[i] = sin(phase)*vol;
+          phase += d_phase;
+          vol += d_vol;
+        }
+      }
+      else
+      {
+        memset(cout+start_frame, 0, (end_frame-start_frame)*sizeof(T));
+      }
+    }
+
+    m_phase += (double)(end_frame-start_frame)*d_phase;
+
+    return CLAP_PROCESS_CONTINUE;
+  }
+
+</code></pre> 
+
+
+And they continue being kicked off with this one:
+<pre><code class="language-cpp">
+clap_process_status plugin_impl__process(const clap_process &#42;process)
+  {
+    double cur_param_values[NUM_PARAMS];
+    for (int i=0; i &lt; NUM_PARAMS; ++i)
+    {
+      cur_param_values[i]=m_param_values[i];
+    }
+
+    clap_process_status s = -1;
+    if (process && process->audio_inputs_count == 0 &&
+      process->audio_outputs_count == 1 && process->audio_outputs[0].channel_count == 2)
+    {
+      // handling incoming parameter changes and slicing the process call
+      // on the time axis would happen here.
+
+      if (process->audio_outputs[0].data32)
+      {
+        s = _plugin_impl__process(process, 2, 0, process->frames_count,
+          m_last_param_values, cur_param_values,
+          process->audio_outputs[0].data32);
+      }
+      else if (process->audio_outputs[0].data64)
+      {
+        s = _plugin_impl__process(process, 2, 0, process->frames_count,
+          m_last_param_values, cur_param_values,
+          process->audio_outputs[0].data64);
+      }
+    }
+
+    for (int i=0; i &lt; NUM_PARAMS; ++i)
+    {
+      m_last_param_values[i]=m_param_values[i];
+    }
+
+    if (s &lt; 0) s = CLAP_PROCESS_ERROR;
+    return s;
+  }
+</code></pre> 
+
+The other important classes are all the `ImGui` ones, like `draw()`.
+
+##### The `\*gui\*` Files
+These files are where our Plugin struct member actually interfaces with OpenGL through [Dear Imgui](https://github.com/ocornut/imgui) and [GLFW](https://www.glfw.org/) 
+
+##### The GUI
+The developer of these simpler plugins - schwaaa - explains why he's using [Dear Imgui](https://github.com/ocornut/imgui):
+ 
+> The UI for this example is presented via [Dear ImGui](https://github.com/ocornut/imgui). The ImGui concept is easy to misunderstand so please read [the Dear ImGui README](https://github.com/ocornut/imgui#readme). The key concept is that the caller (this plugin) does not retain any state related to the UI. This allows developers to quickly prototype controls.
+> 
+> 100% of the plugin's UI code is in `plugin_impl__draw()`, a single small function. For example, this is the code for the volume slider, which draws the control, handles mouse and keyboard input, and links the control to the voldb variable:
+> 
+> `ImGui::SliderFloat("Volume", &voldb, -60.0f, 12.0f, "%+.1f dB", 1.0f);`
+> 
+> You have some control over the appearance and placement of the control, but the primary design goal is simplicity and ease of programmer use. ImGui is not typically used for end-user UI.
+> 
+> ImGui is helpful for this example because:
+> - Permissively licensed
+> - No external dependencies
+> - Very easy to interact with
+
+
+##### The Makefile
+You may have noticed that a single `.clap` file contains two plugins. You can step through the [makefile](https://github.com/schwaaa/clap-imgui/blob/main/build/lin/Makefile) to see how this happens(and here's a [makefile refresher](https://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/), if you're in need), and how we end up with our plugins from dozens of source files. The most important line is where the actual compilation takes place (line 57).
+
+### Closing Thoughts
+Creating audio plugins from scratch is a bit more involved than I expected. I'm certain that if there was any documentation or tutorials on CLAP, I'd have had a bit more fun with this post. The next post in this series will be focused on creating our own simple synth with ImGui, and the following on creating a sampler. 
