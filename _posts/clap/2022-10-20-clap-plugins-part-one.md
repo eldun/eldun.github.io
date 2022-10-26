@@ -1,34 +1,39 @@
 ---
-title: Learning about CLAP Plugins
-subtitle: Part 1/3
+title: CLAP Plugins
+subtitle: "Part 1/3: Learning about CLAP"
 excerpt: What does it take to build an audio plugin?
-reason: To learn about audio plugins on modern systems && start using vim exclusively
+reason: To learn about audio plugins on modern systems && start using vim
 disclaimer:
 toc: true
 use-math: true
 use-raw-images: false
 layout: post
 author: Evan
-header-image: /assets/images/blog-images/clap-synth/sine-wave.png
+header-image: /assets/images/blog-images/clap/part-one/sine-wave.jpg
 header-image-alt: "Image of sine wave from http://www.tronola.com/moorepage/Sine.html" 
 header-image-title:"The basis for all sounds: the sine wave."
-tags: 
+tags: c++ music 
 ---
 
 ## An Introduction
+---
 ### What is an Audio Plugin? 
+
+
 An audio plugin is a piece of software (most often a virtual instrument or effect) that integrates into a [Digital Audio Workstation(DAW)](https://en.wikipedia.org/wiki/Digital_audio_workstation) such as [Reaper](reaper.fm) or [Ableton Live](ableton.com). There are quite a few different audio plugin formats - the most popular ones being:
 - [VST3](https://www.steinberg.net/technology/) - Steinberg's closed-source solution turned open-source
 - [AUv3](https://developer.apple.com/documentation/audiotoolbox/audio_unit_v3_plug-ins) - The iOS standard
 - [AAX](https://www.avid.com/avid-plugins-by-category) - Avid/ProTools' solution
-- Standalone - As the name would imply, these types of plugins don't require any host DAW. They can be launched and operated. Like NotePad.
+- Standalone - As the name would imply, these types of plugins don't require any host DAW. They can be launched and immediately tinkered with. Like NotePad.
 
 Many developers release their audio plugins under multiple formats - often by using licensed tools like [JUCE](https://juce.com/).
 
 
+---
 ### Choosing a Format
 [Each format has their pros and cons](https://lwn.net/Articles/890272/). After starting and abandoning [VST3](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md)(a pain on Linux... I might revisit VST3 on Windows.) and [LV2](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-lv2-synth.md)(Plugin GUIs wouldn't show in Reaper) projects on Linux, I'm ready to try [CLAP](https://cleveraudio.org/). Fingers are crossed.
 
+---
 #### Why Choose CLAP?
 [So many](https://cleveraudio.org/the-story-and-mission/) [reasons](https://u-he.com/community/clap/). 
 
@@ -52,20 +57,34 @@ I originally was going to create a VST3 synth([I even started a blog post :c](ht
 [Here's a list of reasons to use LV2 straight from the source](https://lv2plug.in/pages/why-lv2.html). 
 -->
 
+---
 ### What Does an Audio Plugin Look Like?
 There are thousands upon thousands of plugins out there - ranging from minimalist retro synths and complex rhythm sequencers to Karplus-Strong string modelers and destructive bit-crushers. Here are some of my favorites:
 
+<span class="row-fill">
+![Vital](/assets/images/blog-images/clap/part-one/vital.jpg)
+![Dexed](/assets/images/blog-images/clap/part-one/dexed.png)
+</span>
+<span class="row-fill">
 [Vital](vital.audio)
-![Vital](/assets/images/blog-images/simple-synth/vital.jpg)
 [Dexed](https://asb2m10.github.io/dexed/)
-![Dexed](/assets/images/blog-images/simple-synth/dexed.png)
-![Valhalla Freq Echo](/assets/images/blog-images/simple-synth/valhalla-delay.webp)
+</span>
+
+
+
+<span class="row-fill">
+![Valhalla Freq Echo](/assets/images/blog-images/clap/part-one/valhalla-delay.webp)
+![BlueARP Arpeggiator](/assets/images/blog-images/clap/part-one/blue-arp.png)
+</span> 
+<span class="row-fill">
 [Valhalla Freq Echo](https://valhalladsp.com/shop/delay/valhalla-freq-echo/)
-![BlueARP Arpeggiator](/assets/images/blog-images/simple-synth/blue-arp.png)
 [BlueARP Arpeggiator](https://omg-instruments.com/wp/?page_id=63) 
+</span>
 
- 
+It should be noted that although flashy UIs are fun and often very useful, they're not necessary. Look at Reaper's built-in synth - ReaSynth:
+![ReaSynth](/assets/images/blog-images/clap/reasynth.png) 
 
+Many plugin effects are also often very sparse.
 
 <!--## Setting Up LV2
 
@@ -136,8 +155,9 @@ happens when they are enabled.
 
 
 
+---
 ## Setting up an Environment for CLAP
-[CLAP isn't widely supported yet](https://clapdb.tech/category/hostsdaws). However, [BitWig](bitwig.com) - a DAW that's been gaining a lot of steam recently - does. And my current DAW of choice - [Reaper](reaper.fm) ~~[may be supporting it before long](https://forum.cockos.com/showthread.php?t=267906)~~ supports it on the dev branch, as of [less than a month ago](https://audiosex.pro/threads/reaper-c-l-a-p-support-now-a-reality.65864/). I'll be using Reaper v6.68+dev1004 (October 4).
+[CLAP isn't widely supported yet](https://clapdb.tech/category/hostsdaws). However, [BitWig](bitwig.com) - a DAW that's been gaining a lot of steam recently - supports it, and my current DAW of choice - [Reaper](reaper.fm) ~~[may be supporting it before long](https://forum.cockos.com/showthread.php?t=267906)~~ supports it on the dev branch, as of [less than a month ago](https://audiosex.pro/threads/reaper-c-l-a-p-support-now-a-reality.65864/). I'll be using Reaper v6.68+dev1004 (October 4).
 
 ~~In the meantime, I'll be using [Qtractor](https://qtractor.org/), because it's free. Installation instructions can be found [here](https://qtractor.org/qtractor-index.html#Installation). Make sure to have all the dependencies installed (I was missing some qt5 ones. Also, who names these qt5 packages? They're all over the place.)~~
 
@@ -145,23 +165,26 @@ Just to make sure everything was set up correctly, I installed [dexed](https://g
 
 ![The CLAP version of dexed running in Reaper](/assets/images/blog-images/clap-synth/reaper-clap-dexed.png) 
 
+---
 ## Learning to Create CLAP Plugins
+---
 ### Where to Start?
 I don't know much about creating plugins, and unfortunately, it looks like the ["Getting Started" page has a ways to go](https://cleveraudio.org/developers-getting-started/). 
 
-![CLAP Documentation Under Construction](/assets/images/blog-images/clap-synth/clap-getting-started.png) 
+![CLAP Documentation Under Construction](/assets/images/blog-images/clap/part-one/clap-getting-started.png) 
 
 The way forward is through [example](https://github.com/free-audio/clap#examples) and [this youtube playlist](https://www.youtube.com/playlist?list=PLqRWeSPiYQ64DhTiE2dEIF5xRIw0s5XLS)(Developing with CLAP - Jürgen Moßgraber).
 
-Okay. The videos don't help that much. Let's move on.
+Actually, I watched the videos and they don't help that much. Let's move on.
 
+---
 ### Building Example Plugins
 [This repo](https://github.com/free-audio/clap-plugins) is full of juicy info on CLAP plugins.
 
 The repo has a lengthy note about GUIs, builds and symbols:
 
 > The plugins use Qt for the GUI.
-
+>
 > It is fine to dynamically link to Qt for a host, but it is very dangerous for a plugin.
 > 
 > Also one very important aspect of the plugin is the distribution. Ideally a clap plugin should be self contained: it should not rely upon symbols from the host, and it should export only one symbol: clap_entry.
@@ -190,61 +213,66 @@ The repo has a lengthy note about GUIs, builds and symbols:
 > 
 > Dynamic builds will get your started quickly if your system provides Qt6, and you have an host that do not expose the Qt symbols. Static builds will require more time and space.
 
+([Difference between build methods](https://stackoverflow.com/a/311889))
+
 Build instructions for different platforms can be found [here](https://github.com/free-audio/clap-plugins#building-on-various-platforms).
 
-I'll be building the plugins [statically](https://stackoverflow.com/a/311889) - it's simpler, and I don't really care if it takes a bit more time and space.
 
-<div class="highlight-yellow">
-I couldn't build the plugins statically - maybe my ancient system doesn't have enough RAM? Dynamic build it is. If I understand correctly from the quote above, this is "very dangerous". I will try building statically on another system when I've finished writing my plugin. 
-</div>
+The plugins will be installed to `usr/local/lib`. From there, you can try them out in your preferred plugin host.
 
-The plugins will be installed to `usr/local/lib` and then you can try them out in your preferred plugin host.
-
+---
 ### A Simpler Example
-Oh man, there's a lot going on in the last section. A minimal example (linked to from the official CLAP repository) can be found [here](https://github.com/schwaaa/clap-imgui.git). I highly reccommend reading through [the repo's README](https://github.com/schwaaa/clap-imgui#readme). 
+There's a lot going on in the last section. A minimal example (linked to from the official CLAP repository) can be found [here](https://github.com/schwaaa/clap-imgui.git). I highly reccommend reading through [the repo's README](https://github.com/schwaaa/clap-imgui#readme). 
 
 
 Excluding reference and image files, these are the contents of the repo:
 <pre><code class="language-treeview">
+
 ./
-├── build/
-│   ├── lin/
-│   ├── mac/
-│   └── win/
-└── src/
-    ├── clap/
-    ├── glfw/
-    ├── gui.cpp
-    ├── imgui/
-    ├── imgui_base.cpp
-    ├── imgui_lin.cpp
-    ├── imgui_mac.mm
-    ├── imgui_win.cpp
-    ├── main.cpp
-    ├── main.h
-    ├── plugin.cpp
-    ├── plugin_impl_0.cpp
-    └── plugin_impl_1.cpp
+|-- build/
+|   |-- lin/
+|   |-- mac/
+|   `-- win/
+`-- src/
+    |-- clap/
+    |-- glfw/
+    |-- gui.cpp
+    |-- imgui/
+    |-- imgui_base.cpp
+    |-- imgui_lin.cpp
+    |-- imgui_mac.mm
+    |-- imgui_win.cpp
+    |-- main.cpp
+    |-- main.h
+    |-- plugin.cpp
+    |-- plugin_impl_0.cpp
+    `-- plugin_impl_1.cpp
+
 </code></pre> 
+
 To build these examples, all we have to do(on Linux) is navigate to `build/lin` and execute the makefile there  with `make`.
 
-![Simple CLAP Example 1](/assets/images/blog-images/clap-synth/simple-clap-example-1.gif) 
-![Simple CLAP Example 2](/assets/images/blog-images/clap-synth/simple-clap-example-2.gif) 
+![Simple CLAP Example 1](/assets/images/blog-images/clap/part-one/simple-clap-example-1.gif) 
+![Simple CLAP Example 2](/assets/images/blog-images/clap/part-one/simple-clap-example-2.gif) 
 
 The resulting `.clap` file should show up right next to the makefile. If you'd like to try these plugins out, you can add our current directory to your host's CLAP path or copy the generated CLAP file to `usr/local/lib` - the default path for CLAP plugins.
 
+---
 #### Understanding the Examples
 
+---
 ##### The `main` File
 You can see in `main.h` that the only `#include` is `clap.h`, which allows us to work with CLAP. This is also where our customized plugin struct is defined (With members `clap_plugin`, `clap_plugin_params`, and `clap_plugin_gui` from the included `clap.h`. If you would like to know more about these 'extensions' (params & gui), check out the well-documented [source code files](https://github.com/free-audio/clap/tree/main/include/clap/ext). 
 
+---
 ##### The `plugin` File
 We don't really have to worry about this file - it's where our plugins are constructed and passthroughs are located. Genericized plugin, GUI, and param calls are also set up here.
 
+---
 ##### The `plugin_impl` Files
 These are our actual plugins! Here is where we describe our plugins and their parameters, as well as how they behave, and what they look like (at least in this example).
 Let's take a look at the tone generator plugin once more:
-![Simple CLAP Example 2](/assets/images/blog-images/clap-synth/simple-clap-example-2.gif) 
+![Simple CLAP Example 2](/assets/images/blog-images/clap/part-one/simple-clap-example-2.gif) 
 
 You can see how the turning of knobs is continually processed in the `process` functions. Things are kicked off with this one:
 <pre><code class="language-cpp">
@@ -345,9 +373,11 @@ clap_process_status plugin_impl__process(const clap_process &#42;process)
 
 The other important classes are all the `ImGui` ones, like `draw()`.
 
+---
 ##### The `\*gui\*` Files
 These files are where our Plugin struct member actually interfaces with OpenGL through [Dear Imgui](https://github.com/ocornut/imgui) and [GLFW](https://www.glfw.org/) 
 
+---
 ##### The GUI
 The developer of these simpler plugins - schwaaa - explains why he's using [Dear Imgui](https://github.com/ocornut/imgui):
  
@@ -365,8 +395,10 @@ The developer of these simpler plugins - schwaaa - explains why he's using [Dear
 > - Very easy to interact with
 
 
+---
 ##### The Makefile
 You may have noticed that a single `.clap` file contains two plugins. You can step through the [makefile](https://github.com/schwaaa/clap-imgui/blob/main/build/lin/Makefile) to see how this happens(and here's a [makefile refresher](https://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/), if you're in need), and how we end up with our plugins from dozens of source files. The most important line is where the actual compilation takes place (line 57).
 
+---
 ### Closing Thoughts
-Creating audio plugins from scratch is a bit more involved than I expected. I'm certain that if there was any documentation or tutorials on CLAP, I'd have had a bit more fun with this post. The next post in this series will be focused on creating our own simple synth with ImGui, and the following on creating a sampler. 
+Creating audio plugins from scratch is a bit more involved than I expected... I was hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler. 
