@@ -1,0 +1,193 @@
+[
+  
+    {
+
+      "title"    : "Morso",
+      "subtitle"    : "Creating a Morse Code Android Application with Kotlin",
+      "tags"     : "android, kotlin",
+      "date"     : "2022-10-25 17:55:36 -0400",
+      "url"      : "/2022/10/25/morso.html"
+
+    } ,
+  
+    {
+
+      "title"    : "CLAP Plugins",
+      "subtitle"    : "Part 1/3: Learning about CLAP",
+      "tags"     : "",
+      "date"     : "2022-10-20 00:00:00 -0400",
+      "url"      : "/2022/10/20/clap-plugins-part-one.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Saving my Thumb:",
+      "subtitle"    : "Turning Old Devices into Touchpads",
+      "tags"     : "android",
+      "date"     : "2022-10-13 15:39:48 -0400",
+      "url"      : "/2022/10/13/touchpad.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Switch Hacking",
+      "subtitle"    : "",
+      "tags"     : "",
+      "date"     : "2022-10-13 15:39:48 -0400",
+      "url"      : "/2022/10/13/switch-hacking.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Writing a Simple Synth VST Plug-in",
+      "subtitle"    : "",
+      "tags"     : "synthesis, music, c++",
+      "date"     : "2022-10-13 15:39:48 -0400",
+      "url"      : "/2022/10/13/simple-synth.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Coding up an LV2 Synth Audio Plugin",
+      "subtitle"    : "",
+      "tags"     : "audio, music, c++",
+      "date"     : "2022-10-13 15:39:48 -0400",
+      "url"      : "/2022/10/13/simple-lv2-synth.html"
+
+    } ,
+  
+    {
+
+      "title"    : "See Natural",
+      "subtitle"    : "",
+      "tags"     : "",
+      "date"     : "2022-10-13 15:39:48 -0400",
+      "url"      : "/2022/10/13/see-natural.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Ray Tracing in One Weekend:",
+      "subtitle"    : "Part Three - The Next Weekend",
+      "tags"     : "graphics, ray-tracing-in-one-weekend, c++",
+      "date"     : "2022-10-13 15:39:48 -0400",
+      "url"      : "/2022/10/13/rt-part-3.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Learning OpenGL:",
+      "subtitle"    : "Part One - Getting Started",
+      "tags"     : "graphics, opengl",
+      "date"     : "2022-10-13 15:39:48 -0400",
+      "url"      : "/2022/10/13/post-boilerplate.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Creating a 3D Engine in Java using LWJGL",
+      "subtitle"    : "",
+      "tags"     : "graphics, java",
+      "date"     : "2022-10-13 15:39:48 -0400",
+      "url"      : "/2022/10/13/java-engine.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Gta Self Driving",
+      "subtitle"    : "",
+      "tags"     : "",
+      "date"     : "2022-10-13 15:39:48 -0400",
+      "url"      : "/2022/10/13/gta-self-driving.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Something to Stare At:",
+      "subtitle"    : "A Highly Configurable Art Fetcher",
+      "tags"     : "python, web",
+      "date"     : "2022-10-13 15:39:48 -0400",
+      "url"      : "/2022/10/13/artic-art-fetcher.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Semi-Automating Microsoft Edge Searches",
+      "subtitle"    : " ",
+      "tags"     : "web, javascript, automation",
+      "date"     : "2021-03-16 00:00:00 -0400",
+      "url"      : "/2021/03/16/automating-microsoft-edge-searches.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Ray Tracing in One Weekend:",
+      "subtitle"    : "Part Two - The First Weekend",
+      "tags"     : "graphics, ray-tracing-in-one-weekend, c++",
+      "date"     : "2020-06-19 00:00:00 -0400",
+      "url"      : "/2020/06/19/ray-tracing-in-one-weekend-part-two.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Ray Tracing in One Weekend:",
+      "subtitle"    : "Part One - An Introduction",
+      "tags"     : "graphics, ray-tracing-in-one-weekend",
+      "date"     : "2020-05-20 00:00:00 -0400",
+      "url"      : "/2020/05/20/ray-tracing-in-one-weekend-part-one.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Building a Blog:",
+      "subtitle"    : "Howdy!",
+      "tags"     : "web, jekyll, github-pages, ruby",
+      "date"     : "2020-05-18 00:00:00 -0400",
+      "url"      : "/2020/05/18/building-a-blog.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Kiwifruit",
+      "subtitle"    : "",
+      "tags"     : "fruit",
+      "date"     : "2018-08-22 00:00:00 -0400",
+      "url"      : "/2018/08/22/kiwifruit.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Apples",
+      "subtitle"    : "",
+      "tags"     : "fruit",
+      "date"     : "2018-08-21 00:00:00 -0400",
+      "url"      : "/2018/08/21/apples.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Bananas",
+      "subtitle"    : "",
+      "tags"     : "fruit, bananas",
+      "date"     : "2018-08-20 00:00:00 -0400",
+      "url"      : "/2018/08/20/bananas.html"
+
+    } 
+  
+]
