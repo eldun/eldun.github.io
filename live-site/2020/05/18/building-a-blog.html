@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  
+<head>
+
+
+  <!-- favicon settings -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/site-images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/site-images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/site-images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site-images/site.webmanifest">
+  <link rel="mask-icon" href="/assets/images/site-images/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/assets/images/site-images/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/assets/images/site-images/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+
+
+  
+
+  <!-- Prism is now loaded by being imported in assets/css/style.scss -->
+  <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Building a Blog:</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Building a Blog:" />
+<meta name="author" content="Evan" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it." />
+<meta property="og:description" content="They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it." />
+<link rel="canonical" href="eldun.github.io/2020/05/18/building-a-blog.html" />
+<meta property="og:url" content="eldun.github.io/2020/05/18/building-a-blog.html" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-18T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Building a Blog:" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2020-05-18T00:00:00-04:00","datePublished":"2020-05-18T00:00:00-04:00","description":"They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.","headline":"Building a Blog:","mainEntityOfPage":{"@type":"WebPage","@id":"eldun.github.io/2020/05/18/building-a-blog.html"},"url":"eldun.github.io/2020/05/18/building-a-blog.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+
+
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167888524-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-167888524-1');
+  </script>
+  
+  <meta charset="UTF-8">
+
+ 
+  
+
+
+</head>
+
+  <body>
+    <!-- <a id="skip-to-content" href="#content">Skip to the content.</a> -->
+
+    <header class="page-header" role="banner">
+      <img class="header-image" src="/assets/images/site-images/chicken.jpg">
+      <h1 class="project-name"></h1>
+      <h2 class="project-tagline"></h2>
+      <!-- <link href="../assets/fontawesome/all.css" rel="stylesheet"> load all styles -->
+
+<script src="/js/site-scripts/toggle-search.js" type="text/javascript"></script>
+
+<nav>
+  
+  <a href="/"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-home"></i>
+    <br>
+    Home
+  </a>
+  
+  <a href="/about.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-user"></i>
+    <br>
+    About
+  </a>
+  
+  <a href="/archive.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-archive"></i>
+    <br>
+    Archive
+  </a>
+  
+  <a href="/tags.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-tags"></i>
+    <br>
+    Tags
+  </a>
+  
+  <a href=""
+
+     
+      id="search-button" onclick="toggleSearch(); return false;" 
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-search"></i>
+    <br>
+    Search
+  </a>
+  
+</nav>
+      <!-- Html Elements for Search -->
+<div id="search-container" style="visibility: hidden;">
+  <input type="text" id="search-input" placeholder="Search..." />
+  <ul id="results-container"></ul>
+</div>
+
+<!-- Script pointing to search-script.js -->
+<script src="/js/site-scripts/search-script.js" type="text/javascript"></script>
+
+<!-- Configuration -->
+<script>
+  SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="eldun.github.io{url}">{title} {subtitle}</a></li>'
+  })
+  </script>
+
+
+      
+      
+    </header>
+
+    <hr id="header-main-divider">
+
+    <main id="content" class="main-content" role="main">
+      <div class="post-header inactive">
+<h1 id="post-title">Building a Blog:</h1>
+<h3 id="post-subtitle">Howdy!</h3>
+<div class="post-date">
+    <i class="fas fa-calendar"></i> <time>18 May 2020</time>
+</div>
+</div>
+
+<img class="post-image" src="" alt="" title="">
+
+
+
+<a id="continue-reading-point"></a>
+
+<div class="excerpt">
+<p>They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.</p>
+
+</div>
+<!--end-excerpt-->
+
+
+
+
+<hr>
+
+<h2>Contents</h2>
+
+<ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#humble-beginnings">Humble Beginnings</a></li>
+<li class="toc-entry toc-h2"><a href="#github-pages">GitHub Pages</a></li>
+<li class="toc-entry toc-h2"><a href="#jekyll">Jekyll</a></li>
+<li class="toc-entry toc-h2"><a href="#custom-ruby-plugins">Custom Ruby Plugins</a></li>
+<li class="toc-entry toc-h2"><a href="#archive-page">Archive Page</a></li>
+<li class="toc-entry toc-h2"><a href="#tag-system">Tag System</a></li>
+<li class="toc-entry toc-h2"><a href="#search-function">Search Function</a></li>
+<li class="toc-entry toc-h2"><a href="#the-future">The Future</a></li>
+<li class="toc-entry toc-h2"><a href="#updates">Updates</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#2021-04">2021-04</a></li>
+<li class="toc-entry toc-h3"><a href="#2022-08">2022-08</a></li>
+</ul>
+</li>
+</ul>
+
+<hr>
+
+<div id="markdown-content">
+    <!-- <ul class="table-of-contents">
+<li><a href="#humble-beginnings">Humble Beginnings</a></li>
+<li><a href="#github-pages">GitHub Pages</a></li>
+<li><a href="#jekyll">Jekyll</a></li>
+<li><a href="#custom-ruby-plugins">Custom Ruby Plugins</a></li>
+<li><a href="#archive-page">Archive Page</a></li>
+<li><a href="#tag-system">Tag System</a></li>
+<li><a href="#search-function">Search Function</a></li>
+<li><a href="#the-future">The Future</a></li>
+<li><a href="#updates">Updates</a></li>
+</ul> -->
+
+<h2 id="humble-beginnings">
+<a class="anchor" href="#humble-beginnings" aria-hidden="true"><span class="octicon octicon-link"></span></a>Humble Beginnings</h2>
+<p>I really decided on building a blog when I started working on Peter Shirley’s <a href="https://raytracing.github.io/">Ray Tracing in One Weekend</a> series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to <a href="http://viclw17.github.io/">Victor Li’s Blog</a>. Inspired by the clarity, variety, and layout of Victor’s blog, I constructed a similar site for myself to document my work and personal excursions as a developer.</p>
+
+<hr>
+
+<h2 id="github-pages">
+<a class="anchor" href="#github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="github-pages"></a>GitHub Pages</h2>
+
+<p>As you may have surmised from the URL, this site is hosted by GitHub Pages. Originally, I was going to register a domain from Hostinger, but GitHub Pages is FREE. Additionally, GitHub is probably the most sensible place to expand my portfolio, and a static site is all I really needed for a technical blog… for now.</p>
+
+<p>The only real trouble I ran into was trying to use custom plugins. More on this issue and how I went about solving it <a href="#ruby-plugins">below</a>.</p>
+
+<hr>
+
+<h2 id="jekyll">
+<a class="anchor" href="#jekyll" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="jekyll"></a>Jekyll</h2>
+
+<p>Straight from Jekyll’s GitHub page…</p>
+
+<blockquote>
+  <p>Jekyll is a simple, blog-aware, static site generator perfect for personal, project, or organization sites. Think of it like a file-based CMS, without all the complexity. Jekyll takes your content, renders Markdown and Liquid templates, and spits out a complete, static website ready to be served by Apache, Nginx or another web server. Jekyll is the engine behind GitHub Pages, which you can use to host sites right from your GitHub repositories.</p>
+</blockquote>
+
+<p>For the most part, Jekyll has been a breeze to work with. I would recommend it to anyone looking to build a static site.</p>
+
+<hr>
+
+<h2 id="custom-ruby-plugins">
+<a class="anchor" href="#custom-ruby-plugins" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="custom-ruby-plugins"></a>Custom Ruby Plugins</h2>
+
+<p>When constructing the site, this is where I ran into the most trouble. It turns out that when using the github-pages gem, the site is generated in safe mode and the plugins directory is a random string. Additionally, only a few Jekyll plugins are whitelisted by GitHub Pages. When constructing the tag feature, tags worked fine locally, but when pushing to the master branch, the live site had broken elements. Same with the archive page.</p>
+
+<p>One solution is to build the site locally and push the generated site files to GitHub. In this way, GitHub would interpret the site as static files and not as a Jekyll project - skipping the build process. However, doing so would require a lot of manual file management and would be prone to human error.</p>
+
+<p>The better solution, of course, is to automate. Big thanks to Josh Frankel and <a href="https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/">his post</a> detailing the process.</p>
+
+<p><span class="highlight-yellow">Update: “Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on.” This includes a brand new subscription fee! And re-configuring!<br>I don’t feel like dealing with that (or looking into other options right now), so for the time being, I’ll just be <code class="language-plaintext highlighter-rouge">jekyll build</code>-ing <code class="language-plaintext highlighter-rouge">source</code> and pushing the updated directory <code class="language-plaintext highlighter-rouge">_site</code> to <code class="language-plaintext highlighter-rouge">master</code>.</span></p>
+
+<p><span class="highlight-yellow">Update(Sep 2022): I wrote a little bash script to update the live site from the source branch. Git worktree is a neat feature! I’ve never used it before. Here’s the script:</span></p>
+
+<pre><code class="language-bash">
+#!/bin/bash
+ 
+ 
+if [ $(basename $PWD) != eldun.github.io ]
+then
+    exit "Please execute 'update-live-site.sh' from the site's root directory"
+fi
+ 
+git checkout source
+ 
+# Generate site from branch 'source'
+bundle exec jekyll build
+
+# Create a add directory 'live-site' which is essentially branch 'master'
+git worktree add live-site master
+ 
+# Move all generated files in _site to root directory of live site (mv doesn't have a recursive option, so I'm using cp)
+cp -r _site/* live-site
+rm -r _site
+
+cd live-site
+git add *
+git commit -m "Update live site from branch 'source'"
+git push
+
+cd ..
+git worktree remove live-site/
+</code></pre>
+<p>&lt;/span&gt;</p>
+
+<p>The basic idea is as follows:
+<img src="/assets/images/blog-images/howdy/github-pages-build-process.png" alt="Workflow for using custom plugins on GitHub Pages"></p>
+
+<hr>
+
+<ul>
+  <li>
+    <p><strong>Create a new branch off of master (in my case, it’s called <em>source</em>).</strong></p>
+
+    <p>The <em>source</em> branch is where my changes take place from here on out.
+<em>Source</em> will contain the entire Jekyll project, but master will only contain the static <code class="language-plaintext highlighter-rouge">_site</code> folder.
+It’s also recommended to make <em>source</em> the default branch, as well as protecting it.</p>
+  </li>
+  <li>
+    <p><strong>Generate a GitHub <em>Personal Access Token</em> for Travis CI and give it repo scope/access.</strong></p>
+
+    <p>This will allow Travis CI to perform pushes.</p>
+  </li>
+  <li>
+    <p><strong>Configure the Jekyll site to work with Travis CI.</strong></p>
+
+    <p>Buckle in, becuase the next part of the process introduces a lot of changes to the Jekyll site.</p>
+
+    <ul>
+      <li>
+        <p><strong>Add the following to the <code class="language-plaintext highlighter-rouge">Gemfile</code>:</strong></p>
+
+        <pre><code class="language-ruby">source "https://rubygems.org"
+  ruby RUBY_VERSION
+
+  # We'll need rake to build our site in TravisCI
+  gem "rake", "~&gt; 12"
+  gem "jekyll"
+
+  # Optional: Add any custom plugins here.
+  # Some useful examples are listed below
+  group :jekyll_plugins do
+  gem "jekyll-feed"
+  gem "jekyll-sitemap"
+  gem "jekyll-paginate-v2"
+  gem "jekyll-seo-tag"
+  gem "jekyll-compose", "~&gt; 0.5"
+  gem "jekyll-redirect-from"
+  end</code></pre>
+      </li>
+      <li>
+        <p><strong>Ensure any Gemfiles used in the Gemfile are in <code class="language-plaintext highlighter-rouge">_config.yml</code> as well.</strong></p>
+      </li>
+      <li>
+        <p><strong>Exclude certain files to ensure they don’t end up in <em>master</em> after Travis CI builds <em>source</em>.</strong></p>
+      </li>
+      <li>
+        <p><strong>Sample <code class="language-plaintext highlighter-rouge">_config.yml</code>:</strong></p>
+
+        <pre><code class="language-yaml">title: Your blog title
+email: your.email@gmail.com
+
+# many other settings
+# ...
+
+# Any plugins within jekyll_plugin group from Gemfile
+plugins:
+- jekyll-feed
+- jekyll-sitemap
+- jekyll-paginate-v2
+- jekyll-seo-tag
+- jekyll-compose
+- jekyll-redirect-from
+
+# Exclude these files from the build process results.
+# Prevents them from showing up in the master branch which 
+# is the live site.
+exclude:
+- vendor
+- Gemfile
+- Gemfile.lock
+- LICENSE
+- README.md
+- Rakefile</code></pre>
+      </li>
+      <li>
+        <p><strong>Since <em>master</em> will be used to display the static site, we need git to ignore changes to <code class="language-plaintext highlighter-rouge">_site</code>. Add the following to <code class="language-plaintext highlighter-rouge">.gitignore</code>:</strong></p>
+
+        <pre><code class="language-git">.sass-cache
+.jekyll-metadata
+_site</code></pre>
+      </li>
+      <li>
+        <p><strong>A <code class="language-plaintext highlighter-rouge">.travis.yml</code> file is needed to inform Travis CI how to run:</strong></p>
+
+        <pre><code class="language-yaml">#All of this together basically says, “Using the source branch from this repo, push all the files found within the site directory to the master branch of the repo”.
+
+language: ruby #Use Ruby
+rvm:
+    - 2.3.1 #Use RVM to set ruby version to 2.3.1
+install:
+    - bundle install #Run bundle install to install all gems.
+deploy:
+    provider: pages #Use TravisCI’s Github Pages provider
+    skip_cleanup: true #Preserve files created during build phase.
+    github_token: $GITHUB_TOKEN # Our personal access token. This is currently a reference to an environment variable which will be added in the TravisCI setup section below.
+    local_dir: _site #Use all files found in this directory for deployment.
+    target_branch: master #Push resulting build files to this branch on Github.
+on:
+    branch: source #Only run TravisCI for this branch.</code></pre>
+      </li>
+      <li>
+        <p><strong>The <code class="language-plaintext highlighter-rouge">.travis.yml</code> only works by using the following <code class="language-plaintext highlighter-rouge">Rakefile</code> to manually build the site:</strong></p>
+
+        <pre><code class="language-ruby"># filename: Rakefile
+task :default do
+puts "Running CI tasks..."
+
+# Runs the jekyll build command for production
+# TravisCI will now have a site directory with our
+# statically generated files.
+sh("JEKYLL_ENV=production bundle exec jekyll build")
+puts "Jekyll successfully built"
+end</code></pre>
+      </li>
+      <li>
+        <p><strong>The <code class="language-plaintext highlighter-rouge">Rakefile</code> runs on every build. All checks must be passed before Travis CI will deploy the build.</strong></p>
+      </li>
+      <li>
+        <p><strong>Set up Travis CI.</strong></p>
+
+        <p>Sign in to Travis CI.
+Find the appropriate repository and enable it.
+Create a new environment variable named <code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code> from the repository settings page and enter the <em>Personal Access Token</em> from way back when.</p>
+      </li>
+      <li>
+        <p><strong>Cross fingers and PUSH (to <em>source</em>).</strong></p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>The Travis CI build should start, complete, and the site will be live!</p>
+
+<p>WOW! Quite a bit of work for some custom plugins! Namely, my archive page and tag system. Again, HUGE thanks to <a href="https://joshfrankel.me">Josh Frankel</a> for <a href="https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/">his post</a>!</p>
+
+<hr>
+
+<h2 id="archive-page">
+<a class="anchor" href="#archive-page" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="archive-page"></a>Archive Page</h2>
+<p>The archive page I have on my site at the time of this post is adapted from <a href="https://github.com/Sodaware/jekyll-archive-page">Sodaware’s Repository</a>. There’s not much to it, just some basic ruby data collection and a simple layout file. I would eventually like to style it in a way that is more pleasing on mobile devices.</p>
+
+<hr>
+
+<h2 id="tag-system">
+<a class="anchor" href="#tag-system" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="tag-system"></a>Tag System</h2>
+<p>For post tagging, I followed an <a href="https://blog.lunarlogic.io/2019/managing-tags-in-jekyll-blog-easily/">example from Lunar Logic</a>. In the Lunar Logic post, the author, <a href="https://blog.lunarlogic.io/author/anna/">Anna Ślimak</a>, details using Jekyll hooks - which allow for fine-grained control over various aspects of the build process. For example, one could execute custom functionality every time Jekyll renders a post. That’s exactly what I’m doing on my site for the tags.</p>
+
+<p>While tags can simply be entered in the Front Matter of posts, no html is generated for that specific tag. I could manually create a file for said tag in the tags directory, but the hook automatically does that work for me.</p>
+
+<p>Here’s the code:</p>
+<pre><code class="language-ruby">Jekyll::Hooks.register :posts, :post_write do |post|
+    all_existing_tags = Dir.entries("tags")
+      .map { |t| t.match(/(.*).md/) }
+      .compact.map { |m| m[1] }
+  
+    tags = post['tags'].reject { |t| t.empty? }
+    tags.each do |tag|
+      generate_tag_file(tag) if !all_existing_tags.include?(tag)
+    end
+  end
+  
+  def generate_tag_file(tag)
+    File.open("tags/#{tag}.md", "wb") do |file|
+      file &lt;&lt; "---\nlayout: tag-page\ntag: #{tag}\n---\n"
+    end
+  end</code></pre>
+
+<hr>
+
+<h2 id="search-function">
+<a class="anchor" href="#search-function" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="search-function"></a>Search Function</h2>
+<p>The search function was adapted from <a href="https://github.com/christian-fei/Simple-Jekyll-Search">Christian Fei’s Simple Jekyll Search</a>. Here’s the rundown:</p>
+
+<p>Jekyll is all client-side, so the required content for a search must be stored in a file on the site itself.</p>
+
+<p>Within the root of the Jekyll project, a <code class="language-plaintext highlighter-rouge">.json</code> file is created from existing posts containing data to search through:</p>
+
+<p><a id="search-json"></a><code class="language-plaintext highlighter-rouge">search.json</code>:</p>
+<pre><code class="language-json">---
+---
+[
+  {% for post in site.posts %}
+    {
+
+      "title"    : "{{ post.title | escape }}",
+      "subtitle"    : "{{ post.subtitle | escape }}",
+      "tags"     : "{{ post.tags | join: ', ' }}",
+      "date"     : "{{ post.date }}",
+      "url"      : "{{ site.baseurl }}{{ post.url }}"
+
+    } {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+]</code></pre>
+
+<p>This code generates a <code class="language-plaintext highlighter-rouge">search.json</code> file in the <code class="language-plaintext highlighter-rouge">_site</code> directory. Don’t forget to add escape characters to prevent the <code class="language-plaintext highlighter-rouge">.json</code> file from getting messed up. <a href="https://shopify.github.io/liquid/">Liquid has some useful filters that can help out</a>. Here’s a snippet of my generated <code class="language-plaintext highlighter-rouge">search.json</code>:</p>
+
+<pre><code class="language-json">...
+{
+
+      "title"    : "Building a Blog:",
+      "subtitle"    : "Howdy!",
+      "tags"     : "web, jekyll, github-pages, ruby",
+      "date"     : "2020-05-18 00:00:00 -0400",
+      "url"      : "/2020/05/18/building-a-blog.html"
+
+    } 
+...</code></pre>
+
+<p>If we wanted to include other aspects of the post in our search, such as the excerpt, content, or custom variables, we could easily follow the <a href="#search-json">template above</a>.</p>
+
+<p>Save the <a href="https://github.com/christian-fei/Simple-Jekyll-Search/blob/master/dest/simple-jekyll-search.js">search script</a> in <code class="language-plaintext highlighter-rouge">/js/simple-jekyll-search.js</code>.</p>
+
+<p>I placed the necessary HTML elements for the search function inside <code class="language-plaintext highlighter-rouge">/_includes/search-bar.html</code>:</p>
+
+<pre><code class="language-html">&lt;!-- Html Elements for Search --&gt;
+&lt;div id="search-container" style="visibility: hidden;"&gt;
+  &lt;input type="text" id="search-input" placeholder="Search..." /&gt;
+  &lt;ul id="results-container"&gt;&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;!-- Script pointing to search-script.js --&gt;
+&lt;script src="/js/site-scripts/search-script.js" type="text/javascript"&gt;&lt;/script&gt;
+
+&lt;!-- Configuration --&gt;
+&lt;script&gt;
+  SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '&lt;li&gt;&lt;a href="eldun.github.io{url}"&gt;{title}&lt;/a&gt;&lt;/li&gt;'
+  })&lt;/script&gt;</code></pre>
+
+<p>and included it right below the nav bar in <code class="language-plaintext highlighter-rouge">/_layouts/default.html</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">searchResultTemplate</code> variable above determines what is included in the dropdown search results.</p>
+
+<p>Lastly, I added some javascript to toggle the search bar from visible to hidden.</p>
+
+<hr>
+
+<h2 id="the-future">
+<a class="anchor" href="#the-future" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="the-future"></a>The Future</h2>
+<p>From here onwards, I plan to document as concisely and as compellingly as possible every personal project I undertake.</p>
+
+<p>Oh, and to reformat my <code class="language-plaintext highlighter-rouge">style.css</code>. It’s a little sloppy.</p>
+
+<hr>
+
+<h2 id="updates">
+<a class="anchor" href="#updates" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="updates"></a>Updates</h2>
+
+<h3 id="2021-04">
+<a class="anchor" href="#2021-04" aria-hidden="true"><span class="octicon octicon-link"></span></a><time>2021-04</time>
+</h3>
+
+<details>
+<summary>Refactored my CSS into multiple files</summary>
+<br>
+I used to have one monolithic style.scss file. After some refactoring, this is the result:
+<pre><code class="language-treeview">eldun.github.io/
+    ├── assets/
+    │   ├── css/
+    │   │   └── style.scss
+    │   ├── images/
+    │   └── webfonts/
+    ├── _sass/
+    │   ├── fontawesome/
+    │   └── site/
+    │       ├── about-me.scss
+    │       ├── archive.scss
+    │       ├── header.scss
+    │       ├── images.scss
+    │       ├── mathjax.scss
+    │       ├── nav.scss
+    │       ├── post-navigation.scss
+    │       ├── posts.scss
+    │       ├── search.scss
+    │       └── tags.scss
+    └── ...</code></pre>
+
+<code>style.scss</code> is now mostly imports and high-level stylings:
+<pre><code class="language-scss">---
+---
+$color-primary: {{ site.data.colors["primary"]["dark-theme"] }};
+$color-secondary:  {{ site.data.colors["secondary"]["dark-theme"] }};
+$color-accent: {{ site.data.colors["accent"]["dark-theme"] }};
+$color-clickable: {{ site.data.colors["clickable"]["dark-theme"] }};
+$color-text: {{ site.data.colors["text"]["dark-theme"] }};
+
+/* This file extends/overrides the CSS file used by "jekyll-theme-cayman" (_site/assets/css/style.css)
+  https://help.github.com/en/github/working-with-github-pages/adding-a-theme-to-your-github-pages-site-using-jekyll#customizing-your-themes-css 
+*/
+
+
+// I took this out for a second, but putting it back in is easier than writing a bunch of responive css
+@import "jekyll-theme-cayman";
+
+// The default folder for scss files is _sass (this can be changed in config.yml)
+// Was having a lot of trouble trying to use fontawesome icons with their relative paths
+// before creating the_sass directory and moving the scss files there.
+@import "fontawesome/fontawesome.scss";
+@import "fontawesome/solid.scss";
+@import "fontawesome/brands.scss";
+@import "fontawesome/regular.scss";
+
+
+@import "site/header.scss";
+@import "site/nav.scss";
+
+@import "site/posts.scss";
+@import "site/post-navigation.scss";
+@import "site/images.scss";
+
+@import "site/mathjax.scss";
+
+@import "site/about-me.scss";
+@import "site/archive.scss";
+@import "site/tags.scss";
+@import "site/search.scss";
+
+// CSS rules here</code></pre>
+</details>
+
+<details>
+<summary>Started using <a class="btn" href="https://prismjs.com/" target="_blank">Prism Syntax highlighter</a>
+</summary>
+<br>
+All I had to do was generate js and css files from their site, plop them into my site directory, and link 'em. To use a specific language, all I need to do is specify a code block like so:
+<code>&lt;pre&gt;&lt;code class="language-xxxx"&gt;</code>
+<pre><code class="language-treeview">eldun.github.io
+    ├── assets/
+    │   ├── css/
+    │   │   └── style.scss // import generated prism css here
+    │   ├── images/
+    │   └── webfonts/
+    ├── _config.yml
+    ├── _data/
+    ├── downloads/
+    ├── _drafts/
+    ├── Gemfile
+    ├── Gemfile.lock
+    ├── _includes/
+    ├── index.md
+    ├── js/
+    │   ├── post-scripts/
+    │   └── site-scripts/
+    │       ├── prism.js // generated by prism
+    │       ├── search-script.js
+    │       ├── toggle-search.js
+    │       └── vanilla-back-to-top.min.js
+    ├── _layouts/
+    │   ├── archive-page.html
+    │   ├── default.html // link to generated prism js here 
+    │   ├── post.html
+    │   └── tag-page.html
+    ├── _plugins/
+    ├── _posts/
+    ├── Rakefile
+    ├── _sass/
+    │   ├── fontawesome/
+    │   └── site/
+    │       ├── about-me.scss
+    │       ├── archive.scss
+    │       ├── header.scss
+    │       ├── images.scss
+    │       ├── mathjax.scss
+    │       ├── nav.scss
+    │       ├── post-navigation.scss
+    │       ├── posts.scss
+    │       ├── prism.scss // generated by prism
+    │       ├── search.scss
+    │       └── tags.scss
+    └── ...</code></pre>
+</details>
+
+<h3 id="2022-08">
+<a class="anchor" href="#2022-08" aria-hidden="true"><span class="octicon octicon-link"></span></a><time>2022-08</time>
+</h3>
+
+<details>
+
+<summary>
+Dynamic (&amp; prettier) Table of Contents
+</summary>
+<br>
+
+
+Manual tables of content are time intensive and prone to authoring errors, I've come to find. Thankfully there's a <a href="https://stackoverflow.com/a/5233948">gem</a> for <a href="https://github.com/toshimaru/jekyll-toc">generating a 'toc' dynamically</a>, so I don't have to do too much work.
+
+The instructions are as follows:
+<img src="/assets/images/blog-images/howdy/jekyll-toc-install.png">
+
+After following these steps, I only need to change a few things in <code>_layouts/post.html`</code>:
+<pre><code class="language-diff-markup diff-highlight">
+
+&lt;div class="post-header inactive"&gt;
+&lt;h1 id="post-title"&gt;{{ page.title }}&lt;/h1&gt;
+&lt;h3 id="post-subtitle"&gt;{{ page.subtitle }}&lt;/h3&gt;
+&lt;div class="post-date"&gt;
+    &lt;i class="fas fa-calendar"&gt;&lt;/i&gt; &lt;time&gt;{{ page.date | date_to_string }}&lt;/time&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;img src="{{ page.header-image }}" alt="{{ page.header-image-alt }}" title="{{ post.header-image-description }}"&gt;
+
++ &lt;div class='table-of-contents'&gt;{{ content | toc_only }}&lt;/div&gt;
+
++ {{ content | inject_anchors }}
+
+&lt;hr&gt;
+&lt;h1&gt;&lt;i class="fas fa-hand-peace"&gt;&lt;/i&gt;&lt;/h1&gt;
+&lt;div class="post-tags"&gt;
+    {% include post-tags.html %}
+&lt;/div&gt;
+
+
+</code></pre>
+
+Now I can just use regular headers instead of clumsy anchors, and my table of contents will be generated automatically.
+
+</details>
+
+<details>
+
+<summary>
+Add the ability to use Liquid in Front Matter
+</summary>
+<br>
+
+I've started putting more of my post content into the [Front Matter](https://jekyllrb.com/docs/front-matter/) and letting my layout do most of the work. You can't natively use [Liquid](https://jekyllrb.com/docs/liquid/) in Front Matter, but there's a <a href="https://github.com/gemfarmer/jekyll-liquify">gem</a> for enabling such functionality.
+
+</details>
+
+  </div>
+
+<hr>
+<h1><i class="fas fa-hand-peace"></i></h1>
+<div class="post-tags">
+    
+  
+  <code><a class="tag-link"
+    href=/tags/web
+    rel="category tag">
+    #web</code></a>
+
+  
+  <code><a class="tag-link"
+    href=/tags/jekyll
+    rel="category tag">
+    #jekyll</code></a>
+
+  
+  <code><a class="tag-link"
+    href=/tags/github-pages
+    rel="category tag">
+    #github-pages</code></a>
+
+  
+  <code><a class="tag-link"
+    href=/tags/ruby
+    rel="category tag">
+    #ruby</code></a>
+
+</div>
+
+      <footer class="site-footer">
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+
+    <!-- prism syntax  -->
+    <script src="/js/site-scripts/prism.js"></script>
+    <script src ='/assets/prism-components'></script>
+    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+      'remove-trailing': true,
+      'remove-indent': true,
+      'left-trim': false,
+      'right-trim': true,
+      'break-lines': 80,
+      'indent': 0,
+      'remove-initial-line-feed': true,
+      'tabs-to-spaces': 4,
+      'spaces-to-tabs': 4
+    });</script> -->
+    
+
+      <!-- Back to top -->
+    <script src="/js/site-scripts/vanilla-back-to-top.min.js"></script>
+    <script>addBackToTop()</script>
+
+  </body>
+</html>
