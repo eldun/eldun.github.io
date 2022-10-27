@@ -1,7 +1,7 @@
 ---
 title: "Ray Tracing in One Weekend:"
 subtitle: "Part One - An Introduction"
-excerpt: "It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it."
+excerpt: "It took me long enough, but I finally dipped my toes into the waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it."
 part-nav: ray-tracing/part-nav.html
 toc: true
 layout: post

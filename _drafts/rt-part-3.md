@@ -1,8 +1,10 @@
 ---
 title: "Ray Tracing in One Weekend:"
 subtitle: "Part Three - The Next Weekend"
+excerpt: "We've created a [straight-forward ray tracer]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title) - what more could there be to do? By the time we're done with this segment, we'll have what Peter Shirley calls a \"real ray tracer\"."
 use-math: true
 use-raw-images: false
+toc: true
 layout: post
 author: Evan
 header-image: /assets\images\blog-images\path-tracer-part-three\
@@ -12,9 +14,6 @@ tags: graphics ray-tracing-in-one-weekend c++
 ---
 
 <a id="continue-reading-point"></a>
-We've created a [straight-forward ray tracer]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title) - what more could there be to do? By the time we're done with this segment, we'll have what Peter Shirley calls a "real ray tracer."
-
-<!--end-excerpt-->
 
 {% include ray-tracing/disclaimer.html %}
 
@@ -24,23 +23,7 @@ We've created a [straight-forward ray tracer]({{ site.url }}/2020/06/19/ray-trac
 
 {% include ray-tracing/part-nav.html %}
 
-<ul class="table-of-contents">
-    <li><a href="#motion-blur">Motion Blur</a></li>
-        <ul>
-            <li><a href="#adapting-our-ray-class">Adapting our Ray Class</a></li>
-            <li><a href="#adapting-our-camera-class">Adapting our Camera Class</a></li>
-			<li><a href="#creating-moving-spheres">Creating Moving Spheres</a></li>
-            <li><a href="#adapting-our-material-class">Adapting our Material Class</a></li>
-            <li><a href="#setting-our-scene">Setting our Scene</a></li>
-        </ul>
-    <li><a href="#bounding-volume-hierarchies">Bounding Volume Hierarchies</a></li>
-		<ul>
-            <li><a href="#establishing-a-hierarchy">Establishing a Hierarchy</a></li>
-			<li><a href="#implementing-a-hierarchy-using-axis-aligned-bounding-boxes">Implementing a Hierarchy Using Axis-Aligned Bounding Boxes</a></li>
-        </ul>
 
-
-</ul>
 
 ---
 
@@ -48,7 +31,7 @@ We've created a [straight-forward ray tracer]({{ site.url }}/2020/06/19/ray-trac
 
 Similarly to how we simulated [depth of field]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#depth-of-field) and [imperfect reflections]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#fuzzy-metal) through brute force in my [previous ray tracing post]({% link _posts/path-tracer/2020-06-19-ray-tracing-in-one-weekend-part-two.md %}), we can also implement motion blur.
 
-[Motion blur] (in a real, physical camera) is a the result of movement while the camera's shutter is open. The image produced is the average of what the camera "saw" over that amount of time.
+Motion blur (in a real, physical camera) is a the result of movement while the camera's shutter is open. The image produced is the average of what the camera "saw" over that amount of time.
 
 <span class="captioned-image">
 ![shutter-speed](/assets/images/blog-images/path-tracer/the-next-week/shutter.webp)
@@ -62,20 +45,20 @@ First, we give our ray the ability to store the time at which it exists.
 
 `ray.h`:
 
-<pre><code class="language-diff-cpp diff-highlight">
-  	class ray {
- 		public:
- 			ray() {}
-+			ray(const vec3& a, const vec3& b, double moment) { A = a; B = b; mMoment = moment; }
- 			vec3 origin() const		{ return A; }
-	 		vec3 direction() const	{ return B; }
-+			double moment() const  	{ return mMoment; }
- 			vec3 point_at_parameter(double t) const { return A + t * B; }
+<pre><code class="language-diff-cpp diff-highlight"> 
+ class ray {
+	public:
+	ray() {}
++	ray(const vec3& a, const vec3& b, double moment) { A = a; B = b; mMoment = moment; }
+	vec3 origin() const		{ return A; }
+	vec3 direction() const	{ return B; }
++	double moment() const  	{ return mMoment; }
+	vec3 point_at_parameter(double t) const { return A + t * B; }
  	
-  			vec3 A;
-  			vec3 B;
-+			double mMoment;
- 		};</code></pre>
+	vec3 A;
+	vec3 B;
++	double mMoment;
+ };</code></pre>
 
 
 ### <a id="adapting-our-camera-class"></a>Adapting our Camera Class
@@ -84,12 +67,10 @@ Now we have to update the camera to give each ray a time upon "shooting" one:
 `camera.h`:
 
 <pre><code class="language-diff-cpp diff-highlight">
-	...
-	class camera
+class camera
 	{
 	public:
-		camera(vec3 lookFrom, vec3 lookAt, vec3 vUp, double vFov, double aspectRatio,
-+			double aperture, double focusDistance, double shutterOpenDuration)
++		camera(vec3 lookFrom, vec3 lookAt, vec3 vUp, double vFov, double aspectRatio, double aperture, double focusDistance, double shutterOpenDuration)
 		{
 			lensRadius = aperture / 2;
 			double theta = vFov * pi / 180;
@@ -234,12 +215,11 @@ class lambertian : public material {
             return true;
         }
     vec3 albedo; // reflectivity
+ };
 
-};
-
-// Simulate reflection of a metal (see MetalReflectivity.png)
-// See FuzzyReflections.png for a visualization of fuzziness.
-class metal : public material {
+ // Simulate reflection of a metal (see MetalReflectivity.png)
+ // See FuzzyReflections.png for a visualization of fuzziness.
+ class metal : public material {
     public:
         metal(const vec3& a, double f) : albedo(a) {
             if (f&lt;1) fuzz = f; else fuzz = 1; // max fuzz of 1, for now.
@@ -256,7 +236,7 @@ class metal : public material {
 
     vec3 albedo;
     double fuzz;
-};
+ };
 
 class dielectric : public material {
     public:
