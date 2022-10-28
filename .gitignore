@@ -8,3 +8,5 @@ _site
 *.swp
 
 *.log
+.vscode/settings.json
+.gitignore
