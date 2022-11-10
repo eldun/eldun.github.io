@@ -429,4 +429,320 @@ class MorsoView @JvmOverloads constructor(
 
 This is where we can implement gestures like triple taps in the future.
 
+...
+
+Thinking about it some more, we're probably going to end up creating all of our own gestures from within MorsoView's on `onTouchEvent`. In doing so, we'll be able to specify custom timing delays for dots and dashes and the like. However, it's good for now.
+
+Let's put things in place replace the "Morso" text on touch inputs with the appropriate characters.
+
+##### Learning About Representing UI State
+The main article for this section is [here](https://developer.android.com/topic/architecture/ui-layer#define-ui-state). I suggest reading it.
+
+Details on how IMEs handle config changes can be found [here](https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)).
+
+<!-- Long story short, we're going to use [ViewModels](https://developer.android.com/topic/libraries/architecture/viewmodel). If you already know the story with ViewModels, you can skip to [the next section]({{ post.url }}/drawing-symbols-on-input) -->
+
+
+
+
+
+
+<!-- We'll be using a [data class](https://kotlinlang.org/docs/data-classes.html) to represent the UI state. It's not much at the moment:
+
+```kotlin
+package net.eldun.morso
+
+data class MorsoViewState(){
+    val mainText : String
+}
+``` -->
+
+Here's an explanation for why the UI state member(s) are [immutable](https://kotlinlang.org/docs/basic-syntax.html#variables):
+
+```kotlin
+data class NewsUiState(
+    val isSignedIn: Boolean = false,
+    val isPremium: Boolean = false,
+    val newsItems: List<NewsItemUiState> = listOf(),
+    val userMessages: List<Message> = listOf()
+)
+
+data class NewsItemUiState(
+    val title: String,
+    val body: String,
+    val bookmarked: Boolean = false,
+    ...
+)
+```
+> The UI state definition in the example above is immutable. The key benefit of this is that immutable objects provide guarantees regarding the state of the application at an instant in time. This frees up the UI to focus on a single role: to read the state and update its UI elements accordingly. As a result, you should never modify the UI state in the UI directly unless the UI itself is the sole source of its data. Violating this principle results in multiple sources of truth for the same piece of information, leading to data inconsistencies and subtle bugs.
+>
+> For example, if the bookmarked flag in a NewsItemUiState object from the UI state in the case study were updated in the Activity class, that flag would be competing with the data layer as the source of the bookmarked status of an article. Immutable data classes are very useful for preventing this kind of antipattern.
+>
+> Key Point: Only sources or owners of data should be responsible for updating the data they expose.
+
+Great. You might be wondering - as I was - "How does anything ever change, then?"
+
+The answer is by using a mediator to process events and produce the UI state.
+
+> Interactions and their logic may be housed in the UI itself, but this can quickly get unwieldy as the UI starts to become more than its name suggests: it becomes data owner, producer, transformer, and more. Furthermore, this can affect testability because the resulting code is a tightly coupled amalgam with no discernable boundaries. Unless the UI state is very simple, the UI's sole responsibility should be to consume and display UI state.
+
+> The classes that are responsible for the production of UI state and contain the necessary logic for that task are called [state holders](https://developer.android.com/topic/architecture/ui-layer#state-holders).
+
+> Key Point: The [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) type is the recommended implementation for the management of screen-level UI state with access to the data layer. Furthermore, it survives configuration changes (like rotations) automatically. ViewModel classes define the logic to be applied to events in the app and produce updated state as a result.
+
+
+
+
+> There are many ways to model the codependency between the UI and its state producer. However, because the interaction between the UI and its ViewModel class can largely be understood as event input and its ensuing state output, the relationship can be represented as shown in the following diagram illustrating the "Unidirectional Data Flow" pattern:
+
+![Unidirectional Data Flow](/assets/images/blog-images/morso/udf.png)
+
+- The ViewModel holds and exposes the state to be consumed by the UI. The UI state is application data transformed by the ViewModel.
+- The UI notifies the ViewModel of user events.
+- The ViewModel handles the user actions and updates the state.
+- The updated state is fed back to the UI to render.
+- The above is repeated for any event that causes a mutation of state.
+
+[Why use UDF?](https://developer.android.com/topic/architecture/ui-layer#why-use-udf)
+
+Here's an rudimentary example of what would happen if a user were to bookmark an article in a simple news app:
+
+![Unidirectional Data Flow Example](/assets/images/blog-images/morso/udf-example.png)
+
+<!-- ##### Creating and Storing our UI State Class with ViewModel
+For this section, we'll mostly be looking at the [Android article on `ViewModel`](https://developer.android.com/reference/androidx/lifecycle/ViewModel) and the [ViewModel Codelab](https://developer.android.com/codelabs/basic-android-kotlin-training-viewmodel#0). Neither of these resources mention services or IME's (only activities and fragments), but I don't see any reason not to use ViewModels.
+
+Our first implementation of our `ViewModel` class will merely hold the value of what is displayed in `MorsoIME` - which happens to be `MorsoView`. Further down the line, we may end up with more views - in which case we could add to `MorsoViewModel` *or* create new viewmodels for each view to avoid a monolithic `MorsoViewModel`. "Why is the `ViewModel` assosciated with the service and not the view?" you might ask. The reason is that the viewmodel is tied to the lifecycle of the activity/fragment/service. Also - the view should retain no data about state - merely display it.
+
+![Default MorsoView](/assets/images/blog-images/morso/morso-measured-view.png)
+
+With that being said, let's create `MorsoViewModel`:
+
+```kotlin
+package net.eldun.morso
+
+import androidx.lifecycle.ViewModel
+
+class MorsoViewModel : ViewModel() {
+}
+```
+
+Now we have to assosciate our `ViewModel` with our IME - we'll add a member of type `MorsoViewModel` to `MorsoIME` and initialize it using the `by viewModels()` property delegate:
+
+```kotlin
+private val viewModel: MorsoViewModel by viewModels()
+}
+ ``` -->
+
+<!-- ###### What are Property Delegates?
+
+> In Kotlin, each mutable (var) property has default getter and setter functions automatically generated for it. The setter and getter functions are called when you assign a value or read the value of the property.
+> 
+> For a read-only property (val), it differs slightly from a mutable property. Only the getter function is generated by default. This getter function is called when you read the value of a read-only property.
+> 
+> Property delegation in Kotlin helps you to handoff the getter-setter responsibility to a different class.
+> 
+> This class (called delegate class) provides getter and setter functions of the property and handles its changes.
+> 
+> A delegate property is defined using the by clause and a delegate class instance:
+> 
+> 
+> // Syntax for property delegation
+> var <property-name> : <property-type> by <delegate-class>()
+> In your app, if you initialize the view model using default GameViewModel constructor, like below:
+> 
+> 
+> private val viewModel = GameViewModel()
+> Then the app will lose the state of the viewModel reference when the device goes through a configuration change. For example, if you rotate the device, then the activity is destroyed and created again, and you'll have a new view model instance with the initial state again.
+> 
+> Instead, use the property delegate approach and delegate the responsibility of the viewModel object to a separate class called viewModels. That means when you access the viewModel object, it is handled internally by the delegate class, viewModels. The delegate class creates the viewModel object for you on the first access, and retains its value through configuration changes and returns the value when requested. -->
+
+<!-- ###### Adding Data to our ViewModel
+The article for this section can be found [here](https://developer.android.com/codelabs/basic-android-kotlin-training-viewmodel#4)
+
+Right now, the only property in our `MorsoViewModel` is the the background text:
+```kotlin
+    private var backgroundText = "Morso"
+```
+
+However,
+
+> Inside the ViewModel, the data should be editable, so they should be private and var. From outside the ViewModel, data should be readable, but not editable, so the data should be exposed as public and val. To achieve this behavior, Kotlin has a feature called a [backing property](https://kotlinlang.org/docs/properties.html#backing-properties).
+
+```
+class MorsoViewModel : ViewModel() {
+
+    private var _backgroundText = "Morso"
+    val backgroundText: String
+        get() = _backgroundText()
+}
+```
+
+Mutable data fields from the viewmodel should **never** be exposed. -->
+
+
+
+##### Storing UI Data for our Input Service
+As it turns out, we don't actually have to use viewmodels, because `InputServiceMethod`s generally [don't have to worry about configuration changes](https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)) - which is the main reason to use viewmodels (other than the seperation of ui from state, of course). As is often the case when traveling a bit off the beaten path, the [answers are not always *totally* crystal clear](https://github.com/android/architecture-components-samples/issues/137#issuecomment-327854042), though. Based on what I've read, it sounds like we can get away with a mere [plain class for state holding](https://developer.android.com/topic/architecture/ui-layer/stateholders#choose_between_a_viewmodel_and_plain_class_for_a_state_holder).
+
+The following info is from [this codelab](https://developer.android.com/codelabs/basic-android-kotlin-training-viewmodel#4). Even though the codelab is about viewmodels, the same principles still apply to our plain state class.
+
+Create `MorsoUiState`:
+
+Right now, the only property in our `MorsoUiState` is the the background text:
+```kotlin
+    private var backgroundText = "Morso"
+```
+
+However,
+
+> Inside the ViewModel, the data should be editable, so they should be private and var. From outside the ViewModel, data should be readable, but not editable, so the data should be exposed as public and val. To achieve this behavior, Kotlin has a feature called a [backing property](https://kotlinlang.org/docs/properties.html#backing-properties).
+
+```
+class MorsoUiState {
+
+    private var _backgroundText = "Morso"
+    val backgroundText: String
+        get() = _backgroundText()
+
+    fun setBackgroundText(input: String) {
+        _backgroundText = input
+    }
+}
+```
+
+Mutable data fields from state holders should **never** be exposed.
+
+##### Updating our View with New UI Data
+
+<!-- The main article for this section can be found [here](https://developer.android.com/topic/libraries/data-binding/architecture). -->
+
+We can automatically update our UI using [LiveData](https://developer.android.com/topic/libraries/architecture/livedata) as the binding source.
+
+First, we should update `MorsoView` with a function to update all of its fields(which should all be private):
+```kotlin
+...
+
+    private var backgroundText = "Morso"
+
+
+    fun updateUi(morsoUiState: MorsoUiState) {
+        backgroundText = morsoUiState.backgroundText.value.toString()
+
+    }
+...
+```
+
+To [work with LiveData](https://developer.android.com/topic/libraries/architecture/livedata#work_livedata), we must follow these steps:
+
+1. [Create an instance of LiveData](https://developer.android.com/topic/libraries/architecture/livedata#create_livedata_objects) to hold a certain type of data. This is usually done within your ViewModel class.
+
+```kotlin
+class MorsoUiState {
+
+    val backgroundText: MutableLiveData<String> by lazy {
+        MutableLiveData<String>("Morso")
+    }
+}
+```
+
+2. Create an Observer object that defines the onChanged() method, which controls what happens when the LiveData object's held data changes. You usually create an Observer object in a UI controller, such as an activity or fragment.
+
+```kotlin
+class MorsoIME : InputMethodService() {
+    private val TAG = "MorsoIME"
+
+
+    override fun onCreateInputView(): View {
+    val morsoLayout = layoutInflater.inflate(R.layout.input_container, null)
+        morsoView = morsoLayout.findViewById<MorsoView>(R.id.morsoView)
+
+        // Create the observer which updates the UI.
+        val backgroundTextObserver = Observer<String> {
+
+            // Update the UI
+            morsoView.updateUi(morsoUiState)
+            morsoView.invalidate()
+        }
+
+        return morsoLayout
+    }
+
+}
+```
+
+3. Attach the Observer object to the LiveData object using the observe() method. The observe() method takes a LifecycleOwner object. This subscribes the Observer object to the LiveData object so that it is notified of changes. You usually attach the Observer object in a UI controller, such as an activity or fragment.
+
+> You can register an observer without an associated LifecycleOwner object using the observeForever(Observer) method. In this case, the observer is considered to be always active and is therefore always notified about modifications. You can remove these observers calling the removeObserver(Observer) method.
+
+```kotlin
+class MorsoIME : InputMethodService() {
+    private val TAG = "MorsoIME"
+
+    lateinit var morsoView: MorsoView
+    lateinit var morsoGestureListener : MorsoGestureListener
+    lateinit var morsoUiState: MorsoUiState
+
+
+    override fun onCreateInputView(): View {
+
+        val morsoLayout = layoutInflater.inflate(R.layout.input_container, null)
+        morsoView = morsoLayout.findViewById<MorsoView>(R.id.morsoView)
+        morsoGestureListener = morsoView.gestureListener
+        morsoUiState = morsoGestureListener.morsoUiState
+
+
+        // Create the observer which updates the UI.
+        val backgroundTextObserver = Observer<String> {
+            
+            // Update the UI
+            morsoView.updateUi(morsoUiState)
+            morsoView.invalidate()
+        }
+
+        // Observe the LiveData
+        morsoUiState.backgroundText.observeForever(backgroundTextObserver)
+
+        return morsoLayout
+    }
+
+}
+```
+
+When we have a more complex UI state, it might be worthwhile to make the whole `MorsoUiState` observable.
+
+Add to `onSingleTapUp` in `MorsoGestureListener`:
+
+```kotlin
+   override fun onSingleTapUp(e: MotionEvent): Boolean {
++        morsoUiState.backgroundText.value = "tapped"
+        return true
+    }
+```
+
+Our "Morso" text will change to "tapped" on a single tap.
+
+##### Resetting our Background Text After a Delay
+Add the following code to the `backgroundTextObserver`:
+
+```kotlin
+// Create the observer which updates the UI.
+        val backgroundTextObserver = Observer<String> { newBackgroundText ->
+            Log.d(TAG, "onCreateInputView: New Text!")
+            // Update the UI
+            morsoView.backgroundText = newBackgroundText
+            morsoView.invalidate()
+
++            if (morsoUiState.backgroundText.value != "Morso") {
++                Handler(Looper.getMainLooper()).postDelayed({
++                    morsoUiState.backgroundText.value = "Morso"
++                }, 1000)
+            }
+        }
+```
+
+We will be able to configure the delay in settings later on.
+
+### Representing Morse Code
+
 
