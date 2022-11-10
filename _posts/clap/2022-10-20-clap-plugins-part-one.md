@@ -1,5 +1,5 @@
 ---
-title: CLAP Plugins
+title: Audio Plugins
 subtitle: "Part 1/3: Learning about CLAP"
 excerpt: What does it take to build an audio plugin?
 reason: To learn about audio plugins on modern systems && start using vim
@@ -9,7 +9,7 @@ use-math: true
 use-raw-images: false
 layout: post
 author: Evan
-header-image: /assets/images/blog-images/clap/part-one/sine-wave.jpg
+header-image: /assets/images/blog-images/audio-plugins/part-one/sine-wave.jpg
 header-image-alt: "Image of sine wave from http://www.tronola.com/moorepage/Sine.html" 
 header-image-title:"The basis for all sounds: the sine wave."
 tags: c++ music 
@@ -62,8 +62,8 @@ I originally was going to create a VST3 synth([I even started a blog post :c](ht
 There are thousands upon thousands of plugins out there - ranging from minimalist retro synths and complex rhythm sequencers to Karplus-Strong string modelers and destructive bit-crushers. Here are some of my favorites:
 
 <span class="row-fill">
-![Vital](/assets/images/blog-images/clap/part-one/vital.jpg)
-![Dexed](/assets/images/blog-images/clap/part-one/dexed.png)
+![Vital](/assets/images/blog-images/audio-plugins/part-one/vital.jpg)
+![Dexed](/assets/images/blog-images/audio-plugins/part-one/dexed.png)
 </span>
 <span class="row-fill">
 [Vital](vital.audio)
@@ -73,8 +73,8 @@ There are thousands upon thousands of plugins out there - ranging from minimalis
 
 
 <span class="row-fill">
-![Valhalla Freq Echo](/assets/images/blog-images/clap/part-one/valhalla-delay.webp)
-![BlueARP Arpeggiator](/assets/images/blog-images/clap/part-one/blue-arp.png)
+![Valhalla Freq Echo](/assets/images/blog-images/audio-plugins/part-one/valhalla-delay.webp)
+![BlueARP Arpeggiator](/assets/images/blog-images/audio-plugins/part-one/blue-arp.png)
 </span> 
 <span class="row-fill">
 [Valhalla Freq Echo](https://valhalladsp.com/shop/delay/valhalla-freq-echo/)
@@ -82,7 +82,7 @@ There are thousands upon thousands of plugins out there - ranging from minimalis
 </span>
 
 It should be noted that although flashy UIs are fun and often very useful, they're not necessary. Look at Reaper's built-in synth - ReaSynth:
-![ReaSynth](/assets/images/blog-images/clap/reasynth.png) 
+![ReaSynth](/assets/images/blog-images/audio-plugins/part-one/reasynth.png) 
 
 Many plugin effects are also often very sparse.
 
@@ -163,7 +163,7 @@ happens when they are enabled.
 
 Just to make sure everything was set up correctly, I installed [dexed](https://github.com/asb2m10/dexed) from source and tested it in Reaper.
 
-![The CLAP version of dexed running in Reaper](/assets/images/blog-images/clap-synth/reaper-clap-dexed.png) 
+![The CLAP version of dexed running in Reaper](/assets/images/blog-images/audio-plugins-synth/reaper-clap-dexed.png) 
 
 ---
 ## Learning to Create CLAP Plugins
@@ -171,7 +171,7 @@ Just to make sure everything was set up correctly, I installed [dexed](https://g
 ### Where to Start?
 I don't know much about creating plugins, and unfortunately, it looks like the ["Getting Started" page has a ways to go](https://cleveraudio.org/developers-getting-started/). 
 
-![CLAP Documentation Under Construction](/assets/images/blog-images/clap/part-one/clap-getting-started.png) 
+![CLAP Documentation Under Construction](/assets/images/blog-images/audio-plugins/part-one/clap-getting-started.png) 
 
 The way forward is through [example](https://github.com/free-audio/clap#examples) and [this youtube playlist](https://www.youtube.com/playlist?list=PLqRWeSPiYQ64DhTiE2dEIF5xRIw0s5XLS)(Developing with CLAP - Jürgen Moßgraber).
 
@@ -252,8 +252,8 @@ Excluding reference and image files, these are the contents of the repo:
 
 To build these examples, all we have to do(on Linux) is navigate to `build/lin` and execute the makefile there  with `make`.
 
-![Simple CLAP Example 1](/assets/images/blog-images/clap/part-one/simple-clap-example-1.gif) 
-![Simple CLAP Example 2](/assets/images/blog-images/clap/part-one/simple-clap-example-2.gif) 
+![Simple CLAP Example 1](/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-1.gif) 
+![Simple CLAP Example 2](/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-2.gif) 
 
 The resulting `.clap` file should show up right next to the makefile. If you'd like to try these plugins out, you can add our current directory to your host's CLAP path or copy the generated CLAP file to `usr/local/lib` - the default path for CLAP plugins.
 
@@ -272,7 +272,7 @@ We don't really have to worry about this file - it's where our plugins are const
 ##### The `plugin_impl` Files
 These are our actual plugins! Here is where we describe our plugins and their parameters, as well as how they behave, and what they look like (at least in this example).
 Let's take a look at the tone generator plugin once more:
-![Simple CLAP Example 2](/assets/images/blog-images/clap/part-one/simple-clap-example-2.gif) 
+![Simple CLAP Example 2](/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-2.gif) 
 
 You can see how the turning of knobs is continually processed in the `process` functions. Things are kicked off with this one:
 <pre><code class="language-cpp">
@@ -401,4 +401,4 @@ You may have noticed that a single `.clap` file contains two plugins. You can st
 
 ---
 ### Closing Thoughts
-Creating audio plugins from scratch is a bit more involved than I expected... I was hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler. 
+Creating audio plugins from scratch turned out to be a bit less straightforward than I expected. I was especially hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler. 
