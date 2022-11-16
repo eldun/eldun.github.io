@@ -583,7 +583,7 @@ Mutable data fields from the viewmodel should **never** be exposed. -->
 
 
 ##### Storing UI Data for our Input Service
-As it turns out, we don't actually have to use viewmodels, because `InputServiceMethod`s generally [don't have to worry about configuration changes](https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)) - which is the main reason to use viewmodels (other than the seperation of ui from state, of course). As is often the case when traveling a bit off the beaten path, the [answers are not always *totally* crystal clear](https://github.com/android/architecture-components-samples/issues/137#issuecomment-327854042), though. Based on what I've read, it sounds like we can get away with a mere [plain class for state holding](https://developer.android.com/topic/architecture/ui-layer/stateholders#choose_between_a_viewmodel_and_plain_class_for_a_state_holder).
+As it turns out, we don't actually have to use viewmodels, because `InputServiceMethod`s [don't have to worry about configuration changes](https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)) - which is the main reason to use viewmodels (other than the seperation of ui from state, of course). As is often the case when traveling a bit off the beaten path, the [answers are not always *totally* crystal clear](https://github.com/android/architecture-components-samples/issues/137#issuecomment-327854042), though. Based on what I've read, it sounds like we can get away with a mere [plain class for state holding](https://developer.android.com/topic/architecture/ui-layer/stateholders#choose_between_a_viewmodel_and_plain_class_for_a_state_holder). Furthermore, we'll make our UI state a [singleton](https://en.wikipedia.org/wiki/Singleton_pattern) by using the [object keyword](https://stackoverflow.com/questions/51834996/singleton-class-in-kotlin).
 
 The following info is from [this codelab](https://developer.android.com/codelabs/basic-android-kotlin-training-viewmodel#4). Even though the codelab is about viewmodels, the same principles still apply to our plain state class.
 
@@ -599,7 +599,7 @@ However,
 > Inside the ViewModel, the data should be editable, so they should be private and var. From outside the ViewModel, data should be readable, but not editable, so the data should be exposed as public and val. To achieve this behavior, Kotlin has a feature called a [backing property](https://kotlinlang.org/docs/properties.html#backing-properties).
 
 ```
-class MorsoUiState {
+object MorsoUiState {
 
     private var _backgroundText = "Morso"
     val backgroundText: String
@@ -637,8 +637,10 @@ To [work with LiveData](https://developer.android.com/topic/libraries/architectu
 
 1. [Create an instance of LiveData](https://developer.android.com/topic/libraries/architecture/livedata#create_livedata_objects) to hold a certain type of data. This is usually done within your ViewModel class.
 
+We're not using a viewmodel
+
 ```kotlin
-class MorsoUiState {
+object MorsoUiState {
 
     val backgroundText: MutableLiveData<String> by lazy {
         MutableLiveData<String>("Morso")
@@ -694,7 +696,7 @@ class MorsoIME : InputMethodService() {
 
         // Create the observer which updates the UI.
         val backgroundTextObserver = Observer<String> {
-            
+
             // Update the UI
             morsoView.updateUi(morsoUiState)
             morsoView.invalidate()
@@ -745,4 +747,188 @@ We will be able to configure the delay in settings later on.
 
 ### Representing Morse Code
 
+I figure [enums](https://kotlinlang.org/docs/enum-classes.html#working-with-enum-constants) are a decent way to represent Morse code - we're dealing with a few dozen values that will never change.
 
+Another option would be to use an immutable ordered binary tree created at compile-time in a companion object. If you use a tree, be aware that `Enum.compareTo()` is `final` - the order in which the enums are declared is important for comparing/navigating the tree. [Why is compareTo final?](https://stackoverflow.com/questions/519788/why-is-compareto-on-an-enum-final-in-java)
+
+Lets represent signals in `MorseSignal`:
+```kotlin
+enum class MorseSignal {
+    DOT, DASH, SPACE;
+}
+```
+
+and characters in `Character`:
+```kotlin
+enum class Character(vararg var sequence: MorseSignal) {
+
+    START(),
+
+    E(DOT),
+    T(DASH),
+
+    I(DOT, DOT),
+    A(DOT, DASH),
+    N(DASH, DOT),
+    M(DASH, DASH),
+
+    S(DOT, DOT, DOT),
+    U(DOT, DOT, DASH),
+    R(DOT, DASH, DOT),
+    W(DOT, DASH, DASH),
+    D(DASH, DOT, DOT),
+    K(DASH, DOT, DASH),
+    G(DASH, DASH, DOT),
+    O(DASH, DASH, DASH),
+
+    H(DOT, DOT, DOT, DOT),
+    V(DOT, DOT, DOT, DASH),
+    F(DOT, DOT, DASH, DOT),
+    L(DOT, DASH, DOT, DOT),
+    P(DOT, DASH, DASH, DOT),
+    J(DOT, DASH, DASH, DASH),
+    B(DASH, DOT, DOT, DOT),
+    X(DASH, DOT, DOT, DASH),
+    C(DASH, DOT, DASH, DOT),
+    Y(DASH, DOT, DASH, DASH),
+    Z(DASH, DASH, DOT, DOT),
+    Q(DASH, DASH, DOT, DASH),
+
+    FIVE(DOT, DOT, DOT, DOT, DOT) {
+        override fun toString() = "5"
+    },
+    FOUR(DOT, DOT, DOT, DOT, DASH){
+        override fun toString() = "4"
+    },
+    THREE(DOT, DOT, DOT, DASH, DASH){
+        override fun toString() = "3"
+    },
+    TWO(DOT, DOT, DASH, DASH, DASH){
+        override fun toString() = "2"
+    },
+    PLUS_SIGN(DOT, DASH, DOT, DASH, DOT){
+        override fun toString() = "+"
+    },
+    ONE(DOT, DASH, DASH, DASH, DASH){
+        override fun toString() = "1"
+    },
+    SIX(DASH, DOT, DOT, DOT, DOT){
+        override fun toString() = "6"
+    },
+    EQUALS_SIGN(DASH, DOT, DOT, DOT, DASH){
+        override fun toString() = "="
+    },
+    DIVIDE_SIGN(DASH, DOT, DOT, DASH, DOT){
+        override fun toString() = "/"
+    },
+    SEVEN(DASH, DASH, DOT, DOT, DOT){
+        override fun toString() = "7"
+    },
+    EIGHT(DASH, DASH, DASH, DOT, DOT){
+        override fun toString() = "8"
+    },
+    NINE(DASH, DASH, DASH, DASH, DOT){
+        override fun toString() = "9"
+    },
+    ZERO(DASH, DASH, DASH, DASH, DASH){
+        override fun toString() = "0"
+    };
+}
+
+
+```
+
+We're going to want to be able to get the `Character` by its sequence once Morso detects a long enough break in input. To do so, we'll create a map with the key being `sequence` and the value being the `Character`.
+
+I was originally trying to use the `vararg sequence`(which is an array) as a key, but in order to look up the value, the array passed in [had to be the exact same array as the key](https://stackoverflow.com/a/16839191) - not just the contents of the array. I ended up converting the sequence in `Character`'s construtor to a `List`, and using said list as a key for the dictionary:
+
+```kotlin
+    ...
+
+    NINE(DASH, DASH, DASH, DASH, DOT){
+        override fun toString() = "9"
+    },
+    ZERO(DASH, DASH, DASH, DASH, DASH){
+        override fun toString() = "0"
+    };
+
+    private val sequenceList = this.sequence.asList()
+
+
+    companion object {
+        private val map = Character.values().associateBy(Character::sequenceList)
+        fun fromSequenceList(seqList: List<MorseSignal>) = map[seqList]
+    }
+```
+
+We can now pass in a list of signals to `fromSequenceList` to get the corresponding `Character`:
+```kotlin
+    class MorseTranslator {
+
+        companion object {
+
+            fun decode(vararg sequence: MorseSignal): Character? {
+
+                return Character.fromSequenceList(sequence.asList())
+            }
+        }
+    }
+```
+
+### Using Morso for Input
+
+Now we can start to create an actual input method! Again, the most helpful article for this section can be found [here](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method).
+
+My general idea for the default behavior of Morso is as follows:
+
+- `MorsoInputView` will show the current input (dots and dashes) up until there's a word-length space - at which point `MorsoInputView` will once again display 'Morso'.
+- The current input field will reflect the input, but will only be committed upon a word-length space.
+- `MorsoInputView` will be updated to have a cancel button for the current sequence and a backspace
+
+MorsoCandidatesView will come later.
+
+#### Translating Gestures to Morse Code
+Taps are already handled correctly by default in our `MorsoGestureListener`. However, we should allow the user to customize the dot time. This is because the dash and space duration will be defined as multiples of the base dot time. Until we implement the settings screen, though, a literal will do just fine.
+
+Let's add to `MorsoGestureListener`:
+
+```kotlin
+    fun onHold(e: MotionEvent): Boolean {
+
+        Log.d(TAG, "onHold")
+        return true
+
+    }
+```
+
+In `MorsoInputView`, add a member for the custom long press timeout:
+
+```kotlin
+    private val longPressTimeout: Long = 1500
+```
+
+And add to `onTouchEvent()`:
+
+```kotlin
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+
+        // call onHold if an ACTION_UP has not been received in longPressTimeout ms
+        if (event?.actionMasked == MotionEvent.ACTION_DOWN) {
+            handler.postDelayed({ gestureListener.onHold(event) }, longPressTimeout)
+        } else if (event?.actionMasked == MotionEvent.ACTION_UP) {
+            handler.removeCallbacksAndMessages(null)
+        }
+
+        if (gestureDetector.onTouchEvent(event)) {
+            // The event has been consumed by our simple gesture listener
+            return true
+        }
+
+        // TODO: determine what to do with ambiguous signals
+        // maybe add a progress bar for when the input is held
+        return false
+
+    }```
+
+
+<!-- [Measuring elapsed time](https://stackoverflow.com/a/18554853) -->
