@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2022-11-21T20:19:51-05:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">Morso</title><link href="eldun.github.io/2022/11/21/morso-pt-one.html" rel="alternate" type="text/html" title="Morso" /><published>2022-11-21T00:00:00-05:00</published><updated>2022-11-21T00:00:00-05:00</updated><id>eldun.github.io/2022/11/21/morso-pt-one</id><content type="html" xml:base="eldun.github.io/2022/11/21/morso-pt-one.html"><![CDATA[<h2 id="why-morse-code">Why Morse Code?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2022-11-21T20:34:17-05:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">Morso</title><link href="eldun.github.io/2022/11/21/morso-pt-one.html" rel="alternate" type="text/html" title="Morso" /><published>2022-11-21T00:00:00-05:00</published><updated>2022-11-21T00:00:00-05:00</updated><id>eldun.github.io/2022/11/21/morso-pt-one</id><content type="html" xml:base="eldun.github.io/2022/11/21/morso-pt-one.html"><![CDATA[<h2 id="why-morse-code">Why Morse Code?</h2>
 <p>One of my least favorite things in this world is having to yell in someone’s ear. Usually, I don’t have to. Occasionally, though, I find myself at a bar.</p>
 
 <p>One of my favorite things in this world is the process of getting better at useless-adjacent things. Rather than spending hours learning <a href="https://en.wikipedia.org/wiki/American_Sign_Language">American Sign Language</a> (which <strong>is</strong> on my to-do list), I could just learn 26 characters in <a href="https://en.wikipedia.org/wiki/Morse_code">Morse code</a> and tap out a message on my friend’s shoulder!</p>
@@ -37,7 +37,7 @@
 <p>The most obvious first step to me is to create an input <a href="https://developer.android.com/reference/android/app/Service">service</a> that can be used system-wide. The <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method">Android Developer article on input methods</a> and <a href="https://stackoverflow.com/a/44939816">this StackOverflow answer</a> will be exceedingly helpful.</p>
 
 <hr />
-<h3 id="declaring-ime-components-in-the-manifest">Declaring IME Components in the Manifest</h3>
+<h2 id="declaring-ime-components-in-the-manifest">Declaring IME Components in the Manifest</h2>
 <p>Official documentation for this step can be found <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#DefiningIME">here</a>, but we’re basically going to throw a snippet into our app’s <a href="https://developer.android.com/guide/topics/manifest/manifest-intro"><code class="language-plaintext highlighter-rouge">AndroidManifest.xml</code></a>.</p>
 
 <blockquote>
@@ -117,7 +117,7 @@ dependencies {
 </code></pre>
 
 <hr />
-<h3 id="declaring-the-settings-activity-for-the-ime">Declaring the Settings Activity for the IME</h3>
+<h2 id="declaring-the-settings-activity-for-the-ime">Declaring the Settings Activity for the IME</h2>
 
 <blockquote>
   <p>This next snippet declares the settings activity for the IME. It has an intent filter for ACTION_MAIN that indicates this activity is the main entry point for the IME application:</p>
@@ -138,7 +138,7 @@ dependencies {
 
 <hr />
 
-<h3 id="creating-our-morsoime-class">Creating our MorsoIME Class</h3>
+<h2 id="creating-our-morsoime-class">Creating our MorsoIME Class</h2>
 <p>You may have noticed that we have a warning that a service by the name of <code class="language-plaintext highlighter-rouge">MorsoIME</code> could not be found! Go ahead and create a new Kotlin class - <code class="language-plaintext highlighter-rouge">MorsoIME</code> - that extends <code class="language-plaintext highlighter-rouge">InputMethodService</code>:</p>
 
 <blockquote>
@@ -169,13 +169,9 @@ class MorsoIME : InputMethodService() {
 
 <hr />
 
-<h3 id="creating-our-input-view">Creating our Input View</h3>
+<h2 id="creating-our-input-view">Creating our Input View</h2>
 
 <p>We have two options for <a href="https://developer.android.com/develop/ui">designing our UI</a> - the traditional “Views” method, and the newer “Jetpack Compose” method. <del>We’ll go through both for completeness, starting…</del> (On second thought, we’ll try Jetpack Compose when we implement our settings activity. I like to keep moving forward in these blog posts).</p>
-
-<hr />
-
-<h4 id="with-views">With “Views”</h4>
 
 <p>Almost everything you could want to know about views can be found</p>
 
@@ -188,7 +184,7 @@ class MorsoIME : InputMethodService() {
 
 <hr />
 
-<h5 id="creating-a-placeholder-layout">Creating a Placeholder Layout</h5>
+<h3 id="creating-a-placeholder-layout">Creating a Placeholder Layout</h3>
 <p>Create <code class="language-plaintext highlighter-rouge">res/morso.xml</code>:</p>
 <pre><code class="language-xml">
 &lt;?xml version="1.0" encoding="utf-8"?&gt;
@@ -216,7 +212,7 @@ class MorsoIME : InputMethodService() {
 
 <hr />
 
-<h5 id="creating-our-custom-morsoview">Creating our Custom MorsoView</h5>
+<h3 id="creating-our-custom-morsoview">Creating our Custom MorsoView</h3>
 
 <p>Create a new Kotlin class called MorsoView.</p>
 
@@ -245,7 +241,7 @@ class MorsoView @JvmOverloads constructor(
 <p>We could do both of these tasks in XML by extending a <code class="language-plaintext highlighter-rouge">Button</code> view (rather than a generic <code class="language-plaintext highlighter-rouge">View</code>) and using the <code class="language-plaintext highlighter-rouge">background</code> and <code class="language-plaintext highlighter-rouge">buttonText</code> attributes - or by <a href="https://developer.android.com/develop/ui/views/layout/custom-views/create-view#customattr">Defining Custom Attributes</a> for our totally custom view. I don’t have a great reason for setting properties programmatically, other than the fact that it’s fast.</p>
 
 <hr />
-<h5 id="overriding-onsizechanged">Overriding <code class="language-plaintext highlighter-rouge">onSizeChanged()</code></h5>
+<h3 id="overriding-onsizechanged">Overriding <code class="language-plaintext highlighter-rouge">onSizeChanged()</code></h3>
 
 <p>First, we’ll override the <code class="language-plaintext highlighter-rouge">onSizeChanged()</code> -</p>
 <blockquote>
@@ -265,7 +261,7 @@ override fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: In
 
 <hr />
 
-<h5 id="creating-a-paint-object-for-drawing-text">Creating a <code class="language-plaintext highlighter-rouge">Paint</code> Object for Drawing Text</h5>
+<h3 id="creating-a-paint-object-for-drawing-text">Creating a <code class="language-plaintext highlighter-rouge">Paint</code> Object for Drawing Text</h3>
 <p>We’re going to need a <code class="language-plaintext highlighter-rouge">Paint</code> object for drawing text:</p>
 
 <pre><code class="language-diff-kotlin diff-highlight">
@@ -289,7 +285,7 @@ class MorsoView @JvmOverloads constructor(
 </code></pre>
 
 <hr />
-<h5 id="drawing-our-view">Drawing our View</h5>
+<h3 id="drawing-our-view">Drawing our View</h3>
 <p>Next, we’ll draw our view by overriding <code class="language-plaintext highlighter-rouge">onDraw()</code> (we’ll also set the background color here):</p>
 
 <pre><code class="language-kotlin">
@@ -367,7 +363,7 @@ When  -->
 
 <hr />
 
-<h5 id="making-our-view-interactive">Making our View Interactive</h5>
+<h3 id="making-our-view-interactive">Making our View Interactive</h3>
 <p>The article for this section can be found <a href="https://developer.android.com/develop/ui/views/layout/custom-views/making-interactive">here</a>.</p>
 
 <blockquote>
@@ -456,7 +452,7 @@ class MorsoView @JvmOverloads constructor(
 
 <hr />
 
-<h5 id="representing-ui-state">Representing UI State</h5>
+<h3 id="representing-ui-state">Representing UI State</h3>
 <p>The main article for this section is <a href="https://developer.android.com/topic/architecture/ui-layer#define-ui-state">here</a>. I suggest reading it.</p>
 
 <p>Details on how IMEs handle config changes can be found <a href="https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)">here</a>.</p>
@@ -608,7 +604,7 @@ Mutable data fields from the viewmodel should **never** be exposed. -->
 
 <hr />
 
-<h5 id="storing-ui-data-for-our-input-service">Storing UI Data for our Input Service</h5>
+<h3 id="storing-ui-data-for-our-input-service">Storing UI Data for our Input Service</h3>
 <p>As it turns out, we don’t actually have to use viewmodels, because <code class="language-plaintext highlighter-rouge">InputServiceMethod</code>s <a href="https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)">don’t have to worry about configuration changes</a> - which is the main reason to use viewmodels (other than the seperation of ui from state, of course). As is often the case when traveling a bit off the beaten path, the <a href="https://github.com/android/architecture-components-samples/issues/137#issuecomment-327854042">answers are not always <em>totally</em> satisfactory</a>, though. Based on what I’ve read, it sounds like we can get away with a mere <a href="https://developer.android.com/topic/architecture/ui-layer/stateholders#choose_between_a_viewmodel_and_plain_class_for_a_state_holder">plain class for state holding</a>. Furthermore, we’ll make our UI state a <a href="https://en.wikipedia.org/wiki/Singleton_pattern">singleton</a> by using the <a href="https://stackoverflow.com/questions/51834996/singleton-class-in-kotlin">object keyword</a>.</p>
 
 <p>The following info is from <a href="https://developer.android.com/codelabs/basic-android-kotlin-training-viewmodel#4">this codelab</a>. Even though the codelab is about viewmodels, the same principles still apply to our plain state class.</p>
@@ -643,7 +639,7 @@ object MorsoUiState {
 
 <hr />
 
-<h5 id="updating-our-view-with-new-ui-data">Updating our View with New UI Data</h5>
+<h3 id="updating-our-view-with-new-ui-data">Updating our View with New UI Data</h3>
 
 <!-- The main article for this section can be found [here](https://developer.android.com/topic/libraries/data-binding/architecture). -->
 
@@ -766,7 +762,7 @@ class MorsoIME : InputMethodService() {
 
 <hr />
 
-<h5 id="resetting-our-background-text-after-a-delay">Resetting our Background Text After a Delay</h5>
+<h3 id="resetting-our-background-text-after-a-delay">Resetting our Background Text After a Delay</h3>
 <p>Add the following code to the <code class="language-plaintext highlighter-rouge">backgroundTextObserver</code>:</p>
 
 <pre><code class="language-diff-kotlin diff-highlight">
@@ -789,7 +785,7 @@ class MorsoIME : InputMethodService() {
 
 <hr />
 
-<h3 id="representing-morse-code">Representing Morse Code</h3>
+<h2 id="representing-morse-code">Representing Morse Code</h2>
 
 <p>I figure <a href="https://kotlinlang.org/docs/enum-classes.html#working-with-enum-constants">enums</a> are a decent way to represent Morse code - we’re dealing with a few dozen values that will never change.</p>
 
@@ -924,7 +920,7 @@ enum class Character(vararg var sequence: MorseSignal) {
 
 <hr />
 
-<h3 id="using-morso-for-input">Using Morso for Input</h3>
+<h2 id="using-morso-for-input">Using Morso for Input</h2>
 
 <p>Now we can start to create an actual input method! Again, the most helpful article for this section can be found <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method">here</a>.</p>
 
@@ -940,7 +936,7 @@ enum class Character(vararg var sequence: MorseSignal) {
 
 <hr />
 
-<h4 id="translating-gestures-to-morse-code">Translating Gestures to Morse Code</h4>
+<h2 id="translating-gestures-to-morse-code">Translating Gestures to Morse Code</h2>
 <p>Taps are already handled in our <code class="language-plaintext highlighter-rouge">MorsoGestureListener</code>. However - it’s a bit picky about what counts as a tap and doesn’t register gestures like triple-taps. Additionally, we should allow the user to customize the dot time because the dash and space duration will be defined as multiples of the base dot time.</p>
 
 <p>Let’s add to <code class="language-plaintext highlighter-rouge">MorsoGestureListener</code>:</p>
@@ -1050,7 +1046,7 @@ fun onShortPause(e: MotionEvent): Boolean {
 
 <hr />
 
-<h4 id="implementing-candidates-view">Implementing Candidates View</h4>
+<h2 id="implementing-candidates-view">Implementing Candidates View</h2>
 <p>The <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#CandidateView">candidates view</a> is something you’re likely familiar with:</p>
 
 <p><img src="/assets/images/blog-images/morso/candidates-view.png" alt="Candidates View" /></p>
@@ -1169,7 +1165,7 @@ class MorsoCandidateView @JvmOverloads constructor(
 
 <hr />
 
-<h5 id="updating-candidates">Updating Candidates</h5>
+<h3 id="updating-candidates">Updating Candidates</h3>
 <blockquote>
   <p><a href="https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onCreateCandidatesView()">To change the candidates view after the first one is created by setCandidatesViewShown(), use setCandidatesView(android.view.View).</a></p>
 </blockquote>
@@ -1449,7 +1445,7 @@ class MorsoIME : InputMethodService() {
 <p><span class="todo">I just found out that there’s a widget called <a href="https://developer.android.com/reference/android/widget/TextSwitcher">TextSwitcher</a> which is useful for animating text labels. We can implement them later in the series.</span></p>
 
 <hr />
-<h4 id="sending-input">Sending Input</h4>
+<h2 id="sending-input">Sending Input</h2>
 
 <p><a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#SendText">Main article</a></p>
 
@@ -1632,7 +1628,7 @@ class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
 
 <p><img src="/assets/images/blog-images/morso/part-1-complete.gif" alt="Morso: part one" /></p>
 
-<h3 id="to-be-continued">To be continued</h3>
+<h2 id="to-be-continued">To be continued</h2>
 
 <p>In the next part of this series, we can focus on making the user experience more polished by adding more visual &amp; haptic feedback, creating a settings screen, and <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#GeneralDesign">addressing more general IME considerations</a>.</p>]]></content><author><name>Evan</name></author><category term="android" /><category term="kotlin" /><category term="java" /><summary type="html"><![CDATA[I need to learn Morse code if I want to be able to communicate with my *cool* neighbors.]]></summary></entry><entry><title type="html">Audio Plugins</title><link href="eldun.github.io/2022/10/20/clap-plugins-part-one.html" rel="alternate" type="text/html" title="Audio Plugins" /><published>2022-10-20T00:00:00-04:00</published><updated>2022-10-20T00:00:00-04:00</updated><id>eldun.github.io/2022/10/20/clap-plugins-part-one</id><content type="html" xml:base="eldun.github.io/2022/10/20/clap-plugins-part-one.html"><![CDATA[<h2 id="an-introduction">An Introduction</h2>
 <hr />
