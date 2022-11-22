@@ -34,7 +34,7 @@ Almost all of the code we'll be concerned with will be contained within `plugin_
 
 #### Info and Dexcriptors 
 The first step is to accurately describe our plugin, of course:
-```cpp
+<pre><code class="language-cpp">
 
 static clap_plugin_descriptor _descriptor =
 {
@@ -49,7 +49,7 @@ static clap_plugin_descriptor _descriptor =
   "Arpeggiator",
   _features
 };
-```
+</code></pre>
 
 
 
