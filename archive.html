@@ -229,7 +229,7 @@
       
         
         
-          <span class="archive-month empty-month">Nov</span>
+          <a href="#archive-2022-11" class="archive-month">Nov</a>
         
       
         
@@ -393,6 +393,19 @@
     
       
       
+        <h3 id="archive-2022-11">
+          November, 2022
+        </h3>
+
+        <ul class="archive-list">
+          
+            <li>
+              <a href="/2022/11/21/morso-pt-one.html">Morso Creating a Morse Code Android Application with Kotlin</a>
+            </li>
+            <br>
+          
+        </ul>
+      
     
       
       
@@ -403,7 +416,7 @@
         <ul class="archive-list">
           
             <li>
-              <a href="/2022/10/20/clap-plugins-part-one.html">CLAP Plugins Part 1/3: Learning about CLAP</a>
+              <a href="/2022/10/20/clap-plugins-part-one.html">Audio Plugins Part 1/3: Learning about CLAP</a>
             </li>
             <br>
           
@@ -572,20 +585,26 @@
       </footer>
     </main>
 
-    <!-- prism syntax  -->
+    <!-- link to Prism Syntax Highlighter -->
     <script src="/js/site-scripts/prism.js"></script>
-    <script src ='/assets/prism-components'></script>
-    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+
+    <!-- Autoloader configuration (https://prismjs.com/plugins/autoloader/) -->
+    <script> 
+      Prism.plugins.autoloader.languages_path = '/assets/prism-components/'; 
+    </script> 
+
+<!-- Diff-highlighter is very picky about whitespace -->
+    <script>Prism.plugins.NormalizeWhitespace.setDefaults({
       'remove-trailing': true,
       'remove-indent': true,
       'left-trim': false,
       'right-trim': true,
-      'break-lines': 80,
+      // 'break-lines': 80,
       'indent': 0,
       'remove-initial-line-feed': true,
       'tabs-to-spaces': 4,
-      'spaces-to-tabs': 4
-    });</script> -->
+      // 'spaces-to-tabs': 4
+    });</script>
     
 
       <!-- Back to top -->

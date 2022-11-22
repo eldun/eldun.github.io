@@ -28,8 +28,8 @@
 <meta property="og:title" content="Ray Tracing in One Weekend:" />
 <meta name="author" content="Evan" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it." />
-<meta property="og:description" content="It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it." />
+<meta name="description" content="It took me long enough, but I finally dipped my toes into the waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it." />
+<meta property="og:description" content="It took me long enough, but I finally dipped my toes into the waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it." />
 <link rel="canonical" href="eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one.html" />
 <meta property="og:url" content="eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one.html" />
 <meta property="og:type" content="article" />
@@ -37,7 +37,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Ray Tracing in One Weekend:" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2020-05-20T00:00:00-04:00","datePublished":"2020-05-20T00:00:00-04:00","description":"It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.","headline":"Ray Tracing in One Weekend:","mainEntityOfPage":{"@type":"WebPage","@id":"eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one.html"},"url":"eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2020-05-20T00:00:00-04:00","datePublished":"2020-05-20T00:00:00-04:00","description":"It took me long enough, but I finally dipped my toes into the waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.","headline":"Ray Tracing in One Weekend:","mainEntityOfPage":{"@type":"WebPage","@id":"eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one.html"},"url":"eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one.html"}</script>
 <!-- End Jekyll SEO tag -->
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -188,7 +188,7 @@
 <a id="continue-reading-point"></a>
 
 <div class="excerpt">
-<p>It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.</p>
+<p>It took me long enough, but I finally dipped my toes into the waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.</p>
 
 </div>
 <!--end-excerpt-->
@@ -204,35 +204,38 @@
 
 <ul class="part-navigator">
     
-        
     
-        
-
-        <li>
-                    <a href="/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title" class="btn"
-                        
-                            class="btn inactive"
-                        
-                    >Part One - An Introduction</a>
-
-                </li>
-        
     
-        
-
-        <li>
-                    <a href="/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title" class="btn"
-                        
-                    >Part Two - The First Weekend</a>
-
-                </li>
-        
     
-        
+
+    <li>
+        <a href="/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title" class="btn"
+                                            
+                                            class="btn inactive"
+                                            
+                                            >Part One - An Introduction</a>
+
+    </li>
     
-        
+    
+    
+
+    <li>
+        <a href="/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title" class="btn"
+                                            
+                                            >Part Two - The First Weekend</a>
+
+    </li>
+    
+    
+    
+    
+    
+    
+    
     
 </ul>
+
 
 <ul id="toc" class="section-nav">
 <li class="toc-entry toc-h2"><a href="#what-is-ray-tracing">What is Ray Tracing?</a></li>
@@ -587,20 +590,26 @@ Melee(2001)">
       </footer>
     </main>
 
-    <!-- prism syntax  -->
+    <!-- link to Prism Syntax Highlighter -->
     <script src="/js/site-scripts/prism.js"></script>
-    <script src ='/assets/prism-components'></script>
-    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+
+    <!-- Autoloader configuration (https://prismjs.com/plugins/autoloader/) -->
+    <script> 
+      Prism.plugins.autoloader.languages_path = '/assets/prism-components/'; 
+    </script> 
+
+<!-- Diff-highlighter is very picky about whitespace -->
+    <script>Prism.plugins.NormalizeWhitespace.setDefaults({
       'remove-trailing': true,
       'remove-indent': true,
       'left-trim': false,
       'right-trim': true,
-      'break-lines': 80,
+      // 'break-lines': 80,
       'indent': 0,
       'remove-initial-line-feed': true,
       'tabs-to-spaces': 4,
-      'spaces-to-tabs': 4
-    });</script> -->
+      // 'spaces-to-tabs': 4
+    });</script>
     
 
       <!-- Back to top -->

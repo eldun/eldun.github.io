@@ -2,7 +2,17 @@
   
     {
 
-      "title"    : "CLAP Plugins",
+      "title"    : "Morso",
+      "subtitle"    : "Creating a Morse Code Android Application with Kotlin",
+      "tags"     : "android, kotlin, java",
+      "date"     : "2022-11-21 00:00:00 -0500",
+      "url"      : "/2022/11/21/morso-pt-one.html"
+
+    } ,
+  
+    {
+
+      "title"    : "Audio Plugins",
       "subtitle"    : "Part 1/3: Learning about CLAP",
       "tags"     : "c++, music",
       "date"     : "2022-10-20 00:00:00 -0400",

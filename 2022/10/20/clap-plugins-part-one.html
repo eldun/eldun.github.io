@@ -47,9 +47,9 @@
   <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>CLAP Plugins</title>
+<title>Audio Plugins</title>
 <meta name="generator" content="Jekyll v4.2.2" />
-<meta property="og:title" content="CLAP Plugins" />
+<meta property="og:title" content="Audio Plugins" />
 <meta name="author" content="Evan" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="What does it take to build an audio plugin?" />
@@ -59,9 +59,9 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2022-10-20T00:00:00-04:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="CLAP Plugins" />
+<meta property="twitter:title" content="Audio Plugins" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2022-10-20T00:00:00-04:00","datePublished":"2022-10-20T00:00:00-04:00","description":"What does it take to build an audio plugin?","headline":"CLAP Plugins","mainEntityOfPage":{"@type":"WebPage","@id":"eldun.github.io/2022/10/20/clap-plugins-part-one.html"},"url":"eldun.github.io/2022/10/20/clap-plugins-part-one.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2022-10-20T00:00:00-04:00","datePublished":"2022-10-20T00:00:00-04:00","description":"What does it take to build an audio plugin?","headline":"Audio Plugins","mainEntityOfPage":{"@type":"WebPage","@id":"eldun.github.io/2022/10/20/clap-plugins-part-one.html"},"url":"eldun.github.io/2022/10/20/clap-plugins-part-one.html"}</script>
 <!-- End Jekyll SEO tag -->
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -198,14 +198,14 @@
 
     <main id="content" class="main-content" role="main">
       <div class="post-header inactive">
-<h1 id="post-title">CLAP Plugins</h1>
+<h1 id="post-title">Audio Plugins</h1>
 <h3 id="post-subtitle">Part 1/3: Learning about CLAP</h3>
 <div class="post-date">
     <i class="fas fa-calendar"></i> <time>20 Oct 2022</time>
 </div>
 </div>
 
-<img class="post-image" src="/assets/images/blog-images/clap/part-one/sine-wave.jpg" alt="Image of sine wave from http://www.tronola.com/moorepage/Sine.html" title="">
+<img class="post-image" src="/assets/images/blog-images/audio-plugins/part-one/sine-wave.jpg" alt="Image of sine wave from http://www.tronola.com/moorepage/Sine.html" title="">
 
 
 
@@ -318,8 +318,8 @@ I originally was going to create a VST3 synth([I even started a blog post :c](ht
 <p>There are thousands upon thousands of plugins out there - ranging from minimalist retro synths and complex rhythm sequencers to Karplus-Strong string modelers and destructive bit-crushers. Here are some of my favorites:</p>
 
 <p><span class="row-fill">
-<img src="/assets/images/blog-images/clap/part-one/vital.jpg" alt="Vital">
-<img src="/assets/images/blog-images/clap/part-one/dexed.png" alt="Dexed">
+<img src="/assets/images/blog-images/audio-plugins/part-one/vital.jpg" alt="Vital">
+<img src="/assets/images/blog-images/audio-plugins/part-one/dexed.png" alt="Dexed">
 </span>
 <span class="row-fill">
 <a href="vital.audio">Vital</a>
@@ -327,8 +327,8 @@ I originally was going to create a VST3 synth([I even started a blog post :c](ht
 </span></p>
 
 <p><span class="row-fill">
-<img src="/assets/images/blog-images/clap/part-one/valhalla-delay.webp" alt="Valhalla Freq Echo">
-<img src="/assets/images/blog-images/clap/part-one/blue-arp.png" alt="BlueARP Arpeggiator">
+<img src="/assets/images/blog-images/audio-plugins/part-one/valhalla-delay.webp" alt="Valhalla Freq Echo">
+<img src="/assets/images/blog-images/audio-plugins/part-one/blue-arp.png" alt="BlueARP Arpeggiator">
 </span> 
 <span class="row-fill">
 <a href="https://valhalladsp.com/shop/delay/valhalla-freq-echo/">Valhalla Freq Echo</a>
@@ -336,7 +336,7 @@ I originally was going to create a VST3 synth([I even started a blog post :c](ht
 </span></p>
 
 <p>It should be noted that although flashy UIs are fun and often very useful, they’re not necessary. Look at Reaper’s built-in synth - ReaSynth:
-<img src="/assets/images/blog-images/clap/reasynth.png" alt="ReaSynth"></p>
+<img src="/assets/images/blog-images/audio-plugins/part-one/reasynth.png" alt="ReaSynth"></p>
 
 <p>Many plugin effects are also often very sparse.</p>
 
@@ -416,7 +416,7 @@ happens when they are enabled.
 
 <p>Just to make sure everything was set up correctly, I installed <a href="https://github.com/asb2m10/dexed">dexed</a> from source and tested it in Reaper.</p>
 
-<p><img src="/assets/images/blog-images/clap-synth/reaper-clap-dexed.png" alt="The CLAP version of dexed running in Reaper"></p>
+<p><img src="/assets/images/blog-images/audio-plugins-synth/reaper-clap-dexed.png" alt="The CLAP version of dexed running in Reaper"></p>
 
 <hr>
 <h2 id="learning-to-create-clap-plugins">
@@ -426,7 +426,7 @@ happens when they are enabled.
 <a class="anchor" href="#where-to-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Where to Start?</h3>
 <p>I don’t know much about creating plugins, and unfortunately, it looks like the <a href="https://cleveraudio.org/developers-getting-started/">“Getting Started” page has a ways to go</a>.</p>
 
-<p><img src="/assets/images/blog-images/clap/part-one/clap-getting-started.png" alt="CLAP Documentation Under Construction"></p>
+<p><img src="/assets/images/blog-images/audio-plugins/part-one/clap-getting-started.png" alt="CLAP Documentation Under Construction"></p>
 
 <p>The way forward is through <a href="https://github.com/free-audio/clap#examples">example</a> and <a href="https://www.youtube.com/playlist?list=PLqRWeSPiYQ64DhTiE2dEIF5xRIw0s5XLS">this youtube playlist</a>(Developing with CLAP - Jürgen Moßgraber).</p>
 
@@ -511,8 +511,8 @@ Static builds are convenient for deployment as they are self containded. They us
 
 <p>To build these examples, all we have to do(on Linux) is navigate to <code class="language-plaintext highlighter-rouge">build/lin</code> and execute the makefile there  with <code class="language-plaintext highlighter-rouge">make</code>.</p>
 
-<p><img src="/assets/images/blog-images/clap/part-one/simple-clap-example-1.gif" alt="Simple CLAP Example 1"> 
-<img src="/assets/images/blog-images/clap/part-one/simple-clap-example-2.gif" alt="Simple CLAP Example 2"></p>
+<p><img src="/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-1.gif" alt="Simple CLAP Example 1"> 
+<img src="/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-2.gif" alt="Simple CLAP Example 2"></p>
 
 <p>The resulting <code class="language-plaintext highlighter-rouge">.clap</code> file should show up right next to the makefile. If you’d like to try these plugins out, you can add our current directory to your host’s CLAP path or copy the generated CLAP file to <code class="language-plaintext highlighter-rouge">usr/local/lib</code> - the default path for CLAP plugins.</p>
 
@@ -535,7 +535,7 @@ Static builds are convenient for deployment as they are self containded. They us
 <a class="anchor" href="#the-plugin_impl-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code class="language-plaintext highlighter-rouge">plugin_impl</code> Files</h5>
 <p>These are our actual plugins! Here is where we describe our plugins and their parameters, as well as how they behave, and what they look like (at least in this example).
 Let’s take a look at the tone generator plugin once more:
-<img src="/assets/images/blog-images/clap/part-one/simple-clap-example-2.gif" alt="Simple CLAP Example 2"></p>
+<img src="/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-2.gif" alt="Simple CLAP Example 2"></p>
 
 <p>You can see how the turning of knobs is continually processed in the <code class="language-plaintext highlighter-rouge">process</code> functions. Things are kicked off with this one:</p>
 <pre><code class="language-cpp">
@@ -670,7 +670,7 @@ clap_process_status plugin_impl__process(const clap_process *process)
 <hr>
 <h3 id="closing-thoughts">
 <a class="anchor" href="#closing-thoughts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Closing Thoughts</h3>
-<p>Creating audio plugins from scratch is a bit more involved than I expected… I was hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler.</p>
+<p>Creating audio plugins from scratch turned out to be a bit less straightforward than I expected. I was especially hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler.</p>
 
   </div>
 
@@ -698,20 +698,26 @@ clap_process_status plugin_impl__process(const clap_process *process)
       </footer>
     </main>
 
-    <!-- prism syntax  -->
+    <!-- link to Prism Syntax Highlighter -->
     <script src="/js/site-scripts/prism.js"></script>
-    <script src ='/assets/prism-components'></script>
-    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+
+    <!-- Autoloader configuration (https://prismjs.com/plugins/autoloader/) -->
+    <script> 
+      Prism.plugins.autoloader.languages_path = '/assets/prism-components/'; 
+    </script> 
+
+<!-- Diff-highlighter is very picky about whitespace -->
+    <script>Prism.plugins.NormalizeWhitespace.setDefaults({
       'remove-trailing': true,
       'remove-indent': true,
       'left-trim': false,
       'right-trim': true,
-      'break-lines': 80,
+      // 'break-lines': 80,
       'indent': 0,
       'remove-initial-line-feed': true,
       'tabs-to-spaces': 4,
-      'spaces-to-tabs': 4
-    });</script> -->
+      // 'spaces-to-tabs': 4
+    });</script>
     
 
       <!-- Back to top -->

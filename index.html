@@ -173,16 +173,35 @@
       <ul class="post-list">
 
 <li class="post">
+  <a href="/2022/11/21/morso-pt-one.html#post-title" class="post-header">
+    <div>
+      <h1> Morso</h1>
+      <h3> Creating a Morse Code Android Application with Kotlin</h3>
+    </div>
+  </a>
+  <div class="post-date">
+    <i class="fas fa-calendar"></i> <time>21 Nov 2022</time>
+  </div>
+  <img class="post-image" src="/assets/images/blog-images/morso/F.png" alt="" title="An old telegraph! Source: https://www.history.com/topics/inventions/telegraph" />
+  <div class="excerpt"><p>I need to learn Morse code if I want to be able to communicate with my <em>cool</em> neighbors.</p>
+</div>
+  <div class="post-button">
+    <a href="/2022/11/21/morso-pt-one.html#continue-reading-point" class="btn">Continue reading »</a>
+  </div>
+</li>
+<hr />
+
+<li class="post">
   <a href="/2022/10/20/clap-plugins-part-one.html#post-title" class="post-header">
     <div>
-      <h1> CLAP Plugins</h1>
+      <h1> Audio Plugins</h1>
       <h3> Part 1/3: Learning about CLAP</h3>
     </div>
   </a>
   <div class="post-date">
     <i class="fas fa-calendar"></i> <time>20 Oct 2022</time>
   </div>
-  <img class="post-image" src="/assets/images/blog-images/clap/part-one/sine-wave.jpg" alt="Image of sine wave from http://www.tronola.com/moorepage/Sine.html" title="" />
+  <img class="post-image" src="/assets/images/blog-images/audio-plugins/part-one/sine-wave.jpg" alt="Image of sine wave from http://www.tronola.com/moorepage/Sine.html" title="" />
   <div class="excerpt"><p>What does it take to build an audio plugin?</p>
 </div>
   <div class="post-button">
@@ -240,7 +259,7 @@
     <i class="fas fa-calendar"></i> <time>20 May 2020</time>
   </div>
   <img class="post-image" src="/assets/images/blog-images/path-tracer/introduction/ball.png" alt="Path traced sphere render." title="Render of a path traced sphere." />
-  <div class="excerpt"><p>It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.</p>
+  <div class="excerpt"><p>It took me long enough, but I finally dipped my toes into the waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.</p>
 </div>
   <div class="post-button">
     <a href="/2020/05/20/ray-tracing-in-one-weekend-part-one.html#continue-reading-point" class="btn">Continue reading »</a>
@@ -275,20 +294,26 @@
       </footer>
     </main>
 
-    <!-- prism syntax  -->
+    <!-- link to Prism Syntax Highlighter -->
     <script src="/js/site-scripts/prism.js"></script>
-    <script src ='/assets/prism-components'></script>
-    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+
+    <!-- Autoloader configuration (https://prismjs.com/plugins/autoloader/) -->
+    <script> 
+      Prism.plugins.autoloader.languages_path = '/assets/prism-components/'; 
+    </script> 
+
+<!-- Diff-highlighter is very picky about whitespace -->
+    <script>Prism.plugins.NormalizeWhitespace.setDefaults({
       'remove-trailing': true,
       'remove-indent': true,
       'left-trim': false,
       'right-trim': true,
-      'break-lines': 80,
+      // 'break-lines': 80,
       'indent': 0,
       'remove-initial-line-feed': true,
       'tabs-to-spaces': 4,
-      'spaces-to-tabs': 4
-    });</script> -->
+      // 'spaces-to-tabs': 4
+    });</script>
     
 
       <!-- Back to top -->

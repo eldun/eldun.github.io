@@ -1,4 +1,1640 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2022-10-26T17:16:13-04:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">CLAP Plugins</title><link href="eldun.github.io/2022/10/20/clap-plugins-part-one.html" rel="alternate" type="text/html" title="CLAP Plugins" /><published>2022-10-20T00:00:00-04:00</published><updated>2022-10-20T00:00:00-04:00</updated><id>eldun.github.io/2022/10/20/clap-plugins-part-one</id><content type="html" xml:base="eldun.github.io/2022/10/20/clap-plugins-part-one.html"><![CDATA[<h2 id="an-introduction">An Introduction</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2022-11-21T20:19:51-05:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">Morso</title><link href="eldun.github.io/2022/11/21/morso-pt-one.html" rel="alternate" type="text/html" title="Morso" /><published>2022-11-21T00:00:00-05:00</published><updated>2022-11-21T00:00:00-05:00</updated><id>eldun.github.io/2022/11/21/morso-pt-one</id><content type="html" xml:base="eldun.github.io/2022/11/21/morso-pt-one.html"><![CDATA[<h2 id="why-morse-code">Why Morse Code?</h2>
+<p>One of my least favorite things in this world is having to yell in someone’s ear. Usually, I don’t have to. Occasionally, though, I find myself at a bar.</p>
+
+<p>One of my favorite things in this world is the process of getting better at useless-adjacent things. Rather than spending hours learning <a href="https://en.wikipedia.org/wiki/American_Sign_Language">American Sign Language</a> (which <strong>is</strong> on my to-do list), I could just learn 26 characters in <a href="https://en.wikipedia.org/wiki/Morse_code">Morse code</a> and tap out a message on my friend’s shoulder!</p>
+
+<p>I already learned the <a href="https://en.wikipedia.org/wiki/Dvorak_keyboard_layout">Dvorak keyboard layout</a> (not recommended) - which is unsurprisingly pretty similar to the structure of Morse code (look at the home row)! Obviously, the most used letters are the most accessible.</p>
+
+<p><img src="/assets/images/blog-images/morso/dvorak-layout.png" alt="Dvorak layout" /></p>
+
+<div style="background-color: white">
+<img src="/assets/images/blog-images/morso/morse-code-tree.png" alt="Morse code structure" />
+<img src="/assets/images/blog-images/morso/morse-code-chart.png" alt="Morse code chart" />
+</div>
+
+<p>Additionally, the scope of this project seems perfect for getting back into Android development(sorry <a href="https://github.com/eldun/SeeNatural">SeeNatural</a>) and learning Kotlin.</p>
+
+<hr />
+
+<h2 id="the-general-idea">The General Idea</h2>
+<p>I believe the best way to learn is by doing, which is why I want to create a custom Morse keyboard. Android has a useful “language/input” button for switching the keyboard quickly:
+<img src="/assets/images/blog-images/morso/keyboard-button.png" alt="Android keyboard button" /></p>
+
+<p>I’m not trying to reinvent the keyboard - just creating a handy, accessible practice tool. For that reason, I’ll be structuring my application in much the same way that GBoard does - a keyboard with some settings and utilities accessible from the top row.</p>
+
+<p>Some practice ideas I’ve had are as follows:</p>
+
+<ul>
+  <li>Reading/Typing Morse</li>
+  <li>Reading Morse through vibration/sound/flashing</li>
+  <li>Time Trials</li>
+</ul>
+
+<p>Morso will be written in <a href="https://developer.android.com/kotlin/first">Kotlin</a>, Android’s “official” language.</p>
+
+<hr />
+<h2 id="getting-started">Getting Started</h2>
+<p>The most obvious first step to me is to create an input <a href="https://developer.android.com/reference/android/app/Service">service</a> that can be used system-wide. The <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method">Android Developer article on input methods</a> and <a href="https://stackoverflow.com/a/44939816">this StackOverflow answer</a> will be exceedingly helpful.</p>
+
+<hr />
+<h3 id="declaring-ime-components-in-the-manifest">Declaring IME Components in the Manifest</h3>
+<p>Official documentation for this step can be found <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#DefiningIME">here</a>, but we’re basically going to throw a snippet into our app’s <a href="https://developer.android.com/guide/topics/manifest/manifest-intro"><code class="language-plaintext highlighter-rouge">AndroidManifest.xml</code></a>.</p>
+
+<blockquote>
+  <p>The following snippet declares an IME service. It requests the permission BIND_INPUT_METHOD to allow the service to connect the IME to the system, sets up an intent filter that matches the action android.view.InputMethod, and defines metadata for the IME:</p>
+</blockquote>
+
+<pre><code class="language-xml">
+&lt;!-- Declares the input method service --&gt;
+&lt;service android:name="MorsoIME"
+    android:label="@string/morso_label"
+    android:permission="android.permission.BIND_INPUT_METHOD"&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.view.InputMethod" /&gt;
+    &lt;/intent-filter&gt;
+    &lt;meta-data android:name="android.view.im"
+               android:resource="@xml/method" /&gt;
+&lt;/service&gt;
+</code></pre>
+
+<p>I was notified of an error about how <code class="language-plaintext highlighter-rouge">android:exported</code> must be set to <code class="language-plaintext highlighter-rouge">true</code> or <code class="language-plaintext highlighter-rouge">false</code> - I set it to true. You can read about the exported attribute <a href="https://developer.android.com/guide/topics/manifest/service-element#exported">here</a>.</p>
+
+<p>I was also warned that the <code class="language-plaintext highlighter-rouge">android.preference</code> library is deprecated when I created the <code class="language-plaintext highlighter-rouge">xml/method</code> file. I added this line to my <code class="language-plaintext highlighter-rouge">build.gradle</code> (Module: app):</p>
+
+<pre><code class="language-kotlin">
+dependencies {
+    ...
+    implementation "androidx.preference:preference:1.1.0"
+    ...
+}
+</code></pre>
+
+<p><a href="https://stackoverflow.com/a/56833739">Source</a></p>
+
+<p>Another issue I was having was that I was unable to select Morso as an input method. The reason why was that I had not yet added any <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#IMESubTypes">subtypes</a> to <code class="language-plaintext highlighter-rouge">res/xml/method.xml</code>. For now, you can paste this minimal example into <code class="language-plaintext highlighter-rouge">res/xml/method.xml</code>:</p>
+
+<pre><code class="language-xml">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;input-method
+    xmlns:android="http://schemas.android.com/apk/res/android"&gt;
+
+    &lt;subtype
+        android:imeSubtypeMode="keyboard"/&gt;
+
+&lt;/input-method&gt;
+</code></pre>
+
+<p>We will cover subtypes in further detail later on in this series.</p>
+
+<p>My complete <code class="language-plaintext highlighter-rouge">AndroidManifest.xml</code> looks like this (I have no activities, as you can see.):</p>
+
+<pre><code class="language-xml">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="net.eldun.morso"&gt;
+
+    &lt;application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Morso" /&gt;
+
+    &lt;!-- Declares the input method service --&gt;
+    &lt;service android:name="MorsoIME"
+        android:label="@string/morso_label"
+        android:permission="android.permission.BIND_INPUT_METHOD"
+        android:exported="true"&gt;
+        &lt;intent-filter&gt;
+            &lt;action android:name="android.view.InputMethod" /&gt;
+        &lt;/intent-filter&gt;
+        &lt;meta-data android:name="android.view.im"
+            android:resource="@xml/method" /&gt;
+    &lt;/service&gt;
+
+&lt;/manifest&gt;
+</code></pre>
+
+<hr />
+<h3 id="declaring-the-settings-activity-for-the-ime">Declaring the Settings Activity for the IME</h3>
+
+<blockquote>
+  <p>This next snippet declares the settings activity for the IME. It has an intent filter for ACTION_MAIN that indicates this activity is the main entry point for the IME application:</p>
+</blockquote>
+
+<!-- Optional: an activity for controlling the IME settings -->
+<activity android:name="MorsoIMESettings" android:label="@string/morso_settings">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+    </intent-filter>
+</activity>
+
+<blockquote>
+  <p>You can also provide access to the IME’s settings directly from its UI.</p>
+</blockquote>
+
+<p>We will create the settings screen later on in this series.</p>
+
+<hr />
+
+<h3 id="creating-our-morsoime-class">Creating our MorsoIME Class</h3>
+<p>You may have noticed that we have a warning that a service by the name of <code class="language-plaintext highlighter-rouge">MorsoIME</code> could not be found! Go ahead and create a new Kotlin class - <code class="language-plaintext highlighter-rouge">MorsoIME</code> - that extends <code class="language-plaintext highlighter-rouge">InputMethodService</code>:</p>
+
+<blockquote>
+  <p>The central part of an IME is a service component, a class that extends <a href="https://developer.android.com/reference/android/inputmethodservice/InputMethodService">InputMethodService</a>. In addition to implementing the normal <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#InputMethodLifecycle">service lifecycle</a>, this class has callbacks for providing your IME’s UI, handling user input, and delivering text to the field that currently has focus. By default, the <code class="language-plaintext highlighter-rouge">InputMethodService</code> class provides most of the implementation for managing the state and visibility of the IME and communicating with the current input field.</p>
+</blockquote>
+
+<p>This is what our placeholder <code class="language-plaintext highlighter-rouge">MorsoIME</code> looks like (we’ll create our UI in the next section):</p>
+
+<pre><code class="language-kotlin">
+class MorsoIME : InputMethodService() {
+
+    override fun onCreateInputView(): View {
+        return layoutInflater.inflate(R.layout.input, null).apply {
+            if (this is MorsoView) {
+                setOnKeyboardActionListener(this)
+//                keyboard = latinKeyboard
+            }
+        }
+    }
+
+    private fun setOnKeyboardActionListener(action : MorsoIME) {
+
+    }
+
+}
+</code></pre>
+<p>If you’re confused by that <code class="language-plaintext highlighter-rouge">apply</code> block, read about Kotlin’s <a href="https://kotlinlang.org/docs/scope-functions.html">scope functions</a> and <a href="https://kotlinlang.org/docs/lambdas.html">higher-order functions</a>.</p>
+
+<hr />
+
+<h3 id="creating-our-input-view">Creating our Input View</h3>
+
+<p>We have two options for <a href="https://developer.android.com/develop/ui">designing our UI</a> - the traditional “Views” method, and the newer “Jetpack Compose” method. <del>We’ll go through both for completeness, starting…</del> (On second thought, we’ll try Jetpack Compose when we implement our settings activity. I like to keep moving forward in these blog posts).</p>
+
+<hr />
+
+<h4 id="with-views">With “Views”</h4>
+
+<p>Almost everything you could want to know about views can be found</p>
+
+<ul>
+  <li><a href="https://developer.android.com/guide/topics/ui/how-android-draws">here</a> (how android draws views),</li>
+  <li><a href="https://developer.android.com/develop/ui/views/layout/declaring-layout">here</a> (layouts),</li>
+  <li><a href="https://developer.android.com/develop/ui/views/layout/custom-views/custom-components">here</a> (creating custom components),</li>
+  <li>and <a href="https://developer.android.com/codelabs/advanced-android-kotlin-training-custom-views#0">here</a> (a codelab on creating custom views).</li>
+</ul>
+
+<hr />
+
+<h5 id="creating-a-placeholder-layout">Creating a Placeholder Layout</h5>
+<p>Create <code class="language-plaintext highlighter-rouge">res/morso.xml</code>:</p>
+<pre><code class="language-xml">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"&gt;
+
+    &lt;ImageView
+        android:id="@+id/morsoView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_launcher_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" /&gt;
+
+&lt;/androidx.constraintlayout.widget.ConstraintLayout&gt;
+</code></pre>
+<p><img src="/assets/images/blog-images/morso/android-placeholder.png" alt="Placeholder View" /></p>
+
+<p>Note that setting the <code class="language-plaintext highlighter-rouge">ImageView</code> dimensions to <code class="language-plaintext highlighter-rouge">0dp</code> is equivalent to <code class="language-plaintext highlighter-rouge">match_constraint</code>.</p>
+
+<p>Once we create our custom <code class="language-plaintext highlighter-rouge">MorsoView</code> class, we’ll replace the <code class="language-plaintext highlighter-rouge">&lt;ImageView&gt;</code> tag with <code class="language-plaintext highlighter-rouge">&lt;net.eldun.morso.MorsoView&gt;</code>.</p>
+
+<hr />
+
+<h5 id="creating-our-custom-morsoview">Creating our Custom MorsoView</h5>
+
+<p>Create a new Kotlin class called MorsoView.</p>
+
+<p>Modify the class definition to extend View.</p>
+
+<p>Click on View and then click the red bulb. Choose Add Android View constructors using ‘@JvmOverloads’. Android Studio adds the constructor from the View class. The @JvmOverloads annotation instructs the Kotlin compiler to generate overloads for this function that substitute default parameter values.</p>
+
+<pre><code class="language-kotlin">
+package net.eldun.morso
+
+import android.content.Context
+import android.util.AttributeSet
+import android.view.View
+
+class MorsoView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
+
+}
+</code></pre>
+
+<p>Now let’s follow the steps necessary to <a href="https://developer.android.com/codelabs/advanced-android-kotlin-training-custom-views#4">draw a custom view</a>. How about we start with a black rectangle with “Morso” in the center?</p>
+
+<p>We could do both of these tasks in XML by extending a <code class="language-plaintext highlighter-rouge">Button</code> view (rather than a generic <code class="language-plaintext highlighter-rouge">View</code>) and using the <code class="language-plaintext highlighter-rouge">background</code> and <code class="language-plaintext highlighter-rouge">buttonText</code> attributes - or by <a href="https://developer.android.com/develop/ui/views/layout/custom-views/create-view#customattr">Defining Custom Attributes</a> for our totally custom view. I don’t have a great reason for setting properties programmatically, other than the fact that it’s fast.</p>
+
+<hr />
+<h5 id="overriding-onsizechanged">Overriding <code class="language-plaintext highlighter-rouge">onSizeChanged()</code></h5>
+
+<p>First, we’ll override the <code class="language-plaintext highlighter-rouge">onSizeChanged()</code> -</p>
+<blockquote>
+  <p>The onSizeChanged() method is called any time the view’s size changes, including the first time it is drawn when the layout is inflated. Override onSizeChanged() to calculate positions, dimensions, and any other values related to your custom view’s size, instead of recalculating them every time you draw.</p>
+</blockquote>
+
+<p>Add member floats <code class="language-plaintext highlighter-rouge">centerX</code> and <code class="language-plaintext highlighter-rouge">centerY</code> to our <code class="language-plaintext highlighter-rouge">MorsoView</code> class, and then calculate them in <code class="language-plaintext highlighter-rouge">onSizeChanged</code></p>
+
+<pre><code class="language-kotlin">
+override fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
+   centerX = (width.toFloat / 2.0)
+   centerY = (height.toFloat / 2.0)
+}
+</code></pre>
+
+<p>This won’t <em>exactly</em> center the text (there’s a lot going on with fonts!) - it’s only a placeholder. If you wish you can add the code to <a href="https://stackoverflow.com/a/32081250">actually center it</a>.</p>
+
+<hr />
+
+<h5 id="creating-a-paint-object-for-drawing-text">Creating a <code class="language-plaintext highlighter-rouge">Paint</code> Object for Drawing Text</h5>
+<p>We’re going to need a <code class="language-plaintext highlighter-rouge">Paint</code> object for drawing text:</p>
+
+<pre><code class="language-diff-kotlin diff-highlight">
+class MorsoView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : View (context, attrs, defStyleAttr) {
+
++    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
++        // Paint styles used for rendering are initialized here. This
++        // is a performance optimization, since onDraw() is called
++        // for every screen refresh.
++        style = Paint.Style.FILL
++        textAlign = Paint.Align.CENTER
++        textSize = 55.0f
++    }
+
+    private var centerX = 100F
+    private var centerY = 100F
+</code></pre>
+
+<hr />
+<h5 id="drawing-our-view">Drawing our View</h5>
+<p>Next, we’ll draw our view by overriding <code class="language-plaintext highlighter-rouge">onDraw()</code> (we’ll also set the background color here):</p>
+
+<pre><code class="language-kotlin">
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
+        this.setBackgroundColor(Color.BLACK)
+        canvas.drawText("Morso", centerX, centerY, paint)
+    }
+</code></pre>
+
+<p>If you take a look at our generated layout, you’ll notice <code class="language-plaintext highlighter-rouge">MorsoView</code> takes up almost the whole screen. While this might be useful for typing without looking, it’s definitely not a reasonable default.</p>
+
+<p>In order to determine how much space MorsoView is alloted, we’ll have to override <code class="language-plaintext highlighter-rouge">onMeasure()</code>. Two helpful snippets about <code class="language-plaintext highlighter-rouge">onMeasure()</code> can be found <a href="https://developer.android.com/develop/ui/views/layout/custom-views/custom-components#extend-ondraw-and-onmeasure">here</a> and <a href="https://developer.android.com/develop/ui/views/layout/custom-views/custom-drawing#layouteevent">here</a>.</p>
+
+<p>From the second link:</p>
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">onMeasure</code>’s parameters are View.MeasureSpec values that tell you how big your view’s parent wants your view to be, and whether that size is a hard maximum or just a suggestion. As an optimization, these values are stored as packed integers, and you use the static methods of <code class="language-plaintext highlighter-rouge">View.MeasureSpec</code> to unpack the information stored in each integer.</p>
+</blockquote>
+
+<p>This <a href="https://stackoverflow.com/a/12267248">StackOverflow answer</a> has a nice description of the different <code class="language-plaintext highlighter-rouge">MeasureSpec</code>s and how they relate to the width and height we set in our <code class="language-plaintext highlighter-rouge">res/morso.xml</code></p>
+
+<p>Add a helper function to get the screen height:</p>
+<pre><code class="language-kotlin">
+    fun getScreenHeight(): Int {
+        return Resources.getSystem().getDisplayMetrics().heightPixels
+    }
+</code></pre>
+
+<p>Now we can override <code class="language-plaintext highlighter-rouge">MorsoView</code>’s <code class="language-plaintext highlighter-rouge">onMeasure()</code> and set the height to a quarter of the screen height:</p>
+
+<pre><code class="language-kotlin">
+override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val desiredWidth = 100;
+        val desiredHeight = getScreenHeight() / 4;
+
+        val widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        val heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        val heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        var width : Int;
+        var height : Int;
+
+        //Measure Width
+        when (widthMode) {
+            MeasureSpec.EXACTLY -&gt; width = widthSize;
+            MeasureSpec.AT_MOST -&gt; width = Math.min(desiredWidth, widthSize);
+            else -&gt; width = desiredWidth;
+        }
+
+        // Measure Height
+        when (heightMode) {
+            MeasureSpec.EXACTLY -&gt; height = heightSize;
+            MeasureSpec.AT_MOST -&gt; height = Math.min(desiredHeight, heightSize);
+            else -&gt; height = desiredHeight;
+        }
+
+        //MUST CALL THIS
+        setMeasuredDimension(width, height);
+    }
+
+</code></pre>
+
+<p><img src="/assets/images/blog-images/morso/morso-measured-view.png" alt="Morso measured view" /></p>
+
+<!-- OK, I think that gives us a rough idea of what it's like to work with the traditional view method. -->
+
+<!-- #### With "Jetpack Compose"
+-- Right off the bat, the fact that we're using an `InputMethodService` instead of an `Activity` or `Fragment` makes following the [Compose tutorial](https://developer.android.com/jetpack/compose/tutorial) a little more challenging. Thankfully, [somebody else has gone through this same issue](https://stackoverflow.com/a/66958772) --
+
+
+### Starting our IME Service
+When  -->
+
+<hr />
+
+<h5 id="making-our-view-interactive">Making our View Interactive</h5>
+<p>The article for this section can be found <a href="https://developer.android.com/develop/ui/views/layout/custom-views/making-interactive">here</a>.</p>
+
+<blockquote>
+  <p>Like many other UI frameworks, Android supports an input event model. User actions are turned into events that trigger callbacks, and you can override the callbacks to customize how your application responds to the user. The most common input event in the Android system is touch, which triggers onTouchEvent(android.view.MotionEvent).</p>
+
+  <p>Touch events by themselves are not particularly useful. Modern touch UIs define interactions in terms of gestures such as tapping, pulling, pushing, flinging, and zooming. To convert raw touch events into gestures, Android provides GestureDetector.</p>
+</blockquote>
+
+<p>The obvious gestures that we’re going to be looking for are taps(dots) and holds(dashes). Eventually, we might want to listen for swipes to signal the end of a string or to switch to numerical input.</p>
+
+<p>To learn more about gestures, go <a href="https://developer.android.com/develop/ui/views/touch-and-input/gestures">here</a>.</p>
+
+<blockquote>
+  <p>If you only want to process a few gestures, you can extend <code class="language-plaintext highlighter-rouge">GestureDetector.SimpleOnGestureListener</code> instead of implementing the <code class="language-plaintext highlighter-rouge">GestureDetector.OnGestureListener</code> interface.</p>
+</blockquote>
+
+<p>Create a new <code class="language-plaintext highlighter-rouge">MorsoGestureListener</code> class that extends <code class="language-plaintext highlighter-rouge">SimpleGestureListener</code>:</p>
+
+<pre><code class="language-kotlin">
+package net.eldun.morso
+
+import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
+
+class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
+
+    val TAG = "MorsoGestureListener"
+
+    override fun onDown(e: MotionEvent): Boolean {
+        Log.i(TAG, "downMotion detected!")
+
+        return true
+    }
+
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
+        Log.i(TAG, "tap detected!")
+        return true
+    }
+
+}
+</code></pre>
+
+<blockquote>
+  <p>Whether or not you use GestureDetector.SimpleOnGestureListener, you must always implement an onDown() method that returns true. This step is necessary because all gestures begin with an onDown() message. If you return false from onDown(), as GestureDetector.SimpleOnGestureListener does, the system assumes that you want to ignore the rest of the gesture, and the other methods of GestureDetector.OnGestureListener never get called. The only time you should return false from onDown() is if you truly want to ignore an entire gesture. Once you’ve implemented GestureDetector.OnGestureListener and created an instance of GestureDetector, you can use your GestureDetector to interpret the touch events you receive in onTouchEvent().</p>
+</blockquote>
+
+<p>In our MorsoView, add the following (along with any necessary imports):</p>
+
+<pre><code class="language-kotlin">
+class MorsoView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : View (context, attrs, defStyleAttr) {
+
+    val TAG = "MorsoView"
+
++    private val gestureListener =  MorsoGestureListener()
++    private val gestureDetector = GestureDetector(context, gestureListener)
+
+
+    // ...
+    // code
+    // ...
+
+
++    override fun onTouchEvent(event: MotionEvent): Boolean {
++        return gestureDetector.onTouchEvent(event)
++    }
+
+}
+</code></pre>
+
+<blockquote>
+  <p>When you pass onTouchEvent() a touch event that it doesn’t recognize as part of a gesture, it returns false. You can then run your own custom gesture-detection code.</p>
+</blockquote>
+
+<p>This is where we can implement gestures like triple taps in the future.</p>
+
+<p>…</p>
+
+<p>Thinking about it some more, we’re probably going to end up creating all of our own gestures from within MorsoView’s on <code class="language-plaintext highlighter-rouge">onTouchEvent</code>. In doing so, we’ll be able to specify custom timing delays for dots and dashes and the like. However, it’s good for now.</p>
+
+<p>Let’s put things in place to replace the “Morso” text on touch inputs with the appropriate characters.</p>
+
+<hr />
+
+<h5 id="representing-ui-state">Representing UI State</h5>
+<p>The main article for this section is <a href="https://developer.android.com/topic/architecture/ui-layer#define-ui-state">here</a>. I suggest reading it.</p>
+
+<p>Details on how IMEs handle config changes can be found <a href="https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)">here</a>.</p>
+
+<!-- Long story short, we're going to use [ViewModels](https://developer.android.com/topic/libraries/architecture/viewmodel). If you already know the story with ViewModels, you can skip to [the next section](/drawing-symbols-on-input) -->
+
+<!-- We'll be using a [data class](https://kotlinlang.org/docs/data-classes.html) to represent the UI state. It's not much at the moment:
+
+<pre><code class="language-kotlin">
+package net.eldun.morso
+
+data class MorsoViewState(){
+    val mainText : String
+}
+</code></pre> -->
+
+<p>Here’s an explanation for why the UI state member(s) are <a href="https://kotlinlang.org/docs/basic-syntax.html#variables">immutable</a>:</p>
+
+<pre><code class="language-kotlin">
+data class NewsUiState(
+    val isSignedIn: Boolean = false,
+    val isPremium: Boolean = false,
+    val newsItems: List&lt;NewsItemUiState&gt; = listOf(),
+    val userMessages: List&lt;Message&gt; = listOf()
+)
+
+data class NewsItemUiState(
+    val title: String,
+    val body: String,
+    val bookmarked: Boolean = false,
+    ...
+)
+</code></pre>
+
+<blockquote>
+  <p>The UI state definition in the example above is immutable. The key benefit of this is that immutable objects provide guarantees regarding the state of the application at an instant in time. This frees up the UI to focus on a single role: to read the state and update its UI elements accordingly. As a result, you should never modify the UI state in the UI directly unless the UI itself is the sole source of its data. Violating this principle results in multiple sources of truth for the same piece of information, leading to data inconsistencies and subtle bugs.</p>
+
+  <p>For example, if the bookmarked flag in a NewsItemUiState object from the UI state in the case study were updated in the Activity class, that flag would be competing with the data layer as the source of the bookmarked status of an article. Immutable data classes are very useful for preventing this kind of antipattern.</p>
+
+  <p>Key Point: Only sources or owners of data should be responsible for updating the data they expose.</p>
+</blockquote>
+
+<p>Great. You might be wondering - as I was - “How does anything ever change, then?”</p>
+
+<p>The answer is by using a mediator to process events and produce the UI state.</p>
+
+<blockquote>
+  <p>Interactions and their logic may be housed in the UI itself, but this can quickly get unwieldy as the UI starts to become more than its name suggests: it becomes data owner, producer, transformer, and more. Furthermore, this can affect testability because the resulting code is a tightly coupled amalgam with no discernable boundaries. Unless the UI state is very simple, the UI’s sole responsibility should be to consume and display UI state.</p>
+</blockquote>
+
+<blockquote>
+  <p>The classes that are responsible for the production of UI state and contain the necessary logic for that task are called <a href="https://developer.android.com/topic/architecture/ui-layer#state-holders">state holders</a>.</p>
+</blockquote>
+
+<blockquote>
+  <p>Key Point: The <a href="https://developer.android.com/topic/libraries/architecture/viewmodel">ViewModel</a> type is the recommended implementation for the management of screen-level UI state with access to the data layer. Furthermore, it survives configuration changes (like rotations) automatically. ViewModel classes define the logic to be applied to events in the app and produce updated state as a result.</p>
+</blockquote>
+
+<blockquote>
+  <p>There are many ways to model the codependency between the UI and its state producer. However, because the interaction between the UI and its ViewModel class can largely be understood as event input and its ensuing state output, the relationship can be represented as shown in the following diagram illustrating the “Unidirectional Data Flow” pattern:</p>
+</blockquote>
+
+<p><img src="/assets/images/blog-images/morso/udf.png" alt="Unidirectional Data Flow" /></p>
+
+<ul>
+  <li>The ViewModel holds and exposes the state to be consumed by the UI. The UI state is application data transformed by the ViewModel.</li>
+  <li>The UI notifies the ViewModel of user events.</li>
+  <li>The ViewModel handles the user actions and updates the state.</li>
+  <li>The updated state is fed back to the UI to render.</li>
+  <li>The above is repeated for any event that causes a mutation of state.</li>
+</ul>
+
+<p><a href="https://developer.android.com/topic/architecture/ui-layer#why-use-udf">Why use UDF?</a></p>
+
+<p>Here’s an rudimentary example of what would happen if a user were to bookmark an article in a simple news app:</p>
+
+<p><img src="/assets/images/blog-images/morso/udf-example.png" alt="Unidirectional Data Flow Example" /></p>
+
+<!-- ##### Creating and Storing our UI State Class with ViewModel
+For this section, we'll mostly be looking at the [Android article on `ViewModel`](https://developer.android.com/reference/androidx/lifecycle/ViewModel) and the [ViewModel Codelab](https://developer.android.com/codelabs/basic-android-kotlin-training-viewmodel#0). Neither of these resources mention services or IME's (only activities and fragments), but I don't see any reason not to use ViewModels.
+
+Our first implementation of our `ViewModel` class will merely hold the value of what is displayed in `MorsoIME` - which happens to be `MorsoView`. Further down the line, we may end up with more views - in which case we could add to `MorsoViewModel` *or* create new viewmodels for each view to avoid a monolithic `MorsoViewModel`. "Why is the `ViewModel` assosciated with the service and not the view?" you might ask. The reason is that the viewmodel is tied to the lifecycle of the activity/fragment/service. Also - the view should retain no data about state - merely display it.
+
+![Default MorsoView](/assets/images/blog-images/morso/morso-measured-view.png)
+
+With that being said, let's create `MorsoViewModel`:
+
+<pre><code class="language-kotlin">
+package net.eldun.morso
+
+import androidx.lifecycle.ViewModel
+
+class MorsoViewModel : ViewModel() {
+}
+</code></pre>
+
+Now we have to assosciate our `ViewModel` with our IME - we'll add a member of type `MorsoViewModel` to `MorsoIME` and initialize it using the `by viewModels()` property delegate:
+
+<pre><code class="language-kotlin">
+private val viewModel: MorsoViewModel by viewModels()
+}
+ </code></pre> -->
+
+<!-- ###### What are Property Delegates?
+
+> In Kotlin, each mutable (var) property has default getter and setter functions automatically generated for it. The setter and getter functions are called when you assign a value or read the value of the property.
+>
+> For a read-only property (val), it differs slightly from a mutable property. Only the getter function is generated by default. This getter function is called when you read the value of a read-only property.
+>
+> Property delegation in Kotlin helps you to handoff the getter-setter responsibility to a different class.
+>
+> This class (called delegate class) provides getter and setter functions of the property and handles its changes.
+>
+> A delegate property is defined using the by clause and a delegate class instance:
+>
+>
+> // Syntax for property delegation
+> var <property-name> : <property-type> by <delegate-class>()
+> In your app, if you initialize the view model using default GameViewModel constructor, like below:
+>
+>
+> private val viewModel = GameViewModel()
+> Then the app will lose the state of the viewModel reference when the device goes through a configuration change. For example, if you rotate the device, then the activity is destroyed and created again, and you'll have a new view model instance with the initial state again.
+>
+> Instead, use the property delegate approach and delegate the responsibility of the viewModel object to a separate class called viewModels. That means when you access the viewModel object, it is handled internally by the delegate class, viewModels. The delegate class creates the viewModel object for you on the first access, and retains its value through configuration changes and returns the value when requested. -->
+
+<!-- ###### Adding Data to our ViewModel
+The article for this section can be found [here](https://developer.android.com/codelabs/basic-android-kotlin-training-viewmodel#4)
+
+Right now, the only property in our `MorsoViewModel` is the the background text:
+<pre><code class="language-kotlin">
+    private var backgroundText = "Morso"
+</code></pre>
+
+However,
+
+> Inside the ViewModel, the data should be editable, so they should be private and var. From outside the ViewModel, data should be readable, but not editable, so the data should be exposed as public and val. To achieve this behavior, Kotlin has a feature called a [backing property](https://kotlinlang.org/docs/properties.html#backing-properties).
+
+</code></pre>
+class MorsoViewModel : ViewModel() {
+
+    private var _backgroundText = "Morso"
+    val backgroundText: String
+        get() = _backgroundText()
+}
+</code></pre>
+
+Mutable data fields from the viewmodel should **never** be exposed. -->
+
+<hr />
+
+<h5 id="storing-ui-data-for-our-input-service">Storing UI Data for our Input Service</h5>
+<p>As it turns out, we don’t actually have to use viewmodels, because <code class="language-plaintext highlighter-rouge">InputServiceMethod</code>s <a href="https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)">don’t have to worry about configuration changes</a> - which is the main reason to use viewmodels (other than the seperation of ui from state, of course). As is often the case when traveling a bit off the beaten path, the <a href="https://github.com/android/architecture-components-samples/issues/137#issuecomment-327854042">answers are not always <em>totally</em> satisfactory</a>, though. Based on what I’ve read, it sounds like we can get away with a mere <a href="https://developer.android.com/topic/architecture/ui-layer/stateholders#choose_between_a_viewmodel_and_plain_class_for_a_state_holder">plain class for state holding</a>. Furthermore, we’ll make our UI state a <a href="https://en.wikipedia.org/wiki/Singleton_pattern">singleton</a> by using the <a href="https://stackoverflow.com/questions/51834996/singleton-class-in-kotlin">object keyword</a>.</p>
+
+<p>The following info is from <a href="https://developer.android.com/codelabs/basic-android-kotlin-training-viewmodel#4">this codelab</a>. Even though the codelab is about viewmodels, the same principles still apply to our plain state class.</p>
+
+<p>Create <code class="language-plaintext highlighter-rouge">MorsoUiState</code>:</p>
+
+<p>Right now, the only property in our <code class="language-plaintext highlighter-rouge">MorsoUiState</code> is the the background text:</p>
+<pre><code class="language-kotlin">
+    private var backgroundText = "Morso"
+</code></pre>
+
+<p>However,</p>
+
+<blockquote>
+  <p>Inside the ViewModel, the data should be editable, so they should be private and var. From outside the ViewModel, data should be readable, but not editable, so the data should be exposed as public and val. To achieve this behavior, Kotlin has a feature called a <a href="https://kotlinlang.org/docs/properties.html#backing-properties">backing property</a>.</p>
+</blockquote>
+
+<pre><code class="language-kotlin">
+object MorsoUiState {
+
+    private var _backgroundText = "Morso"
+    val backgroundText: String
+        get() = _backgroundText()
+
+    fun setBackgroundText(input: String) {
+        _backgroundText = input
+    }
+}
+</code></pre>
+
+<p>Mutable data fields from state holders should <strong>never</strong> be exposed.</p>
+
+<hr />
+
+<h5 id="updating-our-view-with-new-ui-data">Updating our View with New UI Data</h5>
+
+<!-- The main article for this section can be found [here](https://developer.android.com/topic/libraries/data-binding/architecture). -->
+
+<p>We can automatically update our UI using <a href="https://developer.android.com/topic/libraries/architecture/livedata">LiveData</a> as the binding source.</p>
+
+<p>First, we should update <code class="language-plaintext highlighter-rouge">MorsoView</code> with a function to update all of its fields(which should all be private) from the ui state and then redraw itself (using <a href="https://developer.android.com/reference/android/view/View#invalidate()"><code class="language-plaintext highlighter-rouge">invalidate</code></a>):</p>
+
+<pre><code class="language-kotlin">
+...
+
+    private var backgroundText = "Morso"
+
+
+    fun updateUi(morsoUiState: MorsoUiState) {
+        backgroundText = morsoUiState.backgroundText.value.toString()
+
+        invalidate()
+
+    }
+...
+</code></pre>
+
+<p>To <a href="https://developer.android.com/topic/libraries/architecture/livedata#work_livedata">work with LiveData</a>, we must follow these steps:</p>
+
+<ol>
+  <li><a href="https://developer.android.com/topic/libraries/architecture/livedata#create_livedata_objects">Create an instance of LiveData</a> to hold a certain type of data. This is usually done within your ViewModel class.</li>
+</ol>
+
+<p>but we’re not using a viewmodel hehe</p>
+
+<pre><code class="language-kotlin">
+object MorsoUiState {
+
+    val backgroundText: MutableLiveData&lt;String&gt; by lazy {
+        MutableLiveData&lt;String&gt;("Morso")
+    }
+}
+</code></pre>
+
+<ol>
+  <li>Create an Observer object that defines the onChanged() method, which controls what happens when the LiveData object’s held data changes. You usually create an Observer object in a UI controller, such as an activity or fragment.</li>
+</ol>
+
+<pre><code class="language-kotlin">
+class MorsoIME : InputMethodService() {
+    private val TAG = "MorsoIME"
+
+
+    override fun onCreateInputView(): View {
+    val morsoLayout = layoutInflater.inflate(R.layout.input_container, null)
+        morsoView = morsoLayout.findViewById&lt;MorsoView&gt;(R.id.morsoView)
+
+        // Create the observer which updates the UI.
+        val backgroundTextObserver = Observer&lt;String&gt; {
+
+            // Update the UI
+            morsoView.updateUi(morsoUiState)
+        }
+
+        return morsoLayout
+    }
+
+}
+</code></pre>
+
+<ol>
+  <li>Attach the Observer object to the LiveData object using the observe() method. The observe() method takes a LifecycleOwner object. This subscribes the Observer object to the LiveData object so that it is notified of changes. You usually attach the Observer object in a UI controller, such as an activity or fragment.</li>
+</ol>
+
+<blockquote>
+  <p>You can register an observer without an associated LifecycleOwner object using the observeForever(Observer) method. In this case, the observer is considered to be always active and is therefore always notified about modifications. You can remove these observers calling the removeObserver(Observer) method.</p>
+</blockquote>
+
+<pre><code class="language-kotlin">
+class MorsoIME : InputMethodService() {
+    private val TAG = "MorsoIME"
+
+    lateinit var morsoView: MorsoView
+    lateinit var morsoGestureListener : MorsoGestureListener
+    lateinit var morsoUiState: MorsoUiState
+
+
+    override fun onCreateInputView(): View {
+
+        val morsoLayout = layoutInflater.inflate(R.layout.input_container, null)
+        morsoView = morsoLayout.findViewById&lt;MorsoView&gt;(R.id.morsoView)
+        morsoGestureListener = morsoView.gestureListener
+        morsoUiState = morsoGestureListener.morsoUiState
+
+
+        // Create the observer which updates the UI.
+        val backgroundTextObserver = Observer&lt;String&gt; {
+
+            // Update the UI
+            morsoView.updateUi(morsoUiState)
+            morsoView.invalidate()
+        }
+
+        // Observe the LiveData
+        morsoUiState.backgroundText.observeForever(backgroundTextObserver)
+
+        return morsoLayout
+    }
+
+}
+</code></pre>
+
+<p>When we have a more complex UI state, it might be worthwhile to make the whole <code class="language-plaintext highlighter-rouge">MorsoUiState</code> observable.</p>
+
+<p>Add to <code class="language-plaintext highlighter-rouge">onSingleTapUp</code> in <code class="language-plaintext highlighter-rouge">MorsoGestureListener</code>:</p>
+
+<pre><code class="language-kotlin">
+   override fun onSingleTapUp(e: MotionEvent): Boolean {
++        morsoUiState.backgroundText.value = "tapped"
+        return true
+    }
+</code></pre>
+
+<p>Our “Morso” text will change to “tapped” on a single tap.</p>
+
+<hr />
+
+<h5 id="resetting-our-background-text-after-a-delay">Resetting our Background Text After a Delay</h5>
+<p>Add the following code to the <code class="language-plaintext highlighter-rouge">backgroundTextObserver</code>:</p>
+
+<pre><code class="language-diff-kotlin diff-highlight">
+// Create the observer which updates the UI.
+        val backgroundTextObserver = Observer&lt;String&gt; { newBackgroundText -&gt;
+            Log.d(TAG, "onCreateInputView: New Text!")
+            // Update the UI
+            morsoView.backgroundText = newBackgroundText
+            morsoView.invalidate()
+
++            if (morsoUiState.backgroundText.value != "Morso") {
++                Handler(Looper.getMainLooper()).postDelayed({
++                    morsoUiState.backgroundText.value = "Morso"
++                }, 1000)
+            }
+        }
+</code></pre>
+
+<p>We will be able to configure the delay in settings later in the series.</p>
+
+<hr />
+
+<h3 id="representing-morse-code">Representing Morse Code</h3>
+
+<p>I figure <a href="https://kotlinlang.org/docs/enum-classes.html#working-with-enum-constants">enums</a> are a decent way to represent Morse code - we’re dealing with a few dozen values that will never change.</p>
+
+<p>Another option would be to use an immutable ordered binary tree created at compile-time in a companion object. If you use a tree, be aware that <code class="language-plaintext highlighter-rouge">Enum.compareTo()</code> is <code class="language-plaintext highlighter-rouge">final</code> - the order in which the enums are declared is important for comparing/navigating the tree. <a href="https://stackoverflow.com/questions/519788/why-is-compareto-on-an-enum-final-in-java">Why is compareTo final?</a></p>
+
+<p>Lets represent signals in <code class="language-plaintext highlighter-rouge">MorseSignal</code>:</p>
+<pre><code class="language-kotlin">
+enum class MorseSignal {
+    DOT, DASH, SPACE;
+}
+</code></pre>
+
+<p>and characters in <code class="language-plaintext highlighter-rouge">Character</code>:</p>
+<pre><code class="language-kotlin">
+enum class Character(vararg var sequence: MorseSignal) {
+
+    START(),
+
+    E(DOT),
+    T(DASH),
+
+    I(DOT, DOT),
+    A(DOT, DASH),
+    N(DASH, DOT),
+    M(DASH, DASH),
+
+    S(DOT, DOT, DOT),
+    U(DOT, DOT, DASH),
+    R(DOT, DASH, DOT),
+    W(DOT, DASH, DASH),
+    D(DASH, DOT, DOT),
+    K(DASH, DOT, DASH),
+    G(DASH, DASH, DOT),
+    O(DASH, DASH, DASH),
+
+    H(DOT, DOT, DOT, DOT),
+    V(DOT, DOT, DOT, DASH),
+    F(DOT, DOT, DASH, DOT),
+    L(DOT, DASH, DOT, DOT),
+    P(DOT, DASH, DASH, DOT),
+    J(DOT, DASH, DASH, DASH),
+    B(DASH, DOT, DOT, DOT),
+    X(DASH, DOT, DOT, DASH),
+    C(DASH, DOT, DASH, DOT),
+    Y(DASH, DOT, DASH, DASH),
+    Z(DASH, DASH, DOT, DOT),
+    Q(DASH, DASH, DOT, DASH),
+
+    FIVE(DOT, DOT, DOT, DOT, DOT) {
+        override fun toString() = "5"
+    },
+    FOUR(DOT, DOT, DOT, DOT, DASH){
+        override fun toString() = "4"
+    },
+    THREE(DOT, DOT, DOT, DASH, DASH){
+        override fun toString() = "3"
+    },
+    TWO(DOT, DOT, DASH, DASH, DASH){
+        override fun toString() = "2"
+    },
+    PLUS_SIGN(DOT, DASH, DOT, DASH, DOT){
+        override fun toString() = "+"
+    },
+    ONE(DOT, DASH, DASH, DASH, DASH){
+        override fun toString() = "1"
+    },
+    SIX(DASH, DOT, DOT, DOT, DOT){
+        override fun toString() = "6"
+    },
+    EQUALS_SIGN(DASH, DOT, DOT, DOT, DASH){
+        override fun toString() = "="
+    },
+    DIVIDE_SIGN(DASH, DOT, DOT, DASH, DOT){
+        override fun toString() = "/"
+    },
+    SEVEN(DASH, DASH, DOT, DOT, DOT){
+        override fun toString() = "7"
+    },
+    EIGHT(DASH, DASH, DASH, DOT, DOT){
+        override fun toString() = "8"
+    },
+    NINE(DASH, DASH, DASH, DASH, DOT){
+        override fun toString() = "9"
+    },
+    ZERO(DASH, DASH, DASH, DASH, DASH){
+        override fun toString() = "0"
+    },
+    NULL(){
+        override fun toString() = ""
+    };
+}
+
+
+</code></pre>
+
+<p>We’re going to want to be able to get the <code class="language-plaintext highlighter-rouge">Character</code> by its sequence once Morso detects a long enough break in input. To do so, we’ll create a map with the key being <code class="language-plaintext highlighter-rouge">sequence</code> and the value being the <code class="language-plaintext highlighter-rouge">Character</code>.</p>
+
+<p>I was originally trying to use the <code class="language-plaintext highlighter-rouge">vararg sequence</code>(which is an array) as a key, but in order to look up the value, the array passed in <a href="https://stackoverflow.com/a/16839191">had to be the exact same array as the key</a> - not just the contents of the array. I ended up converting the sequence in <code class="language-plaintext highlighter-rouge">Character</code>’s construtor to a <code class="language-plaintext highlighter-rouge">List</code>, and using said list as a key for the dictionary:</p>
+
+<pre><code class="language-kotlin">
+    ...
+
+    NINE(DASH, DASH, DASH, DASH, DOT){
+        override fun toString() = "9"
+    },
+    ZERO(DASH, DASH, DASH, DASH, DASH){
+        override fun toString() = "0"
+    };
+
+    private val sequenceList = this.sequence.asList()
+
+
+    companion object {
+        private val map = Character.values().associateBy(Character::sequenceList)
+        fun fromSequenceList(seqList: List&lt;MorseSignal&gt;) = map[seqList]
+    }
+</code></pre>
+
+<p>We can now pass in a list of signals to <code class="language-plaintext highlighter-rouge">fromSequenceList</code> to get the corresponding <code class="language-plaintext highlighter-rouge">Character</code>:</p>
+<pre><code class="language-kotlin">
+    class MorseTranslator {
+
+        companion object {
+
+            fun decode(vararg sequence: MorseSignal): Character? {
+
+                return Character.fromSequenceList(sequence.asList())
+            }
+        }
+    }
+</code></pre>
+
+<hr />
+
+<h3 id="using-morso-for-input">Using Morso for Input</h3>
+
+<p>Now we can start to create an actual input method! Again, the most helpful article for this section can be found <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method">here</a>.</p>
+
+<p>My general idea for the default behavior of Morso is as follows:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">MorsoInputView</code> will show the current input (dots and dashes) up until there’s a word-length pause - at which point <code class="language-plaintext highlighter-rouge">MorsoInputView</code> will once again display ‘Morso’.</li>
+  <li>The current input field will reflect the input, but will only be committed upon a word-length pause.</li>
+  <li><code class="language-plaintext highlighter-rouge">MorsoInputView</code> will be updated to have a cancel button for the current sequence and a backspace.</li>
+</ul>
+
+<p>MorsoCandidatesView will come later.</p>
+
+<hr />
+
+<h4 id="translating-gestures-to-morse-code">Translating Gestures to Morse Code</h4>
+<p>Taps are already handled in our <code class="language-plaintext highlighter-rouge">MorsoGestureListener</code>. However - it’s a bit picky about what counts as a tap and doesn’t register gestures like triple-taps. Additionally, we should allow the user to customize the dot time because the dash and space duration will be defined as multiples of the base dot time.</p>
+
+<p>Let’s add to <code class="language-plaintext highlighter-rouge">MorsoGestureListener</code>:</p>
+
+<pre><code class="language-kotlin">
+    fun onHold(e: MotionEvent): Boolean {
+
+        Log.d(TAG, "onHold")
+        return true
+
+    }
+</code></pre>
+
+<p>In <code class="language-plaintext highlighter-rouge">MorsoInputView</code>, add the following members:</p>
+
+<pre><code class="language-diff-kotlin diff-highlight">
+    class MorsoInputView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : View (context, attrs, defStyleAttr) {
+
+    private val TAG = "MorsoView"
+
+    val gestureListener =  MorsoGestureListener()
+    private val gestureDetector = GestureDetector(context, gestureListener)
++    private var downTime: Long = 0
++    private var upTime: Long = 0
++    private val dotTime: Long = 300
++    private val dashTime = 3*dotTime
++    private val signalSpaceTimeout = dotTime
++    private val letterSpaceTimeout: Long = 3*dotTime
++    private val wordSpaceTimeout: Long = 7*dotTime
+
+
+
+    ...
+</code></pre>
+
+<p>And add to <code class="language-plaintext highlighter-rouge">MorsoGestureListener</code>:</p>
+
+<pre><code class="language-kotlin">
+fun onShortPause(e: MotionEvent): Boolean {
+        Log.d(TAG, "onShortPause")
+        morsoUiState.reset()
+        return true
+    }
+
+    fun onLongPause(e: MotionEvent): Boolean {
+        Log.d(TAG, "onLongPause")
+        inputConnection.commitText(" ", 1)
+
+        return true
+    }
+</code></pre>
+
+<p>and then update <code class="language-plaintext highlighter-rouge">MorsoInputView</code>:</p>
+
+<pre><code class="language-kotlin">
+
+        override fun onTouchEvent(event: MotionEvent): Boolean {
+
+        val onHoldRunnable = Runnable { gestureListener.onHold(event) }
+        val shortPauseRunnable = Runnable { gestureListener.onShortPause(event) }
+        val longPauseRunnable = Runnable { gestureListener.onLongPause(event) }
+
+
+        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            downTime = SystemClock.elapsedRealtime()
+
+            // Cancel possible pending runnables
+            handler.removeCallbacksAndMessages(null)
+            
+            // Call onHold in dashTime ms
+            handler.postDelayed(onHoldRunnable,dashTime)
+        }
+
+
+
+
+        else if (event.actionMasked == MotionEvent.ACTION_UP) {
+            // Cancel the pending hold runnable and previous pause runnables
+            handler.removeCallbacksAndMessages(null)
+
+            upTime = SystemClock.elapsedRealtime()
+
+
+
+            // Listen for all taps with no restrictions (slop, triple-taps, etc. - unlike the default gesture detector)
+            val elapsedTime = upTime - downTime
+            if (elapsedTime &lt; dotTime){
+                gestureListener.onSingleTapUp(event)
+            }
+
+
+            // call timeouts if no input has been received
+            handler.postDelayed(shortPauseRunnable, letterSpaceTimeout)
+            handler.postDelayed(longPauseRunnable, wordSpaceTimeout)
+            
+            return true
+        }
+        
+        // It's up to MorsoGestureListener to decide
+        return gestureDetector.onTouchEvent(event)
+    }
+</code></pre>
+
+<hr />
+
+<h4 id="implementing-candidates-view">Implementing Candidates View</h4>
+<p>The <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#CandidateView">candidates view</a> is something you’re likely familiar with:</p>
+
+<p><img src="/assets/images/blog-images/morso/candidates-view.png" alt="Candidates View" /></p>
+
+<p>For Morso, I’d like to display the left child character, the current character (which can function as a countdown bar to the current character being committed), and the right child character in the candidates view. The rightmost suggestion can also double as a progress bar for dash inputs. One concern is that this is a <em>practice</em> application, so I’m not sure if I should make the suggestions clickable.</p>
+
+<p><span class="todo">Add progress bars to appropriate candidates</span></p>
+
+<p>First, we have to create a view <code class="language-plaintext highlighter-rouge">MorsoCandidateView</code>:</p>
+
+<pre><code class="language-kotlin">
+class MorsoCandidateView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : androidx.appcompat.widget.AppCompatButton (context, attrs, defStyleAttr) {
+
+    private val TAG = "MorsoCandidatesView"
+
+    init {
+        setBackgroundColor(Color.DKGRAY)
+        setTextColor(Color.WHITE)
+        gravity = Gravity.CENTER
+    }
+
+
+}
+</code></pre>
+
+<p>Next, we have to create a layout <code class="language-plaintext highlighter-rouge">candidates.xml</code>:</p>
+
+<pre><code class="language-xml">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"&gt;
+
+    &lt;net.eldun.morso.MorsoCandidateView
+        android:id="@+id/morsoCandidateView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="left"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" /&gt;
+
+    &lt;androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".3333" /&gt;
+
+    &lt;net.eldun.morso.MorsoCandidateView
+        android:id="@+id/morsoCandidateView2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline4"
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="parent" /&gt;
+
+    &lt;androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".6667" /&gt;
+
+    &lt;net.eldun.morso.MorsoCandidateView
+        android:id="@+id/morsoCandidateView3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toTopOf="parent" /&gt;
+
+&lt;/androidx.constraintlayout.widget.ConstraintLayout&gt;
+</code></pre>
+
+<p><img src="/assets/images/blog-images/morso/candidates-layout.png" alt="Candidates layout" /></p>
+
+<blockquote>
+  <p><a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#CandidateView">In the IME lifecycle, the system calls onCreateCandidatesView() when it’s ready to display the candidates view. In your implementation of this method, return a layout that shows word suggestions, or return null if you don’t want to show anything.</a></p>
+</blockquote>
+
+<blockquote>
+  <p><a href="https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onCreateCandidatesView()">To control when the candidates view is displayed, use setCandidatesViewShown(boolean). To change the candidates view after the first one is created by this function, use setCandidatesView(android.view.View).</a></p>
+</blockquote>
+
+<p><span class="todo">I think that since this is a practice tool, it’s alright to show the candidates view at all times. I can always add a setting to hide it later.</span></p>
+
+<p>To display our new candidates layout, all we need to do is override <code class="language-plaintext highlighter-rouge">MorsoIME.onCreateCandidatesView()</code>:</p>
+
+<pre><code class="language-kotlin">
+    override fun onCreateCandidatesView(): View {
+        Log.d(TAG, "onCreateCandidatesView")
+        return layoutInflater.inflate(R.layout.candidates, null)
+    }
+
+</code></pre>
+
+<p>and <code class="language-plaintext highlighter-rouge">setCandidatesViewShown(true)</code> from <code class="language-plaintext highlighter-rouge">MorsoIME.onCreateInputView()</code>.</p>
+
+<p><img src="/assets/images/blog-images/morso/morso-candidates-runtime.png" alt="Morso candidates at runtime" /></p>
+
+<hr />
+
+<h5 id="updating-candidates">Updating Candidates</h5>
+<blockquote>
+  <p><a href="https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onCreateCandidatesView()">To change the candidates view after the first one is created by setCandidatesViewShown(), use setCandidatesView(android.view.View).</a></p>
+</blockquote>
+
+<p>The default candidates will be “E”, “”, and “T”, respectively (I overrode Character.START’s <code class="language-plaintext highlighter-rouge">toString()</code> to return “”). We’ll be using our Character enum class to look up candidates, similar to how we looked up values by a character’s sequence earlier on:</p>
+
+<pre><code class="language-diff-kotlin diff-highlight">
+    companion object {
+        val TAG = "Character"
+
+        private val sequenceMap = values().associateBy(Character::sequenceList)
++        private val stringMap = values().associateBy(Character::toString)
++
+        fun fromSequenceList(seqList: Listlt:MorseSignal&gt;) = sequenceMap[seqList]
++        fun fromString(stringifiedCharacter: String) = stringMap[stringifiedCharacter]
++
+</code></pre>
+
+<p>Let’s also add functions to retrieve the possible options from the current sequence:</p>
+
+<pre><code class="language-kotlin">
+fun getDotChild(character: Character): Character {
+            val result = fromSequenceList(character.sequenceList + DOT)
+            if (result == null)
+                return Character.NULL
+            return result
+        }
+
+        fun getDotChild(characterString: String?): Character {
+            val character = fromString(characterString!!)
+            return getDotChild(character!!)
+        }
+
+
+        fun getDashChild(character: Character): Character {
+            val result = fromSequenceList(character.sequenceList + DASH)
+            if (result == null)
+                return Character.NULL
+            return result
+        }
+
+        fun getDashChild(characterString: String?): Character {
+            val character = fromString(characterString!!)
+            return getDashChild(character!!)
+        }
+</code></pre>
+
+<p>We can add our candidates to <code class="language-plaintext highlighter-rouge">MorsoUiState</code> now.</p>
+
+<pre><code class="language-kotlin">
+object MorsoUiState {
+
+    val backgroundText: MutableLiveData&lt;String&gt; by lazy {
+        MutableLiveData&lt;String&gt;("Morso")
+    }
+
+    // Default characters
+    val currentCandidateText: MutableLiveData&lt;String&gt; by lazy {
+            MutableLiveData&lt;String&gt;(Character.START.toString())
+        }
+    val dotCandidateText: MutableLiveData&lt;String&gt; by lazy {
+        MutableLiveData&lt;String&gt;(Character.E.toString())
+    }
+    val dashCandidateText: MutableLiveData&lt;String&gt; by lazy {
+        MutableLiveData&lt;String&gt;(Character.T.toString())
+    }
+
+    fun reset() {
+        backgroundText.value = "Morso"
+        currentCandidateText.value = Character.START.toString()
+        dotCandidateText.value = Character.E.toString()
+        dashCandidateText.value = Character.T.toString()
+    }
+}
+</code></pre>
+
+<p>We can update our <code class="language-plaintext highlighter-rouge">MorsoUiStateObserver</code> like so:</p>
+
+<pre><code class="language-kotlin">
+class MorsoUiStateObserver(val morso: MorsoIME, val uiState: MorsoUiState) {
+
+    init {
+
+        observeBackgroundText()
+        observeCandidates()
+    }
+
+    private fun observeBackgroundText() {
+        // Create the observer which updates the UI.
+        val backgroundTextObserver = Observer&lt;String&gt; {
+
+            morso.updateUi()
+
+            if (uiState.backgroundText.value != "Morso") {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    uiState.backgroundText.value = "Morso"
+                }, 1000)
+            }
+        }
+
+        // Observe the LiveData
+        uiState.backgroundText.observeForever(backgroundTextObserver)
+    }
+
+    private fun observeCandidates() {
+
+        // Create the observer which updates the UI.
+        val candidatesTextObserver = Observer&lt;String&gt; {
+            morso.updateUi()
+        }
+
+        // Observe the LiveData
+        uiState.currentCandidateText.observeForever(candidatesTextObserver)
+        uiState.dotCandidateText.observeForever(candidatesTextObserver)
+        uiState.dashCandidateText.observeForever(candidatesTextObserver)
+    }
+
+
+}
+</code></pre>
+
+<p>Now we can add logic to <code class="language-plaintext highlighter-rouge">MorsoGestureListener</code>, which will notify the UiStateObserver when candidate values change.</p>
+
+<pre><code class="language-kotlin">
+    ...
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
+        Log.d(TAG, "onSingleTapUp")
+        morsoUiState.backgroundText.value.apply { "." }
+
+        updateCandidates(MorseSignal.DOT)
+
+        inputConnection.commitText("!", 1)
+
+        return true
+    }
+
+
+
+    fun onHold(e: MotionEvent): Boolean {
+
+        updateCandidates(MorseSignal.DASH)
+        Log.d(TAG, "onHold")
+        return true
+
+    }
+
+    private fun updateCandidates(signal: MorseSignal) {
+
+        if (signal == MorseSignal.DOT){
+            morsoUiState.currentCandidateText.value = morsoUiState.dotCandidateText.value
+
+            val newCurrent = Character.fromString(morsoUiState.currentCandidateText.value.toString())
+
+            morsoUiState.dotCandidateText.value = Character.getDotChild(newCurrent!!).toString()
+            morsoUiState.dashCandidateText.value = Character.getDashChild(newCurrent!!).toString()
+        }
+
+        else if (signal == MorseSignal.DASH){
+            morsoUiState.currentCandidateText.value = morsoUiState.dashCandidateText.value
+
+            val newCurrent = Character.fromString(morsoUiState.currentCandidateText.value.toString())
+
+            morsoUiState.dotCandidateText.value = Character.getDotChild(newCurrent!!).toString()
+            morsoUiState.dashCandidateText.value = Character.getDashChild(newCurrent!!).toString()
+        }
+    }
+</code></pre>
+
+<p>Finally, we have to update our IME class:</p>
+
+<pre><code class="language-diff-kotlin diff-highlight">
+class MorsoIME : InputMethodService() {
+    private val TAG = "MorsoIME"
+    lateinit var morsoInputView: MorsoInputView
+
++    lateinit var candidatesLayout: View
++    private var candidatesVisible = false
+
+    lateinit var morsoGestureListener : MorsoGestureListener
+    private val morsoUiState = MorsoUiState
+    lateinit var morsoUiStateObserver: MorsoUiStateObserver
+
+
+
+    /**
+     * Create and return the view hierarchy used for the input area (such as
+     * a soft keyboard).  This will be called once, when the input area is
+     * first displayed.  You can return null to have no input area; the default
+     * implementation returns null.
+     *
+     * &lt;p&gt;To control when the input view is displayed, implement
+     * {@link #onEvaluateInputViewShown()}.
+     * To change the input view after the first one is created by this
+     * function, use {@link #setInputView(View)}.
+     */
+    override fun onCreateInputView(): View {
+//        android.os.Debug.waitForDebugger()
+
+        val morsoLayout = layoutInflater.inflate(R.layout.morso, null)
+        morsoInputView = morsoLayout.findViewById&lt;MorsoInputView&gt;(R.id.morsoInputView)
+        morsoGestureListener = morsoInputView.gestureListener
+        morsoUiStateObserver = MorsoUiStateObserver(this, morsoUiState)
+
+        setCandidatesViewShown(true)
+
+        return morsoLayout
+    }
+
+
++    /**
++     * Set Morso's GestureListener to the updated selection
++     */
++    override fun onUpdateSelection(
++        oldSelStart: Int,
++        oldSelEnd: Int,
++        newSelStart: Int,
++        newSelEnd: Int,
++        candidatesStart: Int,
++        candidatesEnd: Int
++    ) {
++        super.onUpdateSelection(
++            oldSelStart,
++            oldSelEnd,
++            newSelStart,
++            newSelEnd,
++            candidatesStart,
++            candidatesEnd
++        )
++
++        morsoGestureListener.inputConnection = currentInputConnection
++    }
+
++    override fun onCreateCandidatesView(): View {
++
++        candidatesVisible = true
++
++        candidatesLayout = layoutInflater.inflate(R.layout.candidates, null)
++
++        return candidatesLayout
++    }
++
++    override fun onFinishCandidatesView(finishingInput: Boolean) {
++        candidatesVisible = false
++        super.onFinishCandidatesView(finishingInput)
++    }
+
+    /**
+     * Called automatically from MorsoUiStateObserver whenever the state changes.
+     */
++    fun updateUi() {
++        morsoInputView.updateUi(morsoUiState)
++
++        if (candidatesVisible) {
++            var current = candidatesLayout.findViewById&lt;MorsoCandidateView&gt;(R.id.morsoCurrentCandidate)
++            var dot = candidatesLayout.findViewById&lt;MorsoCandidateView&gt;(R.id.morsoDotCandidate)
++            var dash = candidatesLayout.findViewById&lt;MorsoCandidateView&gt;(R.id.morsoDashCandidate)
++
++            Log.d(TAG, "updateUi pre: ${current.text} ${dot.text} ${dash.text}")
++            current.text = morsoUiState.currentCandidateText.value
++            dot.text = morsoUiState.dotCandidateText.value
++            dash.text = morsoUiState.dashCandidateText.value
++            Log.d(TAG, "updateUi post: ${current.text} ${dot.text} ${dash.text}")
++
++
++            candidatesLayout.invalidate()
++        }
++
++    }
+
+}
+</code></pre>
+
+<p>The result:</p>
+
+<p><img src="/assets/images/blog-images/morso/candidates.gif" alt="Morso basic candidates operation GIF" /></p>
+
+<p><span class="todo">I just found out that there’s a widget called <a href="https://developer.android.com/reference/android/widget/TextSwitcher">TextSwitcher</a> which is useful for animating text labels. We can implement them later in the series.</span></p>
+
+<hr />
+<h4 id="sending-input">Sending Input</h4>
+
+<p><a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#SendText">Main article</a></p>
+
+<p>Now that we register all the correct gestures and update the UI appropriately (minimally, at this point), we can use Morso to send info to text fields.</p>
+
+<p>First, we need to remove the background text reset logic from <code class="language-plaintext highlighter-rouge">MorsoUiStateObserver</code>:</p>
+
+<pre><code class="language-kotlin">
+ private fun observeBackgroundText() {
+        // Create the observer which updates the UI.
+        val backgroundTextObserver = Observer&lt;String&gt; {
+
+            morso.updateUi()
+
+-            if (uiState.backgroundText.value != "Morso") {
+-                Handler(Looper.getMainLooper()).postDelayed({
+-                    uiState.backgroundText.value = "Morso"
+-                }, 1000)
+-            }
+        }
+
+        // Observe the LiveData
+        uiState.backgroundText.observeForever(backgroundTextObserver)
+    }
+</code></pre>
+
+<p>Add a member <code class="language-plaintext highlighter-rouge">DEFAULT_BACKGROUND_TEXT</code> to <code class="language-plaintext highlighter-rouge">MorsoUiState</code>:</p>
+
+<pre><code class="language-diff-kotlin diff-highlight">
+object MorsoUiState {
+
++    val DEFAULT_BACKGROUND_TEXT = "Morso"
+
+    val backgroundText: MutableLiveData&lt;String&gt; by lazy {
+!        MutableLiveData&lt;String&gt;(DEFAULT_BACKGROUND_TEXT)
+    }
+
+    // Default characters
+    val currentCandidateText: MutableLiveData&lt;String&gt; by lazy {
+            MutableLiveData&lt;String&gt;(Character.START.toString())
+        }
+    val dotCandidateText: MutableLiveData&lt;String&gt; by lazy {
+        MutableLiveData&lt;String&gt;(Character.E.toString())
+    }
+    val dashCandidateText: MutableLiveData&lt;String&gt; by lazy {
+        MutableLiveData&lt;String&gt;(Character.T.toString())
+    }
+
+    fun reset() {
+!        backgroundText.value = DEFAULT_BACKGROUND_TEXT
+        currentCandidateText.value = Character.START.toString()
+        dotCandidateText.value = Character.E.toString()
+        dashCandidateText.value = Character.T.toString()
+    }
+}
+</code></pre>
+
+<p>Now all we have to do is update our gesture listener actions:</p>
+
+<pre><code class="language-diff-kotlin diff-highlight">
+class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
+
+    val TAG = "MorsoGestureListener"
+
+    private var morsoUiState = MorsoUiState
+    lateinit var inputConnection: InputConnection
+
+    /**
+     * Notified when a tap occurs with the down [MotionEvent]
+     * that triggered it. This will be triggered immediately for
+     * every down event. All other events should be preceded by this.
+     *
+     * @param e The down motion event.
+     */
+    override fun onDown(e: MotionEvent): Boolean {
+        return true
+    }
+
+    /**
+     * Notified when a tap occurs with the up [MotionEvent]
+     * that triggered it.
+     *
+     * @param e The up motion event that completed the first tap
+     * @return true if the event is consumed, else false
+     */
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
+        Log.d(TAG, "onSingleTapUp")
+
++        if (updateCandidates(MorseSignal.DOT))
++            showUserInput(".")
+
+        return true
+    }
+
+
+    fun onHold(e: MotionEvent): Boolean {
+        Log.d(TAG, "onHold")
+
+
++        if (updateCandidates(MorseSignal.DASH))
++            showUserInput("-")
+
+        return true
+
+    }
+
+    fun onShortPause(e: MotionEvent): Boolean {
+        Log.d(TAG, "onShortPause")
+        inputConnection.commitText(morsoUiState.currentCandidateText.value, 1)
+
+        morsoUiState.reset()
+        return true
+    }
+
+    fun onLongPause(e: MotionEvent): Boolean {
+        Log.d(TAG, "onLongPause")
++        inputConnection.commitText(" ", 1)
+
+        return true
+    }
+
++    private fun showUserInput(input: String) {
++
++        if (morsoUiState.backgroundText.value.equals(morsoUiState.DEFAULT_BACKGROUND_TEXT))
++            morsoUiState.backgroundText.value = input
++        else
++            morsoUiState.backgroundText.value += input
++
++    }
+
++    /**
++     * Update current candidate, dot candidate, and dash candidate IF the character at @param signal
++     * from the current sequence is not null.
++     *
++     * @param signal the newest signal added to the sequence
++     *
++     * @return true if the candidates were updated, otherwise false
++     */
++    private fun updateCandidates(signal: MorseSignal): Boolean {
++
++        if (signal == MorseSignal.DOT) {
++            val dotChild = Character.getDotChild(morsoUiState.currentCandidateText.value)
++
++            if (dotChild == Character.NULL) {
++                return false
++            } 
++            
++            else {
++                val newCurrent = dotChild.toString()
++
++                morsoUiState.currentCandidateText.value = newCurrent
++
++                morsoUiState.dotCandidateText.value = Character.getDotChild(newCurrent).toString()
++                morsoUiState.dashCandidateText.value = Character.getDashChild(newCurrent).toString()
++
++                return true
++            }
++        }
++
++        else if (signal == MorseSignal.DASH) {
++            val dashChild = Character.getDashChild(morsoUiState.currentCandidateText.value)
++
++            if (dashChild == Character.NULL) {
++                return false
++            } 
++            
++            else {
++                val newCurrent = dashChild.toString()
++
++                morsoUiState.currentCandidateText.value = newCurrent
++
++                morsoUiState.dotCandidateText.value = Character.getDotChild(newCurrent).toString()
++                morsoUiState.dashCandidateText.value = Character.getDashChild(newCurrent).toString()
++
++                return true
++            }
++        }
+
+</code></pre>
+
+<p><img src="/assets/images/blog-images/morso/part-1-complete.gif" alt="Morso: part one" /></p>
+
+<h3 id="to-be-continued">To be continued</h3>
+
+<p>In the next part of this series, we can focus on making the user experience more polished by adding more visual &amp; haptic feedback, creating a settings screen, and <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#GeneralDesign">addressing more general IME considerations</a>.</p>]]></content><author><name>Evan</name></author><category term="android" /><category term="kotlin" /><category term="java" /><summary type="html"><![CDATA[I need to learn Morse code if I want to be able to communicate with my *cool* neighbors.]]></summary></entry><entry><title type="html">Audio Plugins</title><link href="eldun.github.io/2022/10/20/clap-plugins-part-one.html" rel="alternate" type="text/html" title="Audio Plugins" /><published>2022-10-20T00:00:00-04:00</published><updated>2022-10-20T00:00:00-04:00</updated><id>eldun.github.io/2022/10/20/clap-plugins-part-one</id><content type="html" xml:base="eldun.github.io/2022/10/20/clap-plugins-part-one.html"><![CDATA[<h2 id="an-introduction">An Introduction</h2>
 <hr />
 <h3 id="what-is-an-audio-plugin">What is an Audio Plugin?</h3>
 
@@ -45,8 +1681,8 @@ I originally was going to create a VST3 synth([I even started a blog post :c](ht
 <p>There are thousands upon thousands of plugins out there - ranging from minimalist retro synths and complex rhythm sequencers to Karplus-Strong string modelers and destructive bit-crushers. Here are some of my favorites:</p>
 
 <p><span class="row-fill">
-<img src="/assets/images/blog-images/clap/part-one/vital.jpg" alt="Vital" />
-<img src="/assets/images/blog-images/clap/part-one/dexed.png" alt="Dexed" />
+<img src="/assets/images/blog-images/audio-plugins/part-one/vital.jpg" alt="Vital" />
+<img src="/assets/images/blog-images/audio-plugins/part-one/dexed.png" alt="Dexed" />
 </span>
 <span class="row-fill">
 <a href="vital.audio">Vital</a>
@@ -54,8 +1690,8 @@ I originally was going to create a VST3 synth([I even started a blog post :c](ht
 </span></p>
 
 <p><span class="row-fill">
-<img src="/assets/images/blog-images/clap/part-one/valhalla-delay.webp" alt="Valhalla Freq Echo" />
-<img src="/assets/images/blog-images/clap/part-one/blue-arp.png" alt="BlueARP Arpeggiator" />
+<img src="/assets/images/blog-images/audio-plugins/part-one/valhalla-delay.webp" alt="Valhalla Freq Echo" />
+<img src="/assets/images/blog-images/audio-plugins/part-one/blue-arp.png" alt="BlueARP Arpeggiator" />
 </span> 
 <span class="row-fill">
 <a href="https://valhalladsp.com/shop/delay/valhalla-freq-echo/">Valhalla Freq Echo</a>
@@ -63,7 +1699,7 @@ I originally was going to create a VST3 synth([I even started a blog post :c](ht
 </span></p>
 
 <p>It should be noted that although flashy UIs are fun and often very useful, they’re not necessary. Look at Reaper’s built-in synth - ReaSynth:
-<img src="/assets/images/blog-images/clap/reasynth.png" alt="ReaSynth" /></p>
+<img src="/assets/images/blog-images/audio-plugins/part-one/reasynth.png" alt="ReaSynth" /></p>
 
 <p>Many plugin effects are also often very sparse.</p>
 
@@ -142,7 +1778,7 @@ happens when they are enabled.
 
 <p>Just to make sure everything was set up correctly, I installed <a href="https://github.com/asb2m10/dexed">dexed</a> from source and tested it in Reaper.</p>
 
-<p><img src="/assets/images/blog-images/clap-synth/reaper-clap-dexed.png" alt="The CLAP version of dexed running in Reaper" /></p>
+<p><img src="/assets/images/blog-images/audio-plugins-synth/reaper-clap-dexed.png" alt="The CLAP version of dexed running in Reaper" /></p>
 
 <hr />
 <h2 id="learning-to-create-clap-plugins">Learning to Create CLAP Plugins</h2>
@@ -150,7 +1786,7 @@ happens when they are enabled.
 <h3 id="where-to-start">Where to Start?</h3>
 <p>I don’t know much about creating plugins, and unfortunately, it looks like the <a href="https://cleveraudio.org/developers-getting-started/">“Getting Started” page has a ways to go</a>.</p>
 
-<p><img src="/assets/images/blog-images/clap/part-one/clap-getting-started.png" alt="CLAP Documentation Under Construction" /></p>
+<p><img src="/assets/images/blog-images/audio-plugins/part-one/clap-getting-started.png" alt="CLAP Documentation Under Construction" /></p>
 
 <p>The way forward is through <a href="https://github.com/free-audio/clap#examples">example</a> and <a href="https://www.youtube.com/playlist?list=PLqRWeSPiYQ64DhTiE2dEIF5xRIw0s5XLS">this youtube playlist</a>(Developing with CLAP - Jürgen Moßgraber).</p>
 
@@ -233,8 +1869,8 @@ Static builds are convenient for deployment as they are self containded. They us
 
 <p>To build these examples, all we have to do(on Linux) is navigate to <code class="language-plaintext highlighter-rouge">build/lin</code> and execute the makefile there  with <code class="language-plaintext highlighter-rouge">make</code>.</p>
 
-<p><img src="/assets/images/blog-images/clap/part-one/simple-clap-example-1.gif" alt="Simple CLAP Example 1" /> 
-<img src="/assets/images/blog-images/clap/part-one/simple-clap-example-2.gif" alt="Simple CLAP Example 2" /></p>
+<p><img src="/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-1.gif" alt="Simple CLAP Example 1" /> 
+<img src="/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-2.gif" alt="Simple CLAP Example 2" /></p>
 
 <p>The resulting <code class="language-plaintext highlighter-rouge">.clap</code> file should show up right next to the makefile. If you’d like to try these plugins out, you can add our current directory to your host’s CLAP path or copy the generated CLAP file to <code class="language-plaintext highlighter-rouge">usr/local/lib</code> - the default path for CLAP plugins.</p>
 
@@ -253,7 +1889,7 @@ Static builds are convenient for deployment as they are self containded. They us
 <h5 id="the-plugin_impl-files">The <code class="language-plaintext highlighter-rouge">plugin_impl</code> Files</h5>
 <p>These are our actual plugins! Here is where we describe our plugins and their parameters, as well as how they behave, and what they look like (at least in this example).
 Let’s take a look at the tone generator plugin once more:
-<img src="/assets/images/blog-images/clap/part-one/simple-clap-example-2.gif" alt="Simple CLAP Example 2" /></p>
+<img src="/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-2.gif" alt="Simple CLAP Example 2" /></p>
 
 <p>You can see how the turning of knobs is continually processed in the <code class="language-plaintext highlighter-rouge">process</code> functions. Things are kicked off with this one:</p>
 <pre><code class="language-cpp">
@@ -384,7 +2020,7 @@ clap_process_status plugin_impl__process(const clap_process &#42;process)
 
 <hr />
 <h3 id="closing-thoughts">Closing Thoughts</h3>
-<p>Creating audio plugins from scratch is a bit more involved than I expected… I was hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler.</p>]]></content><author><name>Evan</name></author><category term="c++" /><category term="music" /><summary type="html"><![CDATA[What does it take to build an audio plugin?]]></summary></entry><entry><title type="html">Semi-Automating Microsoft Edge Searches</title><link href="eldun.github.io/2021/03/16/automating-microsoft-edge-searches.html" rel="alternate" type="text/html" title="Semi-Automating Microsoft Edge Searches" /><published>2021-03-16T00:00:00-04:00</published><updated>2021-03-16T00:00:00-04:00</updated><id>eldun.github.io/2021/03/16/automating-microsoft-edge-searches</id><content type="html" xml:base="eldun.github.io/2021/03/16/automating-microsoft-edge-searches.html"><![CDATA[<script src="/js/post-scripts/automating-edge-searches/search.js" type="text/javascript"></script>
+<p>Creating audio plugins from scratch turned out to be a bit less straightforward than I expected. I was especially hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler.</p>]]></content><author><name>Evan</name></author><category term="c++" /><category term="music" /><summary type="html"><![CDATA[What does it take to build an audio plugin?]]></summary></entry><entry><title type="html">Semi-Automating Microsoft Edge Searches</title><link href="eldun.github.io/2021/03/16/automating-microsoft-edge-searches.html" rel="alternate" type="text/html" title="Semi-Automating Microsoft Edge Searches" /><published>2021-03-16T00:00:00-04:00</published><updated>2021-03-16T00:00:00-04:00</updated><id>eldun.github.io/2021/03/16/automating-microsoft-edge-searches</id><content type="html" xml:base="eldun.github.io/2021/03/16/automating-microsoft-edge-searches.html"><![CDATA[<script src="/js/post-scripts/automating-edge-searches/search.js" type="text/javascript"></script>
 
 <h2 id="introduction"><a id="introduction"></a>Introduction</h2>
 
@@ -3171,7 +4807,7 @@ Melee(2001)" />
       <li>Ray tracing is applicable in more fields than just CGI, like optical design and acoustic modeling.</li>
     </ul>
   </li>
-</ul>]]></content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing-in-one-weekend" /><summary type="html"><![CDATA[It took me long enough, but I finally dipped my toes into the temperate waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.]]></summary></entry><entry><title type="html">Building a Blog:</title><link href="eldun.github.io/2020/05/18/building-a-blog.html" rel="alternate" type="text/html" title="Building a Blog:" /><published>2020-05-18T00:00:00-04:00</published><updated>2020-05-18T00:00:00-04:00</updated><id>eldun.github.io/2020/05/18/building-a-blog</id><content type="html" xml:base="eldun.github.io/2020/05/18/building-a-blog.html"><![CDATA[<!-- <ul class="table-of-contents">
+</ul>]]></content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing-in-one-weekend" /><summary type="html"><![CDATA[It took me long enough, but I finally dipped my toes into the waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.]]></summary></entry><entry><title type="html">Building a Blog:</title><link href="eldun.github.io/2020/05/18/building-a-blog.html" rel="alternate" type="text/html" title="Building a Blog:" /><published>2020-05-18T00:00:00-04:00</published><updated>2020-05-18T00:00:00-04:00</updated><id>eldun.github.io/2020/05/18/building-a-blog</id><content type="html" xml:base="eldun.github.io/2020/05/18/building-a-blog.html"><![CDATA[<!-- <ul class="table-of-contents">
 <li><a href="#humble-beginnings">Humble Beginnings</a></li>
 <li><a href="#github-pages">GitHub Pages</a></li>
 <li><a href="#jekyll">Jekyll</a></li>

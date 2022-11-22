@@ -170,20 +170,23 @@
     <hr id="header-main-divider">
 
     <main id="content" class="main-content" role="main">
-      <!-- ## Tags (10) -->
+      <!-- ## Tags (13) -->
 
 <div class="tag-cloud">
     <!-- _plugins/tag-cloud-generator.rb -->
-    <a href="/tags/javascript" style="font-size: 70%;"><code style="font-size: inherit;">#javascript</code></a>
+    <a href="/tags/c++" style="font-size: 170%;"><code style="font-size: inherit;">#c++</code></a>
+<a href="/tags/java" style="font-size: 70%;"><code style="font-size: inherit;">#java</code></a>
+<a href="/tags/javascript" style="font-size: 70%;"><code style="font-size: inherit;">#javascript</code></a>
+<a href="/tags/github-pages" style="font-size: 70%;"><code style="font-size: inherit;">#github-pages</code></a>
+<a href="/tags/ray-tracing-in-one-weekend" style="font-size: 170%;"><code style="font-size: inherit;">#ray-tracing-in-one-weekend</code></a>
 <a href="/tags/graphics" style="font-size: 170%;"><code style="font-size: inherit;">#graphics</code></a>
 <a href="/tags/automation" style="font-size: 70%;"><code style="font-size: inherit;">#automation</code></a>
-<a href="/tags/ray-tracing-in-one-weekend" style="font-size: 170%;"><code style="font-size: inherit;">#ray-tracing-in-one-weekend</code></a>
-<a href="/tags/ruby" style="font-size: 70%;"><code style="font-size: inherit;">#ruby</code></a>
-<a href="/tags/c++" style="font-size: 170%;"><code style="font-size: inherit;">#c++</code></a>
+<a href="/tags/kotlin" style="font-size: 70%;"><code style="font-size: inherit;">#kotlin</code></a>
 <a href="/tags/web" style="font-size: 170%;"><code style="font-size: inherit;">#web</code></a>
 <a href="/tags/jekyll" style="font-size: 70%;"><code style="font-size: inherit;">#jekyll</code></a>
-<a href="/tags/github-pages" style="font-size: 70%;"><code style="font-size: inherit;">#github-pages</code></a>
 <a href="/tags/music" style="font-size: 70%;"><code style="font-size: inherit;">#music</code></a>
+<a href="/tags/android" style="font-size: 70%;"><code style="font-size: inherit;">#android</code></a>
+<a href="/tags/ruby" style="font-size: 70%;"><code style="font-size: inherit;">#ruby</code></a>
 
 </div>
 
@@ -196,20 +199,26 @@
       </footer>
     </main>
 
-    <!-- prism syntax  -->
+    <!-- link to Prism Syntax Highlighter -->
     <script src="/js/site-scripts/prism.js"></script>
-    <script src ='/assets/prism-components'></script>
-    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+
+    <!-- Autoloader configuration (https://prismjs.com/plugins/autoloader/) -->
+    <script> 
+      Prism.plugins.autoloader.languages_path = '/assets/prism-components/'; 
+    </script> 
+
+<!-- Diff-highlighter is very picky about whitespace -->
+    <script>Prism.plugins.NormalizeWhitespace.setDefaults({
       'remove-trailing': true,
       'remove-indent': true,
       'left-trim': false,
       'right-trim': true,
-      'break-lines': 80,
+      // 'break-lines': 80,
       'indent': 0,
       'remove-initial-line-feed': true,
       'tabs-to-spaces': 4,
-      'spaces-to-tabs': 4
-    });</script> -->
+      // 'spaces-to-tabs': 4
+    });</script>
     
 
       <!-- Back to top -->

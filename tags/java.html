@@ -171,6 +171,13 @@
   <h1>Articles tagged with <code>java</code>:</h1>
   <ul>
      
+    <li>
+      <h2><a href="/2022/11/21/morso-pt-one.html">Morso Creating a Morse Code Android Application with Kotlin</a></h2>
+      <p><p>I need to learn Morse code if I want to be able to communicate with my <em>cool</em> neighbors.</p>
+</p>
+      
+    </li>
+     
     </li>
      
     </li>
@@ -190,20 +197,26 @@
       </footer>
     </main>
 
-    <!-- prism syntax  -->
+    <!-- link to Prism Syntax Highlighter -->
     <script src="/js/site-scripts/prism.js"></script>
-    <script src ='/assets/prism-components'></script>
-    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+
+    <!-- Autoloader configuration (https://prismjs.com/plugins/autoloader/) -->
+    <script> 
+      Prism.plugins.autoloader.languages_path = '/assets/prism-components/'; 
+    </script> 
+
+<!-- Diff-highlighter is very picky about whitespace -->
+    <script>Prism.plugins.NormalizeWhitespace.setDefaults({
       'remove-trailing': true,
       'remove-indent': true,
       'left-trim': false,
       'right-trim': true,
-      'break-lines': 80,
+      // 'break-lines': 80,
       'indent': 0,
       'remove-initial-line-feed': true,
       'tabs-to-spaces': 4,
-      'spaces-to-tabs': 4
-    });</script> -->
+      // 'spaces-to-tabs': 4
+    });</script>
     
 
       <!-- Back to top -->
