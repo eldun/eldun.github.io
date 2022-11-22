@@ -1,0 +1,27 @@
+
+---
+title: Morso
+subtitle: Creating a Morse Code Android Application with Kotlin
+excerpt: I need to learn Morse code if I want to be able to communicate with all my **really** cool neighbors.
+reason: To learn Kotlin, start (& finish) an Android app, and create a convenient way to practice Morse.
+disclaimer:
+toc: true
+use-math: true
+use-raw-images: false
+layout: post
+author: Evan
+header-image: /assets\images\blog-images\morso\telegraph.jpg
+header-image-alt:
+header-image-title: "An old telegraph! Source: https://www.history.com/topics/inventions/telegraph"
+tags: android kotlin java
+---
+
+#### Adding Vibration
+
+The [offical docs](https://developer.android.com/reference/android/os/Vibrator.html) on the Android Vibrator class is a bit sparse, so I got my info from [here](https://stackoverflow.com/a/17066803).
+
+We need to specify that our app uses vibration in the manifest:
+
+<pre><code class="language-xml">
+<uses-permission android:name="android.permission.VIBRATE"/>
+</code></pre>

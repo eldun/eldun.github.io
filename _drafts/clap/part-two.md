@@ -32,10 +32,16 @@ We will likely have to add extensions like `note-ports.h` later on.
 ### Adapting schwaaa's Volume Plugin to an Arp
 Almost all of the code we'll be concerned with will be contained within `plugin_impl_2.cpp`, which is (as of right now) a copy of `plugin_impl_0.cpp`. Let's step through, block by block, and make our changes.
 
+<<<<<<< HEAD
 #### Info and Paramters 
 The first step is to 
 
 1. Describe our plugin:
+=======
+#### Info and Dexcriptors 
+The first step is to accurately describe our plugin, of course:
+<pre><code class="language-cpp">
+>>>>>>> 5129e8a5cef11c8c7916a0f4e455105568a47f0e
 
 ```cpp
 static clap_plugin_descriptor _descriptor =
@@ -51,7 +57,7 @@ static clap_plugin_descriptor _descriptor =
   "Arpeggiator",
   _features
 };
-```
+</code></pre>
 
 2. Describe our inputs
 

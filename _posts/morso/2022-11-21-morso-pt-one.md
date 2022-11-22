@@ -1,7 +1,7 @@
 ---
 title: Morso
 subtitle: Creating a Morse Code Android Application with Kotlin
-excerpt: I need to learn Morse code if I want to be able to communicate with all my *cool* neighbors.
+excerpt: I need to learn Morse code if I want to be able to communicate with my *cool* neighbors.
 reason: To learn Kotlin, start (& finish) an Android app, and create a convenient way to practice Morse.
 disclaimer:
 toc: true
@@ -286,7 +286,7 @@ This won't *exactly* center the text (there's a lot going on with fonts!) - it's
 ##### Creating a `Paint` Object for Drawing Text
 We're going to need a `Paint` object for drawing text:
 
-<pre><code class="language-kotlin">
+<pre><code class="language-diff-kotlin diff-highlight">
 class MorsoView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
