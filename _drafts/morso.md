@@ -1,41 +1,43 @@
 ---
 title: Morso
 subtitle: Creating a Morse Code Android Application with Kotlin
-excerpt: I need to learn Morse code if I want to be able to communicate with all my **really** cool neighbors.
+excerpt: I need to learn Morse code if I want to be able to communicate with all my *cool* neighbors.
 reason: To learn Kotlin, start (& finish) an Android app, and create a convenient way to practice Morse.
 disclaimer:
 toc: true
-use-math: true
+use-math: false
 use-raw-images: false
 layout: post
 author: Evan
-header-image: /assets\images\blog-images\morso\telegraph.jpg
+header-image: /assets/images/blog-images/morso/F.png
 header-image-alt:
 header-image-title: "An old telegraph! Source: https://www.history.com/topics/inventions/telegraph"
-tags: android kotlin
+tags: android kotlin java
 ---
 
 ## Why Morse Code?
 One of my least favorite things in this world is having to yell in someone's ear. Usually, I don't have to. Occasionally, though, I find myself at a bar.
 
-One of my favorite things in this world is the process of getting better (at anything!). Rather than spending hours learning [American Sign Language](https://en.wikipedia.org/wiki/American_Sign_Language) (which **is** on my to-do list), I could just learn 26 characters in [Morse code](https://en.wikipedia.org/wiki/Morse_code) and tap out a message on my friend's shoulder!
+One of my favorite things in this world is the process of getting better at useless-adjacent things. Rather than spending hours learning [American Sign Language](https://en.wikipedia.org/wiki/American_Sign_Language) (which **is** on my to-do list), I could just learn 26 characters in [Morse code](https://en.wikipedia.org/wiki/Morse_code) and tap out a message on my friend's shoulder!
 
 I already learned the [Dvorak keyboard layout](https://en.wikipedia.org/wiki/Dvorak_keyboard_layout) (not recommended) - which is unsurprisingly pretty similar to the structure of Morse code (look at the home row)! Obviously, the most used letters are the most accessible.
 
-[Dvorak layout](/assets/images/blog-images/morso/dvorak-layout.png)
+![Dvorak layout](/assets/images/blog-images/morso/dvorak-layout.png)
 
-<span class="row">
-[Morse code structure](/assets/images/blog-images/morso/morse-code-tree.png)
-[Morse code chart](/assets/images/blog-images/morso/morse-code-chart.png)
-</span>
+<div style="background-color: white">
+<img src="/assets/images/blog-images/morso/morse-code-tree.png" alt="Morse code structure">
+<img src="/assets/images/blog-images/morso/morse-code-chart.png" alt="Morse code chart">
+</div>
 
-Additionally, the scope of this project seems perfect for getting back into Android development and learning Kotlin.
+Additionally, the scope of this project seems perfect for getting back into Android development(sorry [SeeNatural](https://github.com/eldun/SeeNatural)) and learning Kotlin.
+
+---
 
 ## The General Idea
 I believe the best way to learn is by doing, which is why I want to create a custom Morse keyboard. Android has a useful "language/input" button for switching the keyboard quickly:
-![Android keyboard button](assets\images\blog-images\morso\keyboard-button.png)
+![Android keyboard button](/assets/images/blog-images/morso/keyboard-button.png)
 
-Keep in mind that I'm not trying to reinvent the keyboard here - just creating a handy, accessible practice tool. For that reason, I'll be structuring my application in much the same way that GBoard does - a keyboard with some settings and utilities accessible from the top row.
+I'm not trying to reinvent the keyboard - just creating a handy, accessible practice tool. For that reason, I'll be structuring my application in much the same way that GBoard does - a keyboard with some settings and utilities accessible from the top row.
 
 Some practice ideas I've had are as follows:
 
@@ -45,65 +47,67 @@ Some practice ideas I've had are as follows:
 
 Morso will be written in [Kotlin](https://developer.android.com/kotlin/first), Android's "official" language.
 
-## The First Step
+---
+## Getting Started
 The most obvious first step to me is to create an input [service](https://developer.android.com/reference/android/app/Service) that can be used system-wide. The [Android Developer article on input methods](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method) and [this StackOverflow answer](https://stackoverflow.com/a/44939816) will be exceedingly helpful.
 
-### 1. Declare IME Components in the Manifest
+---
+### Declaring IME Components in the Manifest
 Official documentation for this step can be found [here](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#DefiningIME), but we're basically going to throw a snippet into our app's [`AndroidManifest.xml`](https://developer.android.com/guide/topics/manifest/manifest-intro).
 
 > The following snippet declares an IME service. It requests the permission BIND_INPUT_METHOD to allow the service to connect the IME to the system, sets up an intent filter that matches the action android.view.InputMethod, and defines metadata for the IME:
 
-```xml
-<!-- Declares the input method service -->
-<service android:name="MorsoIME"
+<pre><code class="language-xml">
+&lt;!-- Declares the input method service -->
+&lt;service android:name="MorsoIME"
     android:label="@string/morso_label"
     android:permission="android.permission.BIND_INPUT_METHOD">
-    <intent-filter>
-        <action android:name="android.view.InputMethod" />
-    </intent-filter>
-    <meta-data android:name="android.view.im"
+    &lt;intent-filter>
+        &lt;action android:name="android.view.InputMethod" />
+    &lt;/intent-filter>
+    &lt;meta-data android:name="android.view.im"
                android:resource="@xml/method" />
-</service>
-```
+&lt;/service>
+</code></pre>
 
 I was notified of an error about how `android:exported` must be set to `true` or `false` - I set it to true. You can read about the exported attribute [here](https://developer.android.com/guide/topics/manifest/service-element#exported).
 
 I was also warned that the `android.preference` library is deprecated when I created the `xml/method` file. I added this line to my `build.gradle` (Module: app):
 
-```gradle
+<pre><code class="language-kotlin">
 dependencies {
     ...
     implementation "androidx.preference:preference:1.1.0"
     ...
 }
-```
+</code></pre>
 
 [Source](https://stackoverflow.com/a/56833739)
 
 Another issue I was having was that I was unable to select Morso as an input method. The reason why was that I had not yet added any [subtypes](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#IMESubTypes) to `res/xml/method.xml`. For now, you can paste this minimal example into `res/xml/method.xml`:
 
-```kotlin
-<?xml version="1.0" encoding="utf-8"?>
-<input-method
+<pre><code class="language-xml">
+&lt;?xml version="1.0" encoding="utf-8"?>
+&lt;input-method
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <subtype
+    &lt;subtype
         android:imeSubtypeMode="keyboard"/>
 
-</input-method>
-```
+&lt;/input-method>
+</code></pre>
 
-We will cover subtypes in further detail later on.
+We will cover subtypes in further detail later on in this series.
 
 
 My complete `AndroidManifest.xml` looks like this (I have no activities, as you can see.):
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<pre><code class="language-xml">
+&lt;?xml version="1.0" encoding="utf-8"?>
+&lt;manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.eldun.morso">
 
-    <application
+    &lt;application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -111,24 +115,24 @@ My complete `AndroidManifest.xml` looks like this (I have no activities, as you 
         android:supportsRtl="true"
         android:theme="@style/Theme.Morso" />
 
-    <!-- Declares the input method service -->
-    <service android:name="MorsoIME"
+    &lt;!-- Declares the input method service -->
+    &lt;service android:name="MorsoIME"
         android:label="@string/morso_label"
         android:permission="android.permission.BIND_INPUT_METHOD"
         android:exported="true">
-        <intent-filter>
-            <action android:name="android.view.InputMethod" />
-        </intent-filter>
-        <meta-data android:name="android.view.im"
+        &lt;intent-filter>
+            &lt;action android:name="android.view.InputMethod" />
+        &lt;/intent-filter>
+        &lt;meta-data android:name="android.view.im"
             android:resource="@xml/method" />
-    </service>
+    &lt;/service>
 
-</manifest>
-```
+&lt;/manifest>
+</code></pre>
 
 
-
-### 2. Declare the Settings Activity for the IME
+---
+### Declaring the Settings Activity for the IME
 
 > This next snippet declares the settings activity for the IME. It has an intent filter for ACTION_MAIN that indicates this activity is the main entry point for the IME application:
 
@@ -140,20 +144,21 @@ My complete `AndroidManifest.xml` looks like this (I have no activities, as you 
     </intent-filter>
 </activity>
 
-I don't plan on using this snippet - the official docs even say what I was thinking:
-
 > You can also provide access to the IME's settings directly from its UI.
 
+We will create the settings screen later on in this series.
 
-### 3. Create our MorsoIME Class
+---
+
+### Creating our MorsoIME Class
 You may have noticed that we have a warning that a service by the name of `MorsoIME` could not be found! Go ahead and create a new Kotlin class - `MorsoIME` - that extends `InputMethodService`:
 
-> The central part of an IME is a service component, a class that extends [`InputMethodService`](https://developer.android.com/reference/android/inputmethodservice/InputMethodService). In addition to implementing the normal [service lifecycle](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#InputMethodLifecycle), this class has callbacks for providing your IME's UI, handling user input, and delivering text to the field that currently has focus. By default, the `InputMethodService` class provides most of the implementation for managing the state and visibility of the IME and communicating with the current input field.
+> The central part of an IME is a service component, a class that extends [InputMethodService](https://developer.android.com/reference/android/inputmethodservice/InputMethodService). In addition to implementing the normal [service lifecycle](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#InputMethodLifecycle), this class has callbacks for providing your IME's UI, handling user input, and delivering text to the field that currently has focus. By default, the `InputMethodService` class provides most of the implementation for managing the state and visibility of the IME and communicating with the current input field.
 
 
 This is what our placeholder `MorsoIME` looks like (we'll create our UI in the next section):
 
-```kotlin
+<pre><code class="language-kotlin">
 class MorsoIME : InputMethodService() {
 
     override fun onCreateInputView(): View {
@@ -170,27 +175,43 @@ class MorsoIME : InputMethodService() {
     }
 
 }
-```
-If you're slightly confused by that `apply` block, read about Kotlin's [scope functions](https://kotlinlang.org/docs/scope-functions.html) and [higher-order functions](https://kotlinlang.org/docs/lambdas.html).
+</code></pre>
+If you're confused by that `apply` block, read about Kotlin's [scope functions](https://kotlinlang.org/docs/scope-functions.html) and [higher-order functions](https://kotlinlang.org/docs/lambdas.html).
 
-### 3. Create our Input View
-We have two options for [designing our UI](https://developer.android.com/develop/ui) - the traditional "Views" method, and the newer "Jetpack Compose" method. We'll go through both for completeness, starting...
+---
+
+### Creating our Input View
+
+We have two options for [designing our UI](https://developer.android.com/develop/ui) - the traditional "Views" method, and the newer "Jetpack Compose" method. ~~We'll go through both for completeness, starting...~~ (On second thought, we'll try Jetpack Compose when we implement our settings activity. I like to keep moving forward in these blog posts).
+
+
+
+
+
+---
 
 #### With "Views"
-Everything you could want to know about views can be found [here](https://developer.android.com/guide/topics/ui/how-android-draws), [here](https://developer.android.com/develop/ui/views/layout/declaring-layout), [here](https://developer.android.com/develop/ui/views/layout/custom-views/custom-components), and [here](https://developer.android.com/codelabs/advanced-android-kotlin-training-custom-views#0).
 
-![A typical view hierarchy](/assets/images/blog-images/morso/android-layout.png)
+Almost everything you could want to know about views can be found
+
+- [here](https://developer.android.com/guide/topics/ui/how-android-draws) (how android draws views),
+- [here](https://developer.android.com/develop/ui/views/layout/declaring-layout) (layouts),
+- [here](https://developer.android.com/develop/ui/views/layout/custom-views/custom-components) (creating custom components),
+- and [here](https://developer.android.com/codelabs/advanced-android-kotlin-training-custom-views#0) (a codelab on creating custom views).
+
+
+---
 
 ##### Creating a Placeholder Layout
-Create `res/input.xml`:
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+Create `res/morso.xml`:
+<pre><code class="language-xml">
+&lt;?xml version="1.0" encoding="utf-8"?>
+&lt;androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    &lt;ImageView
         android:id="@+id/morsoView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -199,8 +220,8 @@ Create `res/input.xml`:
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
-```
+&lt;/androidx.constraintlayout.widget.ConstraintLayout>
+</code></pre>
 ![Placeholder View](/assets/images/blog-images/morso/android-placeholder.png)
 
 Note that setting the `ImageView` dimensions to `0dp` is equivalent to `match_constraint`.
@@ -210,15 +231,17 @@ Once we create our custom `MorsoView` class, we'll replace the `<ImageView>` tag
 
 
 
-
+---
 
 ##### Creating our Custom MorsoView
 
-1. Create a new Kotlin class called MorsoView.
-2. Modify the class definition to extend View.
-3. Click on View and then click the red bulb. Choose Add Android View constructors using ‘@JvmOverloads'. Android Studio adds the constructor from the View class. The @JvmOverloads annotation instructs the Kotlin compiler to generate overloads for this function that substitute default parameter values.
+Create a new Kotlin class called MorsoView.
 
-```kotlin
+Modify the class definition to extend View.
+
+Click on View and then click the red bulb. Choose Add Android View constructors using ‘@JvmOverloads'. Android Studio adds the constructor from the View class. The @JvmOverloads annotation instructs the Kotlin compiler to generate overloads for this function that substitute default parameter values.
+
+<pre><code class="language-kotlin">
 package net.eldun.morso
 
 import android.content.Context
@@ -232,7 +255,7 @@ class MorsoView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
 }
-```
+</code></pre>
 
 Now let's follow the steps necessary to [draw a custom view](https://developer.android.com/codelabs/advanced-android-kotlin-training-custom-views#4). How about we start with a black rectangle with "Morso" in the center?
 
@@ -240,7 +263,7 @@ We could do both of these tasks in XML by extending a `Button` view (rather than
 
 
 
-
+---
 ##### Overriding `onSizeChanged()`
 
 First, we'll override the `onSizeChanged()` -
@@ -248,20 +271,22 @@ First, we'll override the `onSizeChanged()` -
 
 Add member floats `centerX` and `centerY` to our `MorsoView` class, and then calculate them in `onSizeChanged`
 
-```kotlin
+<pre><code class="language-kotlin">
 override fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
-   centerX = (width / 2.0).toFloat()
-   centerY = (height / 2.0).toFloat()
+   centerX = (width.toFloat / 2.0)
+   centerY = (height.toFloat / 2.0)
 }
-```
+</code></pre>
 
 This won't *exactly* center the text (there's a lot going on with fonts!) - it's only a placeholder. If you wish you can add the code to [actually center it](https://stackoverflow.com/a/32081250).
 
 
+---
+
 ##### Creating a `Paint` Object for Drawing Text
 We're going to need a `Paint` object for drawing text:
 
-```kotlin
+<pre><code class="language-kotlin">
 class MorsoView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -279,18 +304,20 @@ class MorsoView @JvmOverloads constructor(
 
     private var centerX = 100F
     private var centerY = 100F
-```
+</code></pre>
+
+---
 ##### Drawing our View
 Next, we'll draw our view by overriding `onDraw()` (we'll also set the background color here):
 
-```kotlin
+<pre><code class="language-kotlin">
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         this.setBackgroundColor(Color.BLACK)
         canvas.drawText("Morso", centerX, centerY, paint)
     }
-```
+</code></pre>
 
 If you take a look at our generated layout, you'll notice `MorsoView` takes up almost the whole screen. While this might be useful for typing without looking, it's definitely not a reasonable default.
 
@@ -299,18 +326,18 @@ In order to determine how much space MorsoView is alloted, we'll have to overrid
 From the second link:
 > `onMeasure`'s parameters are View.MeasureSpec values that tell you how big your view's parent wants your view to be, and whether that size is a hard maximum or just a suggestion. As an optimization, these values are stored as packed integers, and you use the static methods of `View.MeasureSpec` to unpack the information stored in each integer.
 
-This StackOverflow answer has a nice description of the different `MeasureSpec`s and how they relate to the width and height we set in our `res/input.xml`
+This [StackOverflow answer](https://stackoverflow.com/a/12267248) has a nice description of the different `MeasureSpec`s and how they relate to the width and height we set in our `res/morso.xml`
 
 Add a helper function to get the screen height:
-```kotlin
+<pre><code class="language-kotlin">
     fun getScreenHeight(): Int {
         return Resources.getSystem().getDisplayMetrics().heightPixels
     }
-```
+</code></pre>
 
 Now we can override `MorsoView`'s `onMeasure()` and set the height to a quarter of the screen height:
 
-```kotlin
+<pre><code class="language-kotlin">
 override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val desiredWidth = 100;
         val desiredHeight = getScreenHeight() / 4;
@@ -341,7 +368,7 @@ override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         setMeasuredDimension(width, height);
     }
 
-```
+</code></pre>
 
 ![Morso measured view](/assets/images/blog-images/morso/morso-measured-view.png)
 
@@ -354,6 +381,9 @@ override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 
 ### Starting our IME Service
 When  -->
+
+
+---
 
 ##### Making our View Interactive
 The article for this section can be found [here](https://developer.android.com/develop/ui/views/layout/custom-views/making-interactive).
@@ -371,7 +401,7 @@ To learn more about gestures, go [here](https://developer.android.com/develop/ui
 
 Create a new `MorsoGestureListener` class that extends `SimpleGestureListener`:
 
-```kotlin
+<pre><code class="language-kotlin">
 package net.eldun.morso
 
 import android.util.Log
@@ -394,13 +424,13 @@ class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
     }
 
 }
-```
+</code></pre>
 
 > Whether or not you use GestureDetector.SimpleOnGestureListener, you must always implement an onDown() method that returns true. This step is necessary because all gestures begin with an onDown() message. If you return false from onDown(), as GestureDetector.SimpleOnGestureListener does, the system assumes that you want to ignore the rest of the gesture, and the other methods of GestureDetector.OnGestureListener never get called. The only time you should return false from onDown() is if you truly want to ignore an entire gesture. Once you've implemented GestureDetector.OnGestureListener and created an instance of GestureDetector, you can use your GestureDetector to interpret the touch events you receive in onTouchEvent().
 
 In our MorsoView, add the following (along with any necessary imports):
 
-```kotlin
+<pre><code class="language-kotlin">
 class MorsoView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -423,7 +453,7 @@ class MorsoView @JvmOverloads constructor(
 +    }
 
 }
-```
+</code></pre>
 
 > When you pass onTouchEvent() a touch event that it doesn't recognize as part of a gesture, it returns false. You can then run your own custom gesture-detection code.
 
@@ -433,9 +463,12 @@ This is where we can implement gestures like triple taps in the future.
 
 Thinking about it some more, we're probably going to end up creating all of our own gestures from within MorsoView's on `onTouchEvent`. In doing so, we'll be able to specify custom timing delays for dots and dashes and the like. However, it's good for now.
 
-Let's put things in place replace the "Morso" text on touch inputs with the appropriate characters.
+Let's put things in place to replace the "Morso" text on touch inputs with the appropriate characters.
 
-##### Learning About Representing UI State
+
+---
+
+##### Representing UI State
 The main article for this section is [here](https://developer.android.com/topic/architecture/ui-layer#define-ui-state). I suggest reading it.
 
 Details on how IMEs handle config changes can be found [here](https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)).
@@ -449,22 +482,22 @@ Details on how IMEs handle config changes can be found [here](https://developer.
 
 <!-- We'll be using a [data class](https://kotlinlang.org/docs/data-classes.html) to represent the UI state. It's not much at the moment:
 
-```kotlin
+<pre><code class="language-kotlin">
 package net.eldun.morso
 
 data class MorsoViewState(){
     val mainText : String
 }
-``` -->
+</code></pre> -->
 
 Here's an explanation for why the UI state member(s) are [immutable](https://kotlinlang.org/docs/basic-syntax.html#variables):
 
-```kotlin
+<pre><code class="language-kotlin">
 data class NewsUiState(
     val isSignedIn: Boolean = false,
     val isPremium: Boolean = false,
-    val newsItems: List<NewsItemUiState> = listOf(),
-    val userMessages: List<Message> = listOf()
+    val newsItems: List&lt;NewsItemUiState> = listOf(),
+    val userMessages: List&lt;Message> = listOf()
 )
 
 data class NewsItemUiState(
@@ -473,7 +506,8 @@ data class NewsItemUiState(
     val bookmarked: Boolean = false,
     ...
 )
-```
+</code></pre>
+
 > The UI state definition in the example above is immutable. The key benefit of this is that immutable objects provide guarantees regarding the state of the application at an instant in time. This frees up the UI to focus on a single role: to read the state and update its UI elements accordingly. As a result, you should never modify the UI state in the UI directly unless the UI itself is the sole source of its data. Violating this principle results in multiple sources of truth for the same piece of information, leading to data inconsistencies and subtle bugs.
 >
 > For example, if the bookmarked flag in a NewsItemUiState object from the UI state in the case study were updated in the Activity class, that flag would be competing with the data layer as the source of the bookmarked status of an article. Immutable data classes are very useful for preventing this kind of antipattern.
@@ -518,21 +552,21 @@ Our first implementation of our `ViewModel` class will merely hold the value of 
 
 With that being said, let's create `MorsoViewModel`:
 
-```kotlin
+<pre><code class="language-kotlin">
 package net.eldun.morso
 
 import androidx.lifecycle.ViewModel
 
 class MorsoViewModel : ViewModel() {
 }
-```
+</code></pre>
 
 Now we have to assosciate our `ViewModel` with our IME - we'll add a member of type `MorsoViewModel` to `MorsoIME` and initialize it using the `by viewModels()` property delegate:
 
-```kotlin
+<pre><code class="language-kotlin">
 private val viewModel: MorsoViewModel by viewModels()
 }
- ``` -->
+ </code></pre> -->
 
 <!-- ###### What are Property Delegates?
 
@@ -561,44 +595,46 @@ private val viewModel: MorsoViewModel by viewModels()
 The article for this section can be found [here](https://developer.android.com/codelabs/basic-android-kotlin-training-viewmodel#4)
 
 Right now, the only property in our `MorsoViewModel` is the the background text:
-```kotlin
+<pre><code class="language-kotlin">
     private var backgroundText = "Morso"
-```
+</code></pre>
 
 However,
 
 > Inside the ViewModel, the data should be editable, so they should be private and var. From outside the ViewModel, data should be readable, but not editable, so the data should be exposed as public and val. To achieve this behavior, Kotlin has a feature called a [backing property](https://kotlinlang.org/docs/properties.html#backing-properties).
 
-```
+</code></pre>
 class MorsoViewModel : ViewModel() {
 
     private var _backgroundText = "Morso"
     val backgroundText: String
         get() = _backgroundText()
 }
-```
+</code></pre>
 
 Mutable data fields from the viewmodel should **never** be exposed. -->
 
 
+---
+
 
 ##### Storing UI Data for our Input Service
-As it turns out, we don't actually have to use viewmodels, because `InputServiceMethod`s [don't have to worry about configuration changes](https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)) - which is the main reason to use viewmodels (other than the seperation of ui from state, of course). As is often the case when traveling a bit off the beaten path, the [answers are not always *totally* crystal clear](https://github.com/android/architecture-components-samples/issues/137#issuecomment-327854042), though. Based on what I've read, it sounds like we can get away with a mere [plain class for state holding](https://developer.android.com/topic/architecture/ui-layer/stateholders#choose_between_a_viewmodel_and_plain_class_for_a_state_holder). Furthermore, we'll make our UI state a [singleton](https://en.wikipedia.org/wiki/Singleton_pattern) by using the [object keyword](https://stackoverflow.com/questions/51834996/singleton-class-in-kotlin).
+As it turns out, we don't actually have to use viewmodels, because `InputServiceMethod`s [don't have to worry about configuration changes](https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)) - which is the main reason to use viewmodels (other than the seperation of ui from state, of course). As is often the case when traveling a bit off the beaten path, the [answers are not always *totally* satisfactory](https://github.com/android/architecture-components-samples/issues/137#issuecomment-327854042), though. Based on what I've read, it sounds like we can get away with a mere [plain class for state holding](https://developer.android.com/topic/architecture/ui-layer/stateholders#choose_between_a_viewmodel_and_plain_class_for_a_state_holder). Furthermore, we'll make our UI state a [singleton](https://en.wikipedia.org/wiki/Singleton_pattern) by using the [object keyword](https://stackoverflow.com/questions/51834996/singleton-class-in-kotlin).
 
 The following info is from [this codelab](https://developer.android.com/codelabs/basic-android-kotlin-training-viewmodel#4). Even though the codelab is about viewmodels, the same principles still apply to our plain state class.
 
 Create `MorsoUiState`:
 
 Right now, the only property in our `MorsoUiState` is the the background text:
-```kotlin
+<pre><code class="language-kotlin">
     private var backgroundText = "Morso"
-```
+</code></pre>
 
 However,
 
 > Inside the ViewModel, the data should be editable, so they should be private and var. From outside the ViewModel, data should be readable, but not editable, so the data should be exposed as public and val. To achieve this behavior, Kotlin has a feature called a [backing property](https://kotlinlang.org/docs/properties.html#backing-properties).
 
-```
+<pre><code class="language-kotlin">
 object MorsoUiState {
 
     private var _backgroundText = "Morso"
@@ -609,9 +645,12 @@ object MorsoUiState {
         _backgroundText = input
     }
 }
-```
+</code></pre>
 
 Mutable data fields from state holders should **never** be exposed.
+
+
+---
 
 ##### Updating our View with New UI Data
 
@@ -619,8 +658,9 @@ Mutable data fields from state holders should **never** be exposed.
 
 We can automatically update our UI using [LiveData](https://developer.android.com/topic/libraries/architecture/livedata) as the binding source.
 
-First, we should update `MorsoView` with a function to update all of its fields(which should all be private):
-```kotlin
+First, we should update `MorsoView` with a function to update all of its fields(which should all be private) from the ui state and then redraw itself (using [`invalidate`](https://developer.android.com/reference/android/view/View#invalidate())):
+
+<pre><code class="language-kotlin">
 ...
 
     private var backgroundText = "Morso"
@@ -629,55 +669,56 @@ First, we should update `MorsoView` with a function to update all of its fields(
     fun updateUi(morsoUiState: MorsoUiState) {
         backgroundText = morsoUiState.backgroundText.value.toString()
 
+        invalidate()
+
     }
 ...
-```
+</code></pre>
 
 To [work with LiveData](https://developer.android.com/topic/libraries/architecture/livedata#work_livedata), we must follow these steps:
 
 1. [Create an instance of LiveData](https://developer.android.com/topic/libraries/architecture/livedata#create_livedata_objects) to hold a certain type of data. This is usually done within your ViewModel class.
 
-We're not using a viewmodel
+but we're not using a viewmodel hehe
 
-```kotlin
+<pre><code class="language-kotlin">
 object MorsoUiState {
 
-    val backgroundText: MutableLiveData<String> by lazy {
-        MutableLiveData<String>("Morso")
+    val backgroundText: MutableLiveData&lt;String> by lazy {
+        MutableLiveData&lt;String>("Morso")
     }
 }
-```
+</code></pre>
 
 2. Create an Observer object that defines the onChanged() method, which controls what happens when the LiveData object's held data changes. You usually create an Observer object in a UI controller, such as an activity or fragment.
 
-```kotlin
+<pre><code class="language-kotlin">
 class MorsoIME : InputMethodService() {
     private val TAG = "MorsoIME"
 
 
     override fun onCreateInputView(): View {
     val morsoLayout = layoutInflater.inflate(R.layout.input_container, null)
-        morsoView = morsoLayout.findViewById<MorsoView>(R.id.morsoView)
+        morsoView = morsoLayout.findViewById&lt;MorsoView>(R.id.morsoView)
 
         // Create the observer which updates the UI.
-        val backgroundTextObserver = Observer<String> {
+        val backgroundTextObserver = Observer&lt;String> {
 
             // Update the UI
             morsoView.updateUi(morsoUiState)
-            morsoView.invalidate()
         }
 
         return morsoLayout
     }
 
 }
-```
+</code></pre>
 
 3. Attach the Observer object to the LiveData object using the observe() method. The observe() method takes a LifecycleOwner object. This subscribes the Observer object to the LiveData object so that it is notified of changes. You usually attach the Observer object in a UI controller, such as an activity or fragment.
 
 > You can register an observer without an associated LifecycleOwner object using the observeForever(Observer) method. In this case, the observer is considered to be always active and is therefore always notified about modifications. You can remove these observers calling the removeObserver(Observer) method.
 
-```kotlin
+<pre><code class="language-kotlin">
 class MorsoIME : InputMethodService() {
     private val TAG = "MorsoIME"
 
@@ -689,13 +730,13 @@ class MorsoIME : InputMethodService() {
     override fun onCreateInputView(): View {
 
         val morsoLayout = layoutInflater.inflate(R.layout.input_container, null)
-        morsoView = morsoLayout.findViewById<MorsoView>(R.id.morsoView)
+        morsoView = morsoLayout.findViewById&lt;MorsoView>(R.id.morsoView)
         morsoGestureListener = morsoView.gestureListener
         morsoUiState = morsoGestureListener.morsoUiState
 
 
         // Create the observer which updates the UI.
-        val backgroundTextObserver = Observer<String> {
+        val backgroundTextObserver = Observer&lt;String> {
 
             // Update the UI
             morsoView.updateUi(morsoUiState)
@@ -709,27 +750,30 @@ class MorsoIME : InputMethodService() {
     }
 
 }
-```
+</code></pre>
 
 When we have a more complex UI state, it might be worthwhile to make the whole `MorsoUiState` observable.
 
 Add to `onSingleTapUp` in `MorsoGestureListener`:
 
-```kotlin
+<pre><code class="language-kotlin">
    override fun onSingleTapUp(e: MotionEvent): Boolean {
 +        morsoUiState.backgroundText.value = "tapped"
         return true
     }
-```
+</code></pre>
 
 Our "Morso" text will change to "tapped" on a single tap.
+
+
+---
 
 ##### Resetting our Background Text After a Delay
 Add the following code to the `backgroundTextObserver`:
 
-```kotlin
+<pre><code class="language-diff-kotlin diff-highlight">
 // Create the observer which updates the UI.
-        val backgroundTextObserver = Observer<String> { newBackgroundText ->
+        val backgroundTextObserver = Observer&lt;String> { newBackgroundText ->
             Log.d(TAG, "onCreateInputView: New Text!")
             // Update the UI
             morsoView.backgroundText = newBackgroundText
@@ -741,9 +785,12 @@ Add the following code to the `backgroundTextObserver`:
 +                }, 1000)
             }
         }
-```
+</code></pre>
 
-We will be able to configure the delay in settings later on.
+We will be able to configure the delay in settings later in the series.
+
+
+---
 
 ### Representing Morse Code
 
@@ -752,14 +799,14 @@ I figure [enums](https://kotlinlang.org/docs/enum-classes.html#working-with-enum
 Another option would be to use an immutable ordered binary tree created at compile-time in a companion object. If you use a tree, be aware that `Enum.compareTo()` is `final` - the order in which the enums are declared is important for comparing/navigating the tree. [Why is compareTo final?](https://stackoverflow.com/questions/519788/why-is-compareto-on-an-enum-final-in-java)
 
 Lets represent signals in `MorseSignal`:
-```kotlin
+<pre><code class="language-kotlin">
 enum class MorseSignal {
     DOT, DASH, SPACE;
 }
-```
+</code></pre>
 
 and characters in `Character`:
-```kotlin
+<pre><code class="language-kotlin">
 enum class Character(vararg var sequence: MorseSignal) {
 
     START(),
@@ -839,13 +886,13 @@ enum class Character(vararg var sequence: MorseSignal) {
 }
 
 
-```
+</code></pre>
 
 We're going to want to be able to get the `Character` by its sequence once Morso detects a long enough break in input. To do so, we'll create a map with the key being `sequence` and the value being the `Character`.
 
 I was originally trying to use the `vararg sequence`(which is an array) as a key, but in order to look up the value, the array passed in [had to be the exact same array as the key](https://stackoverflow.com/a/16839191) - not just the contents of the array. I ended up converting the sequence in `Character`'s construtor to a `List`, and using said list as a key for the dictionary:
 
-```kotlin
+<pre><code class="language-kotlin">
     ...
 
     NINE(DASH, DASH, DASH, DASH, DOT){
@@ -860,12 +907,12 @@ I was originally trying to use the `vararg sequence`(which is an array) as a key
 
     companion object {
         private val map = Character.values().associateBy(Character::sequenceList)
-        fun fromSequenceList(seqList: List<MorseSignal>) = map[seqList]
+        fun fromSequenceList(seqList: List&lt;MorseSignal>) = map[seqList]
     }
-```
+</code></pre>
 
 We can now pass in a list of signals to `fromSequenceList` to get the corresponding `Character`:
-```kotlin
+<pre><code class="language-kotlin">
     class MorseTranslator {
 
         companion object {
@@ -876,7 +923,9 @@ We can now pass in a list of signals to `fromSequenceList` to get the correspond
             }
         }
     }
-```
+</code></pre>
+
+---
 
 ### Using Morso for Input
 
@@ -890,23 +939,26 @@ My general idea for the default behavior of Morso is as follows:
 
 MorsoCandidatesView will come later.
 
+
+---
+
 #### Translating Gestures to Morse Code
 Taps are already handled in our `MorsoGestureListener`. However - it's a bit picky about what counts as a tap and doesn't register gestures like triple-taps. Additionally, we should allow the user to customize the dot time because the dash and space duration will be defined as multiples of the base dot time. 
 
 Let's add to `MorsoGestureListener`:
 
-```kotlin
+<pre><code class="language-kotlin">
     fun onHold(e: MotionEvent): Boolean {
 
         Log.d(TAG, "onHold")
         return true
 
     }
-```
+</code></pre>
 
 In `MorsoInputView`, add the following members:
 
-```kotlin
+<pre><code class="language-diff-kotlin diff-highlight">
     class MorsoInputView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -928,11 +980,11 @@ In `MorsoInputView`, add the following members:
 
 
     ...
-```
+</code></pre>
 
 And add to `MorsoGestureListener`:
 
-```kotlin
+<pre><code class="language-kotlin">
 fun onShortPause(e: MotionEvent): Boolean {
         Log.d(TAG, "onShortPause")
         morsoUiState.reset()
@@ -945,11 +997,11 @@ fun onShortPause(e: MotionEvent): Boolean {
 
         return true
     }
-```
+</code></pre>
 
  and then update `MorsoInputView`:
 
-```kotlin
+<pre><code class="language-kotlin">
 
         override fun onTouchEvent(event: MotionEvent): Boolean {
 
@@ -979,7 +1031,7 @@ fun onShortPause(e: MotionEvent): Boolean {
 
 
 
-            // Listen for all taps with no restrictions (slop, triple-taps, etc. - unlike our gesture detector)
+            // Listen for all taps with no restrictions (slop, triple-taps, etc. - unlike the default gesture detector)
             val elapsedTime = upTime - downTime
             if (elapsedTime < dotTime){
                 gestureListener.onSingleTapUp(event)
@@ -996,15 +1048,15 @@ fun onShortPause(e: MotionEvent): Boolean {
         // It's up to MorsoGestureListener to decide
         return gestureDetector.onTouchEvent(event)
     }
-```
+</code></pre>
 
-
+---
 
 
 #### Implementing Candidates View
 The [candidates view](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#CandidateView) is something you're likely familiar with:
 
-![Candidates View](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#kotlin)
+![Candidates View](/assets/images/blog-images/morso/candidates-view.png)
 
 For Morso, I'd like to display the left child character, the current character (which can function as a countdown bar to the current character being committed), and the right child character in the candidates view. The rightmost suggestion can also double as a progress bar for dash inputs. One concern is that this is a *practice* application, so I'm not sure if I should make the suggestions clickable.
 
@@ -1012,7 +1064,7 @@ For Morso, I'd like to display the left child character, the current character (
 
 First, we have to create a view `MorsoCandidateView`:
 
-```kotlin
+<pre><code class="language-kotlin">
 class MorsoCandidateView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -1029,20 +1081,20 @@ class MorsoCandidateView @JvmOverloads constructor(
 
 
 }
-```
+</code></pre>
 
 Next, we have to create a layout `candidates.xml`:
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<pre><code class="language-xml">
+&lt;?xml version="1.0" encoding="utf-8"?>
+&lt;androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <net.eldun.morso.MorsoCandidateView
+    &lt;net.eldun.morso.MorsoCandidateView
         android:id="@+id/morsoCandidateView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -1053,14 +1105,14 @@ Next, we have to create a layout `candidates.xml`:
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
+    &lt;androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".3333" />
 
-    <net.eldun.morso.MorsoCandidateView
+    &lt;net.eldun.morso.MorsoCandidateView
         android:id="@+id/morsoCandidateView2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -1071,14 +1123,14 @@ Next, we have to create a layout `candidates.xml`:
         app:layout_constraintStart_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
+    &lt;androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".6667" />
 
-    <net.eldun.morso.MorsoCandidateView
+    &lt;net.eldun.morso.MorsoCandidateView
         android:id="@+id/morsoCandidateView3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -1089,8 +1141,8 @@ Next, we have to create a layout `candidates.xml`:
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
-```
+&lt;/androidx.constraintlayout.widget.ConstraintLayout>
+</code></pre>
 
 ![Candidates layout](/assets/images/blog-images/morso/candidates-layout.png)
 
@@ -1105,72 +1157,85 @@ Next, we have to create a layout `candidates.xml`:
  To display our new candidates layout, all we need to do is override `MorsoIME.onCreateCandidatesView()`:
 
 
-```kotlin
+<pre><code class="language-kotlin">
     override fun onCreateCandidatesView(): View {
         Log.d(TAG, "onCreateCandidatesView")
         return layoutInflater.inflate(R.layout.candidates, null)
     }
 
-```
+</code></pre>
 
 and `setCandidatesViewShown(true)` from `MorsoIME.onCreateInputView()`.
 
 ![Morso candidates at runtime](/assets/images/blog-images/morso/morso-candidates-runtime.png)
+
+
+---
 
 ##### Updating Candidates
 > [To change the candidates view after the first one is created by setCandidatesViewShown(), use setCandidatesView(android.view.View).](https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onCreateCandidatesView())
 
 The default candidates will be "E", "", and "T", respectively (I overrode Character.START's `toString()` to return ""). We'll be using our Character enum class to look up candidates, similar to how we looked up values by a character's sequence earlier on:
 
-```kotlin
+<pre><code class="language-diff-kotlin diff-highlight">
     companion object {
         val TAG = "Character"
 
         private val sequenceMap = values().associateBy(Character::sequenceList)
 +        private val stringMap = values().associateBy(Character::toString)
 +
-        fun fromSequenceList(seqList: List<MorseSignal>) = sequenceMap[seqList]
+        fun fromSequenceList(seqList: Listlt:MorseSignal>) = sequenceMap[seqList]
 +        fun fromString(stringifiedCharacter: String) = stringMap[stringifiedCharacter]
 +
-```
+</code></pre>
 
 Let's also add functions to retrieve the possible options from the current sequence:
 
-```kotlin
-fun getDotChild(character: Character): Character? {
+<pre><code class="language-kotlin">
+fun getDotChild(character: Character): Character {
             val result = fromSequenceList(character.sequenceList + DOT)
             if (result == null)
                 return Character.NULL
             return result
         }
 
+        fun getDotChild(characterString: String?): Character {
+            val character = fromString(characterString!!)
+            return getDotChild(character!!)
+        }
 
-        fun getDashChild(character: Character): Character? {
+
+        fun getDashChild(character: Character): Character {
             val result = fromSequenceList(character.sequenceList + DASH)
             if (result == null)
                 return Character.NULL
             return result
         }
-```
+
+        fun getDashChild(characterString: String?): Character {
+            val character = fromString(characterString!!)
+            return getDashChild(character!!)
+        }
+</code></pre>
 
 We can add our candidates to `MorsoUiState` now.
 
-```kotlin
+<pre><code class="language-kotlin">
 object MorsoUiState {
 
-    val backgroundText: MutableLiveData<String> by lazy {
-        MutableLiveData<String>("Morso")
+    val backgroundText: MutableLiveData&lt;String> by lazy {
+        MutableLiveData&lt;String>("Morso")
     }
 
     // Default characters
-    val currentCandidateText: MutableLiveData<String> by lazy {
-            MutableLiveData<String>(Character.START.toString())
+    val currentCandidateText: MutableLiveData&lt;String> by lazy {
+            MutableLiveData&lt;String>(Character.START.toString())
         }
-    val dotCandidateText: MutableLiveData<String> by lazy {
-        MutableLiveData<String>(Character.E.toString())
+    val dotCandidateText: MutableLiveData&lt;String> by lazy {
+        MutableLiveData&lt;String>(Character.E.toString())
     }
-    val dashCandidateText: MutableLiveData<String> by lazy {
-        MutableLiveData<String>(Character.T.toString())
+    val dashCandidateText: MutableLiveData&lt;String> by lazy {
+        MutableLiveData&lt;String>(Character.T.toString())
     }
 
     fun reset() {
@@ -1180,11 +1245,11 @@ object MorsoUiState {
         dashCandidateText.value = Character.T.toString()
     }
 }
-```
+</code></pre>
 
 We can update our `MorsoUiStateObserver` like so:
 
-```kotlin
+<pre><code class="language-kotlin">
 class MorsoUiStateObserver(val morso: MorsoIME, val uiState: MorsoUiState) {
 
     init {
@@ -1195,7 +1260,7 @@ class MorsoUiStateObserver(val morso: MorsoIME, val uiState: MorsoUiState) {
 
     private fun observeBackgroundText() {
         // Create the observer which updates the UI.
-        val backgroundTextObserver = Observer<String> {
+        val backgroundTextObserver = Observer&lt;String> {
 
             morso.updateUi()
 
@@ -1213,7 +1278,7 @@ class MorsoUiStateObserver(val morso: MorsoIME, val uiState: MorsoUiState) {
     private fun observeCandidates() {
 
         // Create the observer which updates the UI.
-        val candidatesTextObserver = Observer<String> {
+        val candidatesTextObserver = Observer&lt;String> {
             morso.updateUi()
         }
 
@@ -1225,13 +1290,13 @@ class MorsoUiStateObserver(val morso: MorsoIME, val uiState: MorsoUiState) {
 
 
 }
-```
+</code></pre>
 
 Now we can add logic to `MorsoGestureListener`, which will notify the UiStateObserver when candidate values change.
 
 
 
-```kotlin
+<pre><code class="language-kotlin">
     ...
     override fun onSingleTapUp(e: MotionEvent): Boolean {
         Log.d(TAG, "onSingleTapUp")
@@ -1274,11 +1339,11 @@ Now we can add logic to `MorsoGestureListener`, which will notify the UiStateObs
             morsoUiState.dashCandidateText.value = Character.getDashChild(newCurrent!!).toString()
         }
     }
-```
+</code></pre>
 
 Finally, we have to update our IME class:
 
-```kotlin
+<pre><code class="language-diff-kotlin diff-highlight">
 class MorsoIME : InputMethodService() {
     private val TAG = "MorsoIME"
     lateinit var morsoInputView: MorsoInputView
@@ -1298,7 +1363,7 @@ class MorsoIME : InputMethodService() {
      * first displayed.  You can return null to have no input area; the default
      * implementation returns null.
      *
-     * <p>To control when the input view is displayed, implement
+     * &lt;p>To control when the input view is displayed, implement
      * {@link #onEvaluateInputViewShown()}.
      * To change the input view after the first one is created by this
      * function, use {@link #setInputView(View)}.
@@ -1307,9 +1372,8 @@ class MorsoIME : InputMethodService() {
 //        android.os.Debug.waitForDebugger()
 
         val morsoLayout = layoutInflater.inflate(R.layout.morso, null)
-        morsoInputView = morsoLayout.findViewById<MorsoInputView>(R.id.morsoInputView)
+        morsoInputView = morsoLayout.findViewById&lt;MorsoInputView>(R.id.morsoInputView)
         morsoGestureListener = morsoInputView.gestureListener
-        morsoGestureListener.inputConnection = currentInputConnection
         morsoUiStateObserver = MorsoUiStateObserver(this, morsoUiState)
 
         setCandidatesViewShown(true)
@@ -1318,20 +1382,28 @@ class MorsoIME : InputMethodService() {
     }
 
 
-    /**
-     * Called when the input view is being shown and input has started on
-     * a new editor.  This will always be called after {@link #onStartInput},
-     * allowing you to do your general setup there and just view-specific
-     * setup here.  You are guaranteed that {@link #onCreateInputView()} will
-     * have been called some time before this function is called.
-     *
-     * @param info Description of the type of text being edited.
-     * @param restarting Set to true if we are restarting input on the
-     * same text field as before.
-     */
-    override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
-        super.onStartInputView(info, restarting)
-    }
++    /**
++     * Set Morso's GestureListener to the updated selection
++     */
++    override fun onUpdateSelection(
++        oldSelStart: Int,
++        oldSelEnd: Int,
++        newSelStart: Int,
++        newSelEnd: Int,
++        candidatesStart: Int,
++        candidatesEnd: Int
++    ) {
++        super.onUpdateSelection(
++            oldSelStart,
++            oldSelEnd,
++            newSelStart,
++            newSelEnd,
++            candidatesStart,
++            candidatesEnd
++        )
++
++        morsoGestureListener.inputConnection = currentInputConnection
++    }
 
 +    override fun onCreateCandidatesView(): View {
 +
@@ -1354,9 +1426,9 @@ class MorsoIME : InputMethodService() {
 +        morsoInputView.updateUi(morsoUiState)
 +
 +        if (candidatesVisible) {
-+            var current = candidatesLayout.findViewById<MorsoCandidateView>(R.id.morsoCurrentCandidate)
-+            var dot = candidatesLayout.findViewById<MorsoCandidateView>(R.id.morsoDotCandidate)
-+            var dash = candidatesLayout.findViewById<MorsoCandidateView>(R.id.morsoDashCandidate)
++            var current = candidatesLayout.findViewById&lt;MorsoCandidateView>(R.id.morsoCurrentCandidate)
++            var dot = candidatesLayout.findViewById&lt;MorsoCandidateView>(R.id.morsoDotCandidate)
++            var dash = candidatesLayout.findViewById&lt;MorsoCandidateView>(R.id.morsoDashCandidate)
 +
 +            Log.d(TAG, "updateUi pre: ${current.text} ${dot.text} ${dash.text}")
 +            current.text = morsoUiState.currentCandidateText.value
@@ -1371,26 +1443,27 @@ class MorsoIME : InputMethodService() {
 +    }
 
 }
-```
+</code></pre>
 
 The result:
 
 ![Morso basic candidates operation GIF](/assets/images/blog-images/morso/candidates.gif)
 
-<span class="todo">I just found out that there's a widget called [TextSwitcher](https://developer.android.com/reference/android/widget/TextSwitcher) which is useful for animating text labels.</span>
+<span class="todo">I just found out that there's a widget called [TextSwitcher](https://developer.android.com/reference/android/widget/TextSwitcher) which is useful for animating text labels. We can implement them later in the series.</span>
 
+---
 #### Sending Input
 
 [Main article](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#SendText)
 
-Now that we register all the correct gestures and update the UI appropriately (and minimally, at this point), we can use Morso to send info to text fields.
+Now that we register all the correct gestures and update the UI appropriately (minimally, at this point), we can use Morso to send info to text fields.
 
 First, we need to remove the background text reset logic from `MorsoUiStateObserver`:
 
-```kotlin
+<pre><code class="language-kotlin">
  private fun observeBackgroundText() {
         // Create the observer which updates the UI.
-        val backgroundTextObserver = Observer<String> {
+        val backgroundTextObserver = Observer&lt;String> {
 
             morso.updateUi()
 
@@ -1404,28 +1477,28 @@ First, we need to remove the background text reset logic from `MorsoUiStateObser
         // Observe the LiveData
         uiState.backgroundText.observeForever(backgroundTextObserver)
     }
-```
+</code></pre>
 
 Add a member `DEFAULT_BACKGROUND_TEXT` to `MorsoUiState`:
 
-```kotlin
+<pre><code class="language-diff-kotlin diff-highlight">
 object MorsoUiState {
 
 +    val DEFAULT_BACKGROUND_TEXT = "Morso"
 
-    val backgroundText: MutableLiveData<String> by lazy {
-!        MutableLiveData<String>(DEFAULT_BACKGROUND_TEXT)
+    val backgroundText: MutableLiveData&lt;String> by lazy {
+!        MutableLiveData&lt;String>(DEFAULT_BACKGROUND_TEXT)
     }
 
     // Default characters
-    val currentCandidateText: MutableLiveData<String> by lazy {
-            MutableLiveData<String>(Character.START.toString())
+    val currentCandidateText: MutableLiveData&lt;String> by lazy {
+            MutableLiveData&lt;String>(Character.START.toString())
         }
-    val dotCandidateText: MutableLiveData<String> by lazy {
-        MutableLiveData<String>(Character.E.toString())
+    val dotCandidateText: MutableLiveData&lt;String> by lazy {
+        MutableLiveData&lt;String>(Character.E.toString())
     }
-    val dashCandidateText: MutableLiveData<String> by lazy {
-        MutableLiveData<String>(Character.T.toString())
+    val dashCandidateText: MutableLiveData&lt;String> by lazy {
+        MutableLiveData&lt;String>(Character.T.toString())
     }
 
     fun reset() {
@@ -1435,38 +1508,62 @@ object MorsoUiState {
         dashCandidateText.value = Character.T.toString()
     }
 }
-```
+</code></pre>
 
 Now all we have to do is update our gesture listener actions:
 
-```kotlin
-...
+<pre><code class="language-diff-kotlin diff-highlight">
+class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
+
+    val TAG = "MorsoGestureListener"
+
+    private var morsoUiState = MorsoUiState
+    lateinit var inputConnection: InputConnection
+
+    /**
+     * Notified when a tap occurs with the down [MotionEvent]
+     * that triggered it. This will be triggered immediately for
+     * every down event. All other events should be preceded by this.
+     *
+     * @param e The down motion event.
+     */
+    override fun onDown(e: MotionEvent): Boolean {
+        return true
+    }
+
+    /**
+     * Notified when a tap occurs with the up [MotionEvent]
+     * that triggered it.
+     *
+     * @param e The up motion event that completed the first tap
+     * @return true if the event is consumed, else false
+     */
     override fun onSingleTapUp(e: MotionEvent): Boolean {
         Log.d(TAG, "onSingleTapUp")
 
-+        showUserInput(".")
-        updateCandidates(MorseSignal.DOT)
-
++        if (updateCandidates(MorseSignal.DOT))
++            showUserInput(".")
 
         return true
     }
 
 
-
     fun onHold(e: MotionEvent): Boolean {
         Log.d(TAG, "onHold")
 
-+        showUserInput("-")
-        updateCandidates(MorseSignal.DASH)
+
++        if (updateCandidates(MorseSignal.DASH))
++            showUserInput("-")
+
         return true
 
     }
 
     fun onShortPause(e: MotionEvent): Boolean {
         Log.d(TAG, "onShortPause")
-+        inputConnection.commitText(morsoUiState.currentCandidateText.value, 1)
+        inputConnection.commitText(morsoUiState.currentCandidateText.value, 1)
 
-+        morsoUiState.reset()
+        morsoUiState.reset()
         return true
     }
 
@@ -1486,18 +1583,58 @@ Now all we have to do is update our gesture listener actions:
 +
 +    }
 
-...
-```
++    /**
++     * Update current candidate, dot candidate, and dash candidate IF the character at @param signal
++     * from the current sequence is not null.
++     *
++     * @param signal the newest signal added to the sequence
++     *
++     * @return true if the candidates were updated, otherwise false
++     */
++    private fun updateCandidates(signal: MorseSignal): Boolean {
++
++        if (signal == MorseSignal.DOT) {
++            val dotChild = Character.getDotChild(morsoUiState.currentCandidateText.value)
++
++            if (dotChild == Character.NULL) {
++                return false
++            } 
++            
++            else {
++                val newCurrent = dotChild.toString()
++
++                morsoUiState.currentCandidateText.value = newCurrent
++
++                morsoUiState.dotCandidateText.value = Character.getDotChild(newCurrent).toString()
++                morsoUiState.dashCandidateText.value = Character.getDashChild(newCurrent).toString()
++
++                return true
++            }
++        }
++
++        else if (signal == MorseSignal.DASH) {
++            val dashChild = Character.getDashChild(morsoUiState.currentCandidateText.value)
++
++            if (dashChild == Character.NULL) {
++                return false
++            } 
++            
++            else {
++                val newCurrent = dashChild.toString()
++
++                morsoUiState.currentCandidateText.value = newCurrent
++
++                morsoUiState.dotCandidateText.value = Character.getDotChild(newCurrent).toString()
++                morsoUiState.dashCandidateText.value = Character.getDashChild(newCurrent).toString()
++
++                return true
++            }
++        }
 
-### Extras
-We now have a basic input method! This is really all I wanted to accomplish - anything beyond this point is extra credit.
+</code></pre>
 
-#### Adding Vibration
+![Morso: part one](/assets/images/blog-images/morso/part-1-complete.gif)
 
-The [offical docs](https://developer.android.com/reference/android/os/Vibrator.html) on the Android Vibrator class is a bit sparse, so I got my info from [here](https://stackoverflow.com/a/13950364).
+### To be continued
 
-We need to specify that our app uses vibration in the manifest:
-
-```xml
-<uses-permission android:name="android.permission.VIBRATE"/>
-```
+In the next part of this series, we can focus on making the user experience more polished by adding more visual & haptic feedback, creating a settings screen, and [addressing more general IME considerations](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#GeneralDesign).
