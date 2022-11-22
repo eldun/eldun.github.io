@@ -286,7 +286,7 @@ This won't *exactly* center the text (there's a lot going on with fonts!) - it's
 ##### Creating a `Paint` Object for Drawing Text
 We're going to need a `Paint` object for drawing text:
 
-<pre><code class="language-kotlin">
+<pre><code class="language-diff-kotlin diff-highlight">
 class MorsoView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
