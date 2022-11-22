@@ -52,7 +52,7 @@ Morso will be written in [Kotlin](https://developer.android.com/kotlin/first), A
 The most obvious first step to me is to create an input [service](https://developer.android.com/reference/android/app/Service) that can be used system-wide. The [Android Developer article on input methods](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method) and [this StackOverflow answer](https://stackoverflow.com/a/44939816) will be exceedingly helpful.
 
 ---
-### Declaring IME Components in the Manifest
+## Declaring IME Components in the Manifest
 Official documentation for this step can be found [here](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#DefiningIME), but we're basically going to throw a snippet into our app's [`AndroidManifest.xml`](https://developer.android.com/guide/topics/manifest/manifest-intro).
 
 > The following snippet declares an IME service. It requests the permission BIND_INPUT_METHOD to allow the service to connect the IME to the system, sets up an intent filter that matches the action android.view.InputMethod, and defines metadata for the IME:
@@ -132,7 +132,7 @@ My complete `AndroidManifest.xml` looks like this (I have no activities, as you 
 
 
 ---
-### Declaring the Settings Activity for the IME
+## Declaring the Settings Activity for the IME
 
 > This next snippet declares the settings activity for the IME. It has an intent filter for ACTION_MAIN that indicates this activity is the main entry point for the IME application:
 
@@ -150,7 +150,7 @@ We will create the settings screen later on in this series.
 
 ---
 
-### Creating our MorsoIME Class
+## Creating our MorsoIME Class
 You may have noticed that we have a warning that a service by the name of `MorsoIME` could not be found! Go ahead and create a new Kotlin class - `MorsoIME` - that extends `InputMethodService`:
 
 > The central part of an IME is a service component, a class that extends [InputMethodService](https://developer.android.com/reference/android/inputmethodservice/InputMethodService). In addition to implementing the normal [service lifecycle](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#InputMethodLifecycle), this class has callbacks for providing your IME's UI, handling user input, and delivering text to the field that currently has focus. By default, the `InputMethodService` class provides most of the implementation for managing the state and visibility of the IME and communicating with the current input field.
@@ -180,17 +180,10 @@ If you're confused by that `apply` block, read about Kotlin's [scope functions](
 
 ---
 
-### Creating our Input View
+## Creating our Input View
 
 We have two options for [designing our UI](https://developer.android.com/develop/ui) - the traditional "Views" method, and the newer "Jetpack Compose" method. ~~We'll go through both for completeness, starting...~~ (On second thought, we'll try Jetpack Compose when we implement our settings activity. I like to keep moving forward in these blog posts).
 
-
-
-
-
----
-
-#### With "Views"
 
 Almost everything you could want to know about views can be found
 
@@ -202,7 +195,7 @@ Almost everything you could want to know about views can be found
 
 ---
 
-##### Creating a Placeholder Layout
+### Creating a Placeholder Layout
 Create `res/morso.xml`:
 <pre><code class="language-xml">
 &lt;?xml version="1.0" encoding="utf-8"?>
@@ -233,7 +226,7 @@ Once we create our custom `MorsoView` class, we'll replace the `<ImageView>` tag
 
 ---
 
-##### Creating our Custom MorsoView
+### Creating our Custom MorsoView
 
 Create a new Kotlin class called MorsoView.
 
@@ -264,7 +257,7 @@ We could do both of these tasks in XML by extending a `Button` view (rather than
 
 
 ---
-##### Overriding `onSizeChanged()`
+### Overriding `onSizeChanged()`
 
 First, we'll override the `onSizeChanged()` -
 > The onSizeChanged() method is called any time the view's size changes, including the first time it is drawn when the layout is inflated. Override onSizeChanged() to calculate positions, dimensions, and any other values related to your custom view's size, instead of recalculating them every time you draw.
@@ -283,7 +276,7 @@ This won't *exactly* center the text (there's a lot going on with fonts!) - it's
 
 ---
 
-##### Creating a `Paint` Object for Drawing Text
+### Creating a `Paint` Object for Drawing Text
 We're going to need a `Paint` object for drawing text:
 
 <pre><code class="language-diff-kotlin diff-highlight">
@@ -307,7 +300,7 @@ class MorsoView @JvmOverloads constructor(
 </code></pre>
 
 ---
-##### Drawing our View
+### Drawing our View
 Next, we'll draw our view by overriding `onDraw()` (we'll also set the background color here):
 
 <pre><code class="language-kotlin">
@@ -385,7 +378,7 @@ When  -->
 
 ---
 
-##### Making our View Interactive
+### Making our View Interactive
 The article for this section can be found [here](https://developer.android.com/develop/ui/views/layout/custom-views/making-interactive).
 
 
@@ -468,7 +461,7 @@ Let's put things in place to replace the "Morso" text on touch inputs with the a
 
 ---
 
-##### Representing UI State
+### Representing UI State
 The main article for this section is [here](https://developer.android.com/topic/architecture/ui-layer#define-ui-state). I suggest reading it.
 
 Details on how IMEs handle config changes can be found [here](https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)).
@@ -618,7 +611,7 @@ Mutable data fields from the viewmodel should **never** be exposed. -->
 ---
 
 
-##### Storing UI Data for our Input Service
+### Storing UI Data for our Input Service
 As it turns out, we don't actually have to use viewmodels, because `InputServiceMethod`s [don't have to worry about configuration changes](https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onConfigurationChanged(android.content.res.Configuration)) - which is the main reason to use viewmodels (other than the seperation of ui from state, of course). As is often the case when traveling a bit off the beaten path, the [answers are not always *totally* satisfactory](https://github.com/android/architecture-components-samples/issues/137#issuecomment-327854042), though. Based on what I've read, it sounds like we can get away with a mere [plain class for state holding](https://developer.android.com/topic/architecture/ui-layer/stateholders#choose_between_a_viewmodel_and_plain_class_for_a_state_holder). Furthermore, we'll make our UI state a [singleton](https://en.wikipedia.org/wiki/Singleton_pattern) by using the [object keyword](https://stackoverflow.com/questions/51834996/singleton-class-in-kotlin).
 
 The following info is from [this codelab](https://developer.android.com/codelabs/basic-android-kotlin-training-viewmodel#4). Even though the codelab is about viewmodels, the same principles still apply to our plain state class.
@@ -652,7 +645,7 @@ Mutable data fields from state holders should **never** be exposed.
 
 ---
 
-##### Updating our View with New UI Data
+### Updating our View with New UI Data
 
 <!-- The main article for this section can be found [here](https://developer.android.com/topic/libraries/data-binding/architecture). -->
 
@@ -768,7 +761,7 @@ Our "Morso" text will change to "tapped" on a single tap.
 
 ---
 
-##### Resetting our Background Text After a Delay
+### Resetting our Background Text After a Delay
 Add the following code to the `backgroundTextObserver`:
 
 <pre><code class="language-diff-kotlin diff-highlight">
@@ -792,7 +785,7 @@ We will be able to configure the delay in settings later in the series.
 
 ---
 
-### Representing Morse Code
+## Representing Morse Code
 
 I figure [enums](https://kotlinlang.org/docs/enum-classes.html#working-with-enum-constants) are a decent way to represent Morse code - we're dealing with a few dozen values that will never change.
 
@@ -927,7 +920,7 @@ We can now pass in a list of signals to `fromSequenceList` to get the correspond
 
 ---
 
-### Using Morso for Input
+## Using Morso for Input
 
 Now we can start to create an actual input method! Again, the most helpful article for this section can be found [here](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method).
 
@@ -942,7 +935,7 @@ MorsoCandidatesView will come later.
 
 ---
 
-#### Translating Gestures to Morse Code
+## Translating Gestures to Morse Code
 Taps are already handled in our `MorsoGestureListener`. However - it's a bit picky about what counts as a tap and doesn't register gestures like triple-taps. Additionally, we should allow the user to customize the dot time because the dash and space duration will be defined as multiples of the base dot time. 
 
 Let's add to `MorsoGestureListener`:
@@ -1053,7 +1046,7 @@ fun onShortPause(e: MotionEvent): Boolean {
 ---
 
 
-#### Implementing Candidates View
+## Implementing Candidates View
 The [candidates view](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#CandidateView) is something you're likely familiar with:
 
 ![Candidates View](/assets/images/blog-images/morso/candidates-view.png)
@@ -1172,7 +1165,7 @@ and `setCandidatesViewShown(true)` from `MorsoIME.onCreateInputView()`.
 
 ---
 
-##### Updating Candidates
+### Updating Candidates
 > [To change the candidates view after the first one is created by setCandidatesViewShown(), use setCandidatesView(android.view.View).](https://developer.android.com/reference/android/inputmethodservice/InputMethodService#onCreateCandidatesView())
 
 The default candidates will be "E", "", and "T", respectively (I overrode Character.START's `toString()` to return ""). We'll be using our Character enum class to look up candidates, similar to how we looked up values by a character's sequence earlier on:
@@ -1452,7 +1445,7 @@ The result:
 <span class="todo">I just found out that there's a widget called [TextSwitcher](https://developer.android.com/reference/android/widget/TextSwitcher) which is useful for animating text labels. We can implement them later in the series.</span>
 
 ---
-#### Sending Input
+## Sending Input
 
 [Main article](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#SendText)
 
@@ -1635,6 +1628,6 @@ class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
 
 ![Morso: part one](/assets/images/blog-images/morso/part-1-complete.gif)
 
-### To be continued
+## To be continued
 
 In the next part of this series, we can focus on making the user experience more polished by adding more visual & haptic feedback, creating a settings screen, and [addressing more general IME considerations](https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#GeneralDesign).
