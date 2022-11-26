@@ -16,10 +16,10 @@ tags: c++ music audio-plugins
 ---
 
 ### The Idea
-We already have multiple example plugins from [free-audio](https://github.com/free-audio/clap) and [schwaaa](https://github.com/schwaaa/clap-imgui), but there's nothing like doing it yourself. I figured a simple arpeggiator with a rudimentary GUI would be a decent place to start. As per usual, I'm not trying to make the wildest arpeggiator in the world here. Tryhard mode will be the next part in the series.
+We already have multiple example plugins from [free-audio](https://github.com/free-audio/clap) and [schwaaa](https://github.com/schwaaa/clap-imgui), but there's nothing like doing it yourself. I figured a simple arpeggiator with a rudimentary GUI would be a decent place to start. As usual, I'm not trying to make the wildest arpeggiator in the world here - I figure a time division and arp pattern parameter will suffice. Tryhard mode will be the next part in the series.
 
 ### Creating a "New" Plugin
-If you've found your way here through my last post on audio plugins, you've likely already read [schwaaa's README](https://github.com/schwaaa/clap-imgui#readme), but if you haven't, I'd recommend doing so.
+If you've found your way here through my [last post]() on audio plugins, you've likely already read [schwaaa's README](https://github.com/schwaaa/clap-imgui#readme), but if you haven't, I'd recommend doing so.
 
 Anyway, this is the general plan for creating an arpeggiator:
 
@@ -32,14 +32,22 @@ We will likely have to add extensions like `note-ports.h` later on.
 ### Adapting schwaaa's Volume Plugin to an Arp
 Almost all of the code we'll be concerned with will be contained within `plugin_impl_2.cpp`, which is (as of right now) a copy of `plugin_impl_0.cpp`. Let's step through, block by block, and make our changes.
 
+<<<<<<< HEAD
+#### Info and Paramters 
+The first step is to 
+
+1. Describe our plugin:
+=======
 #### Info and Dexcriptors 
 The first step is to accurately describe our plugin, of course:
 <pre><code class="language-cpp">
+>>>>>>> 5129e8a5cef11c8c7916a0f4e455105568a47f0e
 
+```cpp
 static clap_plugin_descriptor _descriptor =
 {
   CLAP_VERSION,
-  "net.eldun.clap-example-2",
+  "net.eldun.clap-arp",
   "CLAP Arp"
   "eldun",
   "eldun.github.io",
@@ -51,35 +59,7 @@ static clap_plugin_descriptor _descriptor =
 };
 </code></pre>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+2. Describe our inputs
 
 
 
