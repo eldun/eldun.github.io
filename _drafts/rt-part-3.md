@@ -288,7 +288,7 @@ class dielectric : public material {
 
 ### <a id="using-smart-pointers"></a>Using Smart Pointers
 
-In the time since I've completed [The First Weekend]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html), Shirley has updated his code to use smart pointers in place of raw ones. Granted, I should've known to use smart pointers myself, but I was more familiar with java at that time and wanted to stick to the guide.
+In the time since I've completed [The First Weekend]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html), Shirley has updated his code to use smart pointers in place of raw ones. I should've known to use smart pointers myself, but I was more familiar with java at that time and wanted to stick to the guide.
 
 Anyway, you can read about smart pointers [here](https://docs.microsoft.com/en-us/cpp/cpp/smart-pointers-modern-cpp). We'll mainly be using the `shared_ptr` class, which is designed for pointers that may have more than one owner. The raw pointer is not deleted until all `shared_ptr` owners have gone out of scope or given up ownership.
 
@@ -485,7 +485,7 @@ int main() {
 
 
 ### <a id="setting-our-scene"></a>Setting our Scene
-Okay - we've got all the boring maintenence out of the way. Do whatever you please; I simplified the scene to show off our new feature with a black sphere moving from left to right:
+Okay - we've got all the maintenence out of the way. Do whatever you please; I simplified the scene to show off our new feature with a black sphere moving from left to right:
 
 <div class="row">
 <div class="captioned-image">
@@ -599,7 +599,6 @@ else
 One more important aspect of BVH's - any object is in **only one bounding volume**, but **bounding volumes can overlap**.
 
 ### <a id="establishing-a-hierarchy"></a>Establishing a Hierarchy
-
 
 To make intersection checks sub-linear, we need to establish a hierarchy. If we had a set of objects split into two subsets - orange & blue - and we used rectangular bounding volumes in our model, this would be the result:
 
