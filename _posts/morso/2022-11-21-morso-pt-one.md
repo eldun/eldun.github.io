@@ -954,6 +954,18 @@ Let's add to `MorsoGestureListener`:
         return true
 
     }
+    fun onShortPause(e: MotionEvent): Boolean {
+        Log.d(TAG, "onShortPause")
+        morsoUiState.reset()
+        return true
+    }
+
+    fun onLongPause(e: MotionEvent): Boolean {
+        Log.d(TAG, "onLongPause")
+        inputConnection.commitText(" ", 1)
+
+        return true
+    }
 </code></pre>
 
 In `MorsoInputView`, add the following members:
@@ -982,24 +994,7 @@ In `MorsoInputView`, add the following members:
     ...
 </code></pre>
 
-And add to `MorsoGestureListener`:
-
-<pre><code class="language-kotlin">
-fun onShortPause(e: MotionEvent): Boolean {
-        Log.d(TAG, "onShortPause")
-        morsoUiState.reset()
-        return true
-    }
-
-    fun onLongPause(e: MotionEvent): Boolean {
-        Log.d(TAG, "onLongPause")
-        inputConnection.commitText(" ", 1)
-
-        return true
-    }
-</code></pre>
-
- and then update `MorsoInputView`:
+ and then update `onTouchEvent`:
 
 <pre><code class="language-kotlin">
 
