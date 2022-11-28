@@ -7,7 +7,7 @@ use-raw-images: false
 toc: true
 layout: post
 author: Evan
-header-image: /assets\images\blog-images\path-tracer-part-three\
+header-image: /assets\images\blog-images\path-tracer-part-three
 header-image-alt: 
 header-image-title: 
 tags: graphics ray-tracing-in-one-weekend c++
@@ -602,11 +602,13 @@ One more important aspect of BVH's - any object is in **only one bounding volume
 
 To make intersection checks sub-linear, we need to establish a hierarchy. If we had a set of objects split into two subsets - orange & blue - and we used rectangular bounding volumes in our model, this would be the result:
 
-![BVH Illustration](/assets/images/blog-images/path-tracer/the-next-week/bounding-hierarchies.png)
+<img src="/assets/images/blog-images/path-tracer/the-next-week/bounding-hierarchies.png" alt="BVH Illustration" style="
+    background: transparent;
+">
 
 The orange & blue subsets are simply inside the white rectangle and the binary tree has no order. The pseudo-code for this hierarchy would look like:
 
-</code></pre>
+<pre><code>
 if (hits white)
     hitOrange = hits orange enclosed objects
     hitBlue = hits blue enclosed objects
@@ -615,9 +617,9 @@ if (hits white)
 return false
 </code></pre>
 
-### <a id="implementing-a-hierarchy-using-axis-aligned-bounding-boxes"></a>Implementing a Hierarchy Using Axis-Aligned Bounding Boxes
+### Understanding Axis-Aligned Bounding Boxes (AABBs)
 
-We want our bounding box collisions to be fast and as compact as possible. For this, we'll implement a popular solution - axis-aligned bounding boxes (AABB's). These boxes will be "parallelepipeds" - 3d parallelograms.
+We want our bounding box collisions to be fast and as compact as possible. For this, we'll implement a popular solution - axis-aligned bounding boxes (AABB's). These boxes will be "parallelepipeds" - 3d parallelograms. Another option would be to use spheres, but depending on the shape of the object in question, spheres can result in more false positive collisions than a bounding box (Imagine enclosing a person in a sphere vs. in a box).
 
 ![Parallelpiped](/assets/images/blog-images/path-tracer/the-next-week/parallelepiped-wiki.svg)
 
@@ -627,15 +629,108 @@ To formulate our AABB's, we'll use the slab method. Here's an explanation from [
 
 > One way to think of bounding boxes is as the intersection of three slabs, where a slab is the region of space between two parallel planes. To intersect a ray against a box, we intersect the ray against each of the box’s three slabs in turn.
 
-<span class="row-fill">
-	<span class="captioned-image">
+
+
+![Rotating knot with dynamic bounding box](/assets/images/blog-images/path-tracer/the-next-week/rotating-knot.gif) 
+
+
+Let's start with an AABB example in 2D - a rectangle:
+
+We need see if the ray in question hits the edges of the slab in the x-coordinate space. It will, unless the ray is parallel to the plane.
+
+<span class="captioned-image">
     ![Slab Intersection](/assets/images/blog-images/path-tracer/the-next-week/ray-slab-intersect.svg)
-	Slab Intersection (with normal $(1,0,0)$)
-	</span>
-	<span class="captioned-image">
-	![AABB Intersection](/assets/images/blog-images/path-tracer/the-next-week/ray-aabb-intersect.svg)
-	2D AABB Intersection
-	</span>
+    Slab Intersection (with normal $(1,0,0)$)
 </span>
 
+We now check for ray-slab intersections in the y-coordinate space in the same manner. If there's any overlap in $x$ and $y$'s $t$ intervals, that's a collision:
 
+<span class="captioned-image">
+    ![AABB Intersection](/assets/images/blog-images/path-tracer/the-next-week/ray-aabb-intersect.svg)
+    2D AABB Collision 
+    </span>
+</span>
+
+In 3D, the edges in question are planes instead of lines. To find where the ray intersects the plane, we can use the function
+
+$$\mathbf{P}(t) = \mathbf{A} + t \mathbf{b}$$ 
+
+$P$ is a point on the ray.
+$A$ is the ray origin.
+$b$ is the direction of the ray.
+The ray parameter $t$ is a real number (positive or negative) that moves $P(t)$ along the ray.
+
+In terms of $x$, the ray hits the plane $x = x_0$ at $t$ that satisfies the equation
+
+$$x_0 = A_x + t_0 b_x$$
+
+Therefore, $t_0$ and $t_1$ can be calculated as follows, respectively:
+
+$$t_0 = \frac{x_0 - A_x}{b_x}$$
+
+$$t_1 = \frac{x_1 - A_x}{b_x}$$
+
+### Implementing AABB Ray Intersections
+
+The simple pseudocode for collisions using the method described in the previous section is as follows:
+
+<pre><code>
+compute (tx0, tx1)
+compute (ty0, ty1)
+compute (tz0, tz1)
+return overlap?( (tx0, tx1), (ty0, ty1), (tz0, tz1))
+</code></pre> 
+
+There are a couple complications to be aware of:
+- The ray could be travelling in the negative direction after having bounced off an object or simply based on the camera's coordinates
+- The division of $x_n - A_n$ by $b_n$ could cause infinites
+- A ray originating from a slab boundary could result in $NaN$
+- SIMD Vectorization issues (Minor and beyond the scope of this post)
+
+To get started addressing these issues and more, we should look to our interval computation:
+
+
+$$t_0 = \frac{x_0 - A_x}{b_x}$$
+
+$$t_1 = \frac{x_1 - A_x}{b_x}$$
+
+One thing to always be wary of is divison by zero. Funnily enough - valid rays that have a $b$ (direction) of 0 (in any coordinate space - x, y, or z) will cause division by zero. Peter mentions that "Also, the zero will have a ± sign under IEEE floating point" - so maybe we won't *technically* get a divide by zero - I'm a little unsure of why he mentions this. You can read up on signed zero on [Wikipedia](https://en.wikipedia.org/wiki/Signed_zero) or [StackOverflow](https://stackoverflow.com/questions/42926763/the-behaviour-of-floating-point-division-by-zero). Anyway, when $b = 0$, $t_0$ and $t_1$ will both be either +∞ or -∞ if not between coordinate $x_0$ and $x_1$, which means that we can use min and max to get the correct values.
+
+
+
+$$
+    t_{x0} = \min(
+     \frac{x_0 - A_x}{b_x},
+     \frac{x_1 - A_x}{b_x})
+$$
+
+
+
+$$
+    t_{x1} = \max(
+    \frac{x_0 - A_x}{b_x},
+    \frac{x_1 - A_x}{b_x})
+$$
+
+
+> The remaining troublesome case if we do that is if $b_x=0$ and either $x_0−A_x=0$ or $x_1−A_x=0$ so we get NaN. In that case we can probably accept either hit or no hit answer, but we’ll revisit that later.
+
+Now we need to think about how we're going to implement the overlap function - we're going to assume that the edges are in order - that is, $x_0$ / $y_0$ / $z_0$ is always less than $x_1$ / $y_1$ / $z_1$  Let's think about it in 2D again:
+
+
+![AABB Intersection](/assets/images/blog-images/path-tracer/the-next-week/ray-aabb-intersect.svg)
+
+We're going to simply check if either $y_0$ or $y_1$ are contained within ($x_0$, $x_1$) 
+We can extend this concept to 3D:
+
+<pre><code>
+bool overlap(x0, x1, y0, y1, z0, z1)
+    z0 = max(x0, y0)
+    z1 = min(x1, y1)
+    return (z0 < z1)
+</code></pre> 
+
+> If there are any NaNs running around there, the compare will return false so we need to be sure our bounding boxes have a little padding if we care about grazing cases (and we probably should because in a ray tracer all cases come up eventually).
+
+
+### Creating Bounding Boxes for our Hittables
