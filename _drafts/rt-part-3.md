@@ -720,7 +720,8 @@ Now we need to think about how we're going to implement the overlap function - w
 
 ![AABB Intersection](/assets/images/blog-images/path-tracer/the-next-week/ray-aabb-intersect.svg)
 
-We're going to simply check if either $y_0$ or $y_1$ are contained within ($x_0$, $x_1$) 
+We're going to simply check if either $y_0$ or $y_1$ are contained within ($x_0$, $x_1$).
+
 We can extend this concept to 3D:
 
 <pre><code>
@@ -732,5 +733,112 @@ bool overlap(x0, x1, y0, y1, z0, z1)
 
 > If there are any NaNs running around there, the compare will return false so we need to be sure our bounding boxes have a little padding if we care about grazing cases (and we probably should because in a ray tracer all cases come up eventually).
 
+Translated to C++:
+
+<pre><code class="language-cpp">
+#ifndef BOUNDINGBOXH
+#define BOUNDINGBOXH
+
+#include "rtweekend.h"
+
+class boundingBox {
+    public:
+        boundingBox() {}
+        boundingBox(const vec3& a, const vec3& b) { minimum = a; maximum = b;}
+
+        vec3 min() const {return minimum; }
+        vec3 max() const {return maximum; }
+
+        bool hit(const ray& r, double t_min, double t_max) const {
+            for (int a = 0; a < 3; a++) {
+                auto t0 = fmin((minimum[a] - r.origin()[a]) / r.direction()[a],
+                               (maximum[a] - r.origin()[a]) / r.direction()[a]);
+                auto t1 = fmax((minimum[a] - r.origin()[a]) / r.direction()[a],
+                               (maximum[a] - r.origin()[a]) / r.direction()[a]);
+                t_min = fmax(t0, t_min);
+                t_max = fmin(t1, t_max);
+                if (t_max <= t_min)
+                    return false;
+            }
+            return true;
+        }
+
+        vec3 minimum;
+        vec3 maximum;
+};
+
+#endif
+</code></pre>
 
 ### Creating Bounding Boxes for our Hittables
+We'll need a function to compute the bounding boxes of hittables. We can create a hierarchy of bounding boxes enclosing all primitives, and the individual primitives (like single spheres) will be the leaves at the bottom of the hierarchy.
+
+Our bounding box function will return a bool because some primitives (like planes) don't have bounding boxes.
+
+Moving objects will have a bounding box that will enclose the primitive from time_start to time_end.
+
+First, we'll create a virtual function in `hittable.h`:
+
+<pre><code class="language-diff-cpp diff-highlight">
++ #include "boundingBox.h"
+
+...
+
+class hittable {
+public: 
+	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
++	virtual bool bounding_box(double time0, double time1, aabb& output_box) const = 0;
+
+};
+</code></pre>
+
+and override it in `sphere.h`:
+
+<pre><code class="language-cpp">
+bool sphere::bounding_box(double time_start, double time_end, boundingBox& output_box) const {
+	
+	
+	boundingBox box_0 = bounding_box(
+			centerAt(time_start) - vec3(radius, radius, radius),
+			centerAt(time_start) + vec3(radius, radius, radius));
+
+	// Sphere is not moving
+	if (time_start-time_end < epsilon ) {
+		bounding_box = box_0
+		return true;
+	}
+
+	else {
+		boundingBox box_1 = bounding_box(
+			centerAt(time_end) - vec3(radius, radius, radius),
+			centerAt(time_end) + vec3(radius, radius, radius));
+		
+		output_box = surrounding_box(box_0, box_1)
+	}
+
+	
+}
+</code></pre>
+
+We need to implement `surrounding_box` in our `bounding_Box` class:
+
+
+<pre><code class="language-cpp">
+aabb surrounding_box(aabb box0, aabb box1) {
+    point3 small(fmin(box0.min().x(), box1.min().x()),
+                 fmin(box0.min().y(), box1.min().y()),
+                 fmin(box0.min().z(), box1.min().z()));
+
+    point3 big(fmax(box0.max().x(), box1.max().x()),
+               fmax(box0.max().y(), box1.max().y()),
+               fmax(box0.max().z(), box1.max().z()));
+
+    return aabb(small,big);
+}
+</code></pre>
+
+
+
+
+
+
