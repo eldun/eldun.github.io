@@ -1362,6 +1362,7 @@ class MorsoIME : InputMethodService() {
         val morsoLayout = layoutInflater.inflate(R.layout.morso, null)
         morsoInputView = morsoLayout.findViewById&lt;MorsoInputView>(R.id.morsoInputView)
         morsoGestureListener = morsoInputView.gestureListener
++       morsoGestureListener.inputConnection = currentInputConnection
         morsoUiStateObserver = MorsoUiStateObserver(this, morsoUiState)
 
         setCandidatesViewShown(true)
@@ -1622,6 +1623,8 @@ class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
 </code></pre>
 
 ![Morso: part one](/assets/images/blog-images/morso/part-1-complete.gif)
+
+---
 
 ## To be continued
 
