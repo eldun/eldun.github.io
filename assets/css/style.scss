@@ -91,9 +91,9 @@ body {
 }
 
 // Cayman theme had margin-top: 0, which was messing with flexbox's "align-items"
-.main-content :first-child {
-  margin: inherit
-}
+// .main-content :first-child {
+//   margin: inherit
+// }
 
 .main-content p, .main-content details {
   color: $color-text;
