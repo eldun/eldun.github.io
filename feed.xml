@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2022-11-21T20:34:17-05:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">Morso</title><link href="eldun.github.io/2022/11/21/morso-pt-one.html" rel="alternate" type="text/html" title="Morso" /><published>2022-11-21T00:00:00-05:00</published><updated>2022-11-21T00:00:00-05:00</updated><id>eldun.github.io/2022/11/21/morso-pt-one</id><content type="html" xml:base="eldun.github.io/2022/11/21/morso-pt-one.html"><![CDATA[<h2 id="why-morse-code">Why Morse Code?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2022-11-30T00:50:55-05:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">Morso</title><link href="eldun.github.io/2022/11/21/morso-pt-one.html" rel="alternate" type="text/html" title="Morso" /><published>2022-11-21T00:00:00-05:00</published><updated>2022-11-21T00:00:00-05:00</updated><id>eldun.github.io/2022/11/21/morso-pt-one</id><content type="html" xml:base="eldun.github.io/2022/11/21/morso-pt-one.html"><![CDATA[<h2 id="why-morse-code">Why Morse Code?</h2>
 <p>One of my least favorite things in this world is having to yell in someone’s ear. Usually, I don’t have to. Occasionally, though, I find myself at a bar.</p>
 
 <p>One of my favorite things in this world is the process of getting better at useless-adjacent things. Rather than spending hours learning <a href="https://en.wikipedia.org/wiki/American_Sign_Language">American Sign Language</a> (which <strong>is</strong> on my to-do list), I could just learn 26 characters in <a href="https://en.wikipedia.org/wiki/Morse_code">Morse code</a> and tap out a message on my friend’s shoulder!</p>
@@ -948,6 +948,18 @@ enum class Character(vararg var sequence: MorseSignal) {
         return true
 
     }
+    fun onShortPause(e: MotionEvent): Boolean {
+        Log.d(TAG, "onShortPause")
+        morsoUiState.reset()
+        return true
+    }
+
+    fun onLongPause(e: MotionEvent): Boolean {
+        Log.d(TAG, "onLongPause")
+        inputConnection.commitText(" ", 1)
+
+        return true
+    }
 </code></pre>
 
 <p>In <code class="language-plaintext highlighter-rouge">MorsoInputView</code>, add the following members:</p>
@@ -976,24 +988,7 @@ enum class Character(vararg var sequence: MorseSignal) {
     ...
 </code></pre>
 
-<p>And add to <code class="language-plaintext highlighter-rouge">MorsoGestureListener</code>:</p>
-
-<pre><code class="language-kotlin">
-fun onShortPause(e: MotionEvent): Boolean {
-        Log.d(TAG, "onShortPause")
-        morsoUiState.reset()
-        return true
-    }
-
-    fun onLongPause(e: MotionEvent): Boolean {
-        Log.d(TAG, "onLongPause")
-        inputConnection.commitText(" ", 1)
-
-        return true
-    }
-</code></pre>
-
-<p>and then update <code class="language-plaintext highlighter-rouge">MorsoInputView</code>:</p>
+<p>and then update <code class="language-plaintext highlighter-rouge">onTouchEvent</code>:</p>
 
 <pre><code class="language-kotlin">
 
@@ -1367,6 +1362,7 @@ class MorsoIME : InputMethodService() {
         val morsoLayout = layoutInflater.inflate(R.layout.morso, null)
         morsoInputView = morsoLayout.findViewById&lt;MorsoInputView&gt;(R.id.morsoInputView)
         morsoGestureListener = morsoInputView.gestureListener
++       morsoGestureListener.inputConnection = currentInputConnection
         morsoUiStateObserver = MorsoUiStateObserver(this, morsoUiState)
 
         setCandidatesViewShown(true)
@@ -1628,9 +1624,11 @@ class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
 
 <p><img src="/assets/images/blog-images/morso/part-1-complete.gif" alt="Morso: part one" /></p>
 
+<hr />
+
 <h2 id="to-be-continued">To be continued</h2>
 
-<p>In the next part of this series, we can focus on making the user experience more polished by adding more visual &amp; haptic feedback, creating a settings screen, and <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#GeneralDesign">addressing more general IME considerations</a>.</p>]]></content><author><name>Evan</name></author><category term="android" /><category term="kotlin" /><category term="java" /><summary type="html"><![CDATA[I need to learn Morse code if I want to be able to communicate with my *cool* neighbors.]]></summary></entry><entry><title type="html">Audio Plugins</title><link href="eldun.github.io/2022/10/20/clap-plugins-part-one.html" rel="alternate" type="text/html" title="Audio Plugins" /><published>2022-10-20T00:00:00-04:00</published><updated>2022-10-20T00:00:00-04:00</updated><id>eldun.github.io/2022/10/20/clap-plugins-part-one</id><content type="html" xml:base="eldun.github.io/2022/10/20/clap-plugins-part-one.html"><![CDATA[<h2 id="an-introduction">An Introduction</h2>
+<p>In the next part of this series, we can focus on making the user experience more polished by adding more visual &amp; haptic feedback, creating a settings screen, and <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#GeneralDesign">addressing more general IME considerations</a>.</p>]]></content><author><name>Evan</name></author><category term="android" /><category term="kotlin" /><category term="java" /><category term="morso" /><summary type="html"><![CDATA[I need to learn Morse code if I want to be able to communicate with my *cool* neighbors.]]></summary></entry><entry><title type="html">Audio Plugins</title><link href="eldun.github.io/2022/10/20/clap-plugins-part-one.html" rel="alternate" type="text/html" title="Audio Plugins" /><published>2022-10-20T00:00:00-04:00</published><updated>2022-10-20T00:00:00-04:00</updated><id>eldun.github.io/2022/10/20/clap-plugins-part-one</id><content type="html" xml:base="eldun.github.io/2022/10/20/clap-plugins-part-one.html"><![CDATA[<h2 id="an-introduction">An Introduction</h2>
 <hr />
 <h3 id="what-is-an-audio-plugin">What is an Audio Plugin?</h3>
 

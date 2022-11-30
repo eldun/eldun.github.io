@@ -1213,6 +1213,18 @@ enum class Character(vararg var sequence: MorseSignal) {
         return true
 
     }
+    fun onShortPause(e: MotionEvent): Boolean {
+        Log.d(TAG, "onShortPause")
+        morsoUiState.reset()
+        return true
+    }
+
+    fun onLongPause(e: MotionEvent): Boolean {
+        Log.d(TAG, "onLongPause")
+        inputConnection.commitText(" ", 1)
+
+        return true
+    }
 </code></pre>
 
 <p>In <code class="language-plaintext highlighter-rouge">MorsoInputView</code>, add the following members:</p>
@@ -1241,24 +1253,7 @@ enum class Character(vararg var sequence: MorseSignal) {
     ...
 </code></pre>
 
-<p>And add to <code class="language-plaintext highlighter-rouge">MorsoGestureListener</code>:</p>
-
-<pre><code class="language-kotlin">
-fun onShortPause(e: MotionEvent): Boolean {
-        Log.d(TAG, "onShortPause")
-        morsoUiState.reset()
-        return true
-    }
-
-    fun onLongPause(e: MotionEvent): Boolean {
-        Log.d(TAG, "onLongPause")
-        inputConnection.commitText(" ", 1)
-
-        return true
-    }
-</code></pre>
-
-<p>and then update <code class="language-plaintext highlighter-rouge">MorsoInputView</code>:</p>
+<p>and then update <code class="language-plaintext highlighter-rouge">onTouchEvent</code>:</p>
 
 <pre><code class="language-kotlin">
 
@@ -1634,6 +1629,7 @@ class MorsoIME : InputMethodService() {
         val morsoLayout = layoutInflater.inflate(R.layout.morso, null)
         morsoInputView = morsoLayout.findViewById&lt;MorsoInputView&gt;(R.id.morsoInputView)
         morsoGestureListener = morsoInputView.gestureListener
++       morsoGestureListener.inputConnection = currentInputConnection
         morsoUiStateObserver = MorsoUiStateObserver(this, morsoUiState)
 
         setCandidatesViewShown(true)
@@ -1896,6 +1892,8 @@ class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
 
 <p><img src="/assets/images/blog-images/morso/part-1-complete.gif" alt="Morso: part one"></p>
 
+<hr>
+
 <h2 id="to-be-continued">
 <a class="anchor" href="#to-be-continued" aria-hidden="true"><span class="octicon octicon-link"></span></a>To be continued</h2>
 
@@ -1924,6 +1922,12 @@ class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
     href=/tags/java
     rel="category tag">
     #java</code></a>
+
+  
+  <code><a class="tag-link"
+    href=/tags/morso
+    rel="category tag">
+    #morso</code></a>
 
 </div>
 

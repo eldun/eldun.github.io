@@ -3380,13 +3380,13 @@ nav { margin: auto; }
 
 #toc > li { margin: 1rem; padding-left: .5rem; padding-right: .5rem; }
 
-img { display: block; height: auto; max-width: 100%; margin-left: auto; margin-right: auto; }
+img { display: block; height: auto; max-width: 100%; margin-left: auto; margin-right: auto; background: #ecdac4; }
 
 .half-sized-image img { width: 50%; }
 
 .post-image { margin-top: 1rem; margin-bottom: 1rem; }
 
-.captioned-image { display: block; text-align: center; font-style: italic; color: #42cad1; margin-bottom: 1rem; }
+.captioned-image { display: block; text-align: center; font-style: italic; color: #42cad1; margin: 1rem; }
 
 .container { position: relative; text-align: center; font-style: italic; border: solid 3px #cc773f; border-radius: .2rem; }
 
@@ -3573,7 +3573,7 @@ body { scrollbar-color: #cc773f transparent; color: #ecdac4; background-color: #
 
 .main-content ul, .main-content ol { margin-top: 1rem; }
 
-.main-content code, .main-content pre, .main-content pre > code { font-size: inherit; color: #ecdac4; background-color: #393e46; border-color: #cc773f; overflow: auto; padding-top: 0; padding-bottom: 0; }
+.main-content code, .main-content pre, .main-content pre > code { font-size: inherit; color: inherit; background-color: #393e46; border-color: #cc773f; overflow: auto; padding-top: 0; padding-bottom: 0; }
 
 .main-content a > code { color: inherit; }
 
