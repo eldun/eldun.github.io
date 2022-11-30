@@ -12,7 +12,7 @@ author: Evan
 header-image: /assets/images/blog-images/morso/F.png
 header-image-alt:
 header-image-title: "An old telegraph! Source: https://www.history.com/topics/inventions/telegraph"
-tags: android kotlin java
+tags: android kotlin java morso
 ---
 
 ## Why Morse Code?
