@@ -820,22 +820,35 @@ bool sphere::bounding_box(double time_start, double time_end, boundingBox& outpu
 }
 </code></pre>
 
-We need to implement `surrounding_box` in our `bounding_Box` class:
+We need to implement `surrounding_box` in our `boundingBox` class:
 
 
-<pre><code class="language-cpp">
-aabb surrounding_box(aabb box0, aabb box1) {
-    point3 small(fmin(box0.min().x(), box1.min().x()),
-                 fmin(box0.min().y(), box1.min().y()),
-                 fmin(box0.min().z(), box1.min().z()));
+<pre><code class="language-cpp">boundingBox surroundingBox(boundingBox box0, boundingBox box1) const {
+            
+            double x,y,z;
 
-    point3 big(fmax(box0.max().x(), box1.max().x()),
-               fmax(box0.max().y(), box1.max().y()),
-               fmax(box0.max().z(), box1.max().z()));
+            x = fmin(box0.min().x(), box1.min().x());
+            y = fmin(box0.min().y(), box1.min().y());
+            z = fmin(box0.min().z(), box1.min().z());
 
-    return aabb(small,big);
-}
+            vec3 min {x, y, z};
+
+
+
+            x = fmax(box0.max().x(), box1.max().x());
+            y = fmax(box0.max().y(), box1.max().y());
+            z = fmax(box0.max().z(), box1.max().z());
+
+            vec3 max {x, y, z};
+
+            return boundingBox(min, max);
+        }
 </code></pre>
+
+### Defining our Hittable BVH Class
+Our BVH 
+
+
 
 
 
