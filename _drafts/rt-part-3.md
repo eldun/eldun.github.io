@@ -794,8 +794,7 @@ public:
 
 and override it in `sphere.h`:
 
-<pre><code class="language-cpp">
-bool sphere::bounding_box(double time_start, double time_end, boundingBox& output_box) const {
+<pre><code class="language-cpp">bool sphere::bounding_box(double time_start, double time_end, boundingBox& output_box) const {
 	
 	
 	boundingBox box_0 = bounding_box(
@@ -846,12 +845,95 @@ We need to implement `surrounding_box` in our `boundingBox` class:
 </code></pre>
 
 ### Defining our Hittable BVH Class
-Our BVH 
+Our BVHs need to be `hittable`s.
+
+Take note of the fact that the child nodes point to generic `hittable`s - they can other BVHs, spheres, or any kind of hittable.
+
+<pre><code class="language-cpp">#ifndef BVHH
+#define BVHH
+
+#include "rtweekend.h"
+
+#include "hittable.h"
+#include "hittableList.h"
 
 
+class bvhNode : public hittable {
+    public:
+    
+        bvhNode();
+
+        bvhNode(const hittable_list& list, double time_start, double time_end)
+            : bvhNode(list.objects, 0, list.objects.size(), time_start, time_end)
+        {}
+
+        bvhNode(
+            const std::vector<shared_ptr<hittable>>& src_objects,
+            size_t start, size_t end, double time_start, double time_end);
+
+        virtual bool hit(
+            const ray& r, double t_min, double t_max, hit_record& rec) const override;
+
+        virtual bool bounding_box(double time_start, double time_end, boundingBox& output_box) const override;
+
+    public:
+        shared_ptr<hittable> left;
+        shared_ptr<hittable> right;
+        boundingBox box;
+};
+
+bool bvh_node::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+    if (!box.hit(r, t_min, t_max))
+        return false;
+
+    bool hit_left = left->hit(r, t_min, t_max, rec);
+    bool hit_right = right->hit(r, t_min, hit_left ? rec.t : t_max, rec);
+
+    return hit_left || hit_right;
+}
+
+bool bvh_node::bounding_box(double time_start, double time_end, boundingBox& output_box) const {
+    output_box = box;
+    return true;
+}
+
+#endif
+</code></pre>
+
+### Splitting BVH Volumes
+
+> The most complicated part of any efficiency structure, including the BVH, is building it.
+
+These BVHs can be hard to create a mental image for - here's a video to help:
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/rM-BVsdi8c4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+We'll be building the BVH in the constructor. The BVH doesn't have to be perfect - as long as the list of `hittables` in a node gets divided into two sublists, the BVH `hit` function will work. Shirley notes that the best/fastest scenario is if the children `hittable`s have smaller bounding boxes than their parent.
+
+We'll follow Shirley's lead and adopt a simplistic middle-ground method:
+
+1. Randomly choose an axis
+2. Sort the primitives
+3. Store the primitives as evenly as possible across subtrees
+
+When the incoming `vector` object has a size of two, that's when we can stop recursing and put each of the two hittables in their respective subtrees.
+
+First, let's add a utility function to `rtweekend.h` to return a random int in a given range:
+
+<pre><code class="language-cpp">inline int random_int(int min, int max) {
+    // Returns a random integer in [min,max].
+    return static_cast&lt;int>(random_double(min, max+1));
+}
+</code></pre>
 
 
+<pre><code class="language-cpp">#include &lt;algorithm>
+
+...
 
 
+</code></pre>
+
+
+Walk through code and then copy it up there
 
 
