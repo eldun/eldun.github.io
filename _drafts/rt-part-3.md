@@ -46,7 +46,7 @@ First, we give our ray the ability to store the time at which it exists.
 `ray.h`:
 
 <pre><code class="language-diff-cpp diff-highlight"> 
- class ray {
+ class Ray {
 	public:
 	ray() {}
 +	ray(const vec3& a, const vec3& b, double moment) { A = a; B = b; mMoment = moment; }
@@ -126,7 +126,7 @@ Motion blur would be useless without motion. We can modify our spheres to move l
 			material_ptr(material){};
 
 +		// Moving sphere
-+		sphere(vec3 centerStart, vec3 centerEnd, double timeToTravel, float radius, material *material) : 
++		sphere(vec3 centerStart, vec3 centerEnd, double timeToTravel, float radius, material &#42;material) : 
 +			centerStart(centerStart),
 +			centerEnd(centerEnd),
 +			moveStartTime(moveStartTime), 
@@ -381,7 +381,7 @@ bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& re
 class sphere : public hittable {
 	public:
 		sphere() {}
--		sphere(vec3 center, float radius, material *material) : 
+-		sphere(vec3 center, float radius, material &#42;material) : 
 +		sphere(vec3 center, float radius, shared_ptr&lt;material> material) : 
 			centerStart(center), 
 			centerEnd(center), 
@@ -391,7 +391,7 @@ class sphere : public hittable {
 			material_ptr(material){};
 
 		// Moving sphere
--			sphere(vec3 centerStart, vec3 centerEnd, double timeToTravel, float radius, material *material) : 
+-			sphere(vec3 centerStart, vec3 centerEnd, double timeToTravel, float radius, material &#42;material) : 
 +		sphere(vec3 centerStart, vec3 centerEnd, double timeToTravel, float radius, shared_ptr&lt;material> material) : 
 			centerStart(centerStart),
 			centerEnd(centerEnd),
@@ -407,7 +407,7 @@ class sphere : public hittable {
 		vec3 centerStart, centerEnd;
 		double moveStartTime, moveEndTime;
 		double radius;
--		material *material_ptr;
+-		material &#42;material_ptr;
 +		shared_ptr&lt;material> material_ptr;
 	};
 
@@ -421,7 +421,7 @@ The changes for `Main.cpp` mostly amount to replacing all uses of keyword `new` 
 
 <pre><code class="language-diff-cpp diff-highlight">
 ...
--	vec3 color(const ray& r, hittable *world, int depth) {
+-	vec3 color(const ray& r, hittable &#42;world, int depth) {
 +	vec3 color(const ray& r, hittable_list world, int depth) {
 		hit_record rec;
 
@@ -435,9 +435,9 @@ The changes for `Main.cpp` mostly amount to replacing all uses of keyword `new` 
 	}
 
 
--	hittable *random_scene() {
+-	hittable &#42;random_scene() {
 -    int n = 500;
--    hittable **list = new hittable*[n+1];
+-    hittable &#42;&#42; list = new hittable &#42; n+1];
 -    list[0] =  new sphere(vec3(0,-1000,0), 1000, new lambertian(vec3(0.5, 0.5, 0.5))); //"Ground"
 -    int i = 1;
 -    for (int a = -11; a &lt; 11; a++) {
@@ -475,7 +475,7 @@ int main() {
 	double distToFocus = (lookFrom-lookAt).length();
 	double aperture = 0.1; // bigger = blurrier
 
--	hittable *world = random_scene();
+-	hittable &#42;world = random_scene();
 +	auto world = random_scene();
 
 	...
@@ -555,9 +555,9 @@ int main() {
 
 			col /= double(ns); // Average the color between objects/background
 			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));  // set gamma to 2
-			int ir = int(255.99 * col[0]);
-			int ig = int(255.99 * col[1]);
-			int ib = int(255.99 * col[2]);
+			int ir = int(255.99 &#42; col[0]);
+			int ig = int(255.99 &#42; col[1]);
+			int ib = int(255.99 &#42; col[2]);
 			std::cout &lt;&lt; ir &lt;&lt; " " &lt;&lt; ig &lt;&lt; " " &lt;&lt; ib &lt;&lt; "\n";
 		}
 	}
@@ -569,6 +569,12 @@ int main() {
 </code></pre>
 
 ---
+
+<span class="note">
+After writing the next section on Bounding Volume Hierarchies, I decided to refactor - I kept getting confused as to what was a class, a method, or a file. There were some inconsistencies in variable names as well. From here on out, variables and functions are camelCase, and classes and files are capitalized. Sorry if this causes any confusion, but it had to be done!
+</span>
+
+
 
 ## <a id="bounding-volume-hierarchies"></a>Bounding Volume Hierarchies
 
@@ -698,6 +704,7 @@ One thing to always be wary of is divison by zero. Funnily enough - valid rays t
 
 
 
+
 $$
     t_{x0} = \min(
      \frac{x_0 - A_x}{b_x},
@@ -739,25 +746,25 @@ Translated to C++:
 #ifndef BOUNDINGBOXH
 #define BOUNDINGBOXH
 
-#include "rtweekend.h"
+#include "RtWeekend.h"
 
-class boundingBox {
+class BoundingBox {
     public:
-        boundingBox() {}
-        boundingBox(const vec3& a, const vec3& b) { minimum = a; maximum = b;}
+        BoundingBox() {}
+        BoundingBox(const Vec3& a, const Vec3& b) { minimum = a; maximum = b;}
 
         vec3 min() const {return minimum; }
         vec3 max() const {return maximum; }
 
-        bool hit(const ray& r, double t_min, double t_max) const {
+        bool hit(const Ray& r, double tMin, double tMax) const {
             for (int a = 0; a < 3; a++) {
                 auto t0 = fmin((minimum[a] - r.origin()[a]) / r.direction()[a],
                                (maximum[a] - r.origin()[a]) / r.direction()[a]);
                 auto t1 = fmax((minimum[a] - r.origin()[a]) / r.direction()[a],
                                (maximum[a] - r.origin()[a]) / r.direction()[a]);
-                t_min = fmax(t0, t_min);
-                t_max = fmin(t1, t_max);
-                if (t_max <= t_min)
+                tMin = fmax(t0, tMin);
+                tMax = fmin(t1, tMax);
+                if (tMax <= tMin)
                     return false;
             }
             return true;
@@ -775,54 +782,54 @@ We'll need a function to compute the bounding boxes of hittables. We can create 
 
 Our bounding box function will return a bool because some primitives (like planes) don't have bounding boxes.
 
-Moving objects will have a bounding box that will enclose the primitive from time_start to time_end.
+Moving objects will have a bounding box that will enclose the primitive from timeStart to timeEnd.
 
-First, we'll create a virtual function in `hittable.h`:
+First, we'll create a virtual function in `Hittable.h`:
 
 <pre><code class="language-diff-cpp diff-highlight">
-+ #include "boundingBox.h"
++ #include "BoundingBox.h"
 
 ...
 
-class hittable {
+class Hittable {
 public: 
-	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
-+	virtual bool bounding_box(double time0, double time1, aabb& output_box) const = 0;
+	virtual bool hit(const Ray& r, double tMin, double tMax, HitRecord& rec) const = 0;
++	virtual bool generateBoundingBox(double time0, double time1, BoundingBox& outputBox) const = 0;
 
 };
 </code></pre>
 
-and override it in `sphere.h`:
+and override it in `Sphere.h`:
 
-<pre><code class="language-cpp">bool sphere::bounding_box(double time_start, double time_end, boundingBox& output_box) const {
+<pre><code class="language-cpp">bool Sphere::generateBoundingBox(double timeStart, double timeEnd, BoundingBox& outputBox) const {
 	
 	
-	boundingBox box_0 = bounding_box(
-			centerAt(time_start) - vec3(radius, radius, radius),
-			centerAt(time_start) + vec3(radius, radius, radius));
+	BoundingBox box0 = BoundingBox(
+			centerAt(timeStart) - vec3(radius, radius, radius),
+			centerAt(timeStart) + vec3(radius, radius, radius));
 
 	// Sphere is not moving
-	if (time_start-time_end < epsilon ) {
-		bounding_box = box_0
+	if (timeStart-timeEnd < epsilon ) {
+		outputBox = box0
 		return true;
 	}
 
 	else {
-		boundingBox box_1 = bounding_box(
-			centerAt(time_end) - vec3(radius, radius, radius),
-			centerAt(time_end) + vec3(radius, radius, radius));
+		BoundingBox box1 = BoundingBox(
+			centerAt(timeEnd) - vec3(radius, radius, radius),
+			centerAt(timeEnd) + vec3(radius, radius, radius));
 		
-		output_box = surrounding_box(box_0, box_1)
+		outputBox = generateSurroundingBox(box0, box1)
 	}
 
 	
 }
 </code></pre>
 
-We need to implement `surrounding_box` in our `boundingBox` class:
+We now need to implement the non-member `generateSurroundingBox` function in `BoundingBox.h`:
 
 
-<pre><code class="language-cpp">boundingBox surroundingBox(boundingBox box0, boundingBox box1) const {
+<pre><code class="language-cpp">BoundingBox generateSurroundingBox(BoundingBox box0, BoundingBox box1) const {
             
             double x,y,z;
 
@@ -840,60 +847,124 @@ We need to implement `surrounding_box` in our `boundingBox` class:
 
             vec3 max {x, y, z};
 
-            return boundingBox(min, max);
+            return BoundingBox(min, max);
         }
 </code></pre>
+
+
+### Creating Bounding Boxes for Lists of Hittables 
+
+
+Similarly, we'll have to add to our `HittableList` class:
+
+<pre><code class="language-cpp">
+#ifndef HITTABLELISTH
+#define HITTABLELISTH
+
+#include "Hittable.h"
+
+class HittableList : public Hittable {
+public:
+	HittableList() {}
+	HittableList(shared_ptr<Hittable> object) {  }
+
+	void clear() { objects.clear(); }
+    void add(shared_ptr<Hittable> object) { objects.push_back(object); }
+	virtual bool hit(const Ray& r, double tMin, double tMax, HitRecord& rec) const override;
++	virtual bool generateboundingBox(double timeStart, double timeEnd, BoundingBox& outputBox) const override;
+
+	std::vector<shared_ptr<Hittable>> objects;
+
+};
+
+bool HittableList::hit(const Ray& r, double tMin, double tMax, HitRecord& rec) const {
+	HitRecord tempHitRec;
+	bool hitStatus = false;
+	double closestSoFar = tMax;
+	for (const auto& object : objects) {
+
+		if (object->hit(r, tMin, closestSoFar, tempHitRec)) {
+			hitStatus = true;
+			closestSoFar = tempHitRec.t;
+			rec = tempHitRec;
+		}
+	}
+	return hitStatus;
+	
+}
+
++   bool HittableList::generateBoundingBox(double timeStart, double timeEnd, BoundingBox &outputBox) const {
++   	
++   	if (objects.empty()) {
++   		return false;
++   	}
++   
++       BoundingBox tempBox;
++       bool isFirstBox = true;
++   
++       for (const auto& object : objects) {
++           if (!object->generateBoundingBox(timeStart, timeEnd, tempBox)) return false;
++           outputBox = isFirstBox ? tempBox :  generateSurroundingBox(outputBox, tempBox);
++           isFirstBox = false;
++       }
++   
++       return true;
++   	
++   }
+
+#endif // !HITTABLELISTH
+</code></pre> 
 
 ### Defining our Hittable BVH Class
 Our BVHs need to be `hittable`s.
 
-Take note of the fact that the child nodes point to generic `hittable`s - they can other BVHs, spheres, or any kind of hittable.
+Take note of the fact that the child nodes point to generic `Hittable`s - they can other BVHs, spheres, or any kind of hittable.
 
 <pre><code class="language-cpp">#ifndef BVHH
 #define BVHH
 
-#include "rtweekend.h"
+#include "RtWeekend.h"
 
-#include "hittable.h"
-#include "hittableList.h"
+#include "Hittable.h"
+#include "HittableList.h"
 
 
-class bvhNode : public hittable {
+class BvhNode : public Hittable {
     public:
     
-        bvhNode();
+        BvhNode();
 
-        bvhNode(const hittable_list& list, double time_start, double time_end)
-            : bvhNode(list.objects, 0, list.objects.size(), time_start, time_end)
+        BvhNode(const HittableList& list, double timeStart, double timeEnd)
+            : BvhNode(list.objects, 0, list.objects.size(), timeStart, timeEnd)
         {}
 
-        bvhNode(
-            const std::vector<shared_ptr<hittable>>& src_objects,
-            size_t start, size_t end, double time_start, double time_end);
+        BvhNode(
+            const std::vector<shared_ptr<hittable>>& srcObjects,
+            size_t start, size_t end, double timeStart, double timeEnd);
 
         virtual bool hit(
-            const ray& r, double t_min, double t_max, hit_record& rec) const override;
+            const Ray& r, double tMin, double tMax, HitRecord& rec) const override;
 
-        virtual bool bounding_box(double time_start, double time_end, boundingBox& output_box) const override;
+        virtual bool generateBoundingBox(double timeStart, double timeEnd, BoundingBox& outputBox) const override;
 
     public:
         shared_ptr<hittable> left;
         shared_ptr<hittable> right;
-        boundingBox box;
+        BoundingBox box;
 };
 
-bool bvh_node::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
-    if (!box.hit(r, t_min, t_max))
+bool BvhNode::hit(const Ray& r, double tMin, double tMax, HitRecord& rec) const {
+    if (!box.hit(r, tMin, tMax))
         return false;
 
-    bool hit_left = left->hit(r, t_min, t_max, rec);
-    bool hit_right = right->hit(r, t_min, hit_left ? rec.t : t_max, rec);
+    bool hitLeft = left->hit(r, tMin, tMax, rec);
+    bool hitRight = right->hit(r, tMin, hitLeft ? rec.t : tMax, rec);
 
-    return hit_left || hit_right;
+    return hitLeft || hitRight;
 }
 
-bool bvh_node::bounding_box(double time_start, double time_end, boundingBox& output_box) const {
-    output_box = box;
+bool BvhNode::generateBoundingBox(double timeStart, double timeEnd, BoundingBox& outputBox) const {
+    outputBox = box;
     return true;
 }
 
@@ -917,23 +988,170 @@ We'll follow Shirley's lead and adopt a simplistic middle-ground method:
 
 When the incoming `vector` object has a size of two, that's when we can stop recursing and put each of the two hittables in their respective subtrees.
 
-First, let's add a utility function to `rtweekend.h` to return a random int in a given range:
+First, let's add a utility function to `RtWeekend.h` to return a random int in a given range:
 
-<pre><code class="language-cpp">inline int random_int(int min, int max) {
+<pre><code class="language-cpp">inline int randomInt(int min, int max) {
     // Returns a random integer in [min,max].
-    return static_cast&lt;int>(random_double(min, max+1));
+    return static_cast&lt;int>(randomDouble(min, max+1));
 }
 </code></pre>
 
-
-<pre><code class="language-cpp">#include &lt;algorithm>
-
-...
+Now we can start forming our BVH class:
 
 
+<pre><code class="language-cpp">
+
+#ifndef BVHH
+#define BVHH
+
+#include &lt;algorithm>
+#include "RtWeekend.h"
+#include "Hittable.h"
+#include "HittableList.h"
+
+class BvhNode : public Hittable {
+    public:
+
+        BvhNode();
+        BvhNode(const HittableList& list, double timeStart, double timeEnd)
+            : BvhNode(list.objects, 0, list.objects.size(), timeStart, timeEnd)
+        {}
+
+        BvhNode(
+                const std::vector<shared_ptr<Hittable>>& srcObjects,
+                size_t start, size_t end, double timeStart, double timeEnd);
+
+        virtual bool hit(
+                const Ray& r, double tMin, double tMax, HitRecord& rec) const override;
+
+        virtual bool generateBoundingBox(double timeStart, double timeEnd, BoundingBox& outputBox) const override;
+
+    public:
+        shared_ptr<hittable> left;
+        shared_ptr<hittable> right;
+        BoundingBox box;
+};
 </code></pre>
 
 
-Walk through code and then copy it up there
+Let's define the constructors and member functions:
+<pre><code class="language-cpp">
+
+
+BvhNode::BvhNode(
+        std::vectorlt;shared_ptrlt;Hittable>>& srcObjects,
+        size_t start, size_t end, double timeStart, double timeEnd
+        ) {
+    auto objects = srcObjects; // Create a modifiable array of the source scene objects
+
+    // Determine random axis
+    int axis = randomInt(0,2);
+
+    // *The comparators will be implemented later on*
+    auto comparator = (axis == 0) ? xBoxCompare
+        : (axis == 1) ? yBoxCompare 
+        : zBoxCompare;
+
+    size_t objectSpan = end - start;
+
+    // Sort the primitives
+    if (objectSpan == 1) {
+        left = right = objects[start];
+    } else if (objectSpan == 2) {
+        if (comparator(objects[start], objects[start+1])) {
+            left = objects[start];
+            right = objects[start+1];
+        } else {
+            left = objects[start+1];
+            right = objects[start];
+        }
+    } else {
+        std::sort(objects.begin() + start, objects.begin() + end, comparator);
+
+        auto mid = start + objectSpan/2;
+        left = make_sharedlt;BvhNode>(objects, start, mid, timeStart, timeEnd);
+        right = make_sharedlt;BvhNode>(objects, mid, end, timeStart, timeEnd);
+    }
+
+    aabb boxLeft, boxRight;
+
+    if (  !left->generateBoundingBox (timeStart, timeEnd, boxLeft)
+            || !right->generateBoundingBox(timeStart, timeEnd, boxRight)
+       )
+        std::cerr lt;lt; "No bounding box in BvhNode constructor.\n";
+
+    box = generateSurroundingBox(boxLeft, boxRight);
+}
+
+bool BvhNode::hit(const Ray& r, double tMin, double tMax, HitRecord& rec) const {
+    if (!box.hit(r, tMin, tMax))
+        return false;
+
+    bool hitLeft = left->hit(r, tMin, tMax, rec);
+    bool hitRight = right->hit(r, tMin, hitLeft ? rec.t : tMax, rec);
+
+    return hitLeft || hitRight;
+}
+
+bool BvhNode::generateBoundingBox(double timeStart, double timeEnd, BoundingBox& outputBox) const {
+    outputBox = box;
+    return true;
+}
+
+#endif
+
+</code></pre> 
+
+
+### Adding our Box Comparison Functions
+
+First of all, let's define some axis `enum`s in `RtWeekend.h`:
+<pre><code class="language-cpp">
+...
+
+// Constants
+const double infinity = std::numeric_limits<double>::infinity();
+const double pi = 3.1415926535897932385;
+const double epsilon = 0.00001;
+
++   // Enums
++   enum Axis { x, y, z };
+
+// Utility Functions
+inline double degreesToRadians(double degrees) {
+    return degrees * pi / 180;
+}
+...
+</code></pre> 
+
+Now we can add a generic non-member comparator to `BoundingBox`:
+
+<pre><code class="language-cpp">
+inline bool box_compare(const shared_ptr&lt;hittable> a, const shared_ptr&lt;hittable> b, int axis) {
+    aabb box_a;
+    aabb box_b;
+
+    if (!a->bounding_box(0,0, box_a) || !b->bounding_box(0,0, box_b))
+        std::cerr &lt;&lt; "No bounding box in bvh_node constructor.\n";
+
+    return box_a.min().e[axis] &lt; box_b.min().e[axis];
+}
+</code></pre>
+
+and the calls to the comparator:
+
+<pre><code class="language-cpp">
+bool compareX (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
+    return compare(a, b, Axis::x);
+}
+
+bool compareY (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
+    return compare(a, b, Axis::y);
+}
+
+bool compareZ (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
+    return compare(a, b, Axis::z);
+}
+</code></pre> 
 
 
