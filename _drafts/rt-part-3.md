@@ -117,7 +117,7 @@ Motion blur would be useless without motion. We can modify our spheres to move l
 	class sphere : public hittable {
 		public:
 		sphere() {}
-		sphere(vec3 center, float radius, material *material) : 
+		sphere(vec3 center, float radius, material* material) : 
 +			centerStart(center), 
 +			centerEnd(center), 
 +			moveStartTime(0),
@@ -141,7 +141,7 @@ Motion blur would be useless without motion. We can modify our spheres to move l
 +		vec3 centerStart, centerEnd;
 +		double moveStartTime, moveEndTime;
 		double radius;
-		material *material_ptr;
+		material* material_ptr;
 	};
 	</code></pre>
 
@@ -193,9 +193,11 @@ Checking for a hit remains mostly the same - we just account for moving spheres 
 +		}
 +
 +		else 
-+			return centerStart + ((time - moveStartTime) / (moveEndTime-moveStartTime))*+(centerEnd - centerStart);	
++			return centerStart + ((time - moveStartTime) / (moveEndTime-moveStartTime)) * (centerEnd - centerStart);	
 +	}
-}</code></pre>
+}
+
+</code></pre>
 
 ### <a id="adapting-our-material-class"></a>Adapting our Material Class
 
@@ -229,7 +231,7 @@ class lambertian : public material {
                             vec3& attenuation, 
                             ray& scattered) const {
         vec3 reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
-+        scattered = ray(rec.p, reflected + fuzz*random_unit_sphere_coordinate(), ray_in.moment()); // large spheres or grazing rays may go below the surface. In that case, they'll just be absorbed.
++        scattered = ray(rec.p, reflected + fuzz * random_unit_sphere_coordinate(), ray_in.moment()); // large spheres or grazing rays may go below the surface. In that case, they'll just be absorbed.
         attenuation = albedo;
         return dot(scattered.direction(), rec.normal) > 0.0;
     }
@@ -314,7 +316,7 @@ Let's start refactoring from the bottom up - `hittable.h`:
 		vec3 p; // intersection point
 		vec3 normal;
 		bool frontFace;
--		material* material_ptr;
+-		material&#42; material_ptr;
 +		shared_ptr&lt;material> material_ptr;
 
 		inline void set_face_normal(const ray& r, const vec3& outward_normal) {
@@ -340,14 +342,14 @@ Additionally, we are going to edit `hittableList.h` to not only use shared point
 class hittable_list : public hittable {
 public:
 	hittable_list() {}
--	hittable_list(hittable** l, int n) { list = l; list_size = n; }
-+	hittable_list(shared_ptr&lt;hittable> object) {  }
+-	hittable_list(hittable&#42;&#42; l, int n) { list = l; list_size = n; }
++	hittable_list(shared_ptr&lt;hittable> object) { add(object); }
 
 +	void clear() { objects.clear(); }
-+   void add(shared_ptr&lt;hittable> object) { objects.push_back(object); }
++       void add(shared_ptr&lt;hittable> object) { objects.push_back(object); }
 	virtual bool hit(const ray& r, double tmin, double tmax, hit_record& rec) const;
 
--	hittable** list;
+-	hittable&#42;&#42; list;
 -	int list_size;
 
 +	std::vector&lt;shared_ptr&lt;hittable>> objects;
@@ -581,6 +583,11 @@ After writing the next section on Bounding Volume Hierarchies, I decided to refa
 <img alt="BVH Illustration" src="/assets/images/blog-images/path-tracer/the-next-week/bounding-volume-hierarchy-wikipedia.svg" style="background: white; padding: 2rem;">
 
 Shirley describes this section as the most difficult part - he justfies tackling it now to avoid future refactoring in addition to significantly reducing runtime. Let's dive in.
+
+If you'd like a succinct primer on the subject, I'd highly reccommend the following video:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/EqvtfIqneKA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+
 
 Calculating ray-object intersections is where our ray tracer spends most of its time - and this time spent increases linearly with the number of objects in a scene. However - as Shirley points out - intersection is a repeated search upon a static model. As such, we should be able to **apply the principles of binary search** (divide and conquer) to our intersection logic.
 
@@ -820,6 +827,7 @@ and override it in `Sphere.h`:
 			centerAt(timeEnd) + vec3(radius, radius, radius));
 		
 		outputBox = generateSurroundingBox(box0, box1)
+                return true;
 	}
 
 	
@@ -866,10 +874,10 @@ Similarly, we'll have to add to our `HittableList` class:
 class HittableList : public Hittable {
 public:
 	HittableList() {}
-	HittableList(shared_ptr<Hittable> object) {  }
+	HittableList(shared_ptr<Hittable> object) { add(object); }
 
 	void clear() { objects.clear(); }
-    void add(shared_ptr<Hittable> object) { objects.push_back(object); }
+        void add(shared_ptr<Hittable> object) { objects.push_back(object); }
 	virtual bool hit(const Ray& r, double tMin, double tMax, HitRecord& rec) const override;
 +	virtual bool generateboundingBox(double timeStart, double timeEnd, BoundingBox& outputBox) const override;
 
@@ -1048,9 +1056,9 @@ BvhNode::BvhNode(
     int axis = randomInt(0,2);
 
     // *The comparators will be implemented later on*
-    auto comparator = (axis == 0) ? xBoxCompare
-        : (axis == 1) ? yBoxCompare 
-        : zBoxCompare;
+    auto comparator = (axis == 0) ? compareX
+        : (axis == 1) ? compareY 
+        : compareZ;
 
     size_t objectSpan = end - start;
 
@@ -1124,7 +1132,7 @@ inline double degreesToRadians(double degrees) {
 ...
 </code></pre> 
 
-Now we can add a generic non-member comparator to `BoundingBox`:
+Now we can add a generic non-member comparator to `BoundingBox` (right above the implementation of our `BvhNode` constructor):
 
 <pre><code class="language-cpp">
 inline bool box_compare(const shared_ptr&lt;hittable> a, const shared_ptr&lt;hittable> b, int axis) {
@@ -1138,7 +1146,7 @@ inline bool box_compare(const shared_ptr&lt;hittable> a, const shared_ptr&lt;hit
 }
 </code></pre>
 
-and the calls to the comparator:
+and the calls to the comparator (right above the implementation of our `BvhNode` constructor):
 
 <pre><code class="language-cpp">
 bool compareX (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
@@ -1154,4 +1162,28 @@ bool compareZ (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
 }
 </code></pre> 
 
+![Our control image for testing BVH optimization](/assets/images/blog-images/path-tracer/the-next-week/with-bvh.ppm)
+The difference in rendering time for the above image is clear:
 
+<pre><code class="language-terminal">
+evan@evan-ThinkPad-E495:~/Projects/PathTracer/src$ ./a.out > without-bvh.ppm
+Scanlines remaining: 0
+Done in:
+	1 hours
+	9 minutes
+	16 seconds.
+</code></pre> 
+
+<pre><code class="language-terminal">evan@evan-ThinkPad-E495:~/Projects/PathTracer/src$ ./a.out > with-bvh.ppm 
+Scanlines remaining: 0   
+Finished in:
+	0 hours
+	13 minutes
+	45 seconds.
+</code></pre>
+
+
+### Implementing Solid Textures
+> A texture in graphics usually means a function that makes the colors on a surface procedural.
+
+The aforementioned function could be synthesis, an image lookup, or somewehere in between
