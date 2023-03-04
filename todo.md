@@ -1,0 +1,5 @@
+- Set up spellchecker / broken link checker
+- Find a better solution automatically changing '<' to '&lt;' within <pre> tags
+- Add comments
+- Add permalinks next to headers
+- Automatically insert <hr> elements before headers
