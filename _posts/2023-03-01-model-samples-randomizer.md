@@ -15,6 +15,9 @@ tags: python scripting music ai
 
 <a id="continue-reading-point"></a>
 
+
+---
+
 ### What is the Model:Samples?
 The [Model:Samples](https://www.elektron.se/us/modelsamples-explorer) (hereinafter referred to as the Samples) is a capable mid-range six-track sample mangler with a powerful built-in sequencer. You can check out a review of it below to get accquainted with its "workflow":
 
@@ -33,9 +36,13 @@ If you didn't watch the video, I'll cover the basics for you:
 
 1 GB of storage might not sound like a lot, but samples are often very short - the storage goes a *long* way.
 
+---
+
 ### The Goal
 Many samplers/sample players have the ability to shuffle the active samples; a feature intended to spark creativity or simply create a new, weird "kit". The Samples, being Elektron's more budget-friendly device (as opposed to the [Digitakt](https://www.elektron.se/us/digitakt-explorer)), lacks this feature, among others. I've found myself making beat after beat with the default kit, just because the process of flippantly selecting samples by scrolling through all my shallow folders really sucks up some time! I've grown tired of the factory kits, and have realized that there's a wonky workaround.
 
+
+---
 
 ### The Solution
 Thankfully, the devs included a feature to automatically load all samples in a folder:
@@ -46,13 +53,19 @@ All we have to do is write a script to copy 6 random files from our desired samp
 
 The first party software used for communicating with and transferring samples to & from the Samples is [Elektron Transfer](https://www.elektron.se/us/download-support-transfer) - available for Mac and Windows. For Linux, the third party [Elektroid](https://github.com/dagargo/elektroid) works just as well.
 
+---
+
 ### The Gameplan
 We'll be using Python. 
 
 First, we should think about scope and how the user will interact with the program.
 
+---
+
 #### Scope
 This is not a life-changing program and does not need to be terribly robust.
+
+---
 
 #### Usage
 At the moment, following cp's example seems to make a lot of sense (Specifically, the first and second lines of the synopsis):
@@ -70,7 +83,11 @@ DESCRIPTION
        Copy SOURCE to DEST, or multiple SOURCE(s) to DIRECTORY.
 </code></pre> 
 
+---
+
 ### The Script 
+
+---
 
 #### Parsing Arguments
 To get started, we'll need to parse command line arguments. Most of what you would ever need to know can about command line arguments can be found [here](https://realpython.com/python-command-line-arguments). Late in the article, you'll find the [recommendation to use the existing Python standard library](https://realpython.com/python-command-line-arguments/#the-python-standard-library), [`argparse`](https://docs.python.org/3/library/argparse.html). 
@@ -113,6 +130,8 @@ Namespace(sources=['goodmorning', 'goodafternoon'], dest=['goodnight'], kits=25)
 </code></pre> 
 
 Perfect! We can access these values using dot notation (e.g. `args.sources`)
+
+---
 
 #### Generating the Kits
 An excellent resource on working with files in python can be found [here](https://realpython.com/working-with-files-in-python/#pythons-with-open-as-pattern).
@@ -193,8 +212,12 @@ Let's create a function `generate_kits`:
 
 That's it! The complete code can be found [here](https://github.com/eldun/msrandomizer/blob/main/msrandomizer.py)
 
+---
+
 ### Results
 Check back in a couple days and I'll have made some preposturous beats with my ultra-fresh random kits.
+
+---
 
 ### Bonus AI Test
 I'm a litte late to the party - I haven't tried using [ChatGPT3](https://openai.com/blog/chatgpt) yet! Can it generate a comparable script in minutes?
