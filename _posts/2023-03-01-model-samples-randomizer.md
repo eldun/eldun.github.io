@@ -1,7 +1,7 @@
 ---
 title: "Mixing it up:"
 subtitle: "Creating Random Sample Kits on the Model:Samples"
-excerpt: "One of my favorite samplers lacks the ability to create a random kit on the fly - are there any workarounds to do so?"
+excerpt: "One of my favorite afforadable samplers lacks the ability to create random kits - are there any workarounds to do so?"
 use-math: true
 use-raw-images: false
 toc: true
@@ -10,7 +10,7 @@ author: Evan
 header-image: /assets/images/blog-images/model-samples/model-samples.png
 header-image-alt: The knobby Model:Samples surrounded by disembodied plaster hands.
 header-image-title: The Elektron Model:Samples, as portrayed by Elektron.
-tags: python scripting music
+tags: python scripting music ai
 ---
 
 <a id="continue-reading-point"></a>
@@ -18,8 +18,7 @@ tags: python scripting music
 ### What is the Model:Samples?
 The [Model:Samples](https://www.elektron.se/us/modelsamples-explorer) (hereinafter referred to as the Samples) is a capable mid-range six-track sample mangler with a powerful built-in sequencer. You can check out a review of it below to get accquainted with its "workflow":
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/y3NBzKJ9R5A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
+<iframe width="560" height="315" style="display: block; margin: auto;" src="https://www.youtube.com/embed/y3NBzKJ9R5A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 If you didn't watch the video, I'll cover the basics for you:
 
 
@@ -76,7 +75,7 @@ DESCRIPTION
 #### Parsing Arguments
 To get started, we'll need to parse command line arguments. Most of what you would ever need to know can about command line arguments can be found [here](https://realpython.com/python-command-line-arguments). Late in the article, you'll find the [recommendation to use the existing Python standard library](https://realpython.com/python-command-line-arguments/#the-python-standard-library), [`argparse`](https://docs.python.org/3/library/argparse.html). 
 
-One of the most useful parts of the documentation on `argparse` is an [overview of the \`add_argument\` method](https://docs.python.org/3/library/argparse.html#the-add-argument-method).
+One of the most useful parts of the documentation on `argparse` is an [overview of the &apos;add_argument&apos; method](https://docs.python.org/3/library/argparse.html#the-add-argument-method).
 
 Using argparse, the start of our program will look like this:
 <pre><code class="language-python">
@@ -105,7 +104,7 @@ if __name__ == "__main__":
 
 Let's do a quick test:
 <pre><code class="language-python">
-evan@evan-ThinkPad-E495:~/Projects/ModelSamplesRandomizer$ python3 msrandomizer.py goodmorning goodafternoon goodnight
+$ python3 msrandomizer.py goodmorning goodafternoon goodnight
 </code></pre> 
 
 The result:
@@ -181,7 +180,7 @@ Let's create a function `generate_kits`:
                 cumulative_size_string = '{:.2f} {}'.format(cumulative_size/1024.0/1024.0, 'MiB copied')
 
                 # Columnated console output
-                print(f'{copied_string:<50}{"":<10}{cumulative_size_string:<}'  )
+                print(f'{copied_string:&lt;50}{"":&lt;10}{cumulative_size_string:&lt;}'  )
 
                 samples_added += 1
 
@@ -196,3 +195,73 @@ That's it! The complete code can be found [here](https://github.com/eldun/msrand
 
 ### Results
 Check back in a couple days and I'll have made some preposturous beats with my ultra-fresh random kits.
+
+### Bonus AI Test
+I'm a litte late to the party - I haven't tried using [ChatGPT3](https://openai.com/blog/chatgpt) yet! Can it generate a comparable script in minutes?
+
+...
+
+Holy COW. This is crazy. After a few iterations and clarifications, this was my request:
+
+<pre><code class="language-terminal" style="white-space:pre-line">Generate a python script that accepts the following arguments in the following order: 'source', 'destination', and 'num_folders'. The user should be able to specify more than one source directory. The arguments should be parsed using argparse. The script should create num_folders folders(named sequentially in hex) at the destination path with 6 unique audio files in each folder. Each of the 6 unique audio files should be randomly selected and copied from a random selection of the source directories and its sub-directories. If fewer than 6 unique audio files are found, notify the user, remove any folders and files that have been created, and exit the program. Keep track of the cumulative size 'cumulative_size' of the files that have been copied. If cumulative_size is about to exceed 1 GiB, notify the user, delete the most recently created hex folder and files, leave the others, and exit the program.  When copying a file, print(in vertically-aligned columns) the last 40 characters of the relative path of the file being copied, the folder it's being copied to, and cumulative_size (labeled 'MiB copied so far').</code></pre> 
+
+The result might look a bit familiar:
+
+<pre><code class="language-python">import os
+import shutil
+import random
+import argparse
+
+MAX_SIZE = 1024 ** 3  # 1 GiB in bytes
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Copy random audio files to folders.')    
+    parser.add_argument('sources', nargs='+', help='the source folder(s) to select audio files from')
+    parser.add_argument('destination', help='the destination folder to create sub-folders in')
+    parser.add_argument('num_folders', type=int, help='the number of folders to create')
+    args = parser.parse_args()
+
+    # create destination folder if it doesn't exist
+    os.makedirs(args.destination, exist_ok=True)
+
+    cumulative_size = 0
+    for i in range(args.num_folders):
+        folder_name = hex(i)[2:].zfill(2)  # convert to hex and zero-pad to 2 digits
+        folder_path = os.path.join(args.destination, folder_name)
+        os.mkdir(folder_path)
+
+        files = []
+        for source in args.sources:
+            for root, _, filenames in os.walk(source):
+                for filename in filenames:
+                    if filename.endswith('.mp3') or filename.endswith('.wav'):
+                        files.append(os.path.join(root, filename))
+
+        if len(files) < 6:
+            print(f"Not enough audio files found for folder {folder_name}.")
+            shutil.rmtree(folder_path)
+            break
+
+        folder_size = 0
+        selected_files = random.sample(files, 6)
+        for file_path in selected_files:
+            file_size = os.path.getsize(file_path)
+            if cumulative_size + folder_size + file_size > MAX_SIZE:
+                print(f"Folder {folder_name} exceeds 1 GiB. Deleting folder.")
+                shutil.rmtree(folder_path)
+                return
+
+            relative_path = os.path.relpath(file_path, args.sources[0])[-40:]
+            dest_path = os.path.join(folder_path, os.path.basename(file_path))
+            shutil.copy2(file_path, dest_path)
+            folder_size += file_size
+            cumulative_size += file_size
+
+            print(f"{relative_path:40} {folder_name} {cumulative_size / (1024 ** 2):10.2f} MiB copied so far.")
+
+if __name__ == '__main__':
+    main()
+</code></pre> 
+
+The only thing I changed was the order of the arguments.
