@@ -3,6 +3,7 @@
 - Add comments
 - Add permalinks next to headers
 - Automatically insert <hr> elements before headers
+- Remove build conflicts / warnings
 - Add instructions to fix `bundle install` issues to website blog post:
     - bundle `install`
     - Try to `gem install` whatever is needed
