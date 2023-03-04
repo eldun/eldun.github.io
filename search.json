@@ -2,6 +2,16 @@
   
     {
 
+      "title"    : "Mixing it up:",
+      "subtitle"    : "Creating Random Sample Kits on the Model:Samples",
+      "tags"     : "python, scripting, music, ai",
+      "date"     : "2023-03-01 00:00:00 -0500",
+      "url"      : "/2023/03/01/model-samples-randomizer.html"
+
+    } ,
+  
+    {
+
       "title"    : "Morso",
       "subtitle"    : "Creating a Morse Code Android Application with Kotlin",
       "tags"     : "android, kotlin, java, morso",

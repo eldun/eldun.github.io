@@ -1,4 +1,281 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2022-12-02T11:32:20-05:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">Morso</title><link href="eldun.github.io/2022/11/21/morso-pt-one.html" rel="alternate" type="text/html" title="Morso" /><published>2022-11-21T00:00:00-05:00</published><updated>2022-11-21T00:00:00-05:00</updated><id>eldun.github.io/2022/11/21/morso-pt-one</id><content type="html" xml:base="eldun.github.io/2022/11/21/morso-pt-one.html"><![CDATA[<h2 id="why-morse-code">Why Morse Code?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2023-03-04T13:06:21-05:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">Mixing it up:</title><link href="eldun.github.io/2023/03/01/model-samples-randomizer.html" rel="alternate" type="text/html" title="Mixing it up:" /><published>2023-03-01T00:00:00-05:00</published><updated>2023-03-01T00:00:00-05:00</updated><id>eldun.github.io/2023/03/01/model-samples-randomizer</id><content type="html" xml:base="eldun.github.io/2023/03/01/model-samples-randomizer.html"><![CDATA[<p><a id="continue-reading-point"></a></p>
+
+<hr />
+
+<h3 id="what-is-the-modelsamples">What is the Model:Samples?</h3>
+<p>The <a href="https://www.elektron.se/us/modelsamples-explorer">Model:Samples</a> (hereinafter referred to as the Samples) is a capable mid-range six-track sample mangler with a powerful built-in sequencer. You can check out a review of it below to get accquainted with its “workflow”:</p>
+
+<iframe width="560" height="315" style="display: block; margin: auto;" src="https://www.youtube.com/embed/y3NBzKJ9R5A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
+<p>If you didn’t watch the video, I’ll cover the basics for you:</p>
+
+<ul>
+  <li>6 audio tracks (all of which may be used as MIDI tracks)</li>
+  <li>6 × velocity-sensitive pads</li>
+  <li>96 projects</li>
+  <li>96 patterns per project</li>
+  <li>Elektron sequencer up to 64 steps with unique length and scale settings per track</li>
+  <li>real-time or grid recording of notes and parameters</li>
+  <li>64 MB sample memory</li>
+  <li>1 GB storage</li>
+</ul>
+
+<p>1 GB of storage might not sound like a lot, but samples are often very short - the storage goes a <em>long</em> way.</p>
+
+<hr />
+
+<h3 id="the-goal">The Goal</h3>
+<p>Many samplers/sample players have the ability to shuffle the active samples; a feature intended to spark creativity or simply create a new, weird “kit”. The Samples, being Elektron’s more budget-friendly device (as opposed to the <a href="https://www.elektron.se/us/digitakt-explorer">Digitakt</a>), lacks this feature, among others. I’ve found myself making beat after beat with the default kit, just because the process of flippantly selecting samples by scrolling through all my shallow folders really sucks up some time! I’ve grown tired of the factory kits, and have realized that there’s a wonky workaround.</p>
+
+<hr />
+
+<h3 id="the-solution">The Solution</h3>
+<p>Thankfully, the devs included a feature to automatically load all samples in a folder:</p>
+
+<p><img src="/assets/images/blog-images/model-samples/load-folder.png" alt="Details on loading an entire set of samples" /></p>
+
+<p>All we have to do is write a script to copy 6 random files from our desired sample library to their own folder. It’s hacky, but it’ll still be loads faster for making completely stupid beats than browsing. Of course, I still want to reserve some space for my curated sounds on the Samples (like for when I need to find and use the <a href="https://www.youtube.com/watch?v=wRl88VATFrs">Goldeneye sound</a>).</p>
+
+<p>The first party software used for communicating with and transferring samples to &amp; from the Samples is <a href="https://www.elektron.se/us/download-support-transfer">Elektron Transfer</a> - available for Mac and Windows. For Linux, the third party <a href="https://github.com/dagargo/elektroid">Elektroid</a> works just as well.</p>
+
+<hr />
+
+<h3 id="the-gameplan">The Gameplan</h3>
+<p>We’ll be using Python.</p>
+
+<p>First, we should think about scope and how the user will interact with the program.</p>
+
+<hr />
+
+<h4 id="scope">Scope</h4>
+<p>This is not a life-changing program and does not need to be terribly robust.</p>
+
+<hr />
+
+<h4 id="usage">Usage</h4>
+<p>At the moment, following cp’s example seems to make a lot of sense (Specifically, the first and second lines of the synopsis):</p>
+
+<pre><code class="language-terminal">
+NAME
+       cp - copy files and directories
+
+SYNOPSIS
+       cp [OPTION]... [-T] SOURCE DEST
+       cp [OPTION]... SOURCE... DIRECTORY
+       cp [OPTION]... -t DIRECTORY SOURCE...
+
+DESCRIPTION
+       Copy SOURCE to DEST, or multiple SOURCE(s) to DIRECTORY.
+</code></pre>
+
+<hr />
+
+<h3 id="the-script">The Script</h3>
+
+<hr />
+
+<h4 id="parsing-arguments">Parsing Arguments</h4>
+<p>To get started, we’ll need to parse command line arguments. Most of what you would ever need to know can about command line arguments can be found <a href="https://realpython.com/python-command-line-arguments">here</a>. Late in the article, you’ll find the <a href="https://realpython.com/python-command-line-arguments/#the-python-standard-library">recommendation to use the existing Python standard library</a>, <a href="https://docs.python.org/3/library/argparse.html"><code class="language-plaintext highlighter-rouge">argparse</code></a>.</p>
+
+<p>One of the most useful parts of the documentation on <code class="language-plaintext highlighter-rouge">argparse</code> is an <a href="https://docs.python.org/3/library/argparse.html#the-add-argument-method">overview of the 'add_argument' method</a>.</p>
+
+<p>Using argparse, the start of our program will look like this:</p>
+<pre><code class="language-python">
+import argparse
+
+
+def init_argparse() -&gt; argparse.ArgumentParser:
+    # print('Initializing parser')
+    parser = argparse.ArgumentParser(description='Create seqeuntially named directories - each containing six random files collated from the provided source directories')
+
+    parser.add_argument('sources', nargs='+')
+    parser.add_argument('dest', nargs=1)
+    parser.add_argument('--kits', '-k',
+                        nargs='?',
+                        type=int,
+                        default=DEFAULT_KIT_SIZE,
+                        help='The number of output folders(\'kits\') to create. Default: ' + str(DEFAULT_KIT_SIZE))
+    # print('Parser initialized')
+    return parser
+
+if __name__ == "__main__":
+    parser = init_argparse()
+    args = parser.parse_args() 
+    print(args)
+</code></pre>
+
+<p>Let’s do a quick test:</p>
+<pre><code class="language-python">
+$ python3 msrandomizer.py goodmorning goodafternoon goodnight
+</code></pre>
+
+<p>The result:</p>
+<pre><code class="language-python">
+Namespace(sources=['goodmorning', 'goodafternoon'], dest=['goodnight'], kits=25)
+</code></pre>
+
+<p>Perfect! We can access these values using dot notation (e.g. <code class="language-plaintext highlighter-rouge">args.sources</code>)</p>
+
+<hr />
+
+<h4 id="generating-the-kits">Generating the Kits</h4>
+<p>An excellent resource on working with files in python can be found <a href="https://realpython.com/working-with-files-in-python/#pythons-with-open-as-pattern">here</a>.</p>
+
+<p>The procedure be as follows:</p>
+<ol>
+  <li>Select 6 unique random audio files from the supplied source(s)</li>
+  <li>Create a directory (named sequentially in hex) and copy the files to it</li>
+  <li>Repeat until the desired number of kits is reached OR the size of the files copied reaches ~1 gig (the size of the Samples’ drive)</li>
+</ol>
+
+<p>To complete these steps, we’ll be importing a few modules:</p>
+
+<ul>
+  <li><a href="https://docs.python.org/3/library/shutil.html"><code class="language-plaintext highlighter-rouge">shutil</code></a> - High-level file operations (<strong>sh</strong>ell <strong>util</strong>ities)</li>
+  <li><a href="https://docs.python.org/3/library/random.html"><code class="language-plaintext highlighter-rouge">random</code></a></li>
+  <li><a href="https://docs.python.org/3/library/os.html"><code class="language-plaintext highlighter-rouge">os</code></a></li>
+</ul>
+
+<p>Let’s create a function <code class="language-plaintext highlighter-rouge">generate_kits</code>:</p>
+
+<pre><code class="language-python">def generate_kits(args) -&gt; None:
+    random_source = lambda: random.choice(args.sources)
+    dest = args.dest[0]
+    kit_count = args.kits
+
+    current_kit_label = 0
+    cumulative_size = 0
+
+
+    for kit in range(kit_count):
+
+        if cumulative_size &gt; MAX_TRANSFER_LIMIT_IN_BYTES:
+            exit_string = str.format('Max transfer size({} GiB) reached', cumulative_size/1024.0/1024.0/1024.0)
+            sys.exit(exit_string)
+        
+        attempts = 0
+        samples_added = 0
+        kit_folder = f'{current_kit_label:x}'
+        output_folder = os.path.join(dest, kit_folder)
+
+        if os.path.isdir(output_folder):
+            shutil.rmtree(output_folder)
+    
+
+        os.mkdir(output_folder)
+
+        while samples_added &lt; KIT_SIZE:
+            if attempts &gt; MAX_ATTEMPTS:
+                exit_string = str.format('The maximum number of attempts({}) for creating a kit has been reached.', MAX_ATTEMPTS)
+                sys.exit(exit_string)
+
+            source = random_source() # Randomly choose a new source dir each iteration
+
+            # Pick random file
+            files = [os.path.join(path, filename)
+                for path, dirs, files in os.walk(source)
+                for filename in files]
+            random_file = random.choice(files)
+
+            # Only grab audio files
+            if (os.path.isfile(random_file) and 
+                random_file.lower().endswith(('.wav', '.mp3', '.aiff'))):
+
+                shutil.copy(random_file, output_folder)
+
+                copied_string = os.path.basename(random_file) + ' copied to ' + kit_folder
+                cumulative_size += os.path.getsize(random_file)
+                cumulative_size_string = '{:.2f} {}'.format(cumulative_size/1024.0/1024.0, 'MiB copied')
+
+                # Columnated console output
+                print(f'{copied_string:&lt;50}{"":&lt;10}{cumulative_size_string:&lt;}'  )
+
+                samples_added += 1
+
+            else:
+                attempts +=1
+
+
+        current_kit_label = current_kit_label + 1
+</code></pre>
+
+<p>That’s it! The complete code can be found <a href="https://github.com/eldun/msrandomizer/blob/main/msrandomizer.py">here</a></p>
+
+<hr />
+
+<h3 id="results">Results</h3>
+<p>Check back in a couple days and I’ll have made some preposturous beats with my ultra-fresh random kits.</p>
+
+<hr />
+
+<h3 id="bonus-ai-test">Bonus AI Test</h3>
+<p>I’m a litte late to the party - I haven’t tried using <a href="https://openai.com/blog/chatgpt">ChatGPT3</a> yet! Can it generate a comparable script in minutes?</p>
+
+<p>…</p>
+
+<p>Holy COW. This is crazy. After a few iterations and clarifications, this was my request:</p>
+
+<pre><code class="language-terminal" style="white-space:pre-line">Generate a python script that accepts the following arguments in the following order: 'source', 'destination', and 'num_folders'. The user should be able to specify more than one source directory. The arguments should be parsed using argparse. The script should create num_folders folders(named sequentially in hex) at the destination path with 6 unique audio files in each folder. Each of the 6 unique audio files should be randomly selected and copied from a random selection of the source directories and its sub-directories. If fewer than 6 unique audio files are found, notify the user, remove any folders and files that have been created, and exit the program. Keep track of the cumulative size 'cumulative_size' of the files that have been copied. If cumulative_size is about to exceed 1 GiB, notify the user, delete the most recently created hex folder and files, leave the others, and exit the program.  When copying a file, print(in vertically-aligned columns) the last 40 characters of the relative path of the file being copied, the folder it's being copied to, and cumulative_size (labeled 'MiB copied so far').</code></pre>
+
+<p>The result might look a bit familiar:</p>
+
+<pre><code class="language-python">import os
+import shutil
+import random
+import argparse
+
+MAX_SIZE = 1024 ** 3  # 1 GiB in bytes
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Copy random audio files to folders.')    
+    parser.add_argument('sources', nargs='+', help='the source folder(s) to select audio files from')
+    parser.add_argument('destination', help='the destination folder to create sub-folders in')
+    parser.add_argument('num_folders', type=int, help='the number of folders to create')
+    args = parser.parse_args()
+
+    # create destination folder if it doesn't exist
+    os.makedirs(args.destination, exist_ok=True)
+
+    cumulative_size = 0
+    for i in range(args.num_folders):
+        folder_name = hex(i)[2:].zfill(2)  # convert to hex and zero-pad to 2 digits
+        folder_path = os.path.join(args.destination, folder_name)
+        os.mkdir(folder_path)
+
+        files = []
+        for source in args.sources:
+            for root, _, filenames in os.walk(source):
+                for filename in filenames:
+                    if filename.endswith('.mp3') or filename.endswith('.wav'):
+                        files.append(os.path.join(root, filename))
+
+        if len(files) &lt; 6:
+            print(f"Not enough audio files found for folder {folder_name}.")
+            shutil.rmtree(folder_path)
+            break
+
+        folder_size = 0
+        selected_files = random.sample(files, 6)
+        for file_path in selected_files:
+            file_size = os.path.getsize(file_path)
+            if cumulative_size + folder_size + file_size &gt; MAX_SIZE:
+                print(f"Folder {folder_name} exceeds 1 GiB. Deleting folder.")
+                shutil.rmtree(folder_path)
+                return
+
+            relative_path = os.path.relpath(file_path, args.sources[0])[-40:]
+            dest_path = os.path.join(folder_path, os.path.basename(file_path))
+            shutil.copy2(file_path, dest_path)
+            folder_size += file_size
+            cumulative_size += file_size
+
+            print(f"{relative_path:40} {folder_name} {cumulative_size / (1024 ** 2):10.2f} MiB copied so far.")
+
+if __name__ == '__main__':
+    main()
+</code></pre>
+
+<p>The only thing I changed was the order of the arguments.</p>]]></content><author><name>Evan</name></author><category term="python" /><category term="scripting" /><category term="music" /><category term="ai" /><summary type="html"><![CDATA[One of my favorite afforadable samplers lacks the ability to create random kits - are there any workarounds to do so?]]></summary></entry><entry><title type="html">Morso</title><link href="eldun.github.io/2022/11/21/morso-pt-one.html" rel="alternate" type="text/html" title="Morso" /><published>2022-11-21T00:00:00-05:00</published><updated>2022-11-21T00:00:00-05:00</updated><id>eldun.github.io/2022/11/21/morso-pt-one</id><content type="html" xml:base="eldun.github.io/2022/11/21/morso-pt-one.html"><![CDATA[<h2 id="why-morse-code">Why Morse Code?</h2>
 <p>One of my least favorite things in this world is having to yell in someone’s ear. Usually, I don’t have to. Occasionally, though, I find myself at a bar.</p>
 
 <p>One of my favorite things in this world is the process of getting better at useless-adjacent things. Rather than spending hours learning <a href="https://en.wikipedia.org/wiki/American_Sign_Language">American Sign Language</a> (which <strong>is</strong> on my to-do list), I could just learn 26 characters in <a href="https://en.wikipedia.org/wiki/Morse_code">Morse code</a> and tap out a message on my friend’s shoulder!</p>
