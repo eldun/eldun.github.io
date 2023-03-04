@@ -25,7 +25,7 @@ The [Model:Samples](https://www.elektron.se/us/modelsamples-explorer) (hereinaft
 If you didn't watch the video, I'll cover the basics for you:
 
 
-- 6 audio tracks (all of which may be used as MIDI tracks instead)
+- 6 audio tracks (all of which may be used as MIDI tracks)
 - 6 × velocity-sensitive pads
 - 96 projects
 - 96 patterns per project
