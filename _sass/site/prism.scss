@@ -42,7 +42,9 @@ pre[class*="language-"] {
 	padding: .1em;
 	border-radius: .3em;
 	white-space: normal;	
-	background: $color-secondary;
+
+	// This property was causing issues with inline code between <a> tags
+	// background: $color-secondary;
 	color: inherit;
 
 }
