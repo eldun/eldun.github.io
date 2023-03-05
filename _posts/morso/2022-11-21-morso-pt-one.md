@@ -1,5 +1,5 @@
 ---
-title: Morso:
+title: 'Morso:'
 subtitle: Creating a Morse Code Android Application with Kotlin
 excerpt: I need to learn Morse code if I want to be able to communicate with my cool neighbors.
 reason: To learn Kotlin, start (& finish) an Android app, and create a convenient way to practice Morse.
