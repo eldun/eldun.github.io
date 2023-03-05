@@ -1,7 +1,7 @@
 ---
-title: Morso
+title: Morso:
 subtitle: Creating a Morse Code Android Application with Kotlin
-excerpt: I need to learn Morse code if I want to be able to communicate with my *cool* neighbors.
+excerpt: I need to learn Morse code if I want to be able to communicate with my cool neighbors.
 reason: To learn Kotlin, start (& finish) an Android app, and create a convenient way to practice Morse.
 disclaimer:
 toc: true
@@ -11,14 +11,14 @@ layout: post
 author: Evan
 header-image: /assets/images/blog-images/morso/F.png
 header-image-alt:
-header-image-title: "An old telegraph! Source: https://www.history.com/topics/inventions/telegraph"
+header-image-title:
 tags: android kotlin java morso
 ---
 
 ## Why Morse Code?
-One of my least favorite things in this world is having to yell in someone's ear. Usually, I don't have to. Occasionally, though, I find myself at a bar.
+Occasionally, I find myself at a bar, yelling in someone's ear just to be heard. No good - it's one of my least-favorite things to do or to have done to me.
 
-One of my favorite things in this world is the process of getting better at useless-adjacent things. Rather than spending hours learning [American Sign Language](https://en.wikipedia.org/wiki/American_Sign_Language) (which **is** on my to-do list), I could just learn 26 characters in [Morse code](https://en.wikipedia.org/wiki/Morse_code) and tap out a message on my friend's shoulder!
+One of my favorite things in this world is the process of getting better at useless-adjacent things. Rather than spending hours learning [American Sign Language](https://en.wikipedia.org/wiki/American_Sign_Language) (which **is** on my to-do list), I could just learn 26 characters in [Morse code](https://en.wikipedia.org/wiki/Morse_code) and tap out a message across the table or upon my friend's shoulder!
 
 I already learned the [Dvorak keyboard layout](https://en.wikipedia.org/wiki/Dvorak_keyboard_layout) (not recommended) - which is unsurprisingly pretty similar to the structure of Morse code (look at the home row)! Obviously, the most used letters are the most accessible.
 
