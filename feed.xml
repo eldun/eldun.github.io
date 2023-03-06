@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2023-03-04T13:11:52-05:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">Mixing it up:</title><link href="eldun.github.io/2023/03/01/model-samples-randomizer.html" rel="alternate" type="text/html" title="Mixing it up:" /><published>2023-03-01T00:00:00-05:00</published><updated>2023-03-01T00:00:00-05:00</updated><id>eldun.github.io/2023/03/01/model-samples-randomizer</id><content type="html" xml:base="eldun.github.io/2023/03/01/model-samples-randomizer.html"><![CDATA[<p><a id="continue-reading-point"></a></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2023-03-06T17:12:52-05:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">Mixing it up:</title><link href="eldun.github.io/2023/03/01/model-samples-randomizer.html" rel="alternate" type="text/html" title="Mixing it up:" /><published>2023-03-01T00:00:00-05:00</published><updated>2023-03-01T00:00:00-05:00</updated><id>eldun.github.io/2023/03/01/model-samples-randomizer</id><content type="html" xml:base="eldun.github.io/2023/03/01/model-samples-randomizer.html"><![CDATA[<p><a id="continue-reading-point"></a></p>
 
 <hr />
 
@@ -198,7 +198,36 @@ Namespace(sources=['goodmorning', 'goodafternoon'], dest=['goodnight'], kits=25)
         current_kit_label = current_kit_label + 1
 </code></pre>
 
-<p>That’s it! The complete code can be found <a href="https://github.com/eldun/msrandomizer/blob/main/msrandomizer.py">here</a></p>
+<blockquote>
+  <p><strong>Note</strong>
+After actually using my script “in production”, I noticed some kits were missing samples. The issue was that some samples I was using started with dots(designating them as hidden) and others (less seriously) with non-numeric characters(impacting legibility). To fix this, import <code class="language-plaintext highlighter-rouge">re</code> for <a href="https://en.wikipedia.org/wiki/Regular_expression">regular expression</a> matching, and add the following method:</p>
+  <pre><code class="language-python"> 
+    def remove_leading_non_alphanumeric(input_string):
+    return re.sub(r'^[^a-zA-Z0-9]*', '', input_string)
+</code></pre>
+
+  <p>Do some manuvering to rename the file when copying it:</p>
+</blockquote>
+<pre><code class="language-python"> 
+     # Pick random file
+            files = [os.path.join(path, filename)
+                for path, dirs, files in os.walk(source)
+                for filename in files]
+            random_file_path = random.choice(files)
+
+            # Only grab audio files
+            if (os.path.isfile(random_file_path) and 
+                random_file_path.lower().endswith(('.wav', '.mp3', '.aiff'))):
+
+                renamed_file_basename = remove_leading_non_alphanumeric_characters(os.path.basename(random_file_path))
+                renamed_file_path = os.path.join(output_folder, renamed_file_basename)
+                shutil.copy(random_file_path, os.path.join(output_folder, renamed_file_basename))
+
+                copied_string = random_file_path + ' copied to ' + kit_folder
+
+&gt; </code></pre>
+
+<p>And that’s it! The complete &amp; final code can be found <a href="https://github.com/eldun/msrandomizer/blob/main/msrandomizer.py">here</a>.</p>
 
 <hr />
 
@@ -210,11 +239,20 @@ Namespace(sources=['goodmorning', 'goodafternoon'], dest=['goodnight'], kits=25)
 <h3 id="bonus-ai-test">Bonus AI Test</h3>
 <p>I’m a litte late to the party - I haven’t tried using <a href="https://openai.com/blog/chatgpt">ChatGPT3</a> yet! Can it generate a comparable script in minutes?</p>
 
+<blockquote>
+  <p><strong>Note</strong>
+I generated the following script before I realized the issue with hidden files. I’m sure ChatGPT would be up to the task, but I don’t feel like going through any more iterations.</p>
+</blockquote>
+
 <p>…</p>
 
-<p>Holy COW. This is crazy. After a few iterations and clarifications, this was my request:</p>
+<p>Holy COW. I knew chat GPT was impressive, but using it to generate solutions for my personal projects feels otherworldly. After a few iterations and clarifications, this was my request:</p>
 
-<pre><code class="language-terminal" style="white-space:pre-line">Generate a python script that accepts the following arguments in the following order: 'source', 'destination', and 'num_folders'. The user should be able to specify more than one source directory. The arguments should be parsed using argparse. The script should create num_folders folders(named sequentially in hex) at the destination path with 6 unique audio files in each folder. Each of the 6 unique audio files should be randomly selected and copied from a random selection of the source directories and its sub-directories. If fewer than 6 unique audio files are found, notify the user, remove any folders and files that have been created, and exit the program. Keep track of the cumulative size 'cumulative_size' of the files that have been copied. If cumulative_size is about to exceed 1 GiB, notify the user, delete the most recently created hex folder and files, leave the others, and exit the program.  When copying a file, print(in vertically-aligned columns) the last 40 characters of the relative path of the file being copied, the folder it's being copied to, and cumulative_size (labeled 'MiB copied so far').</code></pre>
+<pre><code class="language-terminal" style="white-space:pre-line">Generate a python script that accepts the following arguments in the following order: 'source', 'destination', and 'num_folders'. The user should be able to specify more than one source directory. The arguments should be parsed using argparse. 
+
+The script should create num_folders folders(named sequentially in hex) at the destination path with 6 unique audio files in each folder. Each of the 6 unique audio files should be randomly selected and copied from a random selection of the source directories and its sub-directories. If fewer than 6 unique audio files are found, notify the user, remove any folders and files that have been created, and exit the program. 
+
+Keep track of the cumulative size 'cumulative_size' of the files that have been copied. If cumulative_size is about to exceed 1 GiB, notify the user, delete the most recently created hex folder and files, leave the others, and exit the program.  When copying a file, print(in vertically-aligned columns) the last 40 characters of the relative path of the file being copied, the folder it's being copied to, and cumulative_size (labeled 'MiB copied so far').</code></pre>
 
 <p>The result might look a bit familiar:</p>
 
@@ -275,10 +313,12 @@ if __name__ == '__main__':
     main()
 </code></pre>
 
-<p>The only thing I changed was the order of the arguments.</p>]]></content><author><name>Evan</name></author><category term="python" /><category term="scripting" /><category term="music" /><category term="ai" /><summary type="html"><![CDATA[One of my favorite afforadable samplers lacks the ability to create random kits - are there any workarounds to do so?]]></summary></entry><entry><title type="html">Morso</title><link href="eldun.github.io/2022/11/21/morso-pt-one.html" rel="alternate" type="text/html" title="Morso" /><published>2022-11-21T00:00:00-05:00</published><updated>2022-11-21T00:00:00-05:00</updated><id>eldun.github.io/2022/11/21/morso-pt-one</id><content type="html" xml:base="eldun.github.io/2022/11/21/morso-pt-one.html"><![CDATA[<h2 id="why-morse-code">Why Morse Code?</h2>
-<p>One of my least favorite things in this world is having to yell in someone’s ear. Usually, I don’t have to. Occasionally, though, I find myself at a bar.</p>
+<p>The only thing I changed was the order of the arguments.</p>
 
-<p>One of my favorite things in this world is the process of getting better at useless-adjacent things. Rather than spending hours learning <a href="https://en.wikipedia.org/wiki/American_Sign_Language">American Sign Language</a> (which <strong>is</strong> on my to-do list), I could just learn 26 characters in <a href="https://en.wikipedia.org/wiki/Morse_code">Morse code</a> and tap out a message on my friend’s shoulder!</p>
+<p>Thanks for reading - see you next time!</p>]]></content><author><name>Evan</name></author><category term="python" /><category term="scripting" /><category term="music" /><category term="ai" /><summary type="html"><![CDATA[One of my favorite afforadable samplers lacks the ability to create random kits - are there any workarounds to do so?]]></summary></entry><entry><title type="html">Morso:</title><link href="eldun.github.io/2022/11/21/morso-pt-one.html" rel="alternate" type="text/html" title="Morso:" /><published>2022-11-21T00:00:00-05:00</published><updated>2022-11-21T00:00:00-05:00</updated><id>eldun.github.io/2022/11/21/morso-pt-one</id><content type="html" xml:base="eldun.github.io/2022/11/21/morso-pt-one.html"><![CDATA[<h2 id="why-morse-code">Why Morse Code?</h2>
+<p>Occasionally, I find myself at a bar, yelling in someone’s ear just to be heard. No good - it’s one of my least-favorite things to do or to have done to me.</p>
+
+<p>One of my favorite things in this world is the process of getting better at useless-adjacent things. Rather than spending hours learning <a href="https://en.wikipedia.org/wiki/American_Sign_Language">American Sign Language</a> (which <strong>is</strong> on my to-do list), I could just learn 26 characters in <a href="https://en.wikipedia.org/wiki/Morse_code">Morse code</a> and tap out a message across the table or upon my friend’s shoulder!</p>
 
 <p>I already learned the <a href="https://en.wikipedia.org/wiki/Dvorak_keyboard_layout">Dvorak keyboard layout</a> (not recommended) - which is unsurprisingly pretty similar to the structure of Morse code (look at the home row)! Obviously, the most used letters are the most accessible.</p>
 
@@ -1905,7 +1945,7 @@ class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
 
 <h2 id="to-be-continued">To be continued</h2>
 
-<p>In the next part of this series, we can focus on making the user experience more polished by adding more visual &amp; haptic feedback, creating a settings screen, and <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#GeneralDesign">addressing more general IME considerations</a>.</p>]]></content><author><name>Evan</name></author><category term="android" /><category term="kotlin" /><category term="java" /><category term="morso" /><summary type="html"><![CDATA[I need to learn Morse code if I want to be able to communicate with my *cool* neighbors.]]></summary></entry><entry><title type="html">Audio Plugins</title><link href="eldun.github.io/2022/10/20/clap-plugins-part-one.html" rel="alternate" type="text/html" title="Audio Plugins" /><published>2022-10-20T00:00:00-04:00</published><updated>2022-10-20T00:00:00-04:00</updated><id>eldun.github.io/2022/10/20/clap-plugins-part-one</id><content type="html" xml:base="eldun.github.io/2022/10/20/clap-plugins-part-one.html"><![CDATA[<h2 id="an-introduction">An Introduction</h2>
+<p>In the next part of this series, we can focus on making the user experience more polished by adding more visual &amp; haptic feedback, creating a settings screen, and <a href="https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method#GeneralDesign">addressing more general IME considerations</a>.</p>]]></content><author><name>Evan</name></author><category term="android" /><category term="kotlin" /><category term="java" /><category term="morso" /><summary type="html"><![CDATA[I need to learn Morse code if I want to be able to communicate with my cool neighbors.]]></summary></entry><entry><title type="html">Audio Plugins</title><link href="eldun.github.io/2022/10/20/clap-plugins-part-one.html" rel="alternate" type="text/html" title="Audio Plugins" /><published>2022-10-20T00:00:00-04:00</published><updated>2022-10-20T00:00:00-04:00</updated><id>eldun.github.io/2022/10/20/clap-plugins-part-one</id><content type="html" xml:base="eldun.github.io/2022/10/20/clap-plugins-part-one.html"><![CDATA[<h2 id="an-introduction">An Introduction</h2>
 <hr />
 <h3 id="what-is-an-audio-plugin">What is an Audio Plugin?</h3>
 
@@ -5078,20 +5118,8 @@ Melee(2001)" />
       <li>Ray tracing is applicable in more fields than just CGI, like optical design and acoustic modeling.</li>
     </ul>
   </li>
-</ul>]]></content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing-in-one-weekend" /><summary type="html"><![CDATA[It took me long enough, but I finally dipped my toes into the waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.]]></summary></entry><entry><title type="html">Building a Blog:</title><link href="eldun.github.io/2020/05/18/building-a-blog.html" rel="alternate" type="text/html" title="Building a Blog:" /><published>2020-05-18T00:00:00-04:00</published><updated>2020-05-18T00:00:00-04:00</updated><id>eldun.github.io/2020/05/18/building-a-blog</id><content type="html" xml:base="eldun.github.io/2020/05/18/building-a-blog.html"><![CDATA[<!-- <ul class="table-of-contents">
-<li><a href="#humble-beginnings">Humble Beginnings</a></li>
-<li><a href="#github-pages">GitHub Pages</a></li>
-<li><a href="#jekyll">Jekyll</a></li>
-<li><a href="#custom-ruby-plugins">Custom Ruby Plugins</a></li>
-<li><a href="#archive-page">Archive Page</a></li>
-<li><a href="#tag-system">Tag System</a></li>
-<li><a href="#search-function">Search Function</a></li>
-<li><a href="#the-future">The Future</a></li>
-<li><a href="#updates">Updates</a></li>
-</ul> -->
-
-<h2 id="humble-beginnings">Humble Beginnings</h2>
-<p>I really decided on building a blog when I started working on Peter Shirley’s <a href="https://raytracing.github.io/">Ray Tracing in One Weekend</a> series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to <a href="http://viclw17.github.io/">Victor Li’s Blog</a>. Inspired by the clarity, variety, and layout of Victor’s blog, I constructed a similar site for myself to document my work and personal excursions as a developer.</p>
+</ul>]]></content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing-in-one-weekend" /><summary type="html"><![CDATA[It took me long enough, but I finally dipped my toes into the waters of computer graphics earlier this year. Continue reading to learn about what ray tracing is and why I decided to explore it.]]></summary></entry><entry><title type="html">Building a Blog:</title><link href="eldun.github.io/2020/05/18/building-a-blog.html" rel="alternate" type="text/html" title="Building a Blog:" /><published>2020-05-18T00:00:00-04:00</published><updated>2020-05-18T00:00:00-04:00</updated><id>eldun.github.io/2020/05/18/building-a-blog</id><content type="html" xml:base="eldun.github.io/2020/05/18/building-a-blog.html"><![CDATA[<h2 id="humble-beginnings">Humble Beginnings</h2>
+<p>I really decided on building a blog when I started working on Peter Shirley’s <a href="https://raytracing.github.io/">Ray Tracing in One Weekend</a> series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to <a href="http://viclw17.github.io/">Victor Li’s Blog</a>. Inspired by the clarity, variety, and layout of Victor’s blog, I constructed a similar site for myself to document my work and as a developer.</p>
 
 <hr />
 
@@ -5111,7 +5139,7 @@ Melee(2001)" />
   <p>Jekyll is a simple, blog-aware, static site generator perfect for personal, project, or organization sites. Think of it like a file-based CMS, without all the complexity. Jekyll takes your content, renders Markdown and Liquid templates, and spits out a complete, static website ready to be served by Apache, Nginx or another web server. Jekyll is the engine behind GitHub Pages, which you can use to host sites right from your GitHub repositories.</p>
 </blockquote>
 
-<p>For the most part, Jekyll has been a breeze to work with. I would recommend it to anyone looking to build a static site.</p>
+<p>For the most part, Jekyll has been a breeze to work with, and their documentation is top-notch. I would recommend it to anyone looking to build a static site.</p>
 
 <hr />
 
@@ -5123,9 +5151,14 @@ Melee(2001)" />
 
 <p>The better solution, of course, is to automate. Big thanks to Josh Frankel and <a href="https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/">his post</a> detailing the process.</p>
 
-<p><span class="highlight-yellow">Update: “Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on.” This includes a brand new subscription fee! And re-configuring!<br />I don’t feel like dealing with that (or looking into other options right now), so for the time being, I’ll just be <code class="language-plaintext highlighter-rouge">jekyll build</code>-ing <code class="language-plaintext highlighter-rouge">source</code> and pushing the updated directory <code class="language-plaintext highlighter-rouge">_site</code> to <code class="language-plaintext highlighter-rouge">master</code>.</span></p>
+<p><span class="note">Update:</span></p>
+<blockquote>
+  <p>Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on.</p>
+</blockquote>
 
-<p><span class="highlight-yellow">Update(Sep 2022): I wrote a little bash script to update the live site from the source branch. Git worktree is a neat feature! I’ve never used it before. Here’s the script:</span></p>
+<p>This includes a brand new subscription fee! And re-configuring!<br />I don’t feel like dealing with that (or looking into other options right now), so for the time being, I’ll just be <code class="language-plaintext highlighter-rouge">jekyll build</code>-ing <code class="language-plaintext highlighter-rouge">source</code> and pushing the updated directory <code class="language-plaintext highlighter-rouge">_site</code> to <code class="language-plaintext highlighter-rouge">master</code>.&lt;/span&gt;</p>
+
+<p><span class="note">Update(Sep 2022): I wrote a little bash script to update the live site from the source branch. Git worktree is a neat feature! I’ve never used it before. Here’s the script:</span></p>
 
 <pre><code class="language-bash">
 #!/bin/bash
@@ -5415,7 +5448,8 @@ Create a new environment variable named <code class="language-plaintext highligh
 <details>
 <summary>Refactored my CSS into multiple files</summary>
 <br />
-I used to have one monolithic style.scss file. After some refactoring, this is the result:
+I used to have one monolithic `style.scss` file. Thanks to [Sass](https://sass-lang.com/), variables, and some refactoring, this is the result:
+
 <pre><code class="language-treeview">eldun.github.io/
     ├── assets/
     │   ├── css/
@@ -5437,7 +5471,8 @@ I used to have one monolithic style.scss file. After some refactoring, this is t
     │       └── tags.scss
     └── ...</code></pre>
 
-<code>style.scss</code> is now mostly imports and high-level stylings:
+<p>`style.scss` is now mostly imports and high-level stylings:</p>
+
 <pre><code class="language-scss">---
 ---
 $color-primary: {{ site.data.colors["primary"]["dark-theme"] }};
@@ -5484,8 +5519,8 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 <summary>Started using <a class="btn" href="https://prismjs.com/" target="_blank">Prism Syntax highlighter</a>
 </summary>
 <br />
-All I had to do was generate js and css files from their site, plop them into my site directory, and link 'em. To use a specific language, all I need to do is specify a code block like so:
-<code>&lt;pre&gt;&lt;code class="language-xxxx"&gt;</code>
+All I had to do was generate js and css files from Prism's site, plop them into my site directory, and link 'em. To decorate a code snippet with a specific language, all I need to do is specify a code block like so:
+`&lt;pre&gt;&lt;code class="language-xxxx"&gt;`
 <pre><code class="language-treeview">eldun.github.io
     ├── assets/
     │   ├── css/
@@ -5586,4 +5621,4 @@ Add the ability to use Liquid in Front Matter
 
 I've started putting more of my post content into the [Front Matter](https://jekyllrb.com/docs/front-matter/) and letting my layout do most of the work. You can't natively use [Liquid](https://jekyllrb.com/docs/liquid/) in Front Matter, but there's a <a href="https://github.com/gemfarmer/jekyll-liquify">gem</a> for enabling such functionality.
 
-</details>]]></content><author><name>Evan</name></author><category term="web" /><category term="jekyll" /><category term="github-pages" /><category term="ruby" /><summary type="html"><![CDATA[They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.]]></summary></entry></feed>
+</details>]]></content><author><name>Evan</name></author><category term="web" /><category term="ruby" /><summary type="html"><![CDATA[They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and how I built it.]]></summary></entry></feed>

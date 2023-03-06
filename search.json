@@ -12,7 +12,7 @@
   
     {
 
-      "title"    : "Morso",
+      "title"    : "Morso:",
       "subtitle"    : "Creating a Morse Code Android Application with Kotlin",
       "tags"     : "android, kotlin, java, morso",
       "date"     : "2022-11-21 00:00:00 -0500",
@@ -64,7 +64,7 @@
 
       "title"    : "Building a Blog:",
       "subtitle"    : "Howdy!",
-      "tags"     : "web, jekyll, github-pages, ruby",
+      "tags"     : "web, ruby",
       "date"     : "2020-05-18 00:00:00 -0400",
       "url"      : "/2020/05/18/building-a-blog.html"
 

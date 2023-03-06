@@ -28,8 +28,8 @@
 <meta property="og:title" content="Building a Blog:" />
 <meta name="author" content="Evan" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it." />
-<meta property="og:description" content="They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it." />
+<meta name="description" content="They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and how I built it." />
+<meta property="og:description" content="They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and how I built it." />
 <link rel="canonical" href="eldun.github.io/2020/05/18/building-a-blog.html" />
 <meta property="og:url" content="eldun.github.io/2020/05/18/building-a-blog.html" />
 <meta property="og:type" content="article" />
@@ -37,7 +37,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Building a Blog:" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2020-05-18T00:00:00-04:00","datePublished":"2020-05-18T00:00:00-04:00","description":"They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.","headline":"Building a Blog:","mainEntityOfPage":{"@type":"WebPage","@id":"eldun.github.io/2020/05/18/building-a-blog.html"},"url":"eldun.github.io/2020/05/18/building-a-blog.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2020-05-18T00:00:00-04:00","datePublished":"2020-05-18T00:00:00-04:00","description":"They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and how I built it.","headline":"Building a Blog:","mainEntityOfPage":{"@type":"WebPage","@id":"eldun.github.io/2020/05/18/building-a-blog.html"},"url":"eldun.github.io/2020/05/18/building-a-blog.html"}</script>
 <!-- End Jekyll SEO tag -->
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -188,7 +188,7 @@
 <a id="continue-reading-point"></a>
 
 <div class="excerpt">
-<p>They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it.</p>
+<p>They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and how I built it.</p>
 
 </div>
 <!--end-excerpt-->
@@ -220,21 +220,9 @@
 <hr>
 
 <div id="markdown-content">
-    <!-- <ul class="table-of-contents">
-<li><a href="#humble-beginnings">Humble Beginnings</a></li>
-<li><a href="#github-pages">GitHub Pages</a></li>
-<li><a href="#jekyll">Jekyll</a></li>
-<li><a href="#custom-ruby-plugins">Custom Ruby Plugins</a></li>
-<li><a href="#archive-page">Archive Page</a></li>
-<li><a href="#tag-system">Tag System</a></li>
-<li><a href="#search-function">Search Function</a></li>
-<li><a href="#the-future">The Future</a></li>
-<li><a href="#updates">Updates</a></li>
-</ul> -->
-
-<h2 id="humble-beginnings">
+    <h2 id="humble-beginnings">
 <a class="anchor" href="#humble-beginnings" aria-hidden="true"><span class="octicon octicon-link"></span></a>Humble Beginnings</h2>
-<p>I really decided on building a blog when I started working on Peter Shirley’s <a href="https://raytracing.github.io/">Ray Tracing in One Weekend</a> series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to <a href="http://viclw17.github.io/">Victor Li’s Blog</a>. Inspired by the clarity, variety, and layout of Victor’s blog, I constructed a similar site for myself to document my work and personal excursions as a developer.</p>
+<p>I really decided on building a blog when I started working on Peter Shirley’s <a href="https://raytracing.github.io/">Ray Tracing in One Weekend</a> series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to <a href="http://viclw17.github.io/">Victor Li’s Blog</a>. Inspired by the clarity, variety, and layout of Victor’s blog, I constructed a similar site for myself to document my work and as a developer.</p>
 
 <hr>
 
@@ -256,7 +244,7 @@
   <p>Jekyll is a simple, blog-aware, static site generator perfect for personal, project, or organization sites. Think of it like a file-based CMS, without all the complexity. Jekyll takes your content, renders Markdown and Liquid templates, and spits out a complete, static website ready to be served by Apache, Nginx or another web server. Jekyll is the engine behind GitHub Pages, which you can use to host sites right from your GitHub repositories.</p>
 </blockquote>
 
-<p>For the most part, Jekyll has been a breeze to work with. I would recommend it to anyone looking to build a static site.</p>
+<p>For the most part, Jekyll has been a breeze to work with, and their documentation is top-notch. I would recommend it to anyone looking to build a static site.</p>
 
 <hr>
 
@@ -269,9 +257,14 @@
 
 <p>The better solution, of course, is to automate. Big thanks to Josh Frankel and <a href="https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/">his post</a> detailing the process.</p>
 
-<p><span class="highlight-yellow">Update: “Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on.” This includes a brand new subscription fee! And re-configuring!<br>I don’t feel like dealing with that (or looking into other options right now), so for the time being, I’ll just be <code class="language-plaintext highlighter-rouge">jekyll build</code>-ing <code class="language-plaintext highlighter-rouge">source</code> and pushing the updated directory <code class="language-plaintext highlighter-rouge">_site</code> to <code class="language-plaintext highlighter-rouge">master</code>.</span></p>
+<p><span class="note">Update:</span></p>
+<blockquote>
+  <p>Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on.</p>
+</blockquote>
 
-<p><span class="highlight-yellow">Update(Sep 2022): I wrote a little bash script to update the live site from the source branch. Git worktree is a neat feature! I’ve never used it before. Here’s the script:</span></p>
+<p>This includes a brand new subscription fee! And re-configuring!<br>I don’t feel like dealing with that (or looking into other options right now), so for the time being, I’ll just be <code class="language-plaintext highlighter-rouge">jekyll build</code>-ing <code class="language-plaintext highlighter-rouge">source</code> and pushing the updated directory <code class="language-plaintext highlighter-rouge">_site</code> to <code class="language-plaintext highlighter-rouge">master</code>.&lt;/span&gt;</p>
+
+<p><span class="note">Update(Sep 2022): I wrote a little bash script to update the live site from the source branch. Git worktree is a neat feature! I’ve never used it before. Here’s the script:</span></p>
 
 <pre><code class="language-bash">
 #!/bin/bash
@@ -568,7 +561,8 @@ Create a new environment variable named <code class="language-plaintext highligh
 <details>
 <summary>Refactored my CSS into multiple files</summary>
 <br>
-I used to have one monolithic style.scss file. After some refactoring, this is the result:
+I used to have one monolithic `style.scss` file. Thanks to [Sass](https://sass-lang.com/), variables, and some refactoring, this is the result:
+
 <pre><code class="language-treeview">eldun.github.io/
     ├── assets/
     │   ├── css/
@@ -590,7 +584,8 @@ I used to have one monolithic style.scss file. After some refactoring, this is t
     │       └── tags.scss
     └── ...</code></pre>
 
-<code>style.scss</code> is now mostly imports and high-level stylings:
+<p>`style.scss` is now mostly imports and high-level stylings:</p>
+
 <pre><code class="language-scss">---
 ---
 $color-primary: {{ site.data.colors["primary"]["dark-theme"] }};
@@ -637,8 +632,8 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 <summary>Started using <a class="btn" href="https://prismjs.com/" target="_blank">Prism Syntax highlighter</a>
 </summary>
 <br>
-All I had to do was generate js and css files from their site, plop them into my site directory, and link 'em. To use a specific language, all I need to do is specify a code block like so:
-<code>&lt;pre&gt;&lt;code class="language-xxxx"&gt;</code>
+All I had to do was generate js and css files from Prism's site, plop them into my site directory, and link 'em. To decorate a code snippet with a specific language, all I need to do is specify a code block like so:
+`&lt;pre&gt;&lt;code class="language-xxxx"&gt;`
 <pre><code class="language-treeview">eldun.github.io
     ├── assets/
     │   ├── css/
@@ -754,18 +749,6 @@ I've started putting more of my post content into the [Front Matter](https://jek
     href=/tags/web
     rel="category tag">
     #web</code></a>
-
-  
-  <code><a class="tag-link"
-    href=/tags/jekyll
-    rel="category tag">
-    #jekyll</code></a>
-
-  
-  <code><a class="tag-link"
-    href=/tags/github-pages
-    rel="category tag">
-    #github-pages</code></a>
 
   
   <code><a class="tag-link"
