@@ -210,7 +210,35 @@ Let's create a function `generate_kits`:
         current_kit_label = current_kit_label + 1
 </code></pre> 
 
-That's it! The complete code can be found [here](https://github.com/eldun/msrandomizer/blob/main/msrandomizer.py)
+> **Note**
+> After actually using my script "in production", I noticed some kits were missing samples. The issue was that some samples I was using started with dots(designating them as hidden) and others (less seriously) with non-numeric characters(impacting legibility). To fix this, import `re` for [regular expression](https://en.wikipedia.org/wiki/Regular_expression) matching, and add the following method:
+> <pre><code class="language-python"> 
+>     def remove_leading_non_alphanumeric(input_string):
+>     return re.sub(r'^[^a-zA-Z0-9]*', '', input_string)
+> </code></pre>
+>
+> Do some manuvering to rename the file when copying it:
+<pre><code class="language-python"> 
+     # Pick random file
+            files = [os.path.join(path, filename)
+                for path, dirs, files in os.walk(source)
+                for filename in files]
+            random_file_path = random.choice(files)
+
+            # Only grab audio files
+            if (os.path.isfile(random_file_path) and 
+                random_file_path.lower().endswith(('.wav', '.mp3', '.aiff'))):
+
+                renamed_file_basename = remove_leading_non_alphanumeric_characters(os.path.basename(random_file_path))
+                renamed_file_path = os.path.join(output_folder, renamed_file_basename)
+                shutil.copy(random_file_path, os.path.join(output_folder, renamed_file_basename))
+
+                copied_string = random_file_path + ' copied to ' + kit_folder
+
+> </code></pre>
+
+
+And that's it! The complete & final code can be found [here](https://github.com/eldun/msrandomizer/blob/main/msrandomizer.py).
 
 ---
 
@@ -222,9 +250,12 @@ Check back in a couple days and I'll have made some preposturous beats with my u
 ### Bonus AI Test
 I'm a litte late to the party - I haven't tried using [ChatGPT3](https://openai.com/blog/chatgpt) yet! Can it generate a comparable script in minutes?
 
+> **Note**
+> I generated the following script before I realized the issue with hidden files. I'm sure ChatGPT would be up to the task, but I don't feel like going through any more iterations.
+
 ...
 
-Holy COW. This is crazy. After a few iterations and clarifications, this was my request:
+Holy COW. I knew chat GPT was impressive, but using it to generate solutions for my personal projects feels otherworldly. After a few iterations and clarifications, this was my request:
 
 <pre><code class="language-terminal" style="white-space:pre-line">Generate a python script that accepts the following arguments in the following order: 'source', 'destination', and 'num_folders'. The user should be able to specify more than one source directory. The arguments should be parsed using argparse. 
 
@@ -292,3 +323,5 @@ if __name__ == '__main__':
 </code></pre> 
 
 The only thing I changed was the order of the arguments.
+
+Thanks for reading - see you next time!
