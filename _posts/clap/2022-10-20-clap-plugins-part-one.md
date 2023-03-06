@@ -9,9 +9,9 @@ use-math: true
 use-raw-images: false
 layout: post
 author: Evan
-header-image: /assets/images/blog-images/audio-plugins/part-one/sine-wave.jpg
+header-image: /assets/images/blog-images/audio-plugins/part-one/sine-wave.png
 header-image-alt: "Image of sine wave from http://www.tronola.com/moorepage/Sine.html" 
-header-image-title:"The basis for all sounds: the sine wave."
+header-image-title: "The basis for all sounds: the sine wave."
 tags: c++ music 
 ---
 
