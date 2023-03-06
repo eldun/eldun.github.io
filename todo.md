@@ -15,3 +15,4 @@
     - If that doesn't work, [there is probably a gemfile.lock file that freezes all the versions at what was originally in the gemfile. Try deleting the lock file.](https://talk.jekyllrb.com/t/bundler-could-not-find-compatible-versions-for-gem-jekyll/6275/3)
     - run bundle install,entering your password if needed.
 - Pagination
+- Dark / light themes
