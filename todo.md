@@ -16,3 +16,4 @@
     - run bundle install,entering your password if needed.
 - Pagination
 - Dark / light themes
+- Add fontawesome icons to the beginnings of highlights
