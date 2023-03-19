@@ -228,9 +228,10 @@ Let's create a function `generate_kits`:
         current_kit_label = current_kit_label + 1
 </code></pre> 
 
-<div class="warning">
-The Model:Samples wouldn't load any 'AppleDouble' files - the kind found in [useless `__MACOSX` folders](https://superuser.com/a/104501). I just deleted all `__MACOSX` folders from my sample library, rather than checking each file.
-</div>
+
+<span class="warning">
+Using the `file` command, I found the Model:Samples wouldn't load any 'AppleDouble' files - the kind found in [useless `\__MACOSX` folders](https://superuser.com/a/104501). I deleted all `__MACOSX` folders from my sample library, rather than checking each file.
+</span>
 
 
 And that's it! The complete & final code can be found [here](https://github.com/eldun/msrandomizer/blob/main/msrandomizer.py).
@@ -245,9 +246,9 @@ Check back in a couple days and I'll have made some preposturous beats with my u
 ### Bonus AI Test
 I'm a litte late to the party - I haven't tried using [ChatGPT3](https://openai.com/blog/chatgpt) yet! Can it generate a comparable script in minutes?
 
-<div class="note">
+<span class="note">
 I generated the following script before I realized the issue with hidden files. I'm sure ChatGPT would be up to the task, but I don't feel like going through any more iterations to get it just right.
-</note>
+</span>
 ...
 
 Holy COW. I knew chat GPT was impressive, but using it to generate solutions for my personal projects feels otherworldly. After a few iterations and clarifications, this was my request:

@@ -1,3 +1,5 @@
+// Markdown doesn't work inside divs, but it does work inside spans. Hence, "display:block"
+
 .tip {
     display: block;
     padding: .5rem;
