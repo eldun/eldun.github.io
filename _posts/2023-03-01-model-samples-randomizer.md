@@ -205,6 +205,7 @@ Let's create a function `generate_kits`:
 
 
 
+            # Un-hide files that start with '.', as well as make files more legible
             renamed_output_file = remove_leading_non_alphanumeric_characters(root)
 
             # Add 1-6 suffix to accomodate how the Model:Samples loads kits
@@ -218,7 +219,7 @@ Let's create a function `generate_kits`:
 
             # Columnated console output
             renamed_output_file = f'\'{renamed_output_file}\'' # You can't put backslashes inside of f-string braces, so I inserted them here
-            print(f'{random_file_path:<100} copied to \'{kit_folder}\' {"":<10}as {renamed_output_file:<30}  {cumulative_size_string:>30}'  )
+            print(f'{random_file_path:&lt;100} copied to \'{kit_folder}\' {"":&lt;10}as {renamed_output_file:&lt;30}  {cumulative_size_string:>30}'  )
 
             samples_added += 1
 
