@@ -497,3 +497,28 @@ Add the ability to use Liquid in Front Matter
 I've started putting more of my post content into the [Front Matter](https://jekyllrb.com/docs/front-matter/) and letting my layout do most of the work. You can't natively use [Liquid](https://jekyllrb.com/docs/liquid/) in Front Matter, but there's a <a href='https://github.com/gemfarmer/jekyll-liquify'>gem</a> for enabling such functionality.
 
 </details>
+
+
+
+### <time>2023-03</time>
+
+<details>
+
+<summary>
+Hook eldun.github.io up to a custom domain
+</summary>
+<br>
+
+Looks are everything, sometimes. After spending some cash on a custom domain with mailchimp, I thought I'd be able to simply drag-n-drop my statically generated website into their filesystem and have it just work. Nope!
+
+Based on my limited understanding of the internet, I had three options:
+- Redirect eldun.github.io to eldun.net(which would require rebuilding my site with MailChimp's tools and changing my whole workflow)
+- Redirect eldun.net to eldun.github.io (better, but still ugly)
+- Ask for help from MailChimp support
+
+I asked for help, and Fernando was able to set up a masked forward from eldun.net to eldun.github.io - showing the content of eldun.github.io, but leaving the URL as eldun.net. This will take effect (hopefully) in the next 48 hours. Oddly enough, the configuration for masked forwarding is hidden from the user in Mailchimp:
+
+> (09:00:00 PM) Evan: okay, are these settings available for me to look at within the domain settings?
+> (09:00:45 PM) Fernando : You would not be able to see that within the domain settings, if you need to make any changes to the forward you would reach out to us directly
+
+</details>
