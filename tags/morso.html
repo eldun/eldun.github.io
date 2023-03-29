@@ -21,6 +21,8 @@
 
   <!-- Prism is now loaded by being imported in assets/css/style.scss -->
   <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
 <meta name="generator" content="Jekyll v4.3.2" />
@@ -36,7 +38,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#157878">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="stylesheet" href="/assets/css/style.css">
 
 
 
@@ -155,7 +156,7 @@
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('results-container'),
     json: '/search.json',
-    searchResultTemplate: '<li><a href="eldun.github.io{url}">{title} {subtitle}</a></li>'
+    searchResultTemplate: '<li><a href="eldun.github.io{postUrl}">{postTitle} {postSubtitle}</a></li>'
   })
   </script>
 
@@ -208,7 +209,7 @@
     </script> 
 
 <!-- Diff-highlighter is very picky about whitespace -->
-    <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
       'remove-trailing': true,
       'remove-indent': true,
       'left-trim': false,
@@ -218,7 +219,7 @@
       'remove-initial-line-feed': true,
       'tabs-to-spaces': 4,
       // 'spaces-to-tabs': 4
-    });</script>
+    });</script> -->
     
 
       <!-- Back to top -->

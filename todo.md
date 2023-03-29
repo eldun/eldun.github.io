@@ -17,3 +17,5 @@
 - Pagination
 - Dark / light themes
 - Add fontawesome icons to the beginnings of highlights
+- Update description in google search results
+- Ensure tab titles are logical

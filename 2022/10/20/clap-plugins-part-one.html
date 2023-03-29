@@ -45,6 +45,8 @@
 
   <!-- Prism is now loaded by being imported in assets/css/style.scss -->
   <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Audio Plugins</title>
@@ -67,7 +69,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#157878">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="stylesheet" href="/assets/css/style.css">
 
 
 
@@ -185,7 +186,7 @@
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('results-container'),
     json: '/search.json',
-    searchResultTemplate: '<li><a href="eldun.github.io{url}">{title} {subtitle}</a></li>'
+    searchResultTemplate: '<li><a href="eldun.github.io{postUrl}">{postTitle} {postSubtitle}</a></li>'
   })
   </script>
 
@@ -277,7 +278,7 @@
 <a href="https://developer.apple.com/documentation/audiotoolbox/audio_unit_v3_plug-ins">AUv3</a> - The iOS standard</li>
   <li>
 <a href="https://www.avid.com/avid-plugins-by-category">AAX</a> - Avid/ProTools’ solution</li>
-  <li>Standalone - As the name would imply, these types of plugins don’t require any host DAW. They can be launched and immediately tinkered with. Like NotePad.</li>
+  <li>Standalone - As the name would imply, these types of plugins don’t require any host DAW. They can be launched and immediately tinkered with(think NotePad).</li>
 </ul>
 
 <p>Many developers release their audio plugins under multiple formats - often by using licensed tools like <a href="https://juce.com/">JUCE</a>.</p>
@@ -285,7 +286,7 @@
 <hr>
 <h3 id="choosing-a-format">
 <a class="anchor" href="#choosing-a-format" aria-hidden="true"><span class="octicon octicon-link"></span></a>Choosing a Format</h3>
-<p><a href="https://lwn.net/Articles/890272/">Each format has their pros and cons</a>. After starting and abandoning <a href="https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md">VST3</a>(a pain on Linux… I might revisit VST3 on Windows.) and <a href="https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-lv2-synth.md">LV2</a>(Plugin GUIs wouldn’t show in Reaper) projects on Linux, I’m ready to try <a href="https://cleveraudio.org/">CLAP</a>. Fingers are crossed.</p>
+<p><a href="https://lwn.net/Articles/890272/">Each format has their pros and cons</a>. After starting and abandoning <a href="https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md">VST3</a> due to Linux pains and <a href="https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-lv2-synth.md">LV2</a> due to GUI issues in Reaper, I’m ready to try <a href="https://cleveraudio.org/">CLAP</a>. my fingers are crossed.</p>
 
 <hr>
 <h4 id="why-choose-clap">
@@ -335,10 +336,10 @@ I originally was going to create a VST3 synth([I even started a blog post :c](ht
 <a href="https://omg-instruments.com/wp/?page_id=63">BlueARP Arpeggiator</a> 
 </span></p>
 
-<p>It should be noted that although flashy UIs are fun and often very useful, they’re not necessary. Look at Reaper’s built-in synth - ReaSynth:
+<p>It should be noted that although flashy UIs are fun and often very useful, they’re not necessary. Take a look at Reaper’s built-in synth - ReaSynth:
 <img src="/assets/images/blog-images/audio-plugins/part-one/reasynth.png" alt="ReaSynth"></p>
 
-<p>Many plugin effects are also often very sparse.</p>
+<p>FX plugins are also often very sparse.</p>
 
 <!--## Setting Up LV2
 
@@ -410,13 +411,11 @@ happens when they are enabled.
 <hr>
 <h2 id="setting-up-an-environment-for-clap">
 <a class="anchor" href="#setting-up-an-environment-for-clap" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setting up an Environment for CLAP</h2>
-<p><a href="https://clapdb.tech/category/hostsdaws">CLAP isn’t widely supported yet</a>. However, <a href="bitwig.com">BitWig</a> - a DAW that’s been gaining a lot of steam recently - supports it, and my current DAW of choice - <a href="reaper.fm">Reaper</a> <del><a href="https://forum.cockos.com/showthread.php?t=267906">may be supporting it before long</a></del> supports it on the dev branch, as of <a href="https://audiosex.pro/threads/reaper-c-l-a-p-support-now-a-reality.65864/">less than a month ago</a>. I’ll be using Reaper v6.68+dev1004 (October 4).</p>
-
-<p><del>In the meantime, I’ll be using <a href="https://qtractor.org/">Qtractor</a>, because it’s free. Installation instructions can be found <a href="https://qtractor.org/qtractor-index.html#Installation">here</a>. Make sure to have all the dependencies installed (I was missing some qt5 ones. Also, who names these qt5 packages? They’re all over the place.)</del></p>
+<p><a href="https://clapdb.tech/category/hostsdaws">CLAP isn’t widely supported yet</a>. However, <a href="bitwig.com">BitWig</a> - a DAW that’s been gaining a lot of steam recently - supports it. My current DAW of choice - <a href="reaper.fm">Reaper</a> <del><a href="https://forum.cockos.com/showthread.php?t=267906">may be supporting it before long</a></del> supports it on the dev branch, as of <a href="https://audiosex.pro/threads/reaper-c-l-a-p-support-now-a-reality.65864/">less than a month ago</a>. I’ll be using Reaper v6.68+dev1004 (October 4).</p>
 
 <p>Just to make sure everything was set up correctly, I installed <a href="https://github.com/asb2m10/dexed">dexed</a> from source and tested it in Reaper.</p>
 
-<p><img src="/assets/images/blog-images/audio-plugins-synth/reaper-clap-dexed.png" alt="The CLAP version of dexed running in Reaper"></p>
+<p><img src="/assets/images/blog-images/audio-plugins/part-one/dexed.png" alt="The CLAP version of dexed running in Reaper"></p>
 
 <hr>
 <h2 id="learning-to-create-clap-plugins">
@@ -424,7 +423,7 @@ happens when they are enabled.
 <hr>
 <h3 id="where-to-start">
 <a class="anchor" href="#where-to-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Where to Start?</h3>
-<p>I don’t know much about creating plugins, and unfortunately, it looks like the <a href="https://cleveraudio.org/developers-getting-started/">“Getting Started” page has a ways to go</a>.</p>
+<p>I don’t know much about creating plugins, and unfortunately, at the time of this post, it looks like the <a href="https://cleveraudio.org/developers-getting-started/">“Getting Started” page has a ways to go</a>.</p>
 
 <p><img src="/assets/images/blog-images/audio-plugins/part-one/clap-getting-started.png" alt="CLAP Documentation Under Construction"></p>
 
@@ -670,7 +669,7 @@ clap_process_status plugin_impl__process(const clap_process *process)
 <hr>
 <h3 id="closing-thoughts">
 <a class="anchor" href="#closing-thoughts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Closing Thoughts</h3>
-<p>Creating audio plugins from scratch turned out to be a bit less straightforward than I expected. I was especially hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler.</p>
+<p>Creating audio plugins from scratch turned out to be a bit more convoluted than I expected. I was especially hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler.</p>
 
   </div>
 
@@ -707,7 +706,7 @@ clap_process_status plugin_impl__process(const clap_process *process)
     </script> 
 
 <!-- Diff-highlighter is very picky about whitespace -->
-    <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
       'remove-trailing': true,
       'remove-indent': true,
       'left-trim': false,
@@ -717,7 +716,7 @@ clap_process_status plugin_impl__process(const clap_process *process)
       'remove-initial-line-feed': true,
       'tabs-to-spaces': 4,
       // 'spaces-to-tabs': 4
-    });</script>
+    });</script> -->
     
 
       <!-- Back to top -->

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2023-03-19T14:19:38-04:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">Mixing it up:</title><link href="eldun.github.io/2023/03/01/model-samples-randomizer.html" rel="alternate" type="text/html" title="Mixing it up:" /><published>2023-03-01T00:00:00-05:00</published><updated>2023-03-01T00:00:00-05:00</updated><id>eldun.github.io/2023/03/01/model-samples-randomizer</id><content type="html" xml:base="eldun.github.io/2023/03/01/model-samples-randomizer.html"><![CDATA[<p><a id="continue-reading-point"></a></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="eldun.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="eldun.github.io/" rel="alternate" type="text/html" /><updated>2023-03-29T19:40:23-04:00</updated><id>eldun.github.io/feed.xml</id><entry><title type="html">Mixing it up:</title><link href="eldun.github.io/2023/03/01/model-samples-randomizer.html" rel="alternate" type="text/html" title="Mixing it up:" /><published>2023-03-01T00:00:00-05:00</published><updated>2023-03-01T00:00:00-05:00</updated><id>eldun.github.io/2023/03/01/model-samples-randomizer</id><content type="html" xml:base="eldun.github.io/2023/03/01/model-samples-randomizer.html"><![CDATA[<p><a id="continue-reading-point"></a></p>
 
 <hr />
 
@@ -1945,14 +1945,14 @@ class MorsoGestureListener : GestureDetector.SimpleOnGestureListener() {
   <li><a href="https://www.steinberg.net/technology/">VST3</a> - Steinberg’s closed-source solution turned open-source</li>
   <li><a href="https://developer.apple.com/documentation/audiotoolbox/audio_unit_v3_plug-ins">AUv3</a> - The iOS standard</li>
   <li><a href="https://www.avid.com/avid-plugins-by-category">AAX</a> - Avid/ProTools’ solution</li>
-  <li>Standalone - As the name would imply, these types of plugins don’t require any host DAW. They can be launched and immediately tinkered with. Like NotePad.</li>
+  <li>Standalone - As the name would imply, these types of plugins don’t require any host DAW. They can be launched and immediately tinkered with(think NotePad).</li>
 </ul>
 
 <p>Many developers release their audio plugins under multiple formats - often by using licensed tools like <a href="https://juce.com/">JUCE</a>.</p>
 
 <hr />
 <h3 id="choosing-a-format">Choosing a Format</h3>
-<p><a href="https://lwn.net/Articles/890272/">Each format has their pros and cons</a>. After starting and abandoning <a href="https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md">VST3</a>(a pain on Linux… I might revisit VST3 on Windows.) and <a href="https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-lv2-synth.md">LV2</a>(Plugin GUIs wouldn’t show in Reaper) projects on Linux, I’m ready to try <a href="https://cleveraudio.org/">CLAP</a>. Fingers are crossed.</p>
+<p><a href="https://lwn.net/Articles/890272/">Each format has their pros and cons</a>. After starting and abandoning <a href="https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md">VST3</a> due to Linux pains and <a href="https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-lv2-synth.md">LV2</a> due to GUI issues in Reaper, I’m ready to try <a href="https://cleveraudio.org/">CLAP</a>. my fingers are crossed.</p>
 
 <hr />
 <h4 id="why-choose-clap">Why Choose CLAP?</h4>
@@ -2000,10 +2000,10 @@ I originally was going to create a VST3 synth([I even started a blog post :c](ht
 <a href="https://omg-instruments.com/wp/?page_id=63">BlueARP Arpeggiator</a> 
 </span></p>
 
-<p>It should be noted that although flashy UIs are fun and often very useful, they’re not necessary. Look at Reaper’s built-in synth - ReaSynth:
+<p>It should be noted that although flashy UIs are fun and often very useful, they’re not necessary. Take a look at Reaper’s built-in synth - ReaSynth:
 <img src="/assets/images/blog-images/audio-plugins/part-one/reasynth.png" alt="ReaSynth" /></p>
 
-<p>Many plugin effects are also often very sparse.</p>
+<p>FX plugins are also often very sparse.</p>
 
 <!--## Setting Up LV2
 
@@ -2074,19 +2074,17 @@ happens when they are enabled.
 
 <hr />
 <h2 id="setting-up-an-environment-for-clap">Setting up an Environment for CLAP</h2>
-<p><a href="https://clapdb.tech/category/hostsdaws">CLAP isn’t widely supported yet</a>. However, <a href="bitwig.com">BitWig</a> - a DAW that’s been gaining a lot of steam recently - supports it, and my current DAW of choice - <a href="reaper.fm">Reaper</a> <del><a href="https://forum.cockos.com/showthread.php?t=267906">may be supporting it before long</a></del> supports it on the dev branch, as of <a href="https://audiosex.pro/threads/reaper-c-l-a-p-support-now-a-reality.65864/">less than a month ago</a>. I’ll be using Reaper v6.68+dev1004 (October 4).</p>
-
-<p><del>In the meantime, I’ll be using <a href="https://qtractor.org/">Qtractor</a>, because it’s free. Installation instructions can be found <a href="https://qtractor.org/qtractor-index.html#Installation">here</a>. Make sure to have all the dependencies installed (I was missing some qt5 ones. Also, who names these qt5 packages? They’re all over the place.)</del></p>
+<p><a href="https://clapdb.tech/category/hostsdaws">CLAP isn’t widely supported yet</a>. However, <a href="bitwig.com">BitWig</a> - a DAW that’s been gaining a lot of steam recently - supports it. My current DAW of choice - <a href="reaper.fm">Reaper</a> <del><a href="https://forum.cockos.com/showthread.php?t=267906">may be supporting it before long</a></del> supports it on the dev branch, as of <a href="https://audiosex.pro/threads/reaper-c-l-a-p-support-now-a-reality.65864/">less than a month ago</a>. I’ll be using Reaper v6.68+dev1004 (October 4).</p>
 
 <p>Just to make sure everything was set up correctly, I installed <a href="https://github.com/asb2m10/dexed">dexed</a> from source and tested it in Reaper.</p>
 
-<p><img src="/assets/images/blog-images/audio-plugins-synth/reaper-clap-dexed.png" alt="The CLAP version of dexed running in Reaper" /></p>
+<p><img src="/assets/images/blog-images/audio-plugins/part-one/dexed.png" alt="The CLAP version of dexed running in Reaper" /></p>
 
 <hr />
 <h2 id="learning-to-create-clap-plugins">Learning to Create CLAP Plugins</h2>
 <hr />
 <h3 id="where-to-start">Where to Start?</h3>
-<p>I don’t know much about creating plugins, and unfortunately, it looks like the <a href="https://cleveraudio.org/developers-getting-started/">“Getting Started” page has a ways to go</a>.</p>
+<p>I don’t know much about creating plugins, and unfortunately, at the time of this post, it looks like the <a href="https://cleveraudio.org/developers-getting-started/">“Getting Started” page has a ways to go</a>.</p>
 
 <p><img src="/assets/images/blog-images/audio-plugins/part-one/clap-getting-started.png" alt="CLAP Documentation Under Construction" /></p>
 
@@ -2322,7 +2320,7 @@ clap_process_status plugin_impl__process(const clap_process &#42;process)
 
 <hr />
 <h3 id="closing-thoughts">Closing Thoughts</h3>
-<p>Creating audio plugins from scratch turned out to be a bit less straightforward than I expected. I was especially hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler.</p>]]></content><author><name>Evan</name></author><category term="c++" /><category term="music" /><summary type="html"><![CDATA[What does it take to build an audio plugin?]]></summary></entry><entry><title type="html">Semi-Automating Microsoft Edge Searches</title><link href="eldun.github.io/2021/03/16/automating-microsoft-edge-searches.html" rel="alternate" type="text/html" title="Semi-Automating Microsoft Edge Searches" /><published>2021-03-16T00:00:00-04:00</published><updated>2021-03-16T00:00:00-04:00</updated><id>eldun.github.io/2021/03/16/automating-microsoft-edge-searches</id><content type="html" xml:base="eldun.github.io/2021/03/16/automating-microsoft-edge-searches.html"><![CDATA[<script src="/js/post-scripts/automating-edge-searches/search.js" type="text/javascript"></script>
+<p>Creating audio plugins from scratch turned out to be a bit more convoluted than I expected. I was especially hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler.</p>]]></content><author><name>Evan</name></author><category term="c++" /><category term="music" /><summary type="html"><![CDATA[What does it take to build an audio plugin?]]></summary></entry><entry><title type="html">Semi-Automating Microsoft Edge Searches</title><link href="eldun.github.io/2021/03/16/automating-microsoft-edge-searches.html" rel="alternate" type="text/html" title="Semi-Automating Microsoft Edge Searches" /><published>2021-03-16T00:00:00-04:00</published><updated>2021-03-16T00:00:00-04:00</updated><id>eldun.github.io/2021/03/16/automating-microsoft-edge-searches</id><content type="html" xml:base="eldun.github.io/2021/03/16/automating-microsoft-edge-searches.html"><![CDATA[<script src="/js/post-scripts/automating-edge-searches/search.js" type="text/javascript"></script>
 
 <h2 id="introduction"><a id="introduction"></a>Introduction</h2>
 
@@ -3977,7 +3975,7 @@ class lambertian : public material {
 <h3 id="metal-reflection"><a id="metal-reflection"></a>Metal Reflection</h3>
 <p>Metal is definitely NOT Lambertian - here’s a simple sketch depecting a general mirrored reflection:</p>
 
-<p><span class="captioned-image"> <img src="/assets/images/blog-images/path-tracer/the-first-weekend/metal-reflect.png" alt="Mirrored Reflection" /><em>Metal Reflection (<a href="http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/">source</a>)</em></span></p>
+<p><span class="captioned-image"> <img src="/assets/images/blog-images/path-tracer/the-first-weekend/metal-reflect.png" alt="Mirrored Reflection" /><em>Metal Reflection (<a href="http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials">source</a>)</em></span></p>
 
 <div class="math-block">
 $$
@@ -4287,7 +4285,7 @@ $$ -->
 
 <p><span class="captioned-image">
 <img src="/assets/images/blog-images/path-tracer/the-first-weekend/refraction-vector-circle.png" alt="Refraction unit circle" />
-(<em><a href="http://viclw17.github.io/2018/08/05/raytracing-dielectric-materials/">source</a></em>)
+(<em><a href="http://viclw17.github.io/2018/08/05/raytracing-dielectric-materials">source</a></em>)
 </span></p>
 
 \[\vec r = \vec A + \vec B\]
@@ -4806,7 +4804,7 @@ double aperture = 0.2; // bigger = blurrier
 }
 ...</code></pre>
 
-<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/final-render-1.png" alt="Final render" /></p>]]></content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing-in-one-weekend" /><category term="c++" /><summary type="html"><![CDATA[Now that we're familiar with ray tracing through [my introduction](http://localhost:4000/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title), we can delve into the titular first section of Peter Shirley's book.]]></summary></entry><entry><title type="html">Ray Tracing in One Weekend:</title><link href="eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one.html" rel="alternate" type="text/html" title="Ray Tracing in One Weekend:" /><published>2020-05-20T00:00:00-04:00</published><updated>2020-05-20T00:00:00-04:00</updated><id>eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one</id><content type="html" xml:base="eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one.html"><![CDATA[<h2 id="what-is-ray-tracing"><a id="what-is-ray-tracing"></a>What is Ray Tracing?</h2>
+<p><img src="/assets/images/blog-images/path-tracer/the-first-weekend/renders/final-render-1.png" alt="Final render" /></p>]]></content><author><name>Evan</name></author><category term="graphics" /><category term="ray-tracing-in-one-weekend" /><category term="c++" /><summary type="html"><![CDATA[Now that we're familiar with ray tracing through [my introduction]({{ site.url }}/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title), we can delve into the titular first section of Peter Shirley's book.]]></summary></entry><entry><title type="html">Ray Tracing in One Weekend:</title><link href="eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one.html" rel="alternate" type="text/html" title="Ray Tracing in One Weekend:" /><published>2020-05-20T00:00:00-04:00</published><updated>2020-05-20T00:00:00-04:00</updated><id>eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one</id><content type="html" xml:base="eldun.github.io/2020/05/20/ray-tracing-in-one-weekend-part-one.html"><![CDATA[<h2 id="what-is-ray-tracing"><a id="what-is-ray-tracing"></a>What is Ray Tracing?</h2>
 
 <div class="row-fill">
 <img alt="Minecraft (2011 Initial Release, 2020 Path Tracing Update)" src="/assets/images/blog-images/path-tracer/introduction/minecraft-ray-tracing-off.png" />
@@ -4833,7 +4831,7 @@ The reason is a matter of efficiency; rather than sending rays out from the ligh
 
 <p><img src="/assets/images/blog-images/path-tracer/introduction/minecraft-ray-tracing-on-compilation.png" alt="Minecraft (2011 Initial Release, 2020 Path Tracing Update)" /></p>
 
-<p>Path tracing, as you may have guessed, is more accurate a simulation than ray tracing, simulating soft shadows, caustics, and global illumination. However, it is more “brute-force”. Without enough rays through each pixel or simulated bounces for each ray, the final image will be ridden with noise.</p>
+<p>Path tracing, as you may have guessed, is more accurate a simulation than ray tracing, simulating soft shadows, caustics, and global illumination. However, it is more “brute-force.” Without enough rays through each pixel or simulated bounces for each ray, the final image will be ridden with noise.</p>
 
 <p>Also - fun fact: I learned recently path tracing requires light sources to have physical size instead of “point lights” used in ray tracing or rasterized graphics… which brings me to my next point…</p>
 
@@ -5369,11 +5367,11 @@ Create a new environment variable named <code class="language-plaintext highligh
   {% for post in site.posts %}
     {
 
-      "title"    : "{{ post.title | escape }}",
-      "subtitle"    : "{{ post.subtitle | escape }}",
-      "tags"     : "{{ post.tags | join: ', ' }}",
-      "date"     : "{{ post.date }}",
-      "url"      : "{{ site.baseurl }}{{ post.url }}"
+      "postTitle"       : "{{ post.title | escape }}",
+      "postSubtitle"    : "{{ post.subtitle | escape }}",
+      "postTags"        : "{{ post.tags | join: ', ' }}",
+      "postDate"        : "{{ post.date }}",
+      "postUrl"         : "{{ post.url }}"
 
     } {% unless forloop.last %},{% endunless %}
   {% endfor %}
@@ -5382,15 +5380,15 @@ Create a new environment variable named <code class="language-plaintext highligh
 <p>This code generates a <code class="language-plaintext highlighter-rouge">search.json</code> file in the <code class="language-plaintext highlighter-rouge">_site</code> directory. Don’t forget to add escape characters to prevent the <code class="language-plaintext highlighter-rouge">.json</code> file from getting messed up. <a href="https://shopify.github.io/liquid/">Liquid has some useful filters that can help out</a>. Here’s a snippet of my generated <code class="language-plaintext highlighter-rouge">search.json</code>:</p>
 
 <pre><code class="language-json">...
-{
+    {
 
-      "title"    : "Building a Blog:",
-      "subtitle"    : "Howdy!",
-      "tags"     : "web, jekyll, github-pages, ruby",
-      "date"     : "2020-05-18 00:00:00 -0400",
-      "url"      : "/2020/05/18/building-a-blog.html"
+      "postTitle"       : "Building a Blog:",
+      "postSubtitle"    : "Howdy!",
+      "postTags"        : "web, ruby",
+      "postDate"        : "2020-05-18 00:00:00 -0400",
+      "postUrl"         : "/2020/05/18/building-a-blog.html"
 
-    } 
+    } ,
 ...</code></pre>
 
 <p>If we wanted to include other aspects of the post in our search, such as the excerpt, content, or custom variables, we could easily follow the <a href="#search-json">template above</a>.</p>
@@ -5414,14 +5412,75 @@ Create a new environment variable named <code class="language-plaintext highligh
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('results-container'),
     json: '/search.json',
-    searchResultTemplate: '&lt;li&gt;&lt;a href="eldun.github.io{url}"&gt;{title}&lt;/a&gt;&lt;/li&gt;'
+    searchResultTemplate: '&lt;li&gt;&lt;a href="eldun.github.io{postUrl}"&gt;{postTitle} {postSubtitle}&lt;/a&gt;&lt;/li&gt;'
   })&lt;/script&gt;</code></pre>
 
 <p>and included it right below the nav bar in <code class="language-plaintext highlighter-rouge">/_layouts/default.html</code>.</p>
 
 <p>The <code class="language-plaintext highlighter-rouge">searchResultTemplate</code> variable above determines what is included in the dropdown search results.</p>
 
-<p>Lastly, I added some javascript to toggle the search bar from visible to hidden.</p>
+<p>Lastly, I added some javascript at <code class="language-plaintext highlighter-rouge">/js/site-scripts/toggle-search.js</code> to toggle the search bar from visible to hidden:</p>
+
+<pre><code class="language-javascript">
+ function toggleSearch() {
+    var search_container = document.getElementById("search-container");
+    var search_button = document.getElementById("search-button");
+    var search_input = document.getElementById("search-input");
+    var results_container = document.getElementById("results-container")
+
+
+    if (search_container.style.visibility == "hidden") {
+      search_container.style.visibility = "visible";
+      search_input.value = "";
+      results_container.style.visibility = "hidden";
+      search_input.focus();
+
+    search_input.oninput = handleInput;
+
+
+      document.onkeydown = function(evt) {
+        evt = evt || window.event;
+
+        if (search_input.value == "") {
+          results_container.style.visibility = "hidden";
+        }
+        else {
+          results_container.style.visibility = "visible";
+        }
+
+        if (evt.keyCode == 27 &amp;&amp; search_container.style.visibility == "visible") {
+          toggleSearch();
+          return;
+        }
+
+    };
+
+    function handleInput(e) {
+      if (search_input.value != "") {
+        results_container.style.visibility = "visible";
+      }
+      else {
+        results_container.style.visibility = "hidden";
+      }
+    }
+
+    } else {
+      search_container.style.visibility = "hidden";
+    }
+
+    // Styling
+    if (search_container.style.visibility == "visible"){
+      search_button.style.color = "#42cad1"
+      search_container.style.display = "block";
+      // search_input.focus();
+    }
+    else {
+      search_button.style.color = "#cc773f";
+      search_container.style.display = "none";
+    }
+  }
+
+ </code></pre>
 
 <hr />
 
@@ -5611,5 +5670,28 @@ Add the ability to use Liquid in Front Matter
 <br />
 
 I've started putting more of my post content into the [Front Matter](https://jekyllrb.com/docs/front-matter/) and letting my layout do most of the work. You can't natively use [Liquid](https://jekyllrb.com/docs/liquid/) in Front Matter, but there's a <a href="https://github.com/gemfarmer/jekyll-liquify">gem</a> for enabling such functionality.
+
+</details>
+
+<h3 id="2023-03"><time>2023-03</time></h3>
+
+<details>
+
+<summary>
+Hook eldun.github.io up to a custom domain
+</summary>
+<br />
+
+Looks are everything, sometimes. After spending some cash on a custom domain with mailchimp, I thought I'd be able to simply drag-n-drop my statically generated website into their filesystem and have it just work. Nope!
+
+Based on my limited understanding of the internet, I had three options:
+- Redirect eldun.github.io to eldun.net(which would require rebuilding my site with MailChimp's tools and changing my whole workflow)
+- Redirect eldun.net to eldun.github.io (better, but still ugly)
+- Ask for help from MailChimp support
+
+I asked for help, and Fernando was able to set up a masked forward from eldun.net to eldun.github.io - showing the content of eldun.github.io, but leaving the URL as eldun.net. This will take effect (hopefully) in the next 48 hours. Oddly enough, the configuration for masked forwarding is hidden from the user in Mailchimp:
+
+&gt; (09:00:00 PM) Evan: okay, are these settings available for me to look at within the domain settings?
+&gt; (09:00:45 PM) Fernando : You would not be able to see that within the domain settings, if you need to make any changes to the forward you would reach out to us directly
 
 </details>]]></content><author><name>Evan</name></author><category term="web" /><category term="ruby" /><summary type="html"><![CDATA[They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and how I built it.]]></summary></entry></feed>
