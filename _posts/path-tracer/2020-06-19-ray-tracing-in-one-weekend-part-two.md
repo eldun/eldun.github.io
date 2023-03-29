@@ -1,7 +1,7 @@
 ---
 title: "Ray Tracing in One Weekend:"
 subtitle: Part Two - The First Weekend
-excerpt: "Now that we're familiar with ray tracing through [my introduction](http://localhost:4000/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title), we can delve into the titular first section of Peter Shirley's book."
+excerpt: "Now that we're familiar with ray tracing through [my introduction]({{ site.url }}/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title), we can delve into the titular first section of Peter Shirley's book."
 disclaimer: ray-tracing/disclaimer.html
 toc: true
 use-math: true
@@ -1596,7 +1596,7 @@ class lambertian : public material {
 ### <a id="metal-reflection"></a>Metal Reflection
 Metal is definitely NOT Lambertian - here's a simple sketch depecting a general mirrored reflection:
 
-<span class="captioned-image"> ![Mirrored Reflection](/assets/images/blog-images/path-tracer/the-first-weekend/metal-reflect.png)*Metal Reflection ([source](http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/))*</span>
+<span class="captioned-image"> ![Mirrored Reflection](/assets/images/blog-images/path-tracer/the-first-weekend/metal-reflect.png)*Metal Reflection ([source](http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials))*</span>
 
 <div class="math-block">
 $$
@@ -1872,7 +1872,7 @@ We can model the relationships of the vectors with a unit circle to make things 
 
 <span class="captioned-image">
 ![Refraction unit circle](/assets/images/blog-images/path-tracer/the-first-weekend/refraction-vector-circle.png)
-(*[source](http://viclw17.github.io/2018/08/05/raytracing-dielectric-materials/)*)
+(*[source](http://viclw17.github.io/2018/08/05/raytracing-dielectric-materials)*)
 </span>
 
 
