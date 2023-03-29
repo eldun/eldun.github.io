@@ -250,11 +250,11 @@ Within the root of the Jekyll project, a `.json` file is created from existing p
   {% for post in site.posts %}
     {
 
-      "title"    : "{{ post.title | escape }}",
-      "subtitle"    : "{{ post.subtitle | escape }}",
-      "tags"     : "{{ post.tags | join: ', ' }}",
-      "date"     : "{{ post.date }}",
-      "url"      : "{{ site.baseurl }}{{ post.url }}"
+      "postTitle"       : "{{ post.title | escape }}",
+      "postSubtitle"    : "{{ post.subtitle | escape }}",
+      "postTags"        : "{{ post.tags | join: ', ' }}",
+      "postDate"        : "{{ post.date }}",
+      "postUrl"         : "{{ post.url }}"
 
     } {% unless forloop.last %},{% endunless %}
   {% endfor %}
@@ -265,15 +265,15 @@ Within the root of the Jekyll project, a `.json` file is created from existing p
 This code generates a `search.json` file in the `_site` directory. Don't forget to add escape characters to prevent the `.json` file from getting messed up. [Liquid has some useful filters that can help out](https://shopify.github.io/liquid/). Here's a snippet of my generated `search.json`:
 
 <pre><code class="language-json">...
-{
+    {
 
-      "title"    : "Building a Blog:",
-      "subtitle"    : "Howdy!",
-      "tags"     : "web, jekyll, github-pages, ruby",
-      "date"     : "2020-05-18 00:00:00 -0400",
-      "url"      : "/2020/05/18/building-a-blog.html"
+      "postTitle"       : "Building a Blog:",
+      "postSubtitle"    : "Howdy!",
+      "postTags"        : "web, ruby",
+      "postDate"        : "2020-05-18 00:00:00 -0400",
+      "postUrl"         : "/2020/05/18/building-a-blog.html"
 
-    } 
+    } ,
 ...</code></pre>
 
 
@@ -298,14 +298,75 @@ I placed the necessary HTML elements for the search function inside `/_includes/
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('results-container'),
     json: '/search.json',
-    searchResultTemplate: '&lt;li>&lt;a href="{{ site.url }}{url}">{title}&lt;/a>&lt;/li>'
-  })</script></code></pre>
+    searchResultTemplate: '&lt;li>&lt;a href="{{site.url}}{postUrl}">{postTitle} {postSubtitle}&lt;/a>&lt;/li>'
+  })&lt;/script></code></pre>
   
  and included it right below the nav bar in `/_layouts/default.html`.
 
  The `searchResultTemplate` variable above determines what is included in the dropdown search results.
 
- Lastly, I added some javascript to toggle the search bar from visible to hidden.
+ Lastly, I added some javascript at `/js/site-scripts/toggle-search.js` to toggle the search bar from visible to hidden:
+
+ <pre><code class="language-javascript">
+ function toggleSearch() {
+    var search_container = document.getElementById("search-container");
+    var search_button = document.getElementById("search-button");
+    var search_input = document.getElementById("search-input");
+    var results_container = document.getElementById("results-container")
+
+
+    if (search_container.style.visibility == "hidden") {
+      search_container.style.visibility = "visible";
+      search_input.value = "";
+      results_container.style.visibility = "hidden";
+      search_input.focus();
+
+    search_input.oninput = handleInput;
+
+
+      document.onkeydown = function(evt) {
+        evt = evt || window.event;
+
+        if (search_input.value == "") {
+          results_container.style.visibility = "hidden";
+        }
+        else {
+          results_container.style.visibility = "visible";
+        }
+
+        if (evt.keyCode == 27 && search_container.style.visibility == "visible") {
+          toggleSearch();
+          return;
+        }
+
+    };
+
+    function handleInput(e) {
+      if (search_input.value != "") {
+        results_container.style.visibility = "visible";
+      }
+      else {
+        results_container.style.visibility = "hidden";
+      }
+    }
+
+    } else {
+      search_container.style.visibility = "hidden";
+    }
+
+    // Styling
+    if (search_container.style.visibility == "visible"){
+      search_button.style.color = "#42cad1"
+      search_container.style.display = "block";
+      // search_input.focus();
+    }
+    else {
+      search_button.style.color = "#cc773f";
+      search_container.style.display = "none";
+    }
+  }
+
+ </code></pre>
 
 ---
 
