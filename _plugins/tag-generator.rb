@@ -5,7 +5,7 @@
 # tags were being generated in the "_tags" folder. However, tags could not be found when
 # clicking on the links in a blog post. I tried changing the href within posts, 
 # the permalink in navigation.yml, all sorts of things.
-# The only solution I found was to generate the .md files in "tags" instead of "_tags". 
+# The only solution I found was to generate the .md files in "tags" instead of "_tags." 
 # I don't know why it works and _tags doesn'. The important thing is that it works.
 
 

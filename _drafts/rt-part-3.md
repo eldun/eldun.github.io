@@ -1186,4 +1186,4 @@ Finished in:
 ### Implementing Solid Textures
 > A texture in graphics usually means a function that makes the colors on a surface procedural.
 
-The aforementioned function could be synthesis, an image lookup, or somewehere in between
+The aforementioned function could be synthesis, an image lookup, or somewehere in between. Cheese
