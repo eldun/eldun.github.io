@@ -1,7 +1,7 @@
 ---
 title: "Ray Tracing in One Weekend:"
 subtitle: "Part Three - The Next Weekend"
-excerpt: "We've created a [straight-forward ray tracer]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title) - what more could there be to do? By the time we're done with this segment, we'll have what Peter Shirley calls a \"real ray tracer\"."
+excerpt: "We've created a [straight-forward ray tracer]({{ site.url }}/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title) - what more could there be to do? By the time we're done with this segment, we'll have what Peter Shirley calls a \"real ray tracer.\""
 use-math: true
 use-raw-images: false
 toc: true
