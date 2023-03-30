@@ -1224,7 +1224,7 @@ The result:
 
 ### <a id="gamma-correction"></a>Gamma Correction
 
-Our spheres are reflecting 50% of each bounce, so why is our picture so dark? Most image viewers assume images to be "gamma-corrected". Ours is not. Here's an explanation of gamma correction from [Wikipedia](https://en.wikipedia.org/wiki/Gamma_correction):
+Our spheres are reflecting 50% of each bounce, so why is our picture so dark? Most image viewers assume images to be "gamma-corrected." Ours is not. Here's an explanation of gamma correction from [Wikipedia](https://en.wikipedia.org/wiki/Gamma_correction):
 
 > Gamma correction, or often simply gamma, is a nonlinear operation used to encode and decode luminance or tristimulus values in video or still image systems.
 
@@ -1735,7 +1735,7 @@ Feel free to mess around with the color, positioning, and material, as well:
 
 ### <a id="fuzzy-metal"></a>Fuzzy Metal
 
-In addition to perfectly polished metal spheres, we can simulate rough metal as well, with some "fuzziness". To do so, we just need to append a random vector to the reflected rays:
+In addition to perfectly polished metal spheres, we can simulate rough metal as well, with some "fuzziness." To do so, we just need to append a random vector to the reflected rays:
 
 <span class="captioned-image">![Fuzzy metal reflections](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/reflect-fuzzy.png)*Generating fuzzy reflections* ([*source*](https://raytracing.github.io/books/RayTracingInOneWeekend.html))</span>
 
