@@ -39,7 +39,7 @@ If you didn't watch the video, I'll cover the basics for you:
 ---
 
 ### The Goal
-Many samplers/sample players have the ability to shuffle the active samples; a feature intended to spark creativity or simply create a new, weird "kit". The Samples, being Elektron's more budget-friendly device (as opposed to the [Digitakt](https://www.elektron.se/us/digitakt-explorer)), lacks this feature, among others. I've found myself making beat after beat with the default kit, just because the process of flippantly selecting samples by scrolling through all my shallow folders really sucks up some time! I've grown tired of the factory kits, and have realized that there's a wonky workaround.
+Many samplers/sample players have the ability to shuffle the active samples; a feature intended to spark creativity or simply create a new, weird "kit." The Samples, being Elektron's more budget-friendly device (as opposed to the [Digitakt](https://www.elektron.se/us/digitakt-explorer)), lacks this feature, among others. I've found myself making beat after beat with the default kit, just because the process of flippantly selecting samples by scrolling through all my shallow folders really sucks up some time! I've grown tired of the factory kits, and have realized that there's a wonky workaround.
 
 
 ---
