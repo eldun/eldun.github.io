@@ -14,6 +14,9 @@
 
     - If that doesn't work, [there is probably a gemfile.lock file that freezes all the versions at what was originally in the gemfile. Try deleting the lock file.](https://talk.jekyllrb.com/t/bundler-could-not-find-compatible-versions-for-gem-jekyll/6275/3)
     - Run bundle install, entering your password if needed.
+
+    - [This is probably the issue I keep running into](https://stackoverflow.com/a/42844361/13569456). 
+    - I can always install the gems to vendor/bundle and add the dir to .gitignore
 - Pagination
 - Dark / light themes
 - Add fontawesome icons to the beginnings of highlights
