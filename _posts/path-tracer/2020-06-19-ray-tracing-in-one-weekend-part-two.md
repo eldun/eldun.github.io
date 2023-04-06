@@ -140,7 +140,7 @@ Vectors! I feel like I haven't used these since high school math but they are **
 
 ### <a id="vector-refresher"></a>Vector Refresher
 Need a vector refresher? If so, check out [this rundown](https://www.mathsisfun.com/algebra/vectors.html) at mathisfun.com. It's the best I've found.
-All the operations within the code above are covered the mathisfun post. Take particular note of [make_unit_vector()](https://www.mathsisfun.com/algebra/vector-unit.html), [dot()](https://www.mathsisfun.com/algebra/vectors-dot-product.html), and [cross()](https://www.mathsisfun.com/algebra/vectors-cross-product.html).
+All the operations within the code above are covered the mathisfun post. Take particular note of [`make_unit_vector()`](https://www.mathsisfun.com/algebra/vector-unit.html), [`dot()`](https://www.mathsisfun.com/algebra/vectors-dot-product.html), and [`cross()`](https://www.mathsisfun.com/algebra/vectors-cross-product.html).
 
 Here are the constructors and declarations of the functions we'll be using within `vec3.h`.
 
