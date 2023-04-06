@@ -171,7 +171,8 @@ li {
 
 a:hover, 
 .btn:hover,
-a *:hover // all elements within a
+a *:hover, // all elements within a
+a:hover code
  {
   color: $color-primary;
   text-decoration: none;
