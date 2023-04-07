@@ -129,9 +129,9 @@ body {
 .main-content code, 
 .main-content pre,
 .main-content pre > code {
+  color: $color-text;
+  background: $color-secondary;
   font-size: inherit;
-  color: inherit;
-  background-color: $color-secondary;
   border-color: $color-clickable;
   overflow: auto;
   padding-top: 0;
@@ -139,7 +139,8 @@ body {
 }
 
 .main-content a > code {
-  color: inherit;
+  color: $color-clickable;
+  background-color: $color-secondary;
 }
 
 a {
