@@ -130,12 +130,14 @@ body {
 .main-content pre,
 .main-content pre > code {
   color: $color-text;
-  background: $color-secondary;
+
+  // I find using a transparent background for <pre> content easier to look at
+  // background: $color-secondary; 
   font-size: inherit;
   border-color: $color-clickable;
   overflow: auto;
-  padding-top: 0;
-  padding-bottom:0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .main-content a > code {
