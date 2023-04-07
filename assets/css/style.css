@@ -7074,6 +7074,7 @@ nav {
 }
 
 .post {
+  list-style-type: none;
   text-align: center;
 }
 
@@ -7133,7 +7134,8 @@ nav {
   margin-bottom: 0.5rem;
 }
 
-#toc > li {
+#toc li {
+  list-style: none;
   margin: 1rem;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -7241,6 +7243,7 @@ img {
 }
 
 .archive-block {
+  list-style: none;
   padding: 1rem;
 }
 
@@ -7813,17 +7816,17 @@ body {
 .main-content code,
 .main-content pre,
 .main-content pre > code {
+  color: #ecdac4;
   font-size: inherit;
-  color: inherit;
-  background-color: #393e46;
   border-color: #cc773f;
   overflow: auto;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .main-content a > code {
-  color: inherit;
+  color: #cc773f;
+  background-color: #393e46;
 }
 
 a {
@@ -7853,7 +7856,8 @@ li {
 
 a:hover,
 .btn:hover,
-a *:hover {
+a *:hover,
+a:hover code {
   color: #222831;
   text-decoration: none;
   background-color: #cc773f;
