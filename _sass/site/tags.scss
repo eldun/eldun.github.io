@@ -1,3 +1,9 @@
 .tag-cloud {
+  display: inline-block;
     text-align: center;
-  }
+}
+
+.tag-link {
+  display: inherit;
+  margin: .5rem;
+}
