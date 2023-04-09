@@ -7256,7 +7256,13 @@ img {
 }
 
 .tag-cloud {
+  display: inline-block;
   text-align: center;
+}
+
+.tag-link {
+  display: inherit;
+  margin: 0.5rem;
 }
 
 #search-container {
@@ -7820,8 +7826,8 @@ body {
   font-size: inherit;
   border-color: #cc773f;
   overflow: auto;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .main-content a > code {
