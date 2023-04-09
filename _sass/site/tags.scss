@@ -1,6 +1,9 @@
 .tag-cloud {
-  display: inline-block;
-    text-align: center;
+  display: flex;
+  text-align: center;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .tag-link {
