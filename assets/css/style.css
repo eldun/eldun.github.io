@@ -7256,8 +7256,11 @@ img {
 }
 
 .tag-cloud {
-  display: inline-block;
+  display: flex;
   text-align: center;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .tag-link {
