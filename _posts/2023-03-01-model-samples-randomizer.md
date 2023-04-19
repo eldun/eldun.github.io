@@ -137,7 +137,7 @@ Perfect! We can access these values using dot notation (e.g. `args.sources`)
 Some samples in my collection start with dots(designating them as hidden) and others (less seriously) with non-numeric characters(impacting legibility). To fix this, import `re` for [regular expression](https://en.wikipedia.org/wiki/Regular_expression) matching, and add the following method:
 <pre><code class="language-python"> 
     def remove_leading_non_alphanumeric(input_string):
-    return re.sub(r'^[^a-zA-Z0-9]*', '', input_string)
+        return re.sub(r'^[^a-zA-Z0-9]*', '', input_string)
 </code></pre>
 
 ---
@@ -209,7 +209,7 @@ Let's create a function `generate_kits`:
             renamed_output_file = remove_leading_non_alphanumeric_characters(root)
 
             # Add 1-6 suffix to accomodate how the Model:Samples loads kits
-            renamed_output_file = f"{renamed_output_file}-{samples_added+1}{ext}"
+            renamed_output_file = f"{renamed_output_file}-{samples_added+1}"
             
             renamed_output_file_path = os.path.join(output_folder, renamed_output_file)
             shutil.copy(random_file_path, os.path.join(output_folder, renamed_output_file))
