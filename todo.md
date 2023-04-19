@@ -27,3 +27,4 @@
 - Add fontawesome icons to the beginnings of highlights
 - Update description in google search results
 - Ensure tab titles are logical
+- Use flexbox for post tags and nav bar and whatever else
