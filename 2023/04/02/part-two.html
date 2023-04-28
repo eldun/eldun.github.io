@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  
+<head>
+
+
+  <!-- favicon settings -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/site-images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/site-images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/site-images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site-images/site.webmanifest">
+  <link rel="mask-icon" href="/assets/images/site-images/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/assets/images/site-images/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/assets/images/site-images/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+
+
+  
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+
+  
+    MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    </script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+  </script>
+  
+
+  <!-- Prism is now loaded by being imported in assets/css/style.scss -->
+  <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Audio Plugins</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Audio Plugins" />
+<meta name="author" content="Evan" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Now that we know what the deal is with CLAP, we can create a simple MIDI processor." />
+<meta property="og:description" content="Now that we know what the deal is with CLAP, we can create a simple MIDI processor." />
+<link rel="canonical" href="http://localhost:4000/2023/04/02/part-two.html" />
+<meta property="og:url" content="http://localhost:4000/2023/04/02/part-two.html" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-04-02T16:14:29-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Audio Plugins" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2023-04-02T16:14:29-04:00","datePublished":"2023-04-02T16:14:29-04:00","description":"Now that we know what the deal is with CLAP, we can create a simple MIDI processor.","headline":"Audio Plugins","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2023/04/02/part-two.html"},"url":"http://localhost:4000/2023/04/02/part-two.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167888524-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-167888524-1');
+  </script>
+  
+  <meta charset="UTF-8">
+
+ 
+  
+
+
+</head>
+
+  <body>
+    <!-- <a id="skip-to-content" href="#content">Skip to the content.</a> -->
+
+    <header class="page-header" role="banner">
+      <img class="header-image" src="/assets/images/site-images/chicken.jpg">
+      <h1 class="project-name"></h1>
+      <h2 class="project-tagline"></h2>
+      <!-- <link href="../assets/fontawesome/all.css" rel="stylesheet"> load all styles -->
+
+<script src="/js/site-scripts/toggle-search.js" type="text/javascript"></script>
+
+<nav>
+  
+  <a href="/"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-home"></i>
+    <br>
+    Home
+  </a>
+  
+  <a href="/about.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-user"></i>
+    <br>
+    About
+  </a>
+  
+  <a href="/archive.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-archive"></i>
+    <br>
+    Archive
+  </a>
+  
+  <a href="/tags.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-tags"></i>
+    <br>
+    Tags
+  </a>
+  
+  <a href=""
+
+     
+      id="search-button" onclick="toggleSearch(); return false;" 
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-search"></i>
+    <br>
+    Search
+  </a>
+  
+</nav>
+      <!-- Html Elements for Search -->
+<div id="search-container" style="visibility: hidden;">
+  <input type="text" id="search-input" placeholder="Search..." />
+  <ul id="results-container"></ul>
+</div>
+
+<!-- Script pointing to search-script.js -->
+<script src="/js/site-scripts/search-script.js" type="text/javascript"></script>
+
+<!-- Configuration -->
+<script>
+  SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="http://localhost:4000{postUrl}">{postTitle} {postSubtitle}</a></li>'
+  })
+  </script>
+
+
+      
+      
+    </header>
+
+    <hr id="header-main-divider">
+
+    <main id="content" class="main-content" role="main">
+      <div class="post-header inactive">
+<h1 id="post-title">Audio Plugins</h1>
+<h3 id="post-subtitle">Part 2/3: Creating a CLAP Arpeggiator</h3>
+<div class="post-date">
+    <i class="fas fa-calendar"></i> <time>02 Apr 2023</time>
+</div>
+</div>
+
+<img class="post-image" src="/assets/images/blog-images/clap/part-one/" alt="Image of from blank.com" title="">
+
+
+
+<a id="continue-reading-point"></a>
+
+<div class="excerpt">
+<p>Now that we know what the deal is with CLAP, we can create a simple MIDI processor.</p>
+
+</div>
+<!--end-excerpt-->
+
+
+
+
+<hr>
+
+<h2>Contents</h2>
+
+<ul id="toc" class="section-nav">
+<li class="toc-entry toc-h3"><a href="#the-idea">The Idea</a></li>
+<li class="toc-entry toc-h3"><a href="#creating-a-new-plugin">Creating a “New” Plugin</a></li>
+<li class="toc-entry toc-h3"><a href="#adapting-schwaaas-volume-plugin-to-an-arp">Adapting schwaaa’s Volume Plugin to an Arp</a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#info-and-paramters">Info and Paramters</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#describe-our-plugin">Describe our plugin:</a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#info-and-dexcriptors">Info and Dexcriptors</a></li>
+</ul>
+</li>
+</ul>
+
+<hr>
+
+<div id="markdown-content">
+    <h3 id="the-idea">
+<a class="anchor" href="#the-idea" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Idea</h3>
+<p>We already have multiple example plugins from <a href="https://github.com/free-audio/clap">free-audio</a> and <a href="https://github.com/schwaaa/clap-imgui">schwaaa</a>, but there’s nothing like doing it yourself. I figured a simple arpeggiator with a rudimentary GUI would be a decent place to start. As usual, I’m not trying to make the wildest arpeggiator in the world here - I figure a time division and arp pattern parameter will suffice. Tryhard mode will be the next part in the series.</p>
+
+<h3 id="creating-a-new-plugin">
+<a class="anchor" href="#creating-a-new-plugin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a “New” Plugin</h3>
+<p>If you’ve found your way here through my <a href="">last post</a> on audio plugins, you’ve likely already read <a href="https://github.com/schwaaa/clap-imgui#readme">schwaaa’s README</a>, but if you haven’t, I’d recommend doing so.</p>
+
+<p>Anyway, this is the general plan for creating an arpeggiator:</p>
+
+<blockquote>
+  <p>The example code exports two very basic plugins, Volume/Pan and Tone Generator. You should be able to prototype basic plugins by editing (or adding) a src/plugin_impl_#.cpp file, which contains the actual audio plugin and UI implementation. The plugin descriptor and parameter definitions are at the top of the file, and plugin_impl__draw() contains the plugin-specific UI code.</p>
+
+  <p>If you want to extend your plugin to add support for other CLAP extensions, you will need to add scaffolding code to src/plugin.cpp, similar to how the gui and parameter extensions are handled.</p>
+</blockquote>
+
+<p>We will likely have to add extensions like <code class="language-plaintext highlighter-rouge">note-ports.h</code> later on.</p>
+
+<h3 id="adapting-schwaaas-volume-plugin-to-an-arp">
+<a class="anchor" href="#adapting-schwaaas-volume-plugin-to-an-arp" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adapting schwaaa’s Volume Plugin to an Arp</h3>
+<p>Almost all of the code we’ll be concerned with will be contained within <code class="language-plaintext highlighter-rouge">plugin_impl_2.cpp</code>, which is (as of right now) a copy of <code class="language-plaintext highlighter-rouge">plugin_impl_0.cpp</code>. Let’s step through, block by block, and make our changes.</p>
+
+<p>«««&lt; HEAD</p>
+<h4 id="info-and-paramters">
+<a class="anchor" href="#info-and-paramters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Info and Paramters</h4>
+<p>The first step is to</p>
+
+<ol>
+  <li>
+    <h1 id="describe-our-plugin">
+<a class="anchor" href="#describe-our-plugin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Describe our plugin:</h1>
+    <h4 id="info-and-dexcriptors">
+<a class="anchor" href="#info-and-dexcriptors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Info and Dexcriptors</h4>
+    <p>The first step is to accurately describe our plugin, of course:</p>
+  </li>
+</ol>
+<pre><code class="language-cpp">
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; 5129e8a5cef11c8c7916a0f4e455105568a47f0e
+
+```cpp
+static clap_plugin_descriptor _descriptor =
+{
+  CLAP_VERSION,
+  "net.eldun.clap-arp",
+  "CLAP Arp"
+  "eldun",
+  "eldun.github.io",
+  "eldun.github.io",
+  "eldun.github.io",
+  "0.0.1",
+  "Arpeggiator",
+  _features
+};
+</code></pre>
+
+<ol>
+  <li>Describe our inputs</li>
+</ol>
+
+
+  </div>
+
+<hr>
+<h1><i class="fas fa-hand-peace"></i></h1>
+<div class="post-tags">
+    
+  
+  <a class="tag-link"
+    href=/tags/c++
+    rel="category tag">
+    <code>#c++</code></a>
+
+  
+  <a class="tag-link"
+    href=/tags/music
+    rel="category tag">
+    <code>#music</code></a>
+
+  
+  <a class="tag-link"
+    href=/tags/audio-plugins
+    rel="category tag">
+    <code>#audio-plugins</code></a>
+
+</div>
+
+      <footer class="site-footer">
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+
+    <!-- link to Prism Syntax Highlighter -->
+    <script src="/js/site-scripts/prism.js"></script>
+
+    <!-- Autoloader configuration (https://prismjs.com/plugins/autoloader/) -->
+    <script> 
+      Prism.plugins.autoloader.languages_path = '/assets/prism-components/'; 
+    </script> 
+
+<!-- Diff-highlighter is very picky about whitespace -->
+    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+      'remove-trailing': true,
+      'remove-indent': true,
+      'left-trim': false,
+      'right-trim': true,
+      // 'break-lines': 80,
+      'indent': 0,
+      'remove-initial-line-feed': true,
+      'tabs-to-spaces': 4,
+      // 'spaces-to-tabs': 4
+    });</script> -->
+    
+
+      <!-- Back to top -->
+    <script src="/js/site-scripts/vanilla-back-to-top.min.js"></script>
+    <script>addBackToTop()</script>
+
+  </body>
+</html>
