@@ -53,6 +53,7 @@ $color-warning-border: {{ site.data.colors["warning-border"]["dark-theme"] }};
 @import "site/tags.scss";
 @import "site/search.scss";
 
+@import "site/code.scss";
 @import "site/prism.scss";
 
 
@@ -61,6 +62,10 @@ $color-warning-border: {{ site.data.colors["warning-border"]["dark-theme"] }};
   border-radius: .2rem;
   // background-color: inherit;
 
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 
@@ -130,9 +135,6 @@ body {
 .main-content pre,
 .main-content pre > code {
   color: $color-text;
-
-  // I find using a transparent background for <pre> content easier to look at
-  // background: $color-secondary; 
   font-size: inherit;
   border-color: $color-clickable;
   overflow: auto;
