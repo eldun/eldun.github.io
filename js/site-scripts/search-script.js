@@ -214,8 +214,7 @@
       resultsContainer: null,
       json: [],
       success: Function.prototype,
-      searchResultTemplate:
-        '<li><a href="{url}" title="{desc}">{title}</a></li>',
+      searchResultTemplate: null, // Implemented/overridden in search-bar.html
       templateMiddleware: Function.prototype,
       sortMiddleware: function () {
         return 0;
