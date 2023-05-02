@@ -7061,7 +7061,9 @@ readers do not read off random characters that represent icons */
 }
 
 nav {
+  display: flex;
   margin: auto;
+  justify-content: center;
 }
 
 .nav-bar-link {
@@ -7227,6 +7229,11 @@ img {
   opacity: 1;
 }
 
+iframe {
+  display: block;
+  margin: auto;
+}
+
 .MJXc-display {
   overflow: auto;
   color: #42cad1;
@@ -7300,6 +7307,10 @@ img {
   display: inline-block;
   width: 100%;
   padding: 0.5rem;
+}
+
+.highlight {
+  background-color: transparent;
 }
 
 /* PrismJS 1.29.0
@@ -7764,6 +7775,10 @@ pre.diff-highlight > code .token.inserted:not(.prefix), pre > code.diff-highligh
 
 * {
   border-radius: 0.2rem;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {

@@ -28,3 +28,5 @@
 - Update description in google search results
 - Ensure tab titles are logical
 - Use flexbox for post tags and nav bar and whatever else
+- Fix tag page links
+- Redesign image sources (float them on the bottom right of the image)
