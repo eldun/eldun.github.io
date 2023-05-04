@@ -24,9 +24,8 @@
 
 - Pagination
 - Dark / light themes
-- Add fontawesome icons to the beginnings of highlights
+- Add fontawesome icons to the beginning of highlights
 - Update description in google search results
 - Ensure tab titles are logical
-- Use flexbox for post tags and nav bar and whatever else
-- Fix tag page links
 - Redesign image sources (float them on the bottom right of the image)
+- reformat permalinks for 'posts' collections (see jekyll documentation on permalinks for how-to)

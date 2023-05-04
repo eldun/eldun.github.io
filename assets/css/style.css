@@ -7837,20 +7837,23 @@ body {
   margin-top: 1rem;
 }
 
-.main-content code,
-.main-content pre,
+.main-content code {
+  color: inherit;
+  background-color: #393e46;
+  font-size: inherit;
+}
+
+.main-content pre {
+  border-color: #cc773f;
+  background: #393e46;
+}
+
 .main-content pre > code {
   color: #ecdac4;
   font-size: inherit;
-  border-color: #cc773f;
   overflow: auto;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-}
-
-.main-content a > code {
-  color: #cc773f;
-  background-color: #393e46;
 }
 
 a {
@@ -7868,6 +7871,10 @@ button {
 
 code {
   background-color: #393e46;
+}
+
+:not(pre) > code[class*=language-], pre[class*=language-] {
+  background: #393e46;
 }
 
 ul li {
