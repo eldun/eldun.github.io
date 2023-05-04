@@ -6,11 +6,11 @@
   {% for item in site.data.navigation %}
   <a href="{{ item.link }}"
 
-    {% if item.name=="Search" %} 
+    {% if item.name == "Search" %} 
       id="{{ item.id }}" onclick="{{ item.onclick }}" 
     {% endif %}
 
-    {% if page.url==item.link or page.url contains "tags" and item.name=="Tags" %}
+    {% if page.url == item.link %}
       class="nav-bar-link inactive"
     
     {% else %}
