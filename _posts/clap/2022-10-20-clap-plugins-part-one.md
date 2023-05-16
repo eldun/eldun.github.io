@@ -9,9 +9,9 @@ use-math: true
 use-raw-images: false
 layout: post
 author: Evan
-header-image: /assets/images/blog-images/audio-plugins/part-one/sine-wave.jpg
+header-image: /assets/images/blog-images/audio-plugins/part-one/sine-wave.png
 header-image-alt: "Image of sine wave from http://www.tronola.com/moorepage/Sine.html" 
-header-image-title:"The basis for all sounds: the sine wave."
+header-image-title: "The basis for all sounds: the sine wave."
 tags: c++ music 
 ---
 
@@ -24,14 +24,14 @@ An audio plugin is a piece of software (most often a virtual instrument or effec
 - [VST3](https://www.steinberg.net/technology/) - Steinberg's closed-source solution turned open-source
 - [AUv3](https://developer.apple.com/documentation/audiotoolbox/audio_unit_v3_plug-ins) - The iOS standard
 - [AAX](https://www.avid.com/avid-plugins-by-category) - Avid/ProTools' solution
-- Standalone - As the name would imply, these types of plugins don't require any host DAW. They can be launched and immediately tinkered with. Like NotePad.
+- Standalone - As the name would imply, these types of plugins don't require any host DAW. They can be launched and immediately tinkered with(think NotePad).
 
 Many developers release their audio plugins under multiple formats - often by using licensed tools like [JUCE](https://juce.com/).
 
 
 ---
 ### Choosing a Format
-[Each format has their pros and cons](https://lwn.net/Articles/890272/). After starting and abandoning [VST3](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md)(a pain on Linux... I might revisit VST3 on Windows.) and [LV2](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-lv2-synth.md)(Plugin GUIs wouldn't show in Reaper) projects on Linux, I'm ready to try [CLAP](https://cleveraudio.org/). Fingers are crossed.
+[Each format has their pros and cons](https://lwn.net/Articles/890272/). After starting and abandoning [VST3](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md) due to Linux pains and [LV2](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-lv2-synth.md) due to GUI issues in Reaper, I'm ready to try [CLAP](https://cleveraudio.org/). my fingers are crossed.
 
 ---
 #### Why Choose CLAP?
@@ -81,10 +81,10 @@ There are thousands upon thousands of plugins out there - ranging from minimalis
 [BlueARP Arpeggiator](https://omg-instruments.com/wp/?page_id=63) 
 </span>
 
-It should be noted that although flashy UIs are fun and often very useful, they're not necessary. Look at Reaper's built-in synth - ReaSynth:
+It should be noted that although flashy UIs are fun and often very useful, they're not necessary. Take a look at Reaper's built-in synth - ReaSynth:
 ![ReaSynth](/assets/images/blog-images/audio-plugins/part-one/reasynth.png) 
 
-Many plugin effects are also often very sparse.
+FX plugins are also often very sparse.
 
 <!--## Setting Up LV2
 
@@ -157,19 +157,17 @@ happens when they are enabled.
 
 ---
 ## Setting up an Environment for CLAP
-[CLAP isn't widely supported yet](https://clapdb.tech/category/hostsdaws). However, [BitWig](bitwig.com) - a DAW that's been gaining a lot of steam recently - supports it, and my current DAW of choice - [Reaper](reaper.fm) ~~[may be supporting it before long](https://forum.cockos.com/showthread.php?t=267906)~~ supports it on the dev branch, as of [less than a month ago](https://audiosex.pro/threads/reaper-c-l-a-p-support-now-a-reality.65864/). I'll be using Reaper v6.68+dev1004 (October 4).
-
-~~In the meantime, I'll be using [Qtractor](https://qtractor.org/), because it's free. Installation instructions can be found [here](https://qtractor.org/qtractor-index.html#Installation). Make sure to have all the dependencies installed (I was missing some qt5 ones. Also, who names these qt5 packages? They're all over the place.)~~
+[CLAP isn't widely supported yet](https://clapdb.tech/category/hostsdaws). However, [BitWig](bitwig.com) - a DAW that's been gaining a lot of steam recently - supports it. My current DAW of choice - [Reaper](reaper.fm) ~~[may be supporting it before long](https://forum.cockos.com/showthread.php?t=267906)~~ supports it on the dev branch, as of [less than a month ago](https://audiosex.pro/threads/reaper-c-l-a-p-support-now-a-reality.65864/). I'll be using Reaper v6.68+dev1004 (October 4).
 
 Just to make sure everything was set up correctly, I installed [dexed](https://github.com/asb2m10/dexed) from source and tested it in Reaper.
 
-![The CLAP version of dexed running in Reaper](/assets/images/blog-images/audio-plugins-synth/reaper-clap-dexed.png) 
+![The CLAP version of dexed running in Reaper](/assets/images/blog-images/audio-plugins/part-one/dexed.png) 
 
 ---
 ## Learning to Create CLAP Plugins
 ---
 ### Where to Start?
-I don't know much about creating plugins, and unfortunately, it looks like the ["Getting Started" page has a ways to go](https://cleveraudio.org/developers-getting-started/). 
+I don't know much about creating plugins, and unfortunately, at the time of this post, it looks like the ["Getting Started" page has a ways to go](https://cleveraudio.org/developers-getting-started/). 
 
 ![CLAP Documentation Under Construction](/assets/images/blog-images/audio-plugins/part-one/clap-getting-started.png) 
 
@@ -401,4 +399,4 @@ You may have noticed that a single `.clap` file contains two plugins. You can st
 
 ---
 ### Closing Thoughts
-Creating audio plugins from scratch turned out to be a bit less straightforward than I expected. I was especially hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler. 
+Creating audio plugins from scratch turned out to be a bit more convoluted than I expected. I was especially hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler. 

@@ -24,9 +24,9 @@ I'll be following LWJGL's Installation Guide, which can be found [here](https://
 ### Downloading LWJGL
 I'll be using LWJGL's [configurator](https://www.lwjgl.org/customize) to download LWJGL with all default options selected *except* "Mode":
 
-<div class="highlight-yellow">
+<span class="note">
 Make sure you select the correct "natives" option selected. I'm creating this project on an aarch64(AKA arm64) chromebook, and x64 was checked by default.
-</div>
+</span>
 
 > If you plan on using an IDE or need the actual .jar files, choose ZIP Bundle. If you are going to use maven or gradle, choose the respective option to generate a build script.
 

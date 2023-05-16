@@ -39,7 +39,7 @@ Path tracing is similar to ray tracing, but much more intensive. Hundreds to tho
 
 ![Minecraft (2011 Initial Release, 2020 Path Tracing Update)](/assets/images/blog-images/path-tracer/introduction/minecraft-ray-tracing-on-compilation.png)
 
-Path tracing, as you may have guessed, is more accurate a simulation than ray tracing, simulating soft shadows, caustics, and global illumination. However, it is more "brute-force". Without enough rays through each pixel or simulated bounces for each ray, the final image will be ridden with noise.
+Path tracing, as you may have guessed, is more accurate a simulation than ray tracing, simulating soft shadows, caustics, and global illumination. However, it is more "brute-force." Without enough rays through each pixel or simulated bounces for each ray, the final image will be ridden with noise.
 
 Also - fun fact: I learned recently path tracing requires light sources to have physical size instead of "point lights" used in ray tracing or rasterized graphics... which brings me to my next point...
 

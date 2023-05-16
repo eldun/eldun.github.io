@@ -1,0 +1,5 @@
+// Overriding the original background color for github rouge highlighting. 
+// It looked bad when using '```' code blocks - there was a sliver of white right on the corners of the block.
+.highlight {
+    background-color: transparent;
+}

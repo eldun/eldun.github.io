@@ -2,24 +2,34 @@
 ---
 // ^ Use frontmatter
 
+
+
 $color-primary: {{ site.data.colors["primary"]["dark-theme"] }};
 $color-secondary:  {{ site.data.colors["secondary"]["dark-theme"] }};
 $color-accent: {{ site.data.colors["accent"]["dark-theme"] }};
 $color-clickable: {{ site.data.colors["clickable"]["dark-theme"] }};
 $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 
+$color-tip-background: {{ site.data.colors["tip-background"]["dark-theme"] }};
+$color-tip-border: {{ site.data.colors["tip-border"]["dark-theme"] }};
+$color-note-background: {{ site.data.colors["note-background"]["dark-theme"] }};
+$color-note-border: {{ site.data.colors["note-border"]["dark-theme"] }};
+$color-info-background: {{ site.data.colors["info-background"]["dark-theme"] }};
+$color-info-border: {{ site.data.colors["info-border"]["dark-theme"] }};
+$color-warning-background: {{ site.data.colors["warning-background"]["dark-theme"] }};
+$color-warning-border: {{ site.data.colors["warning-border"]["dark-theme"] }};
 
 /* This extends/overrides the CSS used by "jekyll-theme-cayman" (_site\assets\css\style.css)
    https://help.github.com/en/github/working-with-github-pages/adding-a-theme-to-your-github-pages-site-using-jekyll#customizing-your-themes-css 
 */
 
 
-// I took this out for a second, but putting it back in is easier than writing a bunch of responive css
+// I took this out for a second, but putting it back in is easier than writing a bunch of responsive css
 @import "jekyll-theme-cayman";
 
 // The default folder for scss files is _sass (this can be changed in config.yml)
-// Was having a lot of trouble trying to use fontawesome icons with their relative paths
-// before creating the_sass directory and moving the scss files there.
+// I was having a lot of trouble trying to use fontawesome icons with their relative paths
+// before creating the _sass directory and moving the scss files there.
 
 
 @import "fontawesome/fontawesome.scss";
@@ -33,6 +43,7 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 
 @import "site/posts.scss";
 @import "site/post-navigation.scss";
+@import "site/highlights.scss";
 @import "site/images.scss";
 
 @import "site/mathjax.scss";
@@ -42,6 +53,7 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 @import "site/tags.scss";
 @import "site/search.scss";
 
+@import "site/code.scss";
 @import "site/prism.scss";
 
 
@@ -50,6 +62,10 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
   border-radius: .2rem;
   // background-color: inherit;
 
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 
@@ -62,12 +78,6 @@ body {
 
 .main-content blockquote {
   border-left: 0.3rem solid $color-accent;
-}
-
-.highlight-yellow {
-  display: block;
-  padding: .5rem;
-  background-color: #fffb001c;;
 }
 
 .inactive {
@@ -124,17 +134,17 @@ body {
 .main-content code, 
 .main-content pre,
 .main-content pre > code {
+  color: $color-text;
   font-size: inherit;
-  color: inherit;
-  background-color: $color-secondary;
   border-color: $color-clickable;
   overflow: auto;
-  padding-top: 0;
-  padding-bottom:0;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
 }
 
 .main-content a > code {
-  color: inherit;
+  color: $color-clickable;
+  background-color: $color-secondary;
 }
 
 a {
@@ -155,14 +165,19 @@ code {
   background-color: $color-secondary;
 }
 
+ul li {
+  list-style: none;
+}
+
 li {
-  list-style-type: none;
+  // list-style-type: none;
   margin-bottom: 1rem;
 }
 
 a:hover, 
 .btn:hover,
-a *:hover // all elements within a
+a *:hover, // all elements within a
+a:hover code
  {
   color: $color-primary;
   text-decoration: none;

@@ -2,13 +2,13 @@
   link: /
   icon: <i class="fas fa-home"></i>
 - name: About
-  link: /about.html
+  link: /about
   icon: <i class="fas fa-user"></i>
 - name: Archive
-  link: /archive.html
+  link: /archive
   icon: <i class="fas fa-archive"></i>
 - name: Tags
-  link: /tags.html
+  link: /tags
   icon: <i class="fas fa-tags"></i>
 - name: Search
   icon: <i class="fas fa-search"></i>

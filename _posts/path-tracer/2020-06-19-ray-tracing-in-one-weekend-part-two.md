@@ -1,7 +1,7 @@
 ---
 title: "Ray Tracing in One Weekend:"
 subtitle: Part Two - The First Weekend
-excerpt: "Now that we're familiar with ray tracing through [my introduction](http://localhost:4000/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title), we can delve into the titular first section of Peter Shirley's book."
+excerpt: "Now that we're familiar with ray tracing through [my introduction]({{ site.url }}/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title), we can delve into the titular first section of Peter Shirley's book."
 disclaimer: ray-tracing/disclaimer.html
 toc: true
 use-math: true
@@ -140,7 +140,7 @@ Vectors! I feel like I haven't used these since high school math but they are **
 
 ### <a id="vector-refresher"></a>Vector Refresher
 Need a vector refresher? If so, check out [this rundown](https://www.mathsisfun.com/algebra/vectors.html) at mathisfun.com. It's the best I've found.
-All the operations within the code above are covered the mathisfun post. Take particular note of [make_unit_vector()](https://www.mathsisfun.com/algebra/vector-unit.html), [dot()](https://www.mathsisfun.com/algebra/vectors-dot-product.html), and [cross()](https://www.mathsisfun.com/algebra/vectors-cross-product.html).
+All the operations within the code above are covered the mathisfun post. Take particular note of [`make_unit_vector()`](https://www.mathsisfun.com/algebra/vector-unit.html), [`dot()`](https://www.mathsisfun.com/algebra/vectors-dot-product.html), and [`cross()`](https://www.mathsisfun.com/algebra/vectors-cross-product.html).
 
 Here are the constructors and declarations of the functions we'll be using within `vec3.h`.
 
@@ -1224,7 +1224,7 @@ The result:
 
 ### <a id="gamma-correction"></a>Gamma Correction
 
-Our spheres are reflecting 50% of each bounce, so why is our picture so dark? Most image viewers assume images to be "gamma-corrected". Ours is not. Here's an explanation of gamma correction from [Wikipedia](https://en.wikipedia.org/wiki/Gamma_correction):
+Our spheres are reflecting 50% of each bounce, so why is our picture so dark? Most image viewers assume images to be "gamma-corrected." Ours is not. Here's an explanation of gamma correction from [Wikipedia](https://en.wikipedia.org/wiki/Gamma_correction):
 
 > Gamma correction, or often simply gamma, is a nonlinear operation used to encode and decode luminance or tristimulus values in video or still image systems.
 
@@ -1596,7 +1596,7 @@ class lambertian : public material {
 ### <a id="metal-reflection"></a>Metal Reflection
 Metal is definitely NOT Lambertian - here's a simple sketch depecting a general mirrored reflection:
 
-<span class="captioned-image"> ![Mirrored Reflection](/assets/images/blog-images/path-tracer/the-first-weekend/metal-reflect.png)*Metal Reflection ([source](http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials/))*</span>
+<span class="captioned-image"> ![Mirrored Reflection](/assets/images/blog-images/path-tracer/the-first-weekend/metal-reflect.png)*Metal Reflection ([source](http://viclw17.github.io/2018/07/30/raytracing-reflecting-materials))*</span>
 
 <div class="math-block">
 $$
@@ -1735,7 +1735,7 @@ Feel free to mess around with the color, positioning, and material, as well:
 
 ### <a id="fuzzy-metal"></a>Fuzzy Metal
 
-In addition to perfectly polished metal spheres, we can simulate rough metal as well, with some "fuzziness". To do so, we just need to append a random vector to the reflected rays:
+In addition to perfectly polished metal spheres, we can simulate rough metal as well, with some "fuzziness." To do so, we just need to append a random vector to the reflected rays:
 
 <span class="captioned-image">![Fuzzy metal reflections](/assets/images/blog-images/path-tracer/the-first-weekend/shirley/reflect-fuzzy.png)*Generating fuzzy reflections* ([*source*](https://raytracing.github.io/books/RayTracingInOneWeekend.html))</span>
 
@@ -1872,7 +1872,7 @@ We can model the relationships of the vectors with a unit circle to make things 
 
 <span class="captioned-image">
 ![Refraction unit circle](/assets/images/blog-images/path-tracer/the-first-weekend/refraction-vector-circle.png)
-(*[source](http://viclw17.github.io/2018/08/05/raytracing-dielectric-materials/)*)
+(*[source](http://viclw17.github.io/2018/08/05/raytracing-dielectric-materials)*)
 </span>
 
 

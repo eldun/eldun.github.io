@@ -80,7 +80,7 @@ module Jekyll
           size = size_min + ((size_max - size_min) * weight).to_f
           size = sprintf("%.#{@precision}f", size)
 
-          html << "<a href='/tags/#{name}' style='font-size: #{size}#{unit};'><code style='font-size: inherit;'>##{name}</code></a>\n"
+          html << "<a href='/tags/#{name}' class='tag-link' style='font-size: #{size}#{unit};'><code style='font-size: inherit;'>##{name}</code></a>\n"
         end
       end
   

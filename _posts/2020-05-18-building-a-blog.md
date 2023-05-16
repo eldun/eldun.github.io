@@ -1,34 +1,20 @@
 ---
 title: "Building a Blog:"
 subtitle: "Howdy!"
-excerpt: "They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and the hurdles I faced building it."
+excerpt: "They say the best time to start a technical blog is twenty years ago, and that the second best time is today. Continue reading to learn about my site and how I built it."
 toc: true
 layout: post
 author: Evan
 # header-image: /assets/images/blog-images/howdy/howdy.png
 # header-image-alt: Howdy!
 # header-image-title: howdy, partner.
-tags: web jekyll github-pages ruby
+tags: web ruby
 ---
 
 
 
-
-<!-- <ul class="table-of-contents">
-<li><a href="#humble-beginnings">Humble Beginnings</a></li>
-<li><a href="#github-pages">GitHub Pages</a></li>
-<li><a href="#jekyll">Jekyll</a></li>
-<li><a href="#custom-ruby-plugins">Custom Ruby Plugins</a></li>
-<li><a href="#archive-page">Archive Page</a></li>
-<li><a href="#tag-system">Tag System</a></li>
-<li><a href="#search-function">Search Function</a></li>
-<li><a href="#the-future">The Future</a></li>
-<li><a href="#updates">Updates</a></li>
-</ul> -->
-
-
 ## Humble Beginnings
-I really decided on building a blog when I started working on Peter Shirley's [Ray Tracing in One Weekend](https://raytracing.github.io/) series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to [Victor Li's Blog](http://viclw17.github.io/). Inspired by the clarity, variety, and layout of Victor's blog, I constructed a similar site for myself to document my work and personal excursions as a developer.
+I really decided on building a blog when I started working on Peter Shirley's [Ray Tracing in One Weekend](https://raytracing.github.io/) series. As excellent as the content is, some of the explanations and illustrations are a bit muddy. Searching for additional resources led me to [Victor Li's Blog](http://viclw17.github.io/). Inspired by the clarity, variety, and layout of Victor's blog, I constructed a similar site for myself to document my work and as a developer.
 
 ---
 
@@ -46,7 +32,7 @@ Straight from Jekyll's GitHub page...
 
 > Jekyll is a simple, blog-aware, static site generator perfect for personal, project, or organization sites. Think of it like a file-based CMS, without all the complexity. Jekyll takes your content, renders Markdown and Liquid templates, and spits out a complete, static website ready to be served by Apache, Nginx or another web server. Jekyll is the engine behind GitHub Pages, which you can use to host sites right from your GitHub repositories.
 
-For the most part, Jekyll has been a breeze to work with. I would recommend it to anyone looking to build a static site.
+For the most part, Jekyll has been a breeze to work with, and their documentation is top-notch. I would recommend it to anyone looking to build a static site.
 
 ---
 
@@ -58,9 +44,12 @@ One solution is to build the site locally and push the generated site files to G
 
 The better solution, of course, is to automate. Big thanks to Josh Frankel and [his post](https://joshfrankel.me/blog/deploying-a-jekyll-blog-to-github-pages-with-custom-plugins-and-travisci/) detailing the process.
 
-<span class="highlight-yellow">Update: "Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on." This includes a brand new subscription fee! And re-configuring!<br>I don't feel like dealing with that (or looking into other options right now), so for the time being, I'll just be `jekyll build`-ing `source` and pushing the updated directory `_site` to `master`.</span>
+<span class="note">Update: 
+> Since June 15th, 2021, the building on travis-ci.org is ceased. Please use travis-ci.com from now on. 
 
-<span class="highlight-yellow">Update(Sep 2022): I wrote a little bash script to update the live site from the source branch. Git worktree is a neat feature! I've never used it before. Here's the script:
+This includes a brand new subscription fee! And re-configuring!<br>I don't feel like dealing with that (or looking into other options right now), so for the time being, I'll just be `jekyll build`-ing `source` and pushing the updated directory `_site` to `master`.</span>
+
+<span class="note">Update(Sep 2022): I wrote a little bash script to update the live site from the source branch. Git worktree is a neat feature! I've never used it before. Here's the script:
 
 <pre><code class="language-bash">
 #!/bin/bash
@@ -261,11 +250,11 @@ Within the root of the Jekyll project, a `.json` file is created from existing p
   {% for post in site.posts %}
     {
 
-      "title"    : "{{ post.title | escape }}",
-      "subtitle"    : "{{ post.subtitle | escape }}",
-      "tags"     : "{{ post.tags | join: ', ' }}",
-      "date"     : "{{ post.date }}",
-      "url"      : "{{ site.baseurl }}{{ post.url }}"
+      "postTitle"       : "{{ post.title | escape }}",
+      "postSubtitle"    : "{{ post.subtitle | escape }}",
+      "postTags"        : "{{ post.tags | join: ', ' }}",
+      "postDate"        : "{{ post.date }}",
+      "postUrl"         : "{{ post.url }}"
 
     } {% unless forloop.last %},{% endunless %}
   {% endfor %}
@@ -276,15 +265,15 @@ Within the root of the Jekyll project, a `.json` file is created from existing p
 This code generates a `search.json` file in the `_site` directory. Don't forget to add escape characters to prevent the `.json` file from getting messed up. [Liquid has some useful filters that can help out](https://shopify.github.io/liquid/). Here's a snippet of my generated `search.json`:
 
 <pre><code class="language-json">...
-{
+    {
 
-      "title"    : "Building a Blog:",
-      "subtitle"    : "Howdy!",
-      "tags"     : "web, jekyll, github-pages, ruby",
-      "date"     : "2020-05-18 00:00:00 -0400",
-      "url"      : "/2020/05/18/building-a-blog.html"
+      "postTitle"       : "Building a Blog:",
+      "postSubtitle"    : "Howdy!",
+      "postTags"        : "web, ruby",
+      "postDate"        : "2020-05-18 00:00:00 -0400",
+      "postUrl"         : "/2020/05/18/building-a-blog.html"
 
-    } 
+    } ,
 ...</code></pre>
 
 
@@ -309,14 +298,75 @@ I placed the necessary HTML elements for the search function inside `/_includes/
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('results-container'),
     json: '/search.json',
-    searchResultTemplate: '&lt;li>&lt;a href="{{ site.url }}{url}">{title}&lt;/a>&lt;/li>'
-  })</script></code></pre>
+    searchResultTemplate: '&lt;li>&lt;a href="{{site.url}}{postUrl}">{postTitle} {postSubtitle}&lt;/a>&lt;/li>'
+  })&lt;/script></code></pre>
   
  and included it right below the nav bar in `/_layouts/default.html`.
 
  The `searchResultTemplate` variable above determines what is included in the dropdown search results.
 
- Lastly, I added some javascript to toggle the search bar from visible to hidden.
+ Lastly, I added some javascript at `/js/site-scripts/toggle-search.js` to toggle the search bar from visible to hidden:
+
+ <pre><code class="language-javascript">
+ function toggleSearch() {
+    var search_container = document.getElementById("search-container");
+    var search_button = document.getElementById("search-button");
+    var search_input = document.getElementById("search-input");
+    var results_container = document.getElementById("results-container")
+
+
+    if (search_container.style.visibility == "hidden") {
+      search_container.style.visibility = "visible";
+      search_input.value = "";
+      results_container.style.visibility = "hidden";
+      search_input.focus();
+
+    search_input.oninput = handleInput;
+
+
+      document.onkeydown = function(evt) {
+        evt = evt || window.event;
+
+        if (search_input.value == "") {
+          results_container.style.visibility = "hidden";
+        }
+        else {
+          results_container.style.visibility = "visible";
+        }
+
+        if (evt.keyCode == 27 && search_container.style.visibility == "visible") {
+          toggleSearch();
+          return;
+        }
+
+    };
+
+    function handleInput(e) {
+      if (search_input.value != "") {
+        results_container.style.visibility = "visible";
+      }
+      else {
+        results_container.style.visibility = "hidden";
+      }
+    }
+
+    } else {
+      search_container.style.visibility = "hidden";
+    }
+
+    // Styling
+    if (search_container.style.visibility == "visible"){
+      search_button.style.color = "#42cad1"
+      search_container.style.display = "block";
+      // search_input.focus();
+    }
+    else {
+      search_button.style.color = "#cc773f";
+      search_container.style.display = "none";
+    }
+  }
+
+ </code></pre>
 
 ---
 
@@ -334,7 +384,8 @@ Oh, and to reformat my `style.css`. It's a little sloppy.
 <details>
 <summary>Refactored my CSS into multiple files</summary>
 <br>
-I used to have one monolithic style.scss file. After some refactoring, this is the result:
+I used to have one monolithic `style.scss` file. Thanks to [Sass](https://sass-lang.com/), variables, and some refactoring, this is the result:
+
 <pre><code class="language-treeview">eldun.github.io/
     ├── assets/
     │   ├── css/
@@ -356,7 +407,8 @@ I used to have one monolithic style.scss file. After some refactoring, this is t
     │       └── tags.scss
     └── ...</code></pre>
 
-<code>style.scss</code> is now mostly imports and high-level stylings:
+<p>`style.scss` is now mostly imports and high-level stylings:</p>
+
 <pre><code class="language-scss">{%raw%}---
 ---
 $color-primary: {{ site.data.colors["primary"]["dark-theme"] }};
@@ -403,8 +455,8 @@ $color-text: {{ site.data.colors["text"]["dark-theme"] }};
 <summary>Started using <a class="btn" href="https://prismjs.com/" target="_blank">Prism Syntax highlighter</a>
 </summary>
 <br>
-All I had to do was generate js and css files from their site, plop them into my site directory, and link 'em. To use a specific language, all I need to do is specify a code block like so:
-<code>&lt;pre>&lt;code class="language-xxxx"></code>
+All I had to do was generate js and css files from Prism's site, plop them into my site directory, and link 'em. To decorate a code snippet with a specific language, all I need to do is specify a code block like so:
+`&lt;pre>&lt;code class="language-xxxx">`
 <pre><code class="language-treeview">eldun.github.io
     ├── assets/
     │   ├── css/
@@ -504,5 +556,30 @@ Add the ability to use Liquid in Front Matter
 <br>
 
 I've started putting more of my post content into the [Front Matter](https://jekyllrb.com/docs/front-matter/) and letting my layout do most of the work. You can't natively use [Liquid](https://jekyllrb.com/docs/liquid/) in Front Matter, but there's a <a href='https://github.com/gemfarmer/jekyll-liquify'>gem</a> for enabling such functionality.
+
+</details>
+
+
+
+### <time>2023-03</time>
+
+<details>
+
+<summary>
+Hook eldun.github.io up to a custom domain
+</summary>
+<br>
+
+Looks are everything, sometimes. After spending some cash on a custom domain with mailchimp, I thought I'd be able to simply drag-n-drop my statically generated website into their filesystem and have it just work. Nope!
+
+Based on my limited understanding of the internet, I had three options:
+- Redirect eldun.github.io to eldun.net(which would require rebuilding my site with MailChimp's tools and changing my whole workflow)
+- Redirect eldun.net to eldun.github.io (better, but still ugly)
+- Ask for help from MailChimp support
+
+I asked for help, and Fernando was able to set up a masked forward from eldun.net to eldun.github.io - showing the content of eldun.github.io, but leaving the URL as eldun.net. This will take effect (hopefully) in the next 48 hours. Oddly enough, the configuration for masked forwarding is hidden from the user in Mailchimp:
+
+> (09:00:00 PM) Evan: okay, are these settings available for me to look at within the domain settings?
+> (09:00:45 PM) Fernando : You would not be able to see that within the domain settings, if you need to make any changes to the forward you would reach out to us directly
 
 </details>

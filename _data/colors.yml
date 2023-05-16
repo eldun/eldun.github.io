@@ -13,3 +13,19 @@ accent:
 text: 
     dark-theme: '#ecdac4'
     light-theme:
+tip-background: 
+    dark-theme: '#15291C'
+tip-border: 
+    dark-theme: '#33653D'
+note-background: 
+    dark-theme: '#2A2100'
+note-border: 
+    dark-theme: '#7E5E00'
+info-background: 
+    dark-theme: '#393e46'
+info-border: 
+    dark-theme: '42cad1'
+warning-background: 
+    dark-theme: '#380700'
+warning-border: 
+    dark-theme: '#8F2B22'
