@@ -742,7 +742,7 @@ We can extend this concept to 3D:
 bool overlap(x0, x1, y0, y1, z0, z1)
     z0 = max(x0, y0)
     z1 = min(x1, y1)
-    return (z0 < z1)
+    return (z0 &lt; z1)
 </code></pre> 
 
 > If there are any NaNs running around there, the compare will return false so we need to be sure our bounding boxes have a little padding if we care about grazing cases (and we probably should because in a ray tracer all cases come up eventually).
@@ -764,14 +764,14 @@ class BoundingBox {
         vec3 max() const {return maximum; }
 
         bool hit(const Ray& r, double tMin, double tMax) const {
-            for (int a = 0; a < 3; a++) {
+            for (int a = 0; a &lt; 3; a++) {
                 auto t0 = fmin((minimum[a] - r.origin()[a]) / r.direction()[a],
                                (maximum[a] - r.origin()[a]) / r.direction()[a]);
                 auto t1 = fmax((minimum[a] - r.origin()[a]) / r.direction()[a],
                                (maximum[a] - r.origin()[a]) / r.direction()[a]);
                 tMin = fmax(t0, tMin);
                 tMax = fmin(t1, tMax);
-                if (tMax <= tMin)
+                if (tMax &lt;= tMin)
                     return false;
             }
             return true;
@@ -816,7 +816,7 @@ and override it in `Sphere.h`:
 			centerAt(timeStart) + vec3(radius, radius, radius));
 
 	// Sphere is not moving
-	if (timeStart-timeEnd < epsilon ) {
+	if (timeStart-timeEnd &lt; epsilon ) {
 		outputBox = box0
 		return true;
 	}
@@ -874,14 +874,14 @@ Similarly, we'll have to add to our `HittableList` class:
 class HittableList : public Hittable {
 public:
 	HittableList() {}
-	HittableList(shared_ptr<Hittable> object) { add(object); }
+	HittableList(shared_ptr&lt;Hittable> object) { add(object); }
 
 	void clear() { objects.clear(); }
-        void add(shared_ptr<Hittable> object) { objects.push_back(object); }
+        void add(shared_ptr&lt;Hittable> object) { objects.push_back(object); }
 	virtual bool hit(const Ray& r, double tMin, double tMax, HitRecord& rec) const override;
 +	virtual bool generateboundingBox(double timeStart, double timeEnd, BoundingBox& outputBox) const override;
 
-	std::vector<shared_ptr<Hittable>> objects;
+	std::vector&lt;shared_ptr&lt;Hittable>> objects;
 
 };
 
@@ -911,7 +911,7 @@ bool HittableList::hit(const Ray& r, double tMin, double tMax, HitRecord& rec) c
 +       bool isFirstBox = true;
 +   
 +       for (const auto& object : objects) {
-+           if (!object->generateBoundingBox(timeStart, timeEnd, tempBox)) return false;
++           if (!object-&gt;generateBoundingBox(timeStart, timeEnd, tempBox)) return false;
 +           outputBox = isFirstBox ? tempBox :  generateSurroundingBox(outputBox, tempBox);
 +           isFirstBox = false;
 +       }
@@ -947,7 +947,7 @@ class BvhNode : public Hittable {
         {}
 
         BvhNode(
-            const std::vector<shared_ptr<hittable>>& srcObjects,
+            const std::vector&lt;shared_ptr&lt;hittable>>& srcObjects,
             size_t start, size_t end, double timeStart, double timeEnd);
 
         virtual bool hit(
@@ -956,8 +956,8 @@ class BvhNode : public Hittable {
         virtual bool generateBoundingBox(double timeStart, double timeEnd, BoundingBox& outputBox) const override;
 
     public:
-        shared_ptr<hittable> left;
-        shared_ptr<hittable> right;
+        shared_ptr&lt;hittable> left;
+        shared_ptr&lt;hittable> right;
         BoundingBox box;
 };
 
@@ -984,6 +984,7 @@ bool BvhNode::generateBoundingBox(double timeStart, double timeEnd, BoundingBox&
 > The most complicated part of any efficiency structure, including the BVH, is building it.
 
 These BVHs can be hard to create a mental image for - here's a video to help:
+
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/rM-BVsdi8c4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 We'll be building the BVH in the constructor. The BVH doesn't have to be perfect - as long as the list of `hittables` in a node gets divided into two sublists, the BVH `hit` function will work. Shirley notes that the best/fastest scenario is if the children `hittable`s have smaller bounding boxes than their parent.
@@ -1026,7 +1027,7 @@ class BvhNode : public Hittable {
         {}
 
         BvhNode(
-                const std::vector<shared_ptr<Hittable>>& srcObjects,
+                const std::vector&lt;shared_ptr&lt;Hittable>>& srcObjects,
                 size_t start, size_t end, double timeStart, double timeEnd);
 
         virtual bool hit(
@@ -1035,8 +1036,8 @@ class BvhNode : public Hittable {
         virtual bool generateBoundingBox(double timeStart, double timeEnd, BoundingBox& outputBox) const override;
 
     public:
-        shared_ptr<hittable> left;
-        shared_ptr<hittable> right;
+        shared_ptr&lt;hittable> left;
+        shared_ptr&lt;hittable> right;
         BoundingBox box;
 };
 </code></pre>
@@ -1047,7 +1048,7 @@ Let's define the constructors and member functions:
 
 
 BvhNode::BvhNode(
-        std::vectorlt;shared_ptrlt;Hittable>>& srcObjects,
+        std::vector&lt;shared_ptr&lt;Hittable>>& srcObjects,
         size_t start, size_t end, double timeStart, double timeEnd
         ) {
     auto objects = srcObjects; // Create a modifiable array of the source scene objects
@@ -1077,8 +1078,8 @@ BvhNode::BvhNode(
         std::sort(objects.begin() + start, objects.begin() + end, comparator);
 
         auto mid = start + objectSpan/2;
-        left = make_sharedlt;BvhNode>(objects, start, mid, timeStart, timeEnd);
-        right = make_sharedlt;BvhNode>(objects, mid, end, timeStart, timeEnd);
+        left = make_shared&lt;BvhNode>(objects, start, mid, timeStart, timeEnd);
+        right = make_shared&lt;BvhNode>(objects, mid, end, timeStart, timeEnd);
     }
 
     aabb boxLeft, boxRight;
@@ -1086,7 +1087,7 @@ BvhNode::BvhNode(
     if (  !left->generateBoundingBox (timeStart, timeEnd, boxLeft)
             || !right->generateBoundingBox(timeStart, timeEnd, boxRight)
        )
-        std::cerr lt;lt; "No bounding box in BvhNode constructor.\n";
+        std::cerr &lt;&lt; "No bounding box in BvhNode constructor.\n";
 
     box = generateSurroundingBox(boxLeft, boxRight);
 }
@@ -1118,7 +1119,7 @@ First of all, let's define some axis `enum`s in `RtWeekend.h`:
 ...
 
 // Constants
-const double infinity = std::numeric_limits<double>::infinity();
+const double infinity = std::numeric_limits&lt;double>::infinity();
 const double pi = 3.1415926535897932385;
 const double epsilon = 0.00001;
 
@@ -1149,20 +1150,21 @@ inline bool box_compare(const shared_ptr&lt;hittable> a, const shared_ptr&lt;hit
 and the calls to the comparator (right above the implementation of our `BvhNode` constructor):
 
 <pre><code class="language-cpp">
-bool compareX (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
+bool compareX (const shared_ptr&lt;Hittable> a, const shared_ptr&lt;Hittable> b) {
     return compare(a, b, Axis::x);
 }
 
-bool compareY (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
+bool compareY (const shared_ptr&lt;Hittable> a, const shared_ptr&lt;Hittable> b) {
     return compare(a, b, Axis::y);
 }
 
-bool compareZ (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
+bool compareZ (const shared_ptr&lt;Hittable> a, const shared_ptr&lt;Hittable> b) {
     return compare(a, b, Axis::z);
 }
 </code></pre> 
 
-![Our control image for testing BVH optimization](/assets/images/blog-images/path-tracer/the-next-week/with-bvh.ppm)
+![Our control image for testing BVH optimization](/assets/images/blog-images/path-tracer/the-next-week/with-bvh.png)
+
 The difference in rendering time for the above image is clear:
 
 <pre><code class="language-terminal">
@@ -1186,4 +1188,174 @@ Finished in:
 ### Implementing Solid Textures
 > A texture in graphics usually means a function that makes the colors on a surface procedural.
 
-The aforementioned function could be synthesis, an image lookup, or somewehere in between. Cheese
+The aforementioned function could be synthesis, an image lookup, or somewehere in between(even a video!). We'll be keeping things simple to start - our first texture will be a solid color.
+
+#### Constant Color Textures
+We'll start with an [abstract class](https://www.ibm.com/docs/en/zos/2.4.0?topic=only-abstract-classes-c) `Texture`:
+
+```cpp
+#ifndef TEXTUREH
+#define TEXTUREH
+
+#include "RtWeekend.h"
+
+class Texture {
+	public:
+		virtual Vec3 value(double u, double v, const Vec3& p) const = 0;
+};
+```
+
+We'll extend `Texture` to implement `SolidColor`:
+```cpp
+class SolidColor : public Texture {
+	public:
+		SolidColor() {}
+		SolidColor(Vec3 c) : colorValue(c) {}
+
+		SolidColor(double red, double green, double blue)
+			: SolidColor(Vec3(red,green,blue)) {}
+
+		virtual Vec3 value(double u, double v, const Vec3& p) const override {
+			return colorValue;
+		}
+
+	private:
+		Vec3 colorValue;
+};
+
+#endif // TEXTUREH
+```
+
+Add `double u` and `double v` to our `HitRecord` struct to store the UV surace coordinates of the hit point (Wel'll cover this in more detail in the [next section](#uv-texture-coordinates)):
+
+`Hittable.h`
+```cpp
+struct HitRecord {
+	double t; // parameter of the ray that locates the intersection point
+	
+	// surface coordinates of the hit point(uv texture coordinates)
+	double u;
+	double v;
+
+	Vec3 p; // intersection point
+	Vec3 normal;
+	bool frontface;
+	shared_ptr<Material> materialptr;
+
+	inline void setfacenormal(const Ray& r, const Vec3& outwardnormal) {
+        frontface = dot(r.direction(), outwardnormal) < 0;
+        normal = frontface ? outwardnormal : -outwardnormal;
+    }
+};
+```
+
+At this point, we can create textured materials by replacing `const color& albedo` with a pointer to our new `Texture` class:
+
+`Material.h`:
+```cpp
+// Matte surface
+// Light that reflects off a diffuse surface has its direction randomized.
+// Light may also be absorbed. See Diffuse.png for illustration and detailed description
+class Lambertian : public Material {
+    public:
+!       Lambertian(const Vec3& a) : albedo(make_shared<SolidColor>(a)) {};
+!		Lambertian(shared_ptr<Texture> a) : albedo(a) {};
+
+        virtual bool scatter(const Ray& rayIn, 
+                            const HitRecord& rec, 
+                            Vec3& attenuation, 
+                            Ray& scattered) const {
+            Vec3 scatterDirection = rec.p + rec.normal + randomUnitVector();
+            scattered = Ray(rec.p, scatterDirection - rec.p, rayIn.moment());
+!           attenuation = albedo->value(rec.u, rec.v, rec.p);
+            return true;
+        }
+!	shared_ptr<Texture> albedo; // reflectivity
+
+};
+```
+
+#### UV Texture Coordinates
+From [Wikipedia](https://en.wikipedia.org/wiki/UV_mapping):
+> UV mapping is the 3D modeling process of projecting a 3D model's surface to a 2D image for texture mapping. The letters "U" and "V" denote the axes of the 2D texture because "X", "Y", and "Z" are already used to denote the axes of the 3D object in model space, while "W" (in addition to XYZ) is used in calculating quaternion rotations, a common operation in computer graphics.
+
+![UV Mapping](/assets/images/blog-images/path-tracer/the-next-week/uv-mapping.png) 
+
+For whatever reason, I find it easier to think of UV mapping as wrapping a cloth around an object instead of projecting a 3d model's surface to a cloth. They're both valid.
+
+Anyway, we need to compute spherical coordinates (think latitude and longitude). These will be $ (\theta, \phi) $ - $ \theta $ is the angle up from the south pole($ -y $) of the sphere. $ \phi $ is the angle around the y-axis - Imagine a flight right along the equator from Ecuador($ -x $) heading east - it'll pass over $ +z $, then $ +x $, then $ -z $, and will end up back home at $ -x $.
+
+$ \theta $ and $ \phi $ need to be mapped to texture coordinates $ u $ and $ v $ in $ [0,1] $ where $ (u=0, v=0) $ maps to the bottom-left corner of the texture. As such, the normalization from $ (\theta, \phi) $ to $ (u, v) would be:
+
+$$ u = \frac{\phi}{2\pi} $$
+$$ v = \frac{\theta}{\pi} $$
+
+![Spherical UV Mapping](/assets/images/blog-images/path-tracer/the-next-week/uv-mapping-sphere.gif) 
+https://amycoders.org/tutorials/tm_approx.html  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+We'll have to translate these two-dimensional points to hit points on our spheres; for that, we'll use spherical coordinates (theta $ \theta $ and phi $ \phi $). $ \theta $ is the angle south from the north pole, and $ \phi $ is the angle around the axis through the pole. In case you didn't notice, the mathematical symbols align quite nicely with these definitions. The hit point coordinates can be represented as such:
+
+$$ x = \cos(\phi) * \cos(\theta) $$
+
+$$ y = \sin(\phi) * \cos(\theta) $$
+
+$$ z =  \sin(\theta) $$
+
+To get the $ (\theta, \phi) $ coordinates, the equations above have to be [inverted](https://www.mathsisfun.com/algebra/trig-inverse-sin-cos-tan.html) using $ \arcsin $ and $ \arctan $. These functions (like [atan2](https://en.wikipedia.org/wiki/Atan2)) can be found in `<cmath>`. The angles returned will fall within $ -\frac{\pi}{2} $ and $ \frac{\pi}{2} $
+
+$$ \phi = atan2(y,x) $$
+
+$$ \theta = \arcsin(z) $$
+
+
+After normalizing to $ [0,1] $, we get the following:
+
+$$ u = \frac{\phi}{2\pi} $$
+
+$$ v = \frac{\theta}{\pi} $$
+
+We can add the $ (u,v) $ coordinate computation to a utility function in `Sphere.h`:
+```cpp
+class Sphere : public Hittable {
+
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
