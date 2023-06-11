@@ -208,8 +208,8 @@ Let's create a function `generate_kits`:
             # Un-hide files that start with '.', as well as make files more legible
             renamed_output_file = remove_leading_non_alphanumeric_characters(root)
 
-            # Add 1-6 suffix to accomodate how the Model:Samples loads kits
-            renamed_output_file = f"{renamed_output_file}-{samples_added+1}"
+            # Add 1-6 suffix to accommodate how the Model:Samples loads kits
+            renamed_output_file = f"{renamed_output_file}-{samples_added+1}{ext}"
             
             renamed_output_file_path = os.path.join(output_folder, renamed_output_file)
             shutil.copy(random_file_path, os.path.join(output_folder, renamed_output_file))
