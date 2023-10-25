@@ -1249,7 +1249,7 @@ struct HitRecord {
 };
 ```
 
-At this point, we can create textured materials by replacing `const color& albedo` with a pointer to our new `Texture` class:
+At this point, we can create textured materials by replacing `const Vec3& albedo` with a pointer to our new `Texture` class:
 
 `Material.h`:
 ```cpp
@@ -1276,41 +1276,88 @@ class Lambertian : public Material {
 ```
 
 #### UV Texture Coordinates
+
+
 From [Wikipedia](https://en.wikipedia.org/wiki/UV_mapping):
 > UV mapping is the 3D modeling process of projecting a 3D model's surface to a 2D image for texture mapping. The letters "U" and "V" denote the axes of the 2D texture because "X", "Y", and "Z" are already used to denote the axes of the 3D object in model space, while "W" (in addition to XYZ) is used in calculating quaternion rotations, a common operation in computer graphics.
 
 ![UV Mapping](/assets/images/blog-images/path-tracer/the-next-week/uv-mapping.png) 
 
-For whatever reason, I find it easier to think of UV mapping as wrapping a cloth around an object instead of projecting a 3d model's surface to a cloth. They're both valid.
+For whatever reason, I find it easier to think of UV mapping as wrapping a cloth around an object instead of projecting a 3d model's surface to a cloth.
 
-Anyway, we need to compute spherical coordinates (think latitude and longitude). These will be $ (\theta, \phi) $ - $ \theta $ is the angle up from the south pole($ -y $) of the sphere. $ \phi $ is the angle around the y-axis - Imagine a flight right along the equator from Ecuador($ -x $) heading east - it'll pass over $ +z $, then $ +x $, then $ -z $, and will end up back home at $ -x $.
+The first order of business is to convert the raw pixel coordinates to normalized UV coordinates within $ [0, 1] $ to avoid any issues with varying texture size. For pixel $ (i, j) $ in an $ nx * ny $ image, the UV coordinates are:
 
-$ \theta $ and $ \phi $ need to be mapped to texture coordinates $ u $ and $ v $ in $ [0,1] $ where $ (u=0, v=0) $ maps to the bottom-left corner of the texture. As such, the normalization from $ (\theta, \phi) $ to $ (u, v) would be:
+$$
+
+u=i/(nx−1)\\
+v=j/(ny−1)
+
+$$
+
+We'll have to relate these UV coordinates to the $ (x,y,z) $ hit-point coordinates. To do so, we'll use spherical coordinates $ (\theta, \phi) $ - latitude and longitude. *Theta*($\theta$) - is the angle down from the north pole of the sphere. *Phi*($\phi$) - is the angle around the axis. The hit-point coordinates can be represented as:
+
+$$
+x=\cos(ϕ)\cos(θ)\\ 
+y=\sin(ϕ)\cos(θ)\\
+z=\sin(θ)
+$$
+
+To get the $ (\theta, \phi) $ coordinates, the equations above have to be [inverted](https://www.mathsisfun.com/algebra/trig-inverse-sin-cos-tan.html) using $ \arcsin $ and $ \arctan $. These functions (like [atan2](https://en.wikipedia.org/wiki/Atan2)) can be found in `<cmath>`. The angles returned will fall within $ -\frac{\pi}{2} $ and $ \frac{\pi}{2} $
+
+$$ \phi = atan2(y,x) $$
+
+$$ \theta = \arcsin(z) $$
+
+
+After normalizing to $ [0,1] $, we get the following:
+
+$$ u = \frac{\phi}{2\pi} $$
+
+$$ v = \frac{\theta}{\pi} $$
+
+
+We can add the $ (u,v) $ coordinate computation to a utility function in `Sphere.h`:
+```cpp
+void Sphere::getUvCoordinates(const Vec3& p, float& u, float& v){
+	float phi = atan2(p.z(), p.x());
+	float theta = asin(p.y());
+	u = 1 - (phi + M_PI) / (2 * M_PI);
+	v = (theta + M_PI / 2) / M_PI;
+}
+```
+
+
+---
+
+#### Reading an Texture/Image
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Anyway, the first order of business is to compute spherical coordinates (think latitude and longitude). These will be $ (\theta, \phi) $ - $ \theta $ (*theta*) is the angle upwards from the south pole($ -y $) of the sphere. $ \phi $ (*phi*) is the angle around the y-axis - Imagine a flight right along the equator from Ecuador($ -x $) heading east - it'll pass over $ +z $, then $ +x $, then $ -z $, and will end up back home at $ -x $.
+
+$ \theta $ and $ \phi $ need to be mapped to texture coordinates $ u $ and $ v $ in $ [0,1] $ where $ (u=0, v=0) $ maps to the bottom-left corner of the texture. As such, the normalization from $ (\theta, \phi) $ to $ (u, v) $ would be:
 
 $$ u = \frac{\phi}{2\pi} $$
 $$ v = \frac{\theta}{\pi} $$
 
 ![Spherical UV Mapping](/assets/images/blog-images/path-tracer/the-next-week/uv-mapping-sphere.gif) 
-https://amycoders.org/tutorials/tm_approx.html  
+https://amycoders.org/tutorials/tm_approx.html   -->
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!-- 
 
 
 We'll have to translate these two-dimensional points to hit points on our spheres; for that, we'll use spherical coordinates (theta $ \theta $ and phi $ \phi $). $ \theta $ is the angle south from the north pole, and $ \phi $ is the angle around the axis through the pole. In case you didn't notice, the mathematical symbols align quite nicely with these definitions. The hit point coordinates can be represented as such:
@@ -1339,23 +1386,6 @@ We can add the $ (u,v) $ coordinate computation to a utility function in `Sphere
 class Sphere : public Hittable {
 
 }
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+``` -->
 
 
