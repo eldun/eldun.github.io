@@ -1188,43 +1188,114 @@ Finished in:
 ### Implementing Solid Textures
 > A texture in graphics usually means a function that makes the colors on a surface procedural.
 
-The aforementioned function could be synthesis, an image lookup, or somewehere in between(even a video!). We'll be keeping things simple to start - our first texture will be a solid color.
+The aforementioned function could be synthesis, an image lookup, or somewhere in between. We'll be keeping things simple to start - our first texture will be a solid color.
 
 #### Constant Color Textures
 We'll start with an [abstract class](https://www.ibm.com/docs/en/zos/2.4.0?topic=only-abstract-classes-c) `Texture`:
 
 ```cpp
-#ifndef TEXTUREH
-#define TEXTUREH
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
 #include "RtWeekend.h"
 
 class Texture {
-	public:
-		virtual Vec3 value(double u, double v, const Vec3& p) const = 0;
+    public:
+        virtual Vec3 value(double u, double v, const Vec3& p) const = 0;
 };
 ```
 
 We'll extend `Texture` to implement `SolidColor`:
 ```cpp
 class SolidColor : public Texture {
-	public:
-		SolidColor() {}
-		SolidColor(Vec3 c) : colorValue(c) {}
+    public:
+        SolidColor(Vec3 c) : colorValue(c) {}
 
-		SolidColor(double red, double green, double blue)
-			: SolidColor(Vec3(red,green,blue)) {}
+        SolidColor(double red, double green, double blue)
+          : SolidColor(Vec3(red,green,blue)) {}
 
-		virtual Vec3 value(double u, double v, const Vec3& p) const override {
-			return colorValue;
-		}
+        // Return the texture color of the given coordinates		
+        virtual Vec3 value(double u, double v, const Vec3& p) const override {
+            return colorValue;
+        }
 
-	private:
-		Vec3 colorValue;
+    private:
+        Vec3 colorValue;
 };
 
-#endif // TEXTUREH
+#endif
 ```
+
+You may be wondering about the parameters $u$ and $v$ - these are the conventional names for two-dimensional texture coordinates. For a constant textures - like a solid color - we will not be using them, but they will come into play eventually. As such, we have to update our HitRecord class with members $u$ and $v$:
+
+`Hittable.h`
+```cpp
+...
+struct HitRecord {
+	double t; // parameter of the ray that locates the intersection point
+	
+	// Texture coordinates
+	double u;
+	double v;
+
+	Vec3 p; // intersection point
+	Vec3 normal;
+	bool frontFace;
+	shared_ptr<Material> materialPtr;
+
+	inline void setFaceNormal(const Ray& r, const Vec3& outwardNormal) {
+        frontFace = dot(r.direction(), outwardNormal) < 0;
+        normal = frontFace ? outwardNormal : -outwardNormal;
+    }
+};
+...
+```
+
+#### Solid Checkered Textures
+Solid (AKA spatial) textures depend only upon the postiton of each point in 3d space. I like to think of these textures as suspended swimming pools that objects swim through (instead assigning a color to a given object). However, the relationship between the object and the texture is usually fixed.
+
+The checkerboard pattern is a perfect way to explore spatial textures (and it's a ray-tracing staple!). Let's create a `CheckeredTexture` class. Because spatial texture functions are described by a position in space, the `value()` function doesn't make use of the $u$ members $v$. Just the point parameter $p$.
+
+First, we compute the floor value of each component of the input point (x,y,z). The reason that we take the floor instead of truncating values is to account for both positive and negative components. For example, the floor of 2.7 is 2.0, but the floor of -2.7 is -3.0. From here, we take the sum of the floors of (x,y,z) modulo 2 to get either 0 or 1 to determine our checker square color.
+
+Lastly, we'll add a scale factor to control the square size.
+
+`Texture.h`
+```cpp
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Add `double u` and `double v` to our `HitRecord` struct to store the UV surace coordinates of the hit point (Wel'll cover this in more detail in the [next section](#uv-texture-coordinates)):
 
