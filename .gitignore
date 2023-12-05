@@ -10,3 +10,4 @@ _site
 *.log
 .vscode/settings.json
 .gitignore
+.frontmatter/database/taxonomyDb.json
