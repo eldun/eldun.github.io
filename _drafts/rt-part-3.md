@@ -1254,16 +1254,95 @@ struct HitRecord {
 #### Solid Checkered Textures
 Solid (AKA spatial) textures depend only upon the postiton of each point in 3d space. I like to think of these textures as suspended swimming pools that objects swim through (instead assigning a color to a given object). However, the relationship between the object and the texture is usually fixed.
 
-The checkerboard pattern is a perfect way to explore spatial textures (and it's a ray-tracing staple!). Let's create a `CheckeredTexture` class. Because spatial texture functions are described by a position in space, the `value()` function doesn't make use of the $u$ members $v$. Just the point parameter $p$.
+The checkerboard pattern is a perfect way to explore spatial textures (and it's a ray-tracing staple!). Let's create a `CheckerTexture` class. Because spatial texture functions are described by a position in space, the `value()` function doesn't make use of the $u$ members $v$. Just the point parameter $p$.
 
-First, we compute the floor value of each component of the input point (x,y,z). The reason that we take the floor instead of truncating values is to account for both positive and negative components. For example, the floor of 2.7 is 2.0, but the floor of -2.7 is -3.0. From here, we take the sum of the floors of (x,y,z) modulo 2 to get either 0 or 1 to determine our checker square color.
+First, we compute the floor value of each component of the input point $(x,y,z)$. The reason that we take the floor instead of truncating values is to account for both positive and negative components. For example, the floor of 2.7 is 2.0, but the floor of -2.7 is -3.0. From here, we take the sum of the floors of $(x,y,z)$ modulo 2 to get either 0 or 1 to determine our checker square color.
 
 Lastly, we'll add a scale factor to control the square size.
 
 `Texture.h`
 ```cpp
+...
+
+class CheckerTexture : public Texture {
+    public:
+        CheckerTexture(double scale, shared_ptr<Texture> even, shared_ptr<Texture> odd) 
+            :   invertedScale(1.0 / scale), 
+                even(even), 
+                odd(odd) {}
+
+        CheckerTexture(double scale, Vec3 colorOne, Vec3 colorTwo) 
+            :   invertedScale(1.0 / scale), 
+                even(make_shared<SolidColor>(colorOne)), 
+                odd(make_shared<SolidColor>(colorTwo)) {}
+
+        Vec3 value(double u, double v, const Vec3& p) const override {
+            auto xFloor = static_cast<int>(std::floor(invertedScale * p.x()));
+            auto yFloor = static_cast<int>(std::floor(invertedScale * p.y()));
+            auto zFloor = static_cast<int>(std::floor(invertedScale * p.z()));
+
+            bool isEven = (xFloor + yFloor + zFloor) % 2 ? true : false;
+
+            return isEven ? even->value(u, v, p) : odd->value(u, v, p);
+        }
+
+    private:
+        double invertedScale;
+        shared_ptr<Texture> even;
+        shared_ptr<Texture> odd;
+
+};
+
+...
 
 ```
+
+With some minor changes to our `generateRandomScene()` function, we can turn our "ground" sphere into a checkered behemoth:
+
+
+
+NOTE:
+it looks like the update to `generateRandomScene()` actually requires some changes to `Material.h` that the guide hasn't gotten to yet - we have to support textured materials by replacing `const Vec3& a` with a texture pointer:
+`Material.h`:
+```cpp
+#include "Texture.h"
+
+...
+
+class Lambertian : public Material {
+    public:
+!       Lambertian(const Vec3& a) : albedo(make_shared<SolidColor>(a)) {};
+!       Lambertian(shared_ptr<Texture> a) : albedo(a) {}
+
+        virtual bool scatter(const Ray& rayIn, 
+                            const HitRecord& rec, 
+                            Vec3& attenuation, 
+                            Ray& scattered) const {
+            Vec3 scatterDirection = rec.p + rec.normal + randomUnitVector();
+            scattered = Ray(rec.p, scatterDirection - rec.p, rayIn.moment());
+!           attenuation = albedo->value(rec.u, rec.v, rec.p);
+            return true;
+        }
+!   shared_ptr<Texture> albedo; // reflectivity
+
+};
+
+...
+
+
+```
+
+
+
+
+
+`Main.cpp`:
+```cpp
+
+
+
+```
+
 
 
 
