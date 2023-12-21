@@ -1302,7 +1302,7 @@ With some minor changes to our `generateRandomScene()` function, we can turn our
 
 
 NOTE:
-it looks like the update to `generateRandomScene()` actually requires some changes to `Material.h` that the guide hasn't gotten to yet - we have to support textured materials by replacing `const Vec3& a` with a texture pointer:
+it looks like the update to `generateRandomScene()` actually requires some changes to `Material.h` that Shirley hasn't gotten to yet - we have to support textured materials by replacing `const Vec3& a` with a texture pointer:
 `Material.h`:
 ```cpp
 #include "Texture.h"
@@ -1323,7 +1323,7 @@ class Lambertian : public Material {
 !           attenuation = albedo->value(rec.u, rec.v, rec.p);
             return true;
         }
-!   shared_ptr<Texture> albedo; // reflectivity
+!   shared_ptr<Texture> albedo;
 
 };
 
@@ -1339,17 +1339,324 @@ class Lambertian : public Material {
 `Main.cpp`:
 ```cpp
 
+HittableList generateRandomScene(bool useBvh = true) {
+    HittableList world;
 
+    // auto groundMaterial = make_shared<Lambertian>(Vec3(0.5, 0.5, 0.5));
+    // world.add(make_shared<Sphere>(Vec3(0,-1000,0), 1000, groundMaterial));
+
+    auto checkerPattern = make_shared<CheckerTexture>(0.32, Vec3(.2, .3, .1), Vec3(.9, .9, .9));
+    world.add(make_shared<Sphere>(Vec3(0,-1000,0), 1000, make_shared<Lambertian>(checkerPattern)));
+
+
+    for (int a = -11; a < 11; a++) {
+        for (int b = -11; b < 11; b++) {
+            ...
+    }
+
+    ...
+
+}
 
 ```
 
+While we're here in `Main.cpp`, let's make things cleaner by moving the rendering logic to `Camera.h` and compartmentalizing scenes. There are quite a few changes, so here are the files in their entirety (check the [commit history](https://github.com/eldun/PathTracer/commits/the-next-week) if you want more details):
+
+`Main.cpp`:
+```cpp
+
+#include <chrono> // Record elapsed render time
+#include <iostream>
+#include <iomanip> // Time formatting
+#include <float.h>
+
+#include "RtWeekend.h"
+
+#include "BvhNode.h"
+#include "Sphere.h"
+#include "HittableList.h"
+#include "Camera.h"
+#include "Material.h"
+#include "Texture.h"
+
+/****************************************************************************************
+The code for this path tracer is based on "Ray Tracing in One Weekend" by Peter Shirley.
+				https://github.com/RayTracing/raytracing.github.io
+
+Additional/better graphics to illustrate Ray tracing from the "1000 Forms of Bunnies" blog.
+				http://viclw17.github.io/tag/#/Ray%20Tracing%20in%20One%20Weekend
+*****************************************************************************************/
 
 
+void generateMovingSphereComparisonScene() {
+    HittableList world;
+
+    auto groundMaterial = make_shared<Lambertian>(Vec3(0.5, 0.5, 0.5));
+    auto groundSphere = make_shared<Sphere>(Vec3(0,-1000,0), 1000, groundMaterial);
+
+    world.add(groundSphere);
+
+    world.add(make_shared<Sphere>(Vec3(0, 1, 0), 1.0, make_shared<Dielectric>(Vec3(0.9,0.9,0.0), 1.5)));
+    world.add(make_shared<Sphere>(Vec3(-4, 1, 0), 1.0, make_shared<Lambertian>(Vec3(0.4, 0.2, 0.1))));
+    world.add(make_shared<Sphere>(Vec3(4, 1, 0), 1.0, make_shared<Metal>(Vec3(0.7, 0.6, 0.5), 0.0)));
+
+    // Moving Sphere
+    world.add(make_shared<Sphere>(Vec3(-4, 3, 0), Vec3(4,3,0),.25, .75, 1.0, make_shared<Lambertian>(Vec3(0.0, 0.0, 0.0))));
+
+    // BVH
+    world = HittableList(make_shared<BvhNode>(world, 0.0, 1.0));
+
+    Camera cam;
+    cam.render(world);
+}
+
+void generateRandomScene(bool useBvh = true) {
+    HittableList world;
+
+    // auto groundMaterial = make_shared<Lambertian>(Vec3(0.5, 0.5, 0.5));
+    // world.add(make_shared<Sphere>(Vec3(0,-1000,0), 1000, groundMaterial));
+
+    auto checkerPattern = make_shared<CheckerTexture>(0.32, Vec3(.2, .3, .1), Vec3(.9, .9, .9));
+    world.add(make_shared<Sphere>(Vec3(0,-1000,0), 1000, make_shared<Lambertian>(checkerPattern)));
 
 
+    for (int a = -11; a < 11; a++) {
+        for (int b = -11; b < 11; b++) {
+            auto materialChance = randomDouble();
+            Vec3 center(a + 0.9*randomDouble(), 0.2, b + 0.9*randomDouble());
+
+            if ((center - Vec3(4, 0.2, 0)).length() > 0.9) {
+                shared_ptr<Material> sphereMaterial;
+
+                if (materialChance < 0.8) {
+                    // diffuse
+                    auto albedo = Vec3::random() * Vec3::random();
+                    sphereMaterial= make_shared<Lambertian>(albedo);
+                    world.add(make_shared<Sphere>(center, 0.2, sphereMaterial));
+                } else if (materialChance < 0.95) {
+                    // metal
+                    auto albedo = Vec3::random(0.5, 1);
+                    auto fuzz = randomDouble(0, 0.5);
+                    sphereMaterial = make_shared<Metal>(albedo, fuzz);
+                    world.add(make_shared<Sphere>(center, 0.2, sphereMaterial));
+                } else {
+                    // glass
+                    sphereMaterial = make_shared<Dielectric>(Vec3(0.9, 0.9, 0.9), 1.5);
+                    world.add(make_shared<Sphere>(center, 0.2, sphereMaterial));
+                }
+            }
+        }
+    }
+
+    auto material1 = make_shared<Dielectric>(Vec3(0.9, 0.9, 0.9), 1.5);
+    world.add(make_shared<Sphere>(Vec3(0, 1, 0), 1.0, material1));
+
+    auto material2 = make_shared<Lambertian>(Vec3(0.4, 0.2, 0.1));
+    world.add(make_shared<Sphere>(Vec3(-4, 1, 0), 1.0, material2));
+
+    auto material3 = make_shared<Metal>(Vec3(0.7, 0.6, 0.5), 0.0);
+    world.add(make_shared<Sphere>(Vec3(4, 1, 0), 1.0, material3));
+
+    if (useBvh)
+        world = HittableList(make_shared<BvhNode>(world, 0.0, 1.0));
+
+    Camera cam;
+    cam.render(world);
+
+}
+
+int main() {
+
+    switch (0) {
+    case 0:
+        generateRandomScene();
+        break;
+
+    case 1:
+        generateMovingSphereComparisonScene();
+        break;
+
+    default:
+        generateRandomScene();
+        break;
+    }
+
+    return 0;
+   
+}
+
+```
+
+```cpp
+
+#ifndef CAMERA_H
+#define CAMERA_H
+
+#include "RtWeekend.h"
+
+#include "Ray.h"
+#include "Material.h"
+
+class Camera {
+public:
+
+    int imageWidth = 320; // Number of horizontal pixels
+	int samplesPerPixel = 60; // Number of samples for each pixel for anti-aliasing (see AntiAliasing.png for visualization)
+    int maxDepth = 20; // Ray bounce limit
+
+	Vec3 lookFrom = Vec3(13,2,3);
+	Vec3 lookAt = Vec3(0, 0, 0);
+    Vec3 upDirection = Vec3(0,1,0);
+    double vFov = 20;
+    double aspectRatio = 16.0 / 9.0;
+	double focusDistance = (lookFrom-lookAt).length();
+    double shutterOpenDuration = 1.0;
+	double aperture = 0.1; // bigger = blurrier
+
+    void render(Hittable& world) {
+        initialize();
 
 
+        // .ppm header 
+        std::cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n"; // - P3 signifies ASCII, 255 signifies max color value
 
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+
+        for (int j = imageHeight - 1; j >= 0; j--) { // Navigate canvas
+            std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+            for (int i = 0; i < imageWidth; i++) {
+                Vec3 col(0, 0, 0);
+                for (int s = 0; s < samplesPerPixel; s++) { // Anti-aliasing - get ns samples for each pixel
+                    double u = (i + randomDouble(0.0, 0.999)) / double(imageWidth);
+                    double v = (j + randomDouble(0.0, 0.999)) / double(imageHeight);
+                    Ray r = getRay(u, v);
+                    col += color(r, world, maxDepth);
+                }
+
+                col /= double(samplesPerPixel); // Average the color between objects/background
+                col = Vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));  // set gamma to 2
+                int ir = int(255.99 * col[0]);
+                int ig = int(255.99 * col[1]);
+                int ib = int(255.99 * col[2]);
+                std::cout << ir << " " << ig << " " << ib << "\n";
+            }
+        }
+        auto stop = std::chrono::high_resolution_clock::now();
+
+        auto hours = std::chrono::duration_cast<std::chrono::hours>(stop - start);
+        auto minutes = std::chrono::duration_cast<std::chrono::minutes>(stop - start) - hours;
+        auto seconds = std::chrono::duration_cast<std::chrono::seconds>(stop - start) - hours - minutes;
+
+        std::cerr << std::fixed << std::setprecision(2) <<
+        "\nFinished in:" << std::endl <<
+        "\t" << hours.count() << " hours" << std::endl <<
+        "\t" << minutes.count() << " minutes" << std::endl <<
+        "\t" << seconds.count() << " seconds." << std::endl;
+    }
+
+    Ray getRay(double s, double t)
+    {
+        Vec3 rd = lensRadius * randomUnitDiskCoordinate();
+        Vec3 offset = u * rd.x() + v * rd.y();
+        return Ray(origin + offset,
+                   lowerLeftCorner + s * horizontal + t * vertical - origin - offset,
+                   randomDouble(0, shutterOpenDuration));
+    }
+
+private:
+    Vec3 origin;
+    Vec3 lowerLeftCorner;
+    Vec3 horizontal;
+    Vec3 vertical;
+    Vec3 u, v, w;
+    double lensRadius;
+    double imageHeight;
+
+        // Camera(Vec3 lookFrom, Vec3 lookAt, Vec3 upDirection, double vFov, double aspectRatio,
+    //        double aperture, double focusDistance, double shutterOpenDuration)
+    void initialize() {
+        imageHeight = static_cast<int>(imageWidth / aspectRatio);
+        imageHeight = (imageHeight < 1) ? 1 : imageHeight;
+
+        lensRadius = aperture / 2;
+        double theta = vFov * pi / 180;
+        double halfHeight = tan(theta / 2);
+        double halfWidth = aspectRatio * halfHeight;
+        origin = lookFrom;
+        w = unitVector(lookFrom - lookAt);
+        u = unitVector(cross(upDirection, w));
+        v = cross(w, u);
+        lowerLeftCorner = origin - halfWidth * focusDistance * u - halfHeight * focusDistance * v - focusDistance * w;
+        horizontal = 2 * halfWidth * focusDistance * u;
+        vertical = 2 * halfHeight * focusDistance * v;
+    }
+
+    Vec3 color(const Ray& r, const Hittable& world, int depth) {
+        HitRecord rec;
+
+        if (depth <= 0) {
+            return Vec3(0,0,0);
+        }
+        if (world.hit(r, 0.001, DBL_MAX, rec)) {
+            Ray scattered;
+            Vec3 attenuation;
+            if (rec.materialPtr->scatter(r, rec, attenuation, scattered)) {
+                return attenuation*color(scattered, world, depth-1);
+            }
+            else {
+                return Vec3(0,0,0);
+            }
+        }
+
+        // Linear interpolation (sky)
+        else {
+            Vec3 unitDirection = unitVector(r.direction());
+            double t = 0.5*(unitDirection.y() + 1.0);
+            return (1.0-t)*Vec3(1.0, 1.0, 1.0) + t*Vec3(0.5, 0.7, 1.0);
+        }
+    }
+};
+
+#endif // !CAMERA_H
+
+```
+
+The result:
+
+![Our first checkered texture render](/assets/images/blog-images/path-tracer/the-next-week/checkered-ground.png)
+
+With moving spheres:
+
+![Checkered texture render with moving spheres](/assets/images/blog-images/path-tracer/the-next-week/bouncy-checkered-ground.png)
+
+Looks wrong, right?
+
+Let's add another scene to better illustrate the issue:
+
+`Main.cpp`:
+```cpp
+void generateTwoSpheres() {
+    HittableList world;
+
+    auto checker = make_shared<CheckerTexture>(0.8, Vec3(.2, .3, .1), Vec3(.9, .9, .9));
+
+    world.add(make_shared<Sphere>(Vec3(0,-10, 0), 10, make_shared<Lambertian>(checker)));
+    world.add(make_shared<Sphere>(Vec3(0, 10, 0), 10, make_shared<Lambertian>(checker)));
+
+    Camera cam;
+
+    cam.vFov        = 20;
+    cam.lookFrom    = Vec3(13,2,3);
+    cam.lookAt      = Vec3(0,0,0);
+    cam.upDirection = Vec3(0,1,0);
+
+    cam.render(world);
+}
+```
+
+![Two checkered spheres to illustrate a mapping issue](/assets/images/blog-images/path-tracer/the-next-week/two-spheres.png)
 
 
 
