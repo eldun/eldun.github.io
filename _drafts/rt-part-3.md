@@ -1631,7 +1631,9 @@ With moving spheres:
 
 ![Checkered texture render with moving spheres](/assets/images/blog-images/path-tracer/the-next-week/bouncy-checkered-ground.png)
 
-Looks wrong, right?
+Looks wrong, right? I thought I had messed up somewhere - Peter Shirley's preview image looks so much "better." In reality, I think it's just lower resolution and uses fewer samples. You can still see some artifacting along the left side of the reddish spheres by the large metal ball - it looks like the spheres' blur cuts off unexpectedly:
+
+![Peter Shirley's spatial texture preview image](/assets/images/blog-images/path-tracer/the-next-week/spatial-texture-preview.png)
 
 Let's add another scene to better illustrate the issue:
 
@@ -1657,6 +1659,26 @@ void generateTwoSpheres() {
 ```
 
 ![Two checkered spheres to illustrate a mapping issue](/assets/images/blog-images/path-tracer/the-next-week/two-spheres.png)
+
+> Since checker_texture is a spatial texture, we're really looking at the surface of the sphere cutting through the three-dimensional checker space. There are many situations where this is perfect, or at least sufficient. In many other situations, we really want to get a consistent effect on the surface of our objects.
+
+---
+
+#### Texture Coordinates for Spheres
+This is the part where we actually use $u$ and $v$.
+
+From [Wikipedia](https://en.wikipedia.org/wiki/UV_mapping):
+> UV mapping is the 3D modeling process of projecting a 3D model's surface to a 2D image for texture mapping. The letters "U" and "V" denote the axes of the 2D texture because "X", "Y", and "Z" are already used to denote the axes of the 3D object in model space, while "W" (in addition to XYZ) is used in calculating quaternion rotations, a common operation in computer graphics.
+
+![UV Mapping](/assets/images/blog-images/path-tracer/the-next-week/uv-mapping.png) 
+
+For whatever reason, I find it easier to think of UV mapping as wrapping a cloth around an object instead of projecting a 3d model's surface to a cloth.
+
+One more tidbit I'd like to include from Shirley:
+> This mapping is completely arbitrary, but generally you'd like to cover the entire surface, and be able to scale, orient and stretch the 2D image in a way that makes some sense.
+
+
+
 
 
 
@@ -1735,12 +1757,7 @@ class Lambertian : public Material {
 #### UV Texture Coordinates
 
 
-From [Wikipedia](https://en.wikipedia.org/wiki/UV_mapping):
-> UV mapping is the 3D modeling process of projecting a 3D model's surface to a 2D image for texture mapping. The letters "U" and "V" denote the axes of the 2D texture because "X", "Y", and "Z" are already used to denote the axes of the 3D object in model space, while "W" (in addition to XYZ) is used in calculating quaternion rotations, a common operation in computer graphics.
 
-![UV Mapping](/assets/images/blog-images/path-tracer/the-next-week/uv-mapping.png) 
-
-For whatever reason, I find it easier to think of UV mapping as wrapping a cloth around an object instead of projecting a 3d model's surface to a cloth.
 
 The first order of business is to convert the raw pixel coordinates to normalized UV coordinates within $ [0, 1] $ to avoid any issues with varying texture size. For pixel $ (i, j) $ in an $ nx * ny $ image, the UV coordinates are:
 
