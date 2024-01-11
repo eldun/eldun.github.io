@@ -177,24 +177,24 @@ Checking for a hit remains mostly the same - we just account for moving spheres 
 		return false;
 	}
 
-+	vec3 sphere::centerAt(double time) const {
-+
-+		// Prevent divide by zero(naN) for static spheres
-+		if (moveStartTime == moveEndTime) {
-+			return centerStart;
-+		}
-+
-+		else if (time < moveStartTime){
-+			return centerStart;
-+		}
-+
-+		else if (time > moveEndTime){
-+			return centerEnd;
-+		}
-+
-+		else 
-+			return centerStart + ((time - moveStartTime) / (moveEndTime-moveStartTime)) * (centerEnd - centerStart);	
-+	}
+
+Vec3 Sphere::centerAt(double time) const {
+
+	// Prevent divide by zero(naN) for static spheres
+	if (moveStartTime == moveEndTime) {
+		return centerStart;
+	}
+
+	else if (time < moveStartTime){
+		return centerStart;
+	}
+
+	else if (time > moveEndTime){
+		return centerEnd;
+	}
+
+	else 
+		return centerStart + (time * centerVec);
 }
 
 </code></pre>
@@ -579,6 +579,12 @@ After writing the next section on Bounding Volume Hierarchies, I decided to refa
 
 
 ## <a id="bounding-volume-hierarchies"></a>Bounding Volume Hierarchies
+
+<span class="warning">Whoops! I completed this section, but made a mistake somewhere along the way calcualating the bounding boxes for moving spheres. I only realized in the section following this one when my bouncy balls looked completely wrong under specific conditions: 
+
+![Something ain't right here...](/assets/images/blog-images/path-tracer/the-next-week/bouncy-checkered-ground.png)
+
+I went back to follow Shirley's material more closely to eliminate the issue. So while the ideas in this section are sound, the execution is not! I just *really* don't feel like going through this again. I'd reccommend [skipping to the next section]({{site.url}}/2024/01/03/rt-part-3#implementing-solid-textures) or referring to the [source material](https://raytracing.github.io/books/RayTracingTheNextWeek.html#boundingvolumehierarchies) for BVHs.</span>
 
 <img alt="BVH Illustration" src="/assets/images/blog-images/path-tracer/the-next-week/bounding-volume-hierarchy-wikipedia.svg" style="background: white; padding: 2rem;">
 
@@ -1188,7 +1194,11 @@ Finished in:
 ### Implementing Solid Textures
 > A texture in graphics usually means a function that makes the colors on a surface procedural.
 
+> The most common type of texture mapping maps an image onto the surface of an object, defining the color at each point on the object’s surface. In practice, we implement the process in reverse: given some point on the object, we’ll look up the color defined by the texture map. 
+
 The aforementioned function could be synthesis, an image lookup, or somewhere in between. We'll be keeping things simple to start - our first texture will be a solid color.
+
+
 
 #### Constant Color Textures
 We'll start with an [abstract class](https://www.ibm.com/docs/en/zos/2.4.0?topic=only-abstract-classes-c) `Texture`:
@@ -1631,11 +1641,13 @@ With moving spheres:
 
 ![Checkered texture render with moving spheres](/assets/images/blog-images/path-tracer/the-next-week/bouncy-checkered-ground.png)
 
-Looks wrong, right? I thought I had messed up somewhere - Peter Shirley's preview image looks so much "better." In reality, I think it's just lower resolution and uses fewer samples. You can still see some artifacting along the left side of the reddish spheres by the large metal ball - it looks like the spheres' blur cuts off unexpectedly:
+Looks wrong, right? I thought I had messed up somewhere. Turns out, I did. I made a mistake somewhere in calculating the bounding box.o for moving spheres. The expected image:
 
 ![Peter Shirley's spatial texture preview image](/assets/images/blog-images/path-tracer/the-next-week/spatial-texture-preview.png)
 
-Let's add another scene to better illustrate the issue:
+Anyway, I went back and fixed it.
+
+Let's add another scene to better illustrate the issue we'll address next:
 
 `Main.cpp`:
 ```cpp
@@ -1665,23 +1677,42 @@ void generateTwoSpheres() {
 ---
 
 #### Texture Coordinates for Spheres
-This is the part where we actually use $u$ and $v$.
+This is the part where we actually implement and use $u$ and $v$.
 
 From [Wikipedia](https://en.wikipedia.org/wiki/UV_mapping):
 > UV mapping is the 3D modeling process of projecting a 3D model's surface to a 2D image for texture mapping. The letters "U" and "V" denote the axes of the 2D texture because "X", "Y", and "Z" are already used to denote the axes of the 3D object in model space, while "W" (in addition to XYZ) is used in calculating quaternion rotations, a common operation in computer graphics.
 
 ![UV Mapping](/assets/images/blog-images/path-tracer/the-next-week/uv-mapping.png) 
 
-For whatever reason, I find it easier to think of UV mapping as wrapping a cloth around an object instead of projecting a 3d model's surface to a cloth.
-
 One more tidbit I'd like to include from Shirley:
 > This mapping is completely arbitrary, but generally you'd like to cover the entire surface, and be able to scale, orient and stretch the 2D image in a way that makes some sense.
 
+For spheres, texture coordinates are usually based on latitude and longitude - theta ($θ$) and phi ($ϕ$), respectively.
 
+![The spherical coordinate system](/assets/images/blog-images/path-tracer/the-next-week/spherical-coordinate-system.png)
 
+In an effort to stick as closely as possible to Shirley's guide, we'll be diverging slightly from the illustration above by defining $θ$ as the angle northward from the south pole (i.e. up from $-y$) and $ϕ$ as the angle around the y-axis ($-x$ -> $+z$ -> $+x$ -> $-z$ -> $-x$).
 
+Okay. So, we want to map spherical coordinates ($θ$,$ϕ$) to ($u$,$v$) in \[0,1] where ($u$=0, $v$=0) maps to the bottom-left corner of the texture. 
 
+To normalize $u$ and $v$ to each fall between 0 and 1, we'd do the following:
 
+$$
+u = \frac{\phi}{2\pi}\\
+v = \frac{\theta}{\pi} #
+$$
+
+To get $\theta$ and $\phi$ for any given point on the unit sphere, we'll begin with the equation for cartesian coordinates:
+
+$$
+\begin{align*}
+      y &= -\cos(\theta)            \\
+      x &= -\cos(\phi) \sin(\theta) \\
+      z &= \quad\sin(\phi) \sin(\theta)
+     \end{align*}
+$$
+
+To get the $ (\theta, \phi) $ coordinates, the equations above have to be [inverted](https://www.mathsisfun.com/algebra/trig-inverse-sin-cos-tan.html) using $ \arcsin $ and $ \arctan $. These functions (like [atan2](https://en.wikipedia.org/wiki/Atan2)) can be found in `<cmath>`. The angles returned will fall within $ -\frac{\pi}{2} $ and $ \frac{\pi}{2} $
 
 
 
