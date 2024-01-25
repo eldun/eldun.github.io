@@ -1321,8 +1321,9 @@ it looks like the update to `generateRandomScene()` actually requires some chang
 
 class Lambertian : public Material {
     public:
-!       Lambertian(const Vec3& a) : albedo(make_shared<SolidColor>(a)) {};
-!       Lambertian(shared_ptr<Texture> a) : albedo(a) {}
+-       Lambertian(const Vec3& a) : albedo(a){};
++       Lambertian(const Vec3& a) : albedo(make_shared<SolidColor>(a)) {};
++       Lambertian(shared_ptr<Texture> a) : albedo(a) {}
 
         virtual bool scatter(const Ray& rayIn, 
                             const HitRecord& rec, 
@@ -1330,12 +1331,12 @@ class Lambertian : public Material {
                             Ray& scattered) const {
             Vec3 scatterDirection = rec.p + rec.normal + randomUnitVector();
             scattered = Ray(rec.p, scatterDirection - rec.p, rayIn.moment());
-!           attenuation = albedo->value(rec.u, rec.v, rec.p);
+-           attenuation = albedo;
++           attenuation = albedo->value(rec.u, rec.v, rec.p);
             return true;
         }
-!   shared_ptr<Texture> albedo;
-
-};
+-   Vec3 albedo; // reflectivity
++   shared_ptr<Texture> albedo; // reflectivity
 
 ...
 
@@ -1702,7 +1703,7 @@ u = \frac{\phi}{2\pi}\\
 v = \frac{\theta}{\pi} #
 $$
 
-To get $\theta$ and $\phi$ for any given point on the unit sphere, we'll begin with the equation for cartesian coordinates:
+To get $\theta$ and $\phi$ for any given point on the unit sphere, we'll begin with the equation for cartesian coordinates. [This page](https://mathinsight.org/spherical_coordinates) does an excellent job of illustrating the conversion process between Cartesian and spherical coordinates - although the definitions of our variables are slightly different.
 
 $$
 \begin{align*}
@@ -1712,7 +1713,276 @@ $$
      \end{align*}
 $$
 
-To get the $ (\theta, \phi) $ coordinates, the equations above have to be [inverted](https://www.mathsisfun.com/algebra/trig-inverse-sin-cos-tan.html) using $ \arcsin $ and $ \arctan $. These functions (like [atan2](https://en.wikipedia.org/wiki/Atan2)) can be found in `<cmath>`. The angles returned will fall within $ -\frac{\pi}{2} $ and $ \frac{\pi}{2} $
+To get the $ (\theta, \phi) $ coordinates, the equations above have to be [inverted](https://www.mathsisfun.com/algebra/trig-inverse-sin-cos-tan.html) using $ \arcsin $ and $ \arctan $. These functions (like [atan2](https://en.wikipedia.org/wiki/Atan2)) can be found in `<cmath>`.
+
+> atan2() returns values in the range −π to π, but they go from 0 to π, then flip to −π and proceed back to zero. While this is mathematically correct, we want u to range from 0 to 1, not from 0 to 1/2 and then from −1/2 to 0. Fortunately,
+>
+>atan2(a,b)=atan2(−a,−b)+π,
+>
+>and the second formulation yields values from 0
+>continuously to 2π. Thus, we can compute ϕ
+>
+>as
+>
+>ϕ=atan2(−z,x)+π
+
+And for $\theta$:
+
+$$
+\theta = \arccos(-y)
+$$
+
+
+Let's translate all this to code - `Sphere::getUvCoordinates()` - which will take points on the unit sphere centered at the origin, and compute $u$ and $v$:
+
+```
+void Sphere::getUvCoordinates(const Vec3& p, double& u, double& v){
+	// p: a given point on the sphere of radius one, centered at the origin.
+	// u: returned value [0,1] of angle around the Y axis from X=-1.	
+	// v: returned value [0,1] of angle from Y=-1 to Y=+1.	
+	//     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>	
+	//     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>	
+	//     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>	
+
+	auto theta = acos(-p.y());
+	auto phi = atan2(-p.z(), p.x()) + pi;
+
+	u = phi / (2*pi);
+	v = theta / pi;
+}
+```
+
+From here, we need to update our `hit_record` with the UV coordinates:
+
+```
+class Sphere : public Hittable {
+  public:
+    ...
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
+        ...
+
+		rec.t = root;
+        rec.p = r.pointAtParameter(rec.t);
+        Vec3 outward_normal = (rec.p - center) / radius;
+        rec.setFaceNormal(r, outward_normal);
+        getUvCoordinates(outward_normal, rec.u, rec.v);
+		rec.materialPtr = materialPtr;
+
+        return true;	
+    }
+    ...
+};
+```
+
+If you've been following my blog, your Lambertian class in `Material.h` should already look like this (having had `const Vec3&` replaced with a texture pointer):
+
+
+```
+class Lambertian : public Material {
+    public:
+        Lambertian(const Vec3& a) : albedo(make_shared<SolidColor>(a)) {};
+        Lambertian(shared_ptr<Texture> a) : albedo(a) {}
+
+        virtual bool scatter(const Ray& rayIn, 
+                            const HitRecord& rec, 
+                            Vec3& attenuation, 
+                            Ray& scattered) const {
+            Vec3 scatterDirection = rec.p + rec.normal + randomUnitVector();
+            scattered = Ray(rec.p, scatterDirection - rec.p, rayIn.moment());
+            attenuation = albedo->value(rec.u, rec.v, rec.p);
+            return true;
+        }
+    shared_ptr<Texture> albedo; // reflectivity
+
+};
+```
+
+> From the hitpoint P, we compute the surface coordinates (u,v). We then use these to index into our procedural solid texture (like marble). We can also read in an image and use the 2D (u,v) texture coordinate to index into the image. 
+
+UV coordinates more convenient to use than raw pixel coordinates, as the coordinates are normalized to [0,1] and are resolution-independent. For pixel (i,j) in an nx∗ny image, the UV coordinates are:
+
+$$
+u = i / (nx - 1)\\
+v = j / (ny - 1)
+$$
+
+#### Using Images as Textures
+To use images as textures, we're going to create a class that takes advantage of Shirley's favorite image utility - [stb_image](https://github.com/nothings/stb).
+
+> It reads image data into a big array of unsigned chars. These are just packed RGBs with each component in the range [0,255] (black to full white). To help make loading our image files even easier, we provide a helper class to manage all this — rtw_image. The following listing assumes that you have copied the [stb_image.h](https://github.com/nothings/stb/blob/master/stb_image.h) header into a folder called external. Adjust according to your directory structure.
+
+```cpp
+#ifndef RTW_STB_IMAGE_H
+#define RTW_STB_IMAGE_H
+
+// Disable strict warnings for this header from the Microsoft Visual C++ compiler.
+#ifdef _MSC_VER
+    #pragma warning (push, 0)
+#endif
+
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_FAILURE_USERMSG
+#include "../external/stb_image.h"
+
+#include <cstdlib>
+#include <iostream>
+
+class rtw_image {
+  public:
+    rtw_image() : data(nullptr) {}
+
+    rtw_image(const char* image_filename) {
+        // Loads image data from the specified file. If the RTW_IMAGES environment variable is
+        // defined, looks only in that directory for the image file. If the image was not found,
+        // searches for the specified image file first from the current directory, then in the
+        // images/ subdirectory, then the _parent's_ images/ subdirectory, and then _that_
+        // parent, on so on, for six levels up. If the image was not loaded successfully,
+        // width() and height() will return 0.
+
+        auto filename = std::string(image_filename);
+        auto imagedir = getenv("RTW_IMAGES");
+
+        // Hunt for the image file in some likely locations.
+        if (imagedir && load(std::string(imagedir) + "/" + image_filename)) return;
+        if (load(filename)) return;
+        if (load("images/" + filename)) return;
+        if (load("../images/" + filename)) return;
+        if (load("../../images/" + filename)) return;
+        if (load("../../../images/" + filename)) return;
+        if (load("../../../../images/" + filename)) return;
+        if (load("../../../../../images/" + filename)) return;
+        if (load("../../../../../../images/" + filename)) return;
+
+        std::cerr << "ERROR: Could not load image file '" << image_filename << "'.\n";
+    }
+
+    ~rtw_image() { STBI_FREE(data); }
+
+    bool load(const std::string filename) {
+        // Loads image data from the given file name. Returns true if the load succeeded.
+        auto n = bytes_per_pixel; // Dummy out parameter: original components per pixel
+        data = stbi_load(filename.c_str(), &image_width, &image_height, &n, bytes_per_pixel);
+        bytes_per_scanline = image_width * bytes_per_pixel;
+        return data != nullptr;
+    }
+
+    int width()  const { return (data == nullptr) ? 0 : image_width; }
+    int height() const { return (data == nullptr) ? 0 : image_height; }
+
+    const unsigned char* pixel_data(int x, int y) const {
+        // Return the address of the three bytes of the pixel at x,y (or magenta if no data).
+        static unsigned char magenta[] = { 255, 0, 255 };
+        if (data == nullptr) return magenta;
+
+        x = clamp(x, 0, image_width);
+        y = clamp(y, 0, image_height);
+
+        return data + y*bytes_per_scanline + x*bytes_per_pixel;
+    }
+
+  private:
+    const int bytes_per_pixel = 3;
+    unsigned char *data;
+    int image_width, image_height;
+    int bytes_per_scanline;
+
+    static int clamp(int x, int low, int high) {
+        // Return the value clamped to the range [low, high).
+        if (x < low) return low;
+        if (x < high) return x;
+        return high - 1;
+    }
+};
+
+// Restore MSVC compiler warnings
+#ifdef _MSC_VER
+    #pragma warning (pop)
+#endif
+
+#endif
+```
+
+Now that we've got `stb_image` in the mix, we can create our `ImageTexture` class in `Texture.h`:
+
+```cpp
+#include "Interval.h"
+#include "rtw_stb_image.h"
+
+...
+
+class ImageTexture : public Texture {
+    public:
+        ImageTexture(const char* filename) : image(filename) {}
+
+        Vec3 value(double u, double v, const Vec3& p) const override {
+            // If we have no texture data, then return solid cyan as a debugging aid.
+            if (image.height() <= 0) return Vec3(0,1,1);
+
+            // Clamp input texture coordinates to [0,1] x [1,0]
+            u = Interval(0,1).clamp(u);
+            v = 1.0 - Interval(0,1).clamp(v);  // Flip V to image coordinates
+
+            auto i = static_cast<int>(u * image.width());
+            auto j = static_cast<int>(v * image.height());
+            auto pixel = image.pixel_data(i,j);
+
+            auto colorScale = 1.0 / 255.0;
+            return Vec3(colorScale*pixel[0], colorScale*pixel[1], colorScale*pixel[2]);
+        }
+
+    private:
+        rtw_image image;
+};
+
+```
+
+We'll use the suggested earth map for our first uv-mapped render:
+
+[Earth map](/assets/images/blog-images/path-tracer/the-next-week/earthmap.jpg)
+
+Let's add an earth render to `Main.cpp`:
+
+```cpp
+void generateEarth() {
+    HittableList world;
+
+    auto earthTexture = make_shared<ImageTexture>("earthmap.jpg");
+    auto earthSurface = make_shared<Lambertian>(earthTexture);
+    auto globe = make_shared<Sphere>(Vec3(0,0,0), 2, earthSurface);
+
+    world.add(globe);
+
+    Camera cam;
+
+    cam.aspectRatio         = 16.0 / 9.0;
+    cam.samplesPerPixel     = 100;
+    cam.maxDepth            = 50;
+
+    cam.vFov                = 20;
+    cam.lookFrom            = Vec3(0,0,12);
+    cam.lookAt              = Vec3(0,0,0);
+    cam.upDirection         = Vec3(0,1,0);
+
+
+    cam.render(world);
+}
+```
+
+![Our first image texture render - the pale blue dot](/assets/images/blog-images/path-tracer/the-next-week/earth.png)
+
+### Using Noise
+Noise is invaluable in computer graphics (and many other fields). You may have heard of [white noise](https://en.wikipedia.org/wiki/White_noise) - but have you heard of [Perlin noise](https://en.wikipedia.org/wiki/Perlin_noise)? It was developed in 1983 due to Ken Perlin's frustration with the machine-like look of CGI at the time. To simplify, Perlin noise essentially looks like blurry white noise:
+
+![White noise](/assets/images/blog-images/path-tracer/the-next-week/white-noise.png)
+
+![Perlin noise](/assets/images/blog-images/path-tracer/the-next-week/perlin-noise.png)
+
+
+
+
+
+
+
 
 
 
