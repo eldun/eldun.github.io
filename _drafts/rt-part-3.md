@@ -1971,17 +1971,226 @@ void generateEarth() {
 ![Our first image texture render - the pale blue dot](/assets/images/blog-images/path-tracer/the-next-week/earth.png)
 
 ### Using Noise
-Noise is invaluable in computer graphics (and many other fields). You may have heard of [white noise](https://en.wikipedia.org/wiki/White_noise) - but have you heard of [Perlin noise](https://en.wikipedia.org/wiki/Perlin_noise)? It was developed in 1983 due to Ken Perlin's frustration with the machine-like look of CGI at the time. To simplify, Perlin noise essentially looks like blurry white noise:
+Noise is invaluable in computer graphics (and many other fields). You may have heard of [white noise](https://en.wikipedia.org/wiki/White_noise) - but have you heard of [Perlin noise](https://en.wikipedia.org/wiki/Perlin_noise)? It was developed in 1983 due to Ken Perlin's frustration with the machine-like look of CGI at the time. To simplify, Perlin noise essentially "looks" like blurry white noise:
 
 ![White noise](/assets/images/blog-images/path-tracer/the-next-week/white-noise.png)
 
 ![Perlin noise](/assets/images/blog-images/path-tracer/the-next-week/perlin-noise.png)
 
+There are a few important aspects of Perlin noise:
+- it's repeatable
+- nearby points return similar values
+- it's simple & fast
+
+To start implementing noise, let's create a new class - `Perlin.h`. We'll start by simply scrambling some random numbers (This is not Perlin noise yet!):
+
+```cpp
+
+#ifndef PERLIN_H
+#define PERLIN_H
+
+#include "RtWeekend.h"
+
+class Perlin {
+  public:
+    Perlin() {
+        randomDouble = new double[pointCount];
+        for (int i = 0; i < pointCount; ++i) {
+            randomDouble[i] = RT_WEEKEND_H::randomDouble();
+        }
+
+        permX = perlinGeneratePerm();
+        permY = perlinGeneratePerm();
+        permZ = perlinGeneratePerm();
+    }
+
+    ~Perlin() {
+        delete[] randomDouble;
+        delete[] permX;
+        delete[] permY;
+        delete[] permZ;
+    }
+
+    double getNoise(const Vec3& p) const {
+        auto i = static_cast<int>(4*p.x()) & 255;
+        auto j = static_cast<int>(4*p.y()) & 255;
+        auto k = static_cast<int>(4*p.z()) & 255;
+
+        return randomDouble[permX[i] ^ permY[j] ^ permZ[k]];
+    }
+
+  private:
+    static const int pointCount = 256;
+    double* randomDouble;
+    int* permX;
+    int* permY;
+    int* permZ;
+
+    static int* perlinGeneratePerm() {
+        auto p = new int[pointCount];
+
+        for (int i = 0; i < Perlin::pointCount; i++)
+            p[i] = i;
+
+        permute(p, pointCount);
+
+        return p;
+    }
+
+    static void permute(int* p, int n) {
+        for (int i = n-1; i > 0; i--) {
+            int target = randomInt(0, i);
+            int tmp = p[i];
+            p[i] = p[target];
+            p[target] = tmp;
+        }
+    }
+};
+
+#endif
+
+```
+
+From here, we'll create a `NoiseTexture` class:
+
+`Texture.h`:
+```cpp
+
+#include "Perlin.h"
+
+...
+
+class NoiseTexture : public Texture {
+    public:
+        NoiseTexture() {}
+
+        Vec3 value(double u, double v, const Vec3& p) const override {
+            return Vec3(1,1,1) * perlin.getNoise(p);
+        }
+
+    private:
+        Perlin perlin;
+
+};
+
+```
+
+Let's use our hashed texture on some spheres:
+
+`Main.h`:
+```cpp
+...
+
+void generateTwoPerlinSpheres() {
+    HittableList world;
+
+    auto perlinTexture = make_shared<NoiseTexture>();
+    world.add(make_shared<Sphere>(Vec3(0,-1000,0), 1000, make_shared<Lambertian>(perlinTexture)));
+    world.add(make_shared<Sphere>(Vec3(0,2,0), 2, make_shared<Lambertian>(perlinTexture)));
+
+    Camera cam;
+
+    cam.aspectRatio        = 16.0 / 9.0;
+    cam.samplesPerPixel    = 100;
+    cam.maxDepth           = 50;
+
+    cam.vFov               = 20;
+    cam.lookFrom           = Vec3(13,2,3);
+    cam.lookAt             = Vec3(0,0,0);
+    cam.upDirection        = Vec3(0,1,0);
+
+    cam.render(world);
+}
+
+```
+
+![Two noisy spheres (not Perlin yet!)](/assets/images/blog-images/path-tracer/the-next-week/noisy-spheres.png)
+
+#### Smoothing our Noisy Spheres
+Remember linear interpolation from the [first weekend]({{site.url}}/2020/06/19/ray-tracing-in-one-weekend-part-two.html) all those years ago? We'll implement the same thing with our noise function.
+
+`Perlin.h`:
+
+```cpp
+
+    double getNoise(const Vec3& p) const {
+            auto u = p.x() - floor(p.x());
+            auto v = p.y() - floor(p.y());
+            auto w = p.z() - floor(p.z());
+
+            auto i = static_cast<int>(floor(p.x()));
+            auto j = static_cast<int>(floor(p.y()));
+            auto k = static_cast<int>(floor(p.z()));
+            double c[2][2][2];
+
+            for (int di=0; di < 2; di++)
+                for (int dj=0; dj < 2; dj++)
+                    for (int dk=0; dk < 2; dk++)
+                        c[di][dj][dk] = randomDouble[
+                            permX[(i+di) & 255] ^
+                            permY[(j+dj) & 255] ^
+                            permZ[(k+dk) & 255]
+                        ];
+
+            return trilinear_interpolation(c, u, v, w);
+        }
 
 
+...
 
+private:
 
+    static double trilinear_interpolation(double c[2][2][2], double u, double v, double w) {
+        auto accum = 0.0;
+        for (int i=0; i < 2; i++)
+            for (int j=0; j < 2; j++)
+                for (int k=0; k < 2; k++)
+                    accum += (i*u + (1-i)*(1-u))*
+                            (j*v + (1-j)*(1-v))*
+                            (k*w + (1-k)*(1-w))*c[i][j][k];
 
+        return accum;
+    }
+
+```
+
+![Two noisy spheres "LERPed" (not Perlin yet!)](/assets/images/blog-images/path-tracer/the-next-week/noisy-spheres-lerped.png)
+
+Note the sharp "gridding" in some areas. Some of this is due to [Mach banding](https://en.wikipedia.org/wiki/Mach_bands). A standard fix for this problem (according to Shirley) is to use a [Hermite cubic](https://en.wikipedia.org/wiki/Cubic_Hermite_spline) to round off the interpolation:
+
+`Perlin.h`:
+```cpp
+
+double getNoise(const Vec3& p) const {
+        auto u = p.x() - floor(p.x());
+        auto v = p.y() - floor(p.y());
+        auto w = p.z() - floor(p.z());
+
+        // Hermite cubic
++       u = u*u*(3-2*u);
++       v = v*v*(3-2*v);
++       w = w*w*(3-2*w);
+
+        auto i = static_cast<int>(floor(p.x()));
+        auto j = static_cast<int>(floor(p.y()));
+        auto k = static_cast<int>(floor(p.z()));
+        double c[2][2][2];
+
+        for (int di=0; di < 2; di++)
+            for (int dj=0; dj < 2; dj++)
+                for (int dk=0; dk < 2; dk++)
+                    c[di][dj][dk] = randomDouble[
+                        permX[(i+di) & 255] ^
+                        permY[(j+dj) & 255] ^
+                        permZ[(k+dk) & 255]
+                    ];
+
+        return trilinear_interpolation(c, u, v, w);
+    }
+
+```
+
+![Two noisy spheres "LERPed" and Hermite'd (not Perlin yet!)](/assets/images/blog-images/path-tracer/the-next-week/noisy-spheres-lerped-hermitian.png)
 
 
 
