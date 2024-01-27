@@ -1982,6 +1982,8 @@ There are a few important aspects of Perlin noise:
 - nearby points return similar values
 - it's simple & fast
 
+I find Shirley's walkthrough to be a bit too fast and loose. [This article](http://eastfarthing.com/blog/2015-04-21-noise/) will help illustrate aspects of Perlin noise covered in the next few sections.
+
 To start implementing noise, let's create a new class - `Perlin.h`. We'll start by simply scrambling some random numbers (This is not Perlin noise yet!):
 
 ```cpp
@@ -2192,8 +2194,53 @@ double getNoise(const Vec3& p) const {
 
 ![Two noisy spheres "LERPed" and Hermite'd (not Perlin yet!)](/assets/images/blog-images/path-tracer/the-next-week/noisy-spheres-lerped-hermitian.png)
 
+#### Adjusting the Frequency
 
+The frequency of the noise is pretty low here - we can scale the input point to adjust the variation:
 
+`Texture.h`:
+
+```cpp
+...
+
+class NoiseTexture : public Texture {
+    public:
+        NoiseTexture() {}
+
++       NoiseTexture(double scale) : scale(scale) {}
+
+        Vec3 value(double u, double v, const Vec3& p) const override {
++           return Vec3(1,1,1) * perlin.getNoise(scale * p);
+        }
+
+    private:
+        Perlin perlin;
++       double scale;
+
+};
+
+```
+
+`Main.cpp`:
+```cpp
+
+void generateTwoPerlinSpheres() {
+    HittableList world;
+
++   auto perlinTexture = make_shared<NoiseTexture>(4);
+    world.add(make_shared<Sphere>(Vec3(0,-1000,0), 1000, make_shared<Lambertian>(perlinTexture)));
+    world.add(make_shared<Sphere>(Vec3(0,2,0), 2, make_shared<Lambertian>(perlinTexture)));
+
+    ...
+
+    cam.render(world);
+}
+
+```
+
+![Two noisy spheres with higher frequencies](/assets/images/blog-images/path-tracer/the-next-week/noisy-spheres-high-frequency.png)
+
+#### Using Random Vectors to Reduce Blockiness
 
 
 
