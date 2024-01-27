@@ -11,3 +11,4 @@ _site
 .vscode/settings.json
 .gitignore
 .frontmatter/database/taxonomyDb.json
+.frontmatter/database/mediaDb.json
