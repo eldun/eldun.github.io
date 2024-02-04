@@ -2242,6 +2242,9 @@ void generateTwoPerlinSpheres() {
 
 #### Using Random Vectors on Lattice Points to Reduce Blockiness
 
+TODO: Find a good video illustrating random vectors on the corners
+
+
 The best explanation that I've found of what's going on in this section (because I don't want to write it myself) can be found [here](https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/perlin-noise-part-2/perlin-noise.html).
 
 The explanation of our first changes from Shirley:
