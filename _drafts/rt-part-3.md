@@ -1982,7 +1982,7 @@ There are a few important aspects of Perlin noise:
 - nearby points return similar values
 - it's simple & fast
 
-I find Shirley's walkthrough to be a bit too fast and loose. [This article](http://eastfarthing.com/blog/2015-04-21-noise/) will help illustrate aspects of Perlin noise covered in the next few sections.
+I find Shirley's walkthrough on noise to be a bit too fast and loose. [This series](https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/procedural-patterns-noise-part-1/introduction.html)(Wow), [this article](https://rtouti.github.io/graphics/perlin-noise-algorithm), and [this article](http://eastfarthing.com/blog/2015-04-21-noise/) will help illustrate aspects of Perlin noise covered in the next few sections.
 
 To start implementing noise, let's create a new class - `Perlin.h`. We'll start by simply scrambling some random numbers (This is not Perlin noise yet!):
 
@@ -2240,7 +2240,138 @@ void generateTwoPerlinSpheres() {
 
 ![Two noisy spheres with higher frequencies](/assets/images/blog-images/path-tracer/the-next-week/noisy-spheres-high-frequency.png)
 
-#### Using Random Vectors to Reduce Blockiness
+#### Using Random Vectors on Lattice Points to Reduce Blockiness
+
+TODO: Find a good video illustrating random vectors on the corners
+
+
+The best explanation that I've found of what's going on in this section (because I don't want to write it myself) can be found [here](https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/perlin-noise-part-2/perlin-noise.html).
+
+The explanation of our first changes from Shirley:
+> This(The previous image) is still a bit blocky looking, probably because the min and max of the pattern always lands exactly on the integer x/y/z. Ken Perlin’s very clever trick was to instead put random unit vectors (instead of just doubles) on the lattice points, and use a dot product to move the min and max off the lattice. So, first we need to change the random doubles to random vectors. These vectors are any reasonable set of irregular directions, and I won't bother to make them exactly uniform: 
+
+```cpp
+
+class Perlin {
+  public:
+    Perlin() {
+!       randomVector = new Vec3[pointCount];
+        for (int i = 0; i < pointCount; ++i) {
+!           randomVector[i] = unitVector(Vec3::random(-1, 1));
+        }
+
+        permX = perlinGeneratePerm();
+        permY = perlinGeneratePerm();
+        permZ = perlinGeneratePerm();
+    }
+
+    ~Perlin() {
+!       delete[] randomVector;
+        delete[] permX;
+        delete[] permY;
+        delete[] permZ;
+    }
+
+...
+
+  private:
+    static const int pointCount = 256;
+!   Vec3* randomVector;
+    int* permX;
+    int* permY;
+    int* permZ;
+
+
+```
+
+We now have to modify our `getNoise()` function:
+
+```cpp
+  double getNoise(const Vec3& p) const {
+        auto u = p.x() - floor(p.x());
+        auto v = p.y() - floor(p.y());
+        auto w = p.z() - floor(p.z());
+
+
+-        // Hermite cubic
+-        u = u*u*(3-2*u);
+-        v = v*v*(3-2*v);
+-        w = w*w*(3-2*w);
+
+
+        auto i = static_cast<int>(floor(p.x()));
+        auto j = static_cast<int>(floor(p.y()));
+        auto k = static_cast<int>(floor(p.z()));
+!        Vec3 c[2][2][2];
+
+        for (int di=0; di < 2; di++)
+            for (int dj=0; dj < 2; dj++)
+                for (int dk=0; dk < 2; dk++)
+!                    c[di][dj][dk] = randomVector[
+                        permX[(i+di) & 255] ^
+                        permY[(j+dj) & 255] ^
+                        permZ[(k+dk) & 255]
+                    ];
+
+!        return perlinInterpolate(c, u, v, w);
+    }
+
+```
+
+Note that I renamed `trilinearInterpolate` - let's go over its changes now:
+
+```cpp
+
+static double   perlinInterpolate(Vec3 c[2][2][2], double u, double v, double w) {
++   auto uu = u*u*(3-2*u);
++   auto vv = v*v*(3-2*v);
++   auto ww = w*w*(3-2*w);
+    auto accum = 0.0;
+
+    for (int i=0; i < 2; i++)
+        for (int j=0; j < 2; j++)
+            for (int k=0; k < 2; k++) {
+!               Vec3 weightV(u-i, v-j, w-k);
+!               accum += (i*uu + (1-i)*(1-uu))
+!                       * (j*vv + (1-j)*(1-vv))
+!                       * (k*ww + (1-k)*(1-ww))
+!                       * dot(c[i][j][k], weightV);
+            }
+
+    return accum;
+}
+
+```
+
+When performing Perlin interpolation, negative values can be returned, which will eventually be passed to `sqrt()` in our gamma function, breaking everything. To avoid this, we'll cast our Perlin output to a value between 0 and 1: 
+
+```cpp
+
+class NoiseTexture : public Texture {
+    public:
+        NoiseTexture() {}
+
+        NoiseTexture(double scale) : scale(scale) {}
+
+        Vec3 value(double u, double v, const Vec3& p) const override {
+-           return Vec3(1,1,1) * perlin.getNoise(scale * p);
++           return Vec3(1,1,1) * 0.5 * (1.0 + perlin.getNoise(scale * p));
+
+        }
+
+    private:
+        Perlin perlin;
+        double scale;
+
+};
+
+```
+
+Finally - the output:
+
+![Perlin spheres](/assets/images/blog-images/path-tracer/the-next-week/perlin-spheres.png)
+
+#### Implementing Turbulence
 
 
 
@@ -2256,12 +2387,7 @@ void generateTwoPerlinSpheres() {
 
 
 
-
-
-
-
-
-
+<!-- 
 Add `double u` and `double v` to our `HitRecord` struct to store the UV surace coordinates of the hit point (Wel'll cover this in more detail in the [next section](#uv-texture-coordinates)):
 
 `Hittable.h`
@@ -2361,7 +2487,7 @@ void Sphere::getUvCoordinates(const Vec3& p, float& u, float& v){
 ---
 
 #### Reading an Texture/Image
-
+ -->
 
 
 
