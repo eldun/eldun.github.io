@@ -18,6 +18,9 @@ tags: java web spring
 
 ---
 
+### Why use Spring?
+[Lots of reasons!](https://www.baeldung.com/spring-why-to-choose)
+
 ### What is Spring Boot?
 From Spring's [documentation](https://spring.io/projects/spring-boot):
 
@@ -34,7 +37,7 @@ With such features as:
 - Provide production-ready features such as metrics, health checks, and externalized configuration
 - Absolutely no code generation and no requirement for XML configuration
 
-If you want to read more about the differences betweeen Spring and Spring Boot, you can check out [this article](https://www.baeldung.com/spring-vs-spring-boot).
+If you want to read more about the differences between Spring and Spring Boot, you can check out [this article](https://www.baeldung.com/spring-vs-spring-boot).
 
 ---
 
@@ -369,5 +372,13 @@ We've used a few [starters](https://docs.spring.io/spring-boot/docs/3.2.0/refere
 #### Building a RESTful Service
 [This](https://spring.io/guides/gs/rest-service) is the last "Getting Started" tutorial on the [Spring Boot Overview page](https://spring.io/projects/spring-boot). It seems to be extremely similar to our Hello, World example, so I'm not doing it :).
 
+---
+
 ### Diving Deeper
-Spring has curated a [surprisingly large collection of guides](https://spring.io/guides) that are much more involved than those above. 
+Spring has curated a [surprisingly large collection of guides](https://spring.io/guides) that are much more involved than those above. I actually wish I had started here! Let's build a more complete RESTful service using [this guide](https://spring.io/guides/tutorials/rest).
+
+---
+
+#### Building a More Complete RESTful Service
+
+[The guide](https://spring.io/guides/tutorials/rest) I'll be following is comprehensive - I don't see any value in essentially re-writing it here. I'd highly recommend checking it out!
