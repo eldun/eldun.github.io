@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  
+<head>
+
+
+  <!-- favicon settings -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/site-images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/site-images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/site-images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site-images/site.webmanifest">
+  <link rel="mask-icon" href="/assets/images/site-images/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/assets/images/site-images/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/assets/images/site-images/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+
+
+  
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+
+  
+    MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    </script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+  </script>
+  
+
+  <!-- Prism is now loaded by being imported in assets/css/style.scss -->
+  <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Audio Plugins</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Audio Plugins" />
+<meta name="author" content="Evan" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="What does it take to build an audio plugin?" />
+<meta property="og:description" content="What does it take to build an audio plugin?" />
+<link rel="canonical" href="eldun.github.io/2022/10/20/clap-plugins-part-one.html" />
+<meta property="og:url" content="eldun.github.io/2022/10/20/clap-plugins-part-one.html" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-10-20T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Audio Plugins" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2022-10-20T00:00:00-04:00","datePublished":"2022-10-20T00:00:00-04:00","description":"What does it take to build an audio plugin?","headline":"Audio Plugins","mainEntityOfPage":{"@type":"WebPage","@id":"eldun.github.io/2022/10/20/clap-plugins-part-one.html"},"url":"eldun.github.io/2022/10/20/clap-plugins-part-one.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167888524-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-167888524-1');
+  </script>
+  
+  <meta charset="UTF-8">
+
+ 
+  
+
+
+</head>
+
+  <body>
+    <!-- <a id="skip-to-content" href="#content">Skip to the content.</a> -->
+
+    <header class="page-header" role="banner">
+      <img class="header-image" src="/assets/images/site-images/chicken.jpg">
+      <h1 class="project-name"></h1>
+      <h2 class="project-tagline"></h2>
+      <!-- <link href="../assets/fontawesome/all.css" rel="stylesheet"> load all styles -->
+
+<script src="/js/site-scripts/toggle-search.js" type="text/javascript"></script>
+
+<nav>
+  
+  <a href="/"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-home"></i>
+    <br>
+    Home
+  </a>
+  
+  <a href="/about"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-user"></i>
+    <br>
+    About
+  </a>
+  
+  <a href="/archive"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-archive"></i>
+    <br>
+    Archive
+  </a>
+  
+  <a href="/tags"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-tags"></i>
+    <br>
+    Tags
+  </a>
+  
+  <a href=""
+
+     
+      id="search-button" onclick="toggleSearch(); return false;" 
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-search"></i>
+    <br>
+    Search
+  </a>
+  
+</nav>
+      <!-- Html Elements for Search -->
+<div id="search-container" style="visibility: hidden;">
+  <input type="text" id="search-input" placeholder="Search..." />
+  <ul id="results-container"></ul>
+</div>
+
+<!-- Script pointing to search-script.js -->
+<script src="/js/site-scripts/search-script.js" type="text/javascript"></script>
+
+<!-- Configuration -->
+<script>
+  SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="{postUrl}">{postTitle} {postSubtitle}</a></li>'
+  })
+  </script>
+
+
+      
+      
+    </header>
+
+    <hr id="header-main-divider">
+
+    <main id="content" class="main-content" role="main">
+      <div class="post-header inactive">
+<h1 id="post-title">Audio Plugins</h1>
+<h3 id="post-subtitle">Part 1/3: Learning about CLAP</h3>
+<div class="post-date">
+    <i class="fas fa-calendar"></i> <time>20 Oct 2022</time>
+</div>
+</div>
+
+<img class="post-image" src="/assets/images/blog-images/audio-plugins/part-one/sine-wave.png" alt="Image of sine wave from http://www.tronola.com/moorepage/Sine.html" title="">
+
+
+
+<a id="continue-reading-point"></a>
+
+<div class="excerpt">
+<p>What does it take to build an audio plugin?</p>
+
+</div>
+<!--end-excerpt-->
+
+
+
+
+<hr>
+
+<h2>Contents</h2>
+
+<ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#an-introduction">An Introduction</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#what-is-an-audio-plugin">What is an Audio Plugin?</a></li>
+<li class="toc-entry toc-h3"><a href="#choosing-a-format">Choosing a Format</a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#why-choose-clap">Why Choose CLAP?</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#what-does-an-audio-plugin-look-like">What Does an Audio Plugin Look Like?</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#setting-up-an-environment-for-clap">Setting up an Environment for CLAP</a></li>
+<li class="toc-entry toc-h2"><a href="#learning-to-create-clap-plugins">Learning to Create CLAP Plugins</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#where-to-start">Where to Start?</a></li>
+<li class="toc-entry toc-h3"><a href="#building-example-plugins">Building Example Plugins</a></li>
+<li class="toc-entry toc-h3"><a href="#a-simpler-example">A Simpler Example</a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#understanding-the-examples">Understanding the Examples</a>
+<ul>
+<li class="toc-entry toc-h5"><a href="#the-main-file">The main File</a></li>
+<li class="toc-entry toc-h5"><a href="#the-plugin-file">The plugin File</a></li>
+<li class="toc-entry toc-h5"><a href="#the-plugin_impl-files">The plugin_impl Files</a></li>
+<li class="toc-entry toc-h5"><a href="#the-gui-files">The \*gui\* Files</a></li>
+<li class="toc-entry toc-h5"><a href="#the-gui">The GUI</a></li>
+<li class="toc-entry toc-h5"><a href="#the-makefile">The Makefile</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#closing-thoughts">Closing Thoughts</a></li>
+</ul>
+</li>
+</ul>
+
+<hr>
+
+<div id="markdown-content">
+    <h2 id="an-introduction">
+<a class="anchor" href="#an-introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>An Introduction</h2>
+<hr>
+<h3 id="what-is-an-audio-plugin">
+<a class="anchor" href="#what-is-an-audio-plugin" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is an Audio Plugin?</h3>
+
+<p>An audio plugin is a piece of software (most often a virtual instrument or effect) that integrates into a <a href="https://en.wikipedia.org/wiki/Digital_audio_workstation">Digital Audio Workstation(DAW)</a> such as <a href="reaper.fm">Reaper</a> or <a href="ableton.com">Ableton Live</a>. There are quite a few different audio plugin formats - the most popular ones being:</p>
+<ul>
+  <li>
+<a href="https://www.steinberg.net/technology/">VST3</a> - Steinberg’s closed-source solution turned open-source</li>
+  <li>
+<a href="https://developer.apple.com/documentation/audiotoolbox/audio_unit_v3_plug-ins">AUv3</a> - The iOS standard</li>
+  <li>
+<a href="https://www.avid.com/avid-plugins-by-category">AAX</a> - Avid/ProTools’ solution</li>
+  <li>Standalone - As the name would imply, these types of plugins don’t require any host DAW. They can be launched and immediately tinkered with(think NotePad).</li>
+</ul>
+
+<p>Many developers release their audio plugins under multiple formats - often by using licensed tools like <a href="https://juce.com/">JUCE</a>.</p>
+
+<hr>
+<h3 id="choosing-a-format">
+<a class="anchor" href="#choosing-a-format" aria-hidden="true"><span class="octicon octicon-link"></span></a>Choosing a Format</h3>
+<p><a href="https://lwn.net/Articles/890272/">Each format has their pros and cons</a>. After starting and abandoning <a href="https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md">VST3</a> due to Linux pains and <a href="https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-lv2-synth.md">LV2</a> due to GUI issues in Reaper, I’m ready to try <a href="https://cleveraudio.org/">CLAP</a>. my fingers are crossed.</p>
+
+<hr>
+<h4 id="why-choose-clap">
+<a class="anchor" href="#why-choose-clap" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why Choose CLAP?</h4>
+<p><a href="https://cleveraudio.org/the-story-and-mission/">So many</a> <a href="https://u-he.com/community/clap/">reasons</a>.</p>
+
+<!--### What is LV2?
+From [lv2pkug.in](https://lv2plug.in/): 
+> LV2 is an extensible open standard for audio plugins. LV2 has a simple core interface, which is accompanied by extensions that add more advanced functionality.
+>
+> Many types of plugins can be built with LV2, including audio effects, synthesizers, and control processors for modulation and automation. Extensions support more powerful features, such as:
+>
+> - Platform-native UIs
+> - Network-transparent plugin control
+> - Portable and archivable persistent state
+> - Non-realtime tasks (like file loading) with sample-accurate export
+> - Semantic control with meaningful control designations and value units
+> - The LV2 specification and accompanying code is permissively licensed free software, with support for all major platforms.
+  
+
+### Why Choose LV2?
+I originally was going to create a VST3 synth([I even started a blog post :c](https://github.com/eldun/eldun.github.io/blob/source/_drafts/simple-synth.md)), but found Steinberg's [documentation](https://steinbergmedia.github.io/vst3_dev_portal/pages/) to be lacking and poorly organized - especially for the Linux platform, which is where I'm doing most of my coding as of late. LV2, on the other hand is platform-agnostic, [well-documented](https://lv2plug.in/pages/developing.html), and open-source from the start. 
+
+[Here's a list of reasons to use LV2 straight from the source](https://lv2plug.in/pages/why-lv2.html). 
+-->
+
+<hr>
+<h3 id="what-does-an-audio-plugin-look-like">
+<a class="anchor" href="#what-does-an-audio-plugin-look-like" aria-hidden="true"><span class="octicon octicon-link"></span></a>What Does an Audio Plugin Look Like?</h3>
+<p>There are thousands upon thousands of plugins out there - ranging from minimalist retro synths and complex rhythm sequencers to Karplus-Strong string modelers and destructive bit-crushers. Here are some of my favorites:</p>
+
+<p><span class="row-fill">
+<img src="/assets/images/blog-images/audio-plugins/part-one/vital.jpg" alt="Vital">
+<img src="/assets/images/blog-images/audio-plugins/part-one/dexed.png" alt="Dexed">
+</span>
+<span class="row-fill">
+<a href="vital.audio">Vital</a>
+<a href="https://asb2m10.github.io/dexed/">Dexed</a>
+</span></p>
+
+<p><span class="row-fill">
+<img src="/assets/images/blog-images/audio-plugins/part-one/valhalla-delay.webp" alt="Valhalla Freq Echo">
+<img src="/assets/images/blog-images/audio-plugins/part-one/blue-arp.png" alt="BlueARP Arpeggiator">
+</span> 
+<span class="row-fill">
+<a href="https://valhalladsp.com/shop/delay/valhalla-freq-echo/">Valhalla Freq Echo</a>
+<a href="https://omg-instruments.com/wp/?page_id=63">BlueARP Arpeggiator</a> 
+</span></p>
+
+<p>It should be noted that although flashy UIs are fun and often very useful, they’re not necessary. Take a look at Reaper’s built-in synth - ReaSynth:
+<img src="/assets/images/blog-images/audio-plugins/part-one/reasynth.png" alt="ReaSynth"></p>
+
+<p>FX plugins are also often very sparse.</p>
+
+<!--## Setting Up LV2
+
+### Resources
+LV2 doesn't have an official guide, but comes with a few well-documented example plugins. There's also a "[book](https://lv2plug.in/book/#_introduction)" that walks through the included examples. 
+
+A short list of development topics can be read about [here](https://lv2plug.in/pages/developing.html).
+
+### Downloading LV2
+At the time of this writing, LV2 can be downloaded from [LV2's homepage](https://lv2plug.in/). There's also a [gitlab repository](https://gitlab.com/lv2/lv2). 
+
+### Installing LV2
+[Installation instructions](https://gitlab.com/lv2/lv2/-/blob/master/INSTALL.md) are included in the LV2 download. 
+
+
+
+#### Installing Dependency Meson
+- [Meson](https://mesonbuild.com/index.html) is LV2's chosen build system.
+- [Installing Meson](https://mesonbuild.com/Getting-meson.html): `sudo apt install meson`. 
+- [Getting Started with Meson](https://mesonbuild.com/Quick-guide.html).
+
+#### Configuration
+> The build is configured with the setup command, which creates a new build directory with the given name:
+>
+> `meson setup build`
+
+(Just run `meson setup build` from the LV2 root directory)
+
+From within the newly created `build` directory, you can:
+- [`meson compile`](https://gitlab.com/lv2/lv2/-/blob/master/INSTALL.md#building)
+- [`meson test`](https://gitlab.com/lv2/lv2/-/blob/master/INSTALL.md#building)
+- [`meson install`](https://gitlab.com/lv2/lv2/-/blob/master/INSTALL.md#installation)
+
+> You may need to acquire root permissions to install to a system-wide prefix. For packaging, the installation may be staged to a directory using the DESTDIR environment variable or the --destdir option:
+> 
+> <pre><code class="language-console">
+> DESTDIR=/tmp/mypackage/ meson install
+> 
+> meson install --destdir=/tmp/mypackage/
+> </code></pre> 
+
+> By default, on UNIX-like systems, everything is installed within the <code>prefix</code>,
+and LV2 bundles are installed in the "lv2" subdirectory of the <code>libdir</code>.  On
+other systems, bundles are installed by default to the standard location for
+plugins on the system. The bundle installation directory can be overridden
+with the <code>lv2dir</code> option.
+> The specification bundles are run-time dependencies of LV2 applications.
+Programs expect their data to be available somewhere in `LV2_PATH`.  See
+[http://lv2plug.in/pages/filesystem-hierarchy-standard.html](http://lv2plug.in/pages/filesystem-hierarchy-standard.html ) for details on the
+standard installation paths.
+
+> Configuration options(such as `lv2dir`) can be inspected with the `configure` command from within the `build` directory:
+> 
+> <pre><code class="language-console">
+> cd build
+> meson configure
+> </code></pre> 
+
+> Options can be set by passing C-style "define" options to configure:
+>
+> `meson configure -Dc_args="-march=native" -Dprefix="/opt/mypackage/"`
+>
+>
+> Note that some options, such as strict and werror are for
+developer/maintainer use only.  Please don't file issues about anything that
+happens when they are enabled.
+-->
+
+<hr>
+<h2 id="setting-up-an-environment-for-clap">
+<a class="anchor" href="#setting-up-an-environment-for-clap" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setting up an Environment for CLAP</h2>
+<p><a href="https://clapdb.tech/category/hostsdaws">CLAP isn’t widely supported yet</a>. However, <a href="bitwig.com">BitWig</a> - a DAW that’s been gaining a lot of steam recently - supports it. My current DAW of choice - <a href="reaper.fm">Reaper</a> <del><a href="https://forum.cockos.com/showthread.php?t=267906">may be supporting it before long</a></del> supports it on the dev branch, as of <a href="https://audiosex.pro/threads/reaper-c-l-a-p-support-now-a-reality.65864/">less than a month ago</a>. I’ll be using Reaper v6.68+dev1004 (October 4).</p>
+
+<p>Just to make sure everything was set up correctly, I installed <a href="https://github.com/asb2m10/dexed">dexed</a> from source and tested it in Reaper.</p>
+
+<p><img src="/assets/images/blog-images/audio-plugins/part-one/dexed.png" alt="The CLAP version of dexed running in Reaper"></p>
+
+<hr>
+<h2 id="learning-to-create-clap-plugins">
+<a class="anchor" href="#learning-to-create-clap-plugins" aria-hidden="true"><span class="octicon octicon-link"></span></a>Learning to Create CLAP Plugins</h2>
+<hr>
+<h3 id="where-to-start">
+<a class="anchor" href="#where-to-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Where to Start?</h3>
+<p>I don’t know much about creating plugins, and unfortunately, at the time of this post, it looks like the <a href="https://cleveraudio.org/developers-getting-started/">“Getting Started” page has a ways to go</a>.</p>
+
+<p><img src="/assets/images/blog-images/audio-plugins/part-one/clap-getting-started.png" alt="CLAP Documentation Under Construction"></p>
+
+<p>The way forward is through <a href="https://github.com/free-audio/clap#examples">example</a> and <a href="https://www.youtube.com/playlist?list=PLqRWeSPiYQ64DhTiE2dEIF5xRIw0s5XLS">this youtube playlist</a>(Developing with CLAP - Jürgen Moßgraber).</p>
+
+<p>Actually, I watched the videos and they don’t help that much. Let’s move on.</p>
+
+<hr>
+<h3 id="building-example-plugins">
+<a class="anchor" href="#building-example-plugins" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building Example Plugins</h3>
+<p><a href="https://github.com/free-audio/clap-plugins">This repo</a> is full of juicy info on CLAP plugins.</p>
+
+<p>The repo has a lengthy note about GUIs, builds and symbols:</p>
+
+<blockquote>
+  <p>The plugins use Qt for the GUI.</p>
+
+  <p>It is fine to dynamically link to Qt for a host, but it is very dangerous for a plugin.</p>
+
+  <p>Also one very important aspect of the plugin is the distribution. Ideally a clap plugin should be self contained: it should not rely upon symbols from the host, and it should export only one symbol: clap_entry.</p>
+
+  <p>You should be aware that even if you hide all your symbols some may still remain visible at unexpected places. Objective-C seems to register every classes including those coming from plugins in a flat namespace. Which means that if two plugins define two different Objective-C classes but with the same, they will clash which will result in undeflined behavior.</p>
+
+  <p>Qt uses a few Objective-C classes on macOS. So it is crucial to use QT_NAMESPACE.</p>
+
+  <p>We have two different strategies to work with that.</p>
+
+  <p>local: statically link every thing
+remote: start the gui in a child process</p>
+  <ol>
+    <li>has the advantage of being simple to deploy. 2. is more complex due to its inter-process nature. It has a few advantages:</li>
+  </ol>
+
+  <p>if the GUI crash, the audio engine does not
+the GUI can use any libraries, won’t be subject to symbol or library clash etc…
+We abstracted the relation between the plugin and the GUI: AbstractGui and AbstractGuiListener which lets us transparently insert proxies to support the remote model.</p>
+
+  <p>The GUI itself work with proxy objects to the parameters, transport info, … They are then bound into QML objects. See Knob.qml and parameter-proxy.hh.</p>
+
+  <p>We offer two options:</p>
+
+  <p>static build, cmake preset: ninja-vcpkg or vs-vcpkg on Windows.
+dynamic builg, cmake preset: ninja-system
+Static builds are convenient for deployment as they are self containded. They use the local gui model.</p>
+
+  <p>Dynamic builds will get your started quickly if your system provides Qt6, and you have an host that do not expose the Qt symbols. Static builds will require more time and space.</p>
+</blockquote>
+
+<p>(<a href="https://stackoverflow.com/a/311889">Difference between build methods</a>)</p>
+
+<p>Build instructions for different platforms can be found <a href="https://github.com/free-audio/clap-plugins#building-on-various-platforms">here</a>.</p>
+
+<p>The plugins will be installed to <code class="language-plaintext highlighter-rouge">usr/local/lib</code>. From there, you can try them out in your preferred plugin host.</p>
+
+<hr>
+<h3 id="a-simpler-example">
+<a class="anchor" href="#a-simpler-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>A Simpler Example</h3>
+<p>There’s a lot going on in the last section. A minimal example (linked to from the official CLAP repository) can be found <a href="https://github.com/schwaaa/clap-imgui.git">here</a>. I highly reccommend reading through <a href="https://github.com/schwaaa/clap-imgui#readme">the repo’s README</a>.</p>
+
+<p>Excluding reference and image files, these are the contents of the repo:</p>
+<pre><code class="language-treeview">
+
+./
+|-- build/
+|   |-- lin/
+|   |-- mac/
+|   `-- win/
+`-- src/
+    |-- clap/
+    |-- glfw/
+    |-- gui.cpp
+    |-- imgui/
+    |-- imgui_base.cpp
+    |-- imgui_lin.cpp
+    |-- imgui_mac.mm
+    |-- imgui_win.cpp
+    |-- main.cpp
+    |-- main.h
+    |-- plugin.cpp
+    |-- plugin_impl_0.cpp
+    `-- plugin_impl_1.cpp
+
+</code></pre>
+
+<p>To build these examples, all we have to do(on Linux) is navigate to <code class="language-plaintext highlighter-rouge">build/lin</code> and execute the makefile there  with <code class="language-plaintext highlighter-rouge">make</code>.</p>
+
+<p><img src="/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-1.gif" alt="Simple CLAP Example 1"> 
+<img src="/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-2.gif" alt="Simple CLAP Example 2"></p>
+
+<p>The resulting <code class="language-plaintext highlighter-rouge">.clap</code> file should show up right next to the makefile. If you’d like to try these plugins out, you can add our current directory to your host’s CLAP path or copy the generated CLAP file to <code class="language-plaintext highlighter-rouge">usr/local/lib</code> - the default path for CLAP plugins.</p>
+
+<hr>
+<h4 id="understanding-the-examples">
+<a class="anchor" href="#understanding-the-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding the Examples</h4>
+
+<hr>
+<h5 id="the-main-file">
+<a class="anchor" href="#the-main-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code class="language-plaintext highlighter-rouge">main</code> File</h5>
+<p>You can see in <code class="language-plaintext highlighter-rouge">main.h</code> that the only <code class="language-plaintext highlighter-rouge">#include</code> is <code class="language-plaintext highlighter-rouge">clap.h</code>, which allows us to work with CLAP. This is also where our customized plugin struct is defined (With members <code class="language-plaintext highlighter-rouge">clap_plugin</code>, <code class="language-plaintext highlighter-rouge">clap_plugin_params</code>, and <code class="language-plaintext highlighter-rouge">clap_plugin_gui</code> from the included <code class="language-plaintext highlighter-rouge">clap.h</code>. If you would like to know more about these ‘extensions’ (params &amp; gui), check out the well-documented <a href="https://github.com/free-audio/clap/tree/main/include/clap/ext">source code files</a>.</p>
+
+<hr>
+<h5 id="the-plugin-file">
+<a class="anchor" href="#the-plugin-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code class="language-plaintext highlighter-rouge">plugin</code> File</h5>
+<p>We don’t really have to worry about this file - it’s where our plugins are constructed and passthroughs are located. Genericized plugin, GUI, and param calls are also set up here.</p>
+
+<hr>
+<h5 id="the-plugin_impl-files">
+<a class="anchor" href="#the-plugin_impl-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code class="language-plaintext highlighter-rouge">plugin_impl</code> Files</h5>
+<p>These are our actual plugins! Here is where we describe our plugins and their parameters, as well as how they behave, and what they look like (at least in this example).
+Let’s take a look at the tone generator plugin once more:
+<img src="/assets/images/blog-images/audio-plugins/part-one/simple-clap-example-2.gif" alt="Simple CLAP Example 2"></p>
+
+<p>You can see how the turning of knobs is continually processed in the <code class="language-plaintext highlighter-rouge">process</code> functions. Things are kicked off with this one:</p>
+<pre><code class="language-cpp">
+template &lt;class T&gt;
+  clap_process_status \_plugin\_impl__process(const clap_process *process,
+    int num_channels, int start_frame, int end_frame,
+    double *start_param_values, double *end_param_values,
+    T **out)
+  {
+    if (!out) return CLAP_PROCESS_ERROR;
+
+    double start_vol = start_param_values[PARAM_VOLUME];
+    double end_vol = end_param_values[PARAM_VOLUME];
+    double d_vol = (end_vol-start_vol) / (double)(end_frame-start_frame);
+
+    double start_pitch = start_param_values[PARAM_PITCH];
+    double end_pitch = end_param_values[PARAM_PITCH];
+    double start_phase=m_phase, d_phase=0.0;
+    if (end_pitch &gt;= 0.0)
+    {
+      if (start_pitch &lt; 0.0) start_phase=0.0;
+      else start_pitch += start_param_values[PARAM_DETUNE]*0.01;
+      end_pitch += end_param_values[PARAM_DETUNE]*0.01;
+      double freq = 440.0 * pow(2.0, (end_pitch-57.0)/12.0);
+      d_phase = 2.0 * _PI * freq / (double)m_srate;
+    }
+
+    for (int c=0; c &lt; num_channels; ++c)
+    {
+      T *cout=out[c];
+      if (!cout) return CLAP_PROCESS_ERROR;
+
+      if (d_phase &gt; 0.0)
+      {
+        double vol = start_vol;
+        double phase = start_phase;
+        for (int i=start_frame; i &lt; end_frame; ++i)
+        {
+          cout[i] = sin(phase)*vol;
+          phase += d_phase;
+          vol += d_vol;
+        }
+      }
+      else
+      {
+        memset(cout+start_frame, 0, (end_frame-start_frame)*sizeof(T));
+      }
+    }
+
+    m_phase += (double)(end_frame-start_frame)*d_phase;
+
+    return CLAP_PROCESS_CONTINUE;
+  }
+
+</code></pre>
+
+<p>And they continue being kicked off with this one:</p>
+<pre><code class="language-cpp">
+clap_process_status plugin_impl__process(const clap_process *process)
+  {
+    double cur_param_values[NUM_PARAMS];
+    for (int i=0; i &lt; NUM_PARAMS; ++i)
+    {
+      cur_param_values[i]=m_param_values[i];
+    }
+
+    clap_process_status s = -1;
+    if (process &amp;&amp; process-&gt;audio_inputs_count == 0 &amp;&amp;
+      process-&gt;audio_outputs_count == 1 &amp;&amp; process-&gt;audio_outputs[0].channel_count == 2)
+    {
+      // handling incoming parameter changes and slicing the process call
+      // on the time axis would happen here.
+
+      if (process-&gt;audio_outputs[0].data32)
+      {
+        s = _plugin_impl__process(process, 2, 0, process-&gt;frames_count,
+          m_last_param_values, cur_param_values,
+          process-&gt;audio_outputs[0].data32);
+      }
+      else if (process-&gt;audio_outputs[0].data64)
+      {
+        s = _plugin_impl__process(process, 2, 0, process-&gt;frames_count,
+          m_last_param_values, cur_param_values,
+          process-&gt;audio_outputs[0].data64);
+      }
+    }
+
+    for (int i=0; i &lt; NUM_PARAMS; ++i)
+    {
+      m_last_param_values[i]=m_param_values[i];
+    }
+
+    if (s &lt; 0) s = CLAP_PROCESS_ERROR;
+    return s;
+  }
+</code></pre>
+
+<p>The other important classes are all the <code class="language-plaintext highlighter-rouge">ImGui</code> ones, like <code class="language-plaintext highlighter-rouge">draw()</code>.</p>
+
+<hr>
+<h5 id="the-gui-files">
+<a class="anchor" href="#the-gui-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code class="language-plaintext highlighter-rouge">\*gui\*</code> Files</h5>
+<p>These files are where our Plugin struct member actually interfaces with OpenGL through <a href="https://github.com/ocornut/imgui">Dear Imgui</a> and <a href="https://www.glfw.org/">GLFW</a></p>
+
+<hr>
+<h5 id="the-gui">
+<a class="anchor" href="#the-gui" aria-hidden="true"><span class="octicon octicon-link"></span></a>The GUI</h5>
+<p>The developer of these simpler plugins - schwaaa - explains why he’s using <a href="https://github.com/ocornut/imgui">Dear Imgui</a>:</p>
+
+<blockquote>
+  <p>The UI for this example is presented via <a href="https://github.com/ocornut/imgui">Dear ImGui</a>. The ImGui concept is easy to misunderstand so please read <a href="https://github.com/ocornut/imgui#readme">the Dear ImGui README</a>. The key concept is that the caller (this plugin) does not retain any state related to the UI. This allows developers to quickly prototype controls.</p>
+
+  <p>100% of the plugin’s UI code is in <code class="language-plaintext highlighter-rouge">plugin_impl__draw()</code>, a single small function. For example, this is the code for the volume slider, which draws the control, handles mouse and keyboard input, and links the control to the voldb variable:</p>
+
+  <p><code class="language-plaintext highlighter-rouge">ImGui::SliderFloat("Volume", &amp;voldb, -60.0f, 12.0f, "%+.1f dB", 1.0f);</code></p>
+
+  <p>You have some control over the appearance and placement of the control, but the primary design goal is simplicity and ease of programmer use. ImGui is not typically used for end-user UI.</p>
+
+  <p>ImGui is helpful for this example because:</p>
+  <ul>
+    <li>Permissively licensed</li>
+    <li>No external dependencies</li>
+    <li>Very easy to interact with</li>
+  </ul>
+</blockquote>
+
+<hr>
+<h5 id="the-makefile">
+<a class="anchor" href="#the-makefile" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Makefile</h5>
+<p>You may have noticed that a single <code class="language-plaintext highlighter-rouge">.clap</code> file contains two plugins. You can step through the <a href="https://github.com/schwaaa/clap-imgui/blob/main/build/lin/Makefile">makefile</a> to see how this happens(and here’s a <a href="https://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/">makefile refresher</a>, if you’re in need), and how we end up with our plugins from dozens of source files. The most important line is where the actual compilation takes place (line 57).</p>
+
+<hr>
+<h3 id="closing-thoughts">
+<a class="anchor" href="#closing-thoughts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Closing Thoughts</h3>
+<p>Creating audio plugins from scratch turned out to be a bit more convoluted than I expected. I was especially hoping for more in the way of documentation. The next post in this series will be focused on creating our own arpeggiator, and the following on creating a sampler.</p>
+
+  </div>
+
+<hr>
+<h1><i class="fas fa-hand-peace"></i></h1>
+<div class="post-tags">
+    
+  
+  <a class="tag-link"
+    href=/tags/c++
+    rel="category tag">
+    <code>#c++</code></a>
+
+  
+  <a class="tag-link"
+    href=/tags/music
+    rel="category tag">
+    <code>#music</code></a>
+
+</div>
+
+      <footer class="site-footer">
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+
+    <!-- link to Prism Syntax Highlighter -->
+    <script src="/js/site-scripts/prism.js"></script>
+
+    <!-- Autoloader configuration (https://prismjs.com/plugins/autoloader/) -->
+    <script> 
+      Prism.plugins.autoloader.languages_path = '/assets/prism-components/'; 
+    </script> 
+
+<!-- Diff-highlighter is very picky about whitespace -->
+    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+      'remove-trailing': true,
+      'remove-indent': true,
+      'left-trim': false,
+      'right-trim': true,
+      // 'break-lines': 80,
+      'indent': 0,
+      'remove-initial-line-feed': true,
+      'tabs-to-spaces': 4,
+      // 'spaces-to-tabs': 4
+    });</script> -->
+    
+
+      <!-- Back to top -->
+    <script src="/js/site-scripts/vanilla-back-to-top.min.js"></script>
+    <script>addBackToTop()</script>
+
+  </body>
+</html>

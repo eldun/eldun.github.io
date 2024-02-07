@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  
+<head>
+
+
+  <!-- favicon settings -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/site-images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/site-images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/site-images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site-images/site.webmanifest">
+  <link rel="mask-icon" href="/assets/images/site-images/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/assets/images/site-images/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/assets/images/site-images/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+
+
+  
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+
+  
+    MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    </script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+  </script>
+  
+
+  <!-- Prism is now loaded by being imported in assets/css/style.scss -->
+  <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Ray Tracing in One Weekend:</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Ray Tracing in One Weekend:" />
+<meta name="author" content="Evan" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="We’ve created a straight-forward ray tracer - what more could there be to do? By the time we’re done with this segment, we’ll have what Peter Shirley calls a “real ray tracer.”" />
+<meta property="og:description" content="We’ve created a straight-forward ray tracer - what more could there be to do? By the time we’re done with this segment, we’ll have what Peter Shirley calls a “real ray tracer.”" />
+<link rel="canonical" href="http://localhost:4000/2023/04/25/rt-part-3.html" />
+<meta property="og:url" content="http://localhost:4000/2023/04/25/rt-part-3.html" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-04-25T22:52:17-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Ray Tracing in One Weekend:" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2023-04-25T22:52:17-04:00","datePublished":"2023-04-25T22:52:17-04:00","description":"We’ve created a straight-forward ray tracer - what more could there be to do? By the time we’re done with this segment, we’ll have what Peter Shirley calls a “real ray tracer.”","headline":"Ray Tracing in One Weekend:","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2023/04/25/rt-part-3.html"},"url":"http://localhost:4000/2023/04/25/rt-part-3.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167888524-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-167888524-1');
+  </script>
+  
+  <meta charset="UTF-8">
+
+ 
+  
+
+
+</head>
+
+  <body>
+    <!-- <a id="skip-to-content" href="#content">Skip to the content.</a> -->
+
+    <header class="page-header" role="banner">
+      <img class="header-image" src="/assets/images/site-images/chicken.jpg">
+      <h1 class="project-name"></h1>
+      <h2 class="project-tagline"></h2>
+      <!-- <link href="../assets/fontawesome/all.css" rel="stylesheet"> load all styles -->
+
+<script src="/js/site-scripts/toggle-search.js" type="text/javascript"></script>
+
+<nav>
+  
+  <a href="/"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-home"></i>
+    <br>
+    Home
+  </a>
+  
+  <a href="/about.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-user"></i>
+    <br>
+    About
+  </a>
+  
+  <a href="/archive.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-archive"></i>
+    <br>
+    Archive
+  </a>
+  
+  <a href="/tags.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-tags"></i>
+    <br>
+    Tags
+  </a>
+  
+  <a href=""
+
+     
+      id="search-button" onclick="toggleSearch(); return false;" 
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-search"></i>
+    <br>
+    Search
+  </a>
+  
+</nav>
+      <!-- Html Elements for Search -->
+<div id="search-container" style="visibility: hidden;">
+  <input type="text" id="search-input" placeholder="Search..." />
+  <ul id="results-container"></ul>
+</div>
+
+<!-- Script pointing to search-script.js -->
+<script src="/js/site-scripts/search-script.js" type="text/javascript"></script>
+
+<!-- Configuration -->
+<script>
+  SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="http://localhost:4000{postUrl}">{postTitle} {postSubtitle}</a></li>'
+  })
+  </script>
+
+
+      
+      
+    </header>
+
+    <hr id="header-main-divider">
+
+    <main id="content" class="main-content" role="main">
+      <div class="post-header inactive">
+<h1 id="post-title">Ray Tracing in One Weekend:</h1>
+<h3 id="post-subtitle">Part Three - The Next Weekend</h3>
+<div class="post-date">
+    <i class="fas fa-calendar"></i> <time>25 Apr 2023</time>
+</div>
+</div>
+
+<img class="post-image" src="/assets\images\blog-images\path-tracer-part-three" alt="" title="">
+
+
+
+<a id="continue-reading-point"></a>
+
+<div class="excerpt">
+<p>We’ve created a <a href="http://localhost:4000/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title">straight-forward ray tracer</a> - what more could there be to do? By the time we’re done with this segment, we’ll have what Peter Shirley calls a “real ray tracer.”</p>
+
+</div>
+<!--end-excerpt-->
+
+
+
+
+<hr>
+
+<h2>Contents</h2>
+
+<ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#contents">Contents</a></li>
+<li class="toc-entry toc-h2"><a href="#motion-blur">Motion Blur</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#adapting-our-ray-class">Adapting our Ray Class</a></li>
+<li class="toc-entry toc-h3"><a href="#adapting-our-camera-class">Adapting our Camera Class</a></li>
+<li class="toc-entry toc-h3"><a href="#creating-moving-spheres">Creating Moving Spheres</a></li>
+<li class="toc-entry toc-h3"><a href="#adapting-our-material-class">Adapting our Material Class</a></li>
+<li class="toc-entry toc-h3"><a href="#using-smart-pointers">Using Smart Pointers</a></li>
+<li class="toc-entry toc-h3"><a href="#setting-our-scene">Setting our Scene</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#bounding-volume-hierarchies">Bounding Volume Hierarchies</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#establishing-a-hierarchy">Establishing a Hierarchy</a></li>
+<li class="toc-entry toc-h3"><a href="#understanding-axis-aligned-bounding-boxes-aabbs">Understanding Axis-Aligned Bounding Boxes (AABBs)</a></li>
+<li class="toc-entry toc-h3"><a href="#implementing-aabb-ray-intersections">Implementing AABB Ray Intersections</a></li>
+<li class="toc-entry toc-h3"><a href="#creating-bounding-boxes-for-our-hittables">Creating Bounding Boxes for our Hittables</a></li>
+<li class="toc-entry toc-h3"><a href="#creating-bounding-boxes-for-lists-of-hittables">Creating Bounding Boxes for Lists of Hittables</a></li>
+</ul>
+</li>
+</ul>
+
+<hr>
+
+<div id="markdown-content">
+    <p><a id="continue-reading-point"></a></p>
+
+<p><span class="note">
+    I started this path tracer months ago, and only started this blog in late May. The version of Shirley’s book that I used is from some time in 2018 (Version 1.54), and I have found that there is a recently updated version (3.1.2) on <a href="https://raytracing.github.io/">his website</a> from June 6th, 2020! I also supplemented Shirley’s book with <a href="https://viclw17.github.io/writing.html">Victor Li’s posts on the subject</a>. As such, there may be differences in implementation compared to the most recent version of Ray Tracing in One Weekend. <br><br>I am trying to keep things easy-to-follow, mostly sticking with my original code and only changing or adding what I deem to be necessary for readability, clarity, or image rendering purposes. If you are reading this to build your own ray tracer, I highly recommend Shirley’s book as a primary source.
+</span></p>
+
+<hr>
+<h2 id="contents">
+<a class="anchor" href="#contents" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contents</h2>
+
+<ul class="part-navigator">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    <li>
+        <a href="/2020/05/20/ray-tracing-in-one-weekend-part-one.html#post-title" class="btn">Part One - An Introduction</a>
+
+    </li>
+    
+    
+    
+
+    <li>
+        <a href="/2020/06/19/ray-tracing-in-one-weekend-part-two.html#post-title" class="btn">Part Two - The First Weekend</a>
+
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    <li>
+        <a href="/2023/04/25/rt-part-3.html#post-title" class="btn inactive">Part Three - The Next Weekend</a>
+
+    </li>
+    
+    
+</ul>
+
+<hr>
+
+<h2 id="motion-blur">
+<a class="anchor" href="#motion-blur" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="motion-blur"></a>Motion Blur</h2>
+
+<p>Similarly to how we simulated <a href="http://localhost:4000/2020/06/19/ray-tracing-in-one-weekend-part-two.html#depth-of-field">depth of field</a> and <a href="http://localhost:4000/2020/06/19/ray-tracing-in-one-weekend-part-two.html#fuzzy-metal">imperfect reflections</a> through brute force in my <a href="/2020/06/19/ray-tracing-in-one-weekend-part-two.html">previous ray tracing post</a>, we can also implement motion blur.</p>
+
+<p>Motion blur (in a real, physical camera) is a the result of movement while the camera’s shutter is open. The image produced is the average of what the camera “saw” over that amount of time.</p>
+
+<p><span class="captioned-image">
+<img src="/assets/images/blog-images/path-tracer/the-next-week/shutter.webp" alt="shutter-speed">
+<a href="https://www.studiobinder.com/blog/what-is-shutter-speed/">(source)</a>
+</span></p>
+
+<h3 id="adapting-our-ray-class">
+<a class="anchor" href="#adapting-our-ray-class" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="adapting-our-ray-class"></a>Adapting our Ray Class</h3>
+
+<p>First, we give our ray the ability to store the time at which it exists.</p>
+
+<p><code class="language-plaintext highlighter-rouge">ray.h</code>:</p>
+
+<pre><code class="language-diff-cpp diff-highlight"> 
+ class Ray {
+	public:
+	ray() {}
++	ray(const vec3&amp; a, const vec3&amp; b, double moment) { A = a; B = b; mMoment = moment; }
+	vec3 origin() const		{ return A; }
+	vec3 direction() const	{ return B; }
++	double moment() const  	{ return mMoment; }
+	vec3 point_at_parameter(double t) const { return A + t * B; }
+ 	
+	vec3 A;
+	vec3 B;
++	double mMoment;
+ };</code></pre>
+
+<h3 id="adapting-our-camera-class">
+<a class="anchor" href="#adapting-our-camera-class" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="adapting-our-camera-class"></a>Adapting our Camera Class</h3>
+
+<p>Now we have to update the camera to give each ray a time upon “shooting” one:
+<code class="language-plaintext highlighter-rouge">camera.h</code>:</p>
+
+<pre><code class="language-diff-cpp diff-highlight">
+class camera
+	{
+	public:
++		camera(vec3 lookFrom, vec3 lookAt, vec3 vUp, double vFov, double aspectRatio, double aperture, double focusDistance, double shutterOpenDuration)
+		{
+			lensRadius = aperture / 2;
+			double theta = vFov * pi / 180;
+			double halfHeight = tan(theta / 2);
+			double halfWidth = aspectRatio * halfHeight;
+			origin = lookFrom;
+			w = unit_vector(lookFrom - lookAt);
+			u = unit_vector(cross(vUp, w));
+			v = cross(w, u);
+			lowerLeftCorner = origin - halfWidth * focusDistance * u - halfHeight * focusDistance * v - focusDistance * w;
+			horizontal = 2 * halfWidth * focusDistance * u;
+			vertical = 2 * halfHeight * focusDistance * v;
++			this-&gt;shutterOpenDuration = shutterOpenDuration;
+		}
+
+		ray get_ray(double s, double t)
+		{
+			vec3 rd = lensRadius * random_unit_disk_coordinate();
+			vec3 offset = u * rd.x() + v * rd.y();
+			return ray(origin + offset,
+					lowerLeftCorner + s * horizontal + t * vertical - origin - offset,
++					random_double(0, shutterOpenDuration));
+		}
+
+	private:
+		vec3 origin;
+		vec3 lowerLeftCorner;
+		vec3 horizontal;
+		vec3 vertical;
+		vec3 u, v, w;
+		double lensRadius;
++		double shutterOpenDuration;
+	};
+...
+</code></pre>
+
+<h3 id="creating-moving-spheres">
+<a class="anchor" href="#creating-moving-spheres" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="creating-moving-spheres"></a>Creating Moving Spheres</h3>
+
+<p>Motion blur would be useless without motion. We can modify our spheres to move linearly from some point <code class="language-plaintext highlighter-rouge">centerStart</code> to another <code class="language-plaintext highlighter-rouge">centerEnd</code> starting at <code class="language-plaintext highlighter-rouge">moveStartTime</code> and stopping at <code class="language-plaintext highlighter-rouge">moveEndTime</code>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">sphere.h</code>:</p>
+
+<pre><code class="language-diff-cpp diff-highlight"> 
+	class sphere : public hittable {
+		public:
+		sphere() {}
+		sphere(vec3 center, float radius, material* material) : 
++			centerStart(center), 
++			centerEnd(center), 
++			moveStartTime(0),
++			moveEndTime(0),
+			radius(radius), 
+			material_ptr(material){};
+
++		// Moving sphere
++		sphere(vec3 centerStart, vec3 centerEnd, double timeToTravel, float radius, material *material) : 
++			centerStart(centerStart),
++			centerEnd(centerEnd),
++			moveStartTime(moveStartTime), 
++			moveEndTime(moveEndTime),
++			radius(radius), 
++			material_ptr(material){};
+
+		virtual bool hit(const ray &amp;r, double tmin, double tmax, hit_record &amp;rec) const;
+
++		vec3 centerAt(double time) const;
+
++		vec3 centerStart, centerEnd;
++		double moveStartTime, moveEndTime;
+		double radius;
+		material* material_ptr;
+	};
+	</code></pre>
+
+<p>Checking for a hit remains mostly the same - we just account for moving spheres by calculating the centers at specific times. If you need a refresher on the implementation details of sphere collisions, check <a href="http://localhost:4000/2020/06/19/ray-tracing-in-one-weekend-part-two.html#simplifying-ray-sphere-intersection">here</a>. I stray from Shirley’s code a small amount here by actually checking if the sphere has moved yet, is moving, or has stopped moving. The result can look a little <a href="#wait-then-move-sphere">goofy</a>, but I like having the option for more interesting motion, and the code feels a bit less ambiguous than Shirley’s:</p>
+<blockquote>
+  <p>I’ll create a sphere class that has its center move linearly from center0 at time0 to center1 at time1. Outside that time interval it continues on, so those times need not match up with the camera aperture open and close.</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">sphere.h</code>:</p>
+<pre><code class="language-diff-cpp diff-highlight"> 
+
+	bool sphere::hit(const ray&amp; r, double t_min, double t_max, hit_record&amp; rec) const
+	{
++		vec3 oc = r.origin() - centerAt(r.moment()); // Vector from center to ray origin
+		double a = r.direction().length_squared();
+		double halfB = dot(oc, r.direction());
+		double c = oc.length_squared() - radius * radius;
+		double discriminant = (halfB * halfB) - (a * c);
+		if (discriminant &gt; 0.0) {
+			auto root = sqrt(discriminant);
+
+			auto temp = (-halfB - root) / a;
+
+			temp = (-halfB + root) / a;
+			if (temp &lt; t_max &amp;&amp; temp &gt; t_min) {
+				rec.t = temp;
+				rec.p = r.point_at_parameter(rec.t);
++				vec3 outward_normal = (rec.p - centerAt(r.moment())) / radius;
+				rec.set_face_normal(r, outward_normal);
+				rec.material_ptr = material_ptr;
+				return true;
+			}
+		}
+		return false;
+	}
+
++	vec3 sphere::centerAt(double time) const {
++
++		// Prevent divide by zero(naN) for static spheres
++		if (moveStartTime == moveEndTime) {
++			return centerStart;
++		}
++
++		else if (time &lt; moveStartTime){
++			return centerStart;
++		}
++
++		else if (time &gt; moveEndTime){
++			return centerEnd;
++		}
++
++		else 
++			return centerStart + ((time - moveStartTime) / (moveEndTime-moveStartTime)) * (centerEnd - centerStart);	
++	}
+}
+
+</code></pre>
+
+<h3 id="adapting-our-material-class">
+<a class="anchor" href="#adapting-our-material-class" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="adapting-our-material-class"></a>Adapting our Material Class</h3>
+
+<p>All calls to our ray constructor within <code class="language-plaintext highlighter-rouge">material.h</code> must be updated as well:</p>
+
+<pre><code class="language-diff-cpp diff-highlight"> 
+class lambertian : public material {
+    public:
+        lambertian(const vec3&amp; a) : albedo(a){};
+        virtual bool scatter(const ray&amp; ray_in, 
+                            const hit_record&amp; rec, 
+                            vec3&amp; attenuation, 
+                            ray&amp; scattered) const {
+            vec3 scatter_direction = rec.p + rec.normal + random_unit_vector();
++            scattered = ray(rec.p, scatter_direction - rec.p, ray_in.moment());
+            attenuation = albedo;
+            return true;
+        }
+    vec3 albedo; // reflectivity
+ };
+
+ // Simulate reflection of a metal (see MetalReflectivity.png)
+ // See FuzzyReflections.png for a visualization of fuzziness.
+ class metal : public material {
+    public:
+        metal(const vec3&amp; a, double f) : albedo(a) {
+            if (f&lt;1) fuzz = f; else fuzz = 1; // max fuzz of 1, for now.
+        }
+        virtual bool scatter(const ray&amp; ray_in, 
+                            const hit_record&amp; rec, 
+                            vec3&amp; attenuation, 
+                            ray&amp; scattered) const {
+        vec3 reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
++        scattered = ray(rec.p, reflected + fuzz * random_unit_sphere_coordinate(), ray_in.moment()); // large spheres or grazing rays may go below the surface. In that case, they'll just be absorbed.
+        attenuation = albedo;
+        return dot(scattered.direction(), rec.normal) &gt; 0.0;
+    }
+
+    vec3 albedo;
+    double fuzz;
+ };
+
+class dielectric : public material {
+    public:
+        dielectric(vec3 a, double ri) : albedo(a), ref_idx(ri) {}
+
+        virtual bool scatter(
+            const ray&amp; ray_in, const hit_record&amp; rec, vec3&amp; attenuation, ray&amp; scattered
+        ) const {
+
+            attenuation = albedo;
+
+            double n1_over_n2 = (rec.frontFace) ? (1.0 / ref_idx) : (ref_idx);
+
+            vec3 unit_direction = unit_vector(ray_in.direction());
+            
+            double cosine = fmin(dot(-unit_direction, rec.normal), 1.0);
+            double reflect_random = random_double(0,1);
+            double reflect_probability;
+
+            vec3 refracted;
+            vec3 reflected;
+
+            if (refract(unit_direction, rec.normal, n1_over_n2, refracted)) {
+                reflect_probability = schlick(cosine, ref_idx);
+
+                if (reflect_random &lt; reflect_probability) {
+                    vec3 reflected = reflect(unit_direction, rec.normal);
++                    scattered = ray(rec.p, reflected, ray_in.moment());
+                    return true;
+                }
++                scattered = ray(rec.p, refracted, ray_in.moment());
+                return true;
+            }
+
+            else {
+                reflected = reflect(unit_direction, rec.normal);
++                scattered = ray(rec.p, reflected, ray_in.moment());
+                return true;
+            }
+
+            
+        
+        }
+    public:
+        double ref_idx;
+        vec3 albedo;
+};
+</code></pre>
+
+<h3 id="using-smart-pointers">
+<a class="anchor" href="#using-smart-pointers" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="using-smart-pointers"></a>Using Smart Pointers</h3>
+
+<p>In the time since I’ve completed <a href="http://localhost:4000/2020/06/19/ray-tracing-in-one-weekend-part-two.html">The First Weekend</a>, Shirley has updated his code to use smart pointers in place of raw ones. I should’ve known to use smart pointers myself, but I was more familiar with java at that time and wanted to stick to the guide.</p>
+
+<p>Anyway, you can read about smart pointers <a href="https://docs.microsoft.com/en-us/cpp/cpp/smart-pointers-modern-cpp">here</a>. We’ll mainly be using the <code class="language-plaintext highlighter-rouge">shared_ptr</code> class, which is designed for pointers that may have more than one owner. The raw pointer is not deleted until all <code class="language-plaintext highlighter-rouge">shared_ptr</code> owners have gone out of scope or given up ownership.</p>
+
+<p><img src="/assets/images/blog-images/path-tracer/the-next-week/shared_ptr.png" alt="Shared pointer"></p>
+
+<p>Let’s start refactoring from the bottom up - <code class="language-plaintext highlighter-rouge">hittable.h</code>:</p>
+<pre><code class="language-diff-cpp diff-highlight">
+	#ifndef HITTABLEH
+	#define HITTABLEH
+
+	#include "ray.h"
+
++	#include &lt;memory&gt;
++	#include &lt;vector&gt;
++	
++	using std::shared_ptr;
++	using std::make_shared;
+
+	class material; // forward declaration
+
+	struct hit_record {
+		double t; // parameter of the ray that locates the intersection point
+		vec3 p; // intersection point
+		vec3 normal;
+		bool frontFace;
+-		material* material_ptr;
++		shared_ptr&lt;material&gt; material_ptr;
+
+		inline void set_face_normal(const ray&amp; r, const vec3&amp; outward_normal) {
+			frontFace = dot(r.direction(), outward_normal) &lt; 0;
+			normal = frontFace ? outward_normal : -outward_normal;
+		}
+	};
+
+	...
+
+</code></pre>
+
+<p>Additionally, we are going to edit <code class="language-plaintext highlighter-rouge">hittableList.h</code> to not only use shared pointers, but also use <a href="https://www.cplusplus.com/reference/vector/vector/">vectors</a>, which are basically arrays that can change size. Using raw dynamic arrays should generally be avoided, as they come with a heap of responsibility and potential for error, with no real benefits.</p>
+
+<p><code class="language-plaintext highlighter-rouge">hittableList.h</code>:</p>
+<pre><code class="language-diff-cpp diff-highlight">
+#ifndef HITTABLELISTH
+#define HITTABLELISTH
+
+#include "hittable.h"
+
+class hittable_list : public hittable {
+public:
+	hittable_list() {}
+-	hittable_list(hittable** l, int n) { list = l; list_size = n; }
++	hittable_list(shared_ptr&lt;hittable&gt; object) { add(object); }
+
++	void clear() { objects.clear(); }
++       void add(shared_ptr&lt;hittable&gt; object) { objects.push_back(object); }
+	virtual bool hit(const ray&amp; r, double tmin, double tmax, hit_record&amp; rec) const;
+
+-	hittable** list;
+-	int list_size;
+
++	std::vector&lt;shared_ptr&lt;hittable&gt;&gt; objects;
+
+};
+
+bool hittable_list::hit(const ray&amp; r, double t_min, double t_max, hit_record&amp; rec) const {
+	hit_record temp_rec;
+	bool hit_anything = false;
+	double closest_so_far = t_max;
+	for (const auto&amp; object : objects) {
+-		for (int i = 0; i &lt; list_size; i++) {
+-			if (list[i]-&gt;hit(r, t_min, closest_so_far, temp_rec)) {
+
++		if (object-&gt;hit(r, t_min, closest_so_far, temp_rec)) {
++			hit_anything = true;
+			closest_so_far = temp_rec.t;
+			rec = temp_rec;
+		}
+	}
+	return hit_anything;
+}
+
+#endif // !HITTABLELISTH
+</code></pre>
+
+<p><code class="language-plaintext highlighter-rouge">sphere.h</code>:</p>
+
+<pre><code class="language-diff-cpp diff-highlight">
+class sphere : public hittable {
+	public:
+		sphere() {}
+-		sphere(vec3 center, float radius, material *material) : 
++		sphere(vec3 center, float radius, shared_ptr&lt;material&gt; material) : 
+			centerStart(center), 
+			centerEnd(center), 
+			moveStartTime(0),
+			moveEndTime(0),
+			radius(radius), 
+			material_ptr(material){};
+
+		// Moving sphere
+-			sphere(vec3 centerStart, vec3 centerEnd, double timeToTravel, float radius, material *material) : 
++		sphere(vec3 centerStart, vec3 centerEnd, double timeToTravel, float radius, shared_ptr&lt;material&gt; material) : 
+			centerStart(centerStart),
+			centerEnd(centerEnd),
+			moveStartTime(moveStartTime), 
+			moveEndTime(moveEndTime),
+			radius(radius), 
+			material_ptr(material){};
+
+		virtual bool hit(const ray &amp;r, double tmin, double tmax, hit_record &amp;rec) const;
+
+		vec3 centerAt(double time) const;
+
+		vec3 centerStart, centerEnd;
+		double moveStartTime, moveEndTime;
+		double radius;
+-		material *material_ptr;
++		shared_ptr&lt;material&gt; material_ptr;
+	};
+
+	...
+
+</code></pre>
+
+<p>The changes for <code class="language-plaintext highlighter-rouge">Main.cpp</code> mostly amount to replacing all uses of keyword <code class="language-plaintext highlighter-rouge">new</code> with <code class="language-plaintext highlighter-rouge">make_shared</code>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">Main.cpp</code>:</p>
+
+<pre><code class="language-diff-cpp diff-highlight">
+...
+-	vec3 color(const ray&amp; r, hittable *world, int depth) {
++	vec3 color(const ray&amp; r, hittable_list world, int depth) {
+		hit_record rec;
+
+		if (depth &lt;= 0) {
+			return vec3(0,0,0);
+		}  
+-	    if (world-&gt;hit(r, 0.001, DBL_MAX, rec)) {
++		if (world.hit(r, 0.001, DBL_MAX, rec)) {
+			ray scattered;
+			...
+	}
+
+
+-	hittable *random_scene() {
+-    int n = 500;
+-    hittable ** list = new hittable * n+1];
+-    list[0] =  new sphere(vec3(0,-1000,0), 1000, new lambertian(vec3(0.5, 0.5, 0.5))); //"Ground"
+-    int i = 1;
+-    for (int a = -11; a &lt; 11; a++) {
+-        ...
+-    }
+-	 return new hittable_list(list,i);
+-	}
+-	
+
+
++	hittable_list random_scene() {
++		hittable_list world;
++		
++		auto ground_material = make_shared&lt;lambertian&gt;(vec3(0.5, 0.5, 0.5));
++		auto ground_sphere = make_shared&lt;sphere&gt;(vec3(0,-1000,0), 1000, ground_material);
++
++		world.add(ground_sphere);
++
++		...
++
++		return world;
++	}
+
+
+int main() {
+
+	int nx = 400; // Number of horizontal pixels
+	int ny = 300; // Number of vertical pixels
+	int ns = 30; // Number of samples for each pixel for anti-aliasing (see AntiAliasing.png for visualization)
+    int maxDepth = 20; // Ray bounce limit
+	std::cout &lt;&lt; "P3\n" &lt;&lt; nx &lt;&lt; " " &lt;&lt; ny &lt;&lt; "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
+
+	vec3 lookFrom(0, 2, 24);
+	vec3 lookAt(0,1,0);
+	double distToFocus = (lookFrom-lookAt).length();
+	double aperture = 0.1; // bigger = blurrier
+
+-	hittable *world = random_scene();
++	auto world = random_scene();
+
+	...
+
+}
+</code></pre>
+
+<h3 id="setting-our-scene">
+<a class="anchor" href="#setting-our-scene" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="setting-our-scene"></a>Setting our Scene</h3>
+<p>Okay - we’ve got all the maintenence out of the way. Do whatever you please; I simplified the scene to show off our new feature with a black sphere moving from left to right:</p>
+
+<div class="row">
+<div class="captioned-image">
+<img src="/assets/images/blog-images/path-tracer/the-next-week/blur-speed1-shutter1.png" alt="Moving sphere">
+Shutter speed 1, start move at 0, stop move at 1
+</div>
+<div class="captioned-image" id="wait-then-move-sphere">
+<img src="/assets/images/blog-images/path-tracer/the-next-week/blur-start25end75-shutter1.png" alt="Wait then move sphere">
+Shutter speed 1, start move at .25, stop move at .75
+</div>
+</div>
+
+<p><code class="language-plaintext highlighter-rouge">Main.cpp</code>:</p>
+<pre><code class="language-diff-cpp diff-highlight">
+
+hittable_list random_scene() {
+    hittable_list world;
+    
+    auto ground_material = make_shared&lt;lambertian&gt;(vec3(0.5, 0.5, 0.5));
+    auto ground_sphere = make_shared&lt;sphere&gt;(vec3(0,-1000,0), 1000, ground_material);
+
+    world.add(ground_sphere);
+
+-	...
+
+    world.add(make_shared&lt;sphere&gt;(vec3(0, 1, 0), 1.0, make_shared&lt;dielectric&gt;(vec3(0.9,0.9,0.0), 1.5)));
+    world.add(make_shared&lt;sphere&gt;(vec3(-4, 1, 0), 1.0, make_shared&lt;lambertian&gt;(vec3(0.4, 0.2, 0.1))));
+    world.add(make_shared&lt;sphere&gt;(vec3(4, 1, 0), 1.0, make_shared&lt;metal&gt;(vec3(0.7, 0.6, 0.5), 0.0)));
+
++    // Moving sphere
++    world.add(make_shared&lt;sphere&gt;(vec3(-4, 3, 0), vec3(4,3,0), 0, 1.0, make_shared&lt;lambertian&gt;(vec3(0.0, 0.0, 0.0))));
+
+
+    return world;
+}
+
+int main() {
+
+	int nx = 1600; // Number of horizontal pixels
+	int ny = 900; // Number of vertical pixels
+	int ns = 60; // Number of samples for each pixel for anti-aliasing (see AntiAliasing.png for visualization)
+    int maxDepth = 20; // Ray bounce limit
+	std::cout &lt;&lt; "P3\n" &lt;&lt; nx &lt;&lt; " " &lt;&lt; ny &lt;&lt; "\n255\n"; // P3 signifies ASCII, 255 signifies max color value
+
+	vec3 lookFrom(0, 2, 24);
+	vec3 lookAt(0,1,0);
+	double distToFocus = (lookFrom-lookAt).length();
+	double aperture = 0.1; // bigger = blurrier
+
+	auto world = random_scene();
+
++	camera cam(lookFrom, lookAt, vec3(0,1,0), 20,double(nx)/double(ny), aperture, distToFocus, 1.0);	
+
+   	auto start = std::chrono::high_resolution_clock::now();
+
+
+	for (int j = ny - 1; j &gt;= 0; j--) { // Navigate canvas
+        std::cerr &lt;&lt; "\rScanlines remaining: " &lt;&lt; j &lt;&lt; ' ' &lt;&lt; std::flush;
+		for (int i = 0; i &lt; nx; i++) {
+			vec3 col(0, 0, 0);
+			for (int s = 0; s &lt; ns; s++) { // Anti-aliasing - get ns samples for each pixel
+				double u = (i + random_double(0.0, 0.999)) / double(nx);
+				double v = (j + random_double(0.0, 0.999)) / double(ny);
+				ray r = cam.get_ray(u, v);
+				col += color(r, world, maxDepth);
+			}
+
+			col /= double(ns); // Average the color between objects/background
+			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));  // set gamma to 2
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
+			std::cout &lt;&lt; ir &lt;&lt; " " &lt;&lt; ig &lt;&lt; " " &lt;&lt; ib &lt;&lt; "\n";
+		}
+	}
+    
+	...
+
+}
+
+</code></pre>
+
+<hr>
+
+<p><span class="note">
+After writing the next section on Bounding Volume Hierarchies, I decided to refactor - I kept getting confused as to what was a class, a method, or a file. There were some inconsistencies in variable names as well. From here on out, variables and functions are camelCase, and classes and files are capitalized. Sorry if this causes any confusion, but it had to be done!
+</span></p>
+
+<h2 id="bounding-volume-hierarchies">
+<a class="anchor" href="#bounding-volume-hierarchies" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="bounding-volume-hierarchies"></a>Bounding Volume Hierarchies</h2>
+
+<p><img alt="BVH Illustration" src="/assets/images/blog-images/path-tracer/the-next-week/bounding-volume-hierarchy-wikipedia.svg" style="background: white; padding: 2rem;"></p>
+
+<p>Shirley describes this section as the most difficult part - he justfies tackling it now to avoid future refactoring in addition to significantly reducing runtime. Let’s dive in.</p>
+
+<p>If you’d like a succinct primer on the subject, I’d highly reccommend the following video:</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/EqvtfIqneKA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
+
+<p>Calculating ray-object intersections is where our ray tracer spends most of its time - and this time spent increases linearly with the number of objects in a scene. However - as Shirley points out - intersection is a repeated search upon a static model. As such, we should be able to <strong>apply the principles of binary search</strong> (divide and conquer) to our intersection logic.</p>
+
+<p><span class="captioned-image">
+<img src="/assets/images/blog-images/path-tracer/the-next-week/binary-vs-linear.gif" alt="Binary vs linear search">
+Average case for binary search (<a href="https://blog.penjee.com/binary-vs-linear-search-animated-gifs/">source</a>)
+</span></p>
+
+<p>In order to use a binary sort in any scenario, the data has to be sorted. Consequently, we have to find a way to “sort” our scene. We’ll do this by breaking up the scene into progressively smaller chunks (like a binary tree) using bounding volumes. The most common approaches for sorting ray tracing models are to either bound by space or by scene objects. We’ll be bounding by object, as it’s simpler.</p>
+
+<p>Here’s the “Key Idea” on BVH’s from Shirley’s book:</p>
+<blockquote>
+  <p>The key idea of a bounding volume over a set of primitives is to find a volume that fully encloses (bounds) all the objects. For example, suppose you computed a bounding sphere of 10 objects. Any ray that misses the bounding sphere definitely misses all ten objects. If the ray hits the bounding sphere, then it might hit one of the ten objects.</p>
+</blockquote>
+
+<p>It follows that the pseudo-code looks like this:
+&lt;/code&gt;&lt;/pre&gt;
+if (ray hits bounding object)
+    return whether ray hits bounded objects
+else
+    return false
+&lt;/code&gt;&lt;/pre&gt;</p>
+
+<p>One more important aspect of BVH’s - any object is in <strong>only one bounding volume</strong>, but <strong>bounding volumes can overlap</strong>.</p>
+
+<h3 id="establishing-a-hierarchy">
+<a class="anchor" href="#establishing-a-hierarchy" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="establishing-a-hierarchy"></a>Establishing a Hierarchy</h3>
+
+<p>To make intersection checks sub-linear, we need to establish a hierarchy. If we had a set of objects split into two subsets - orange &amp; blue - and we used rectangular bounding volumes in our model, this would be the result:</p>
+
+<p><img src="/assets/images/blog-images/path-tracer/the-next-week/bounding-hierarchies.png" alt="BVH Illustration" style="     background: transparent; "></p>
+
+<p>The orange &amp; blue subsets are simply inside the white rectangle and the binary tree has no order. The pseudo-code for this hierarchy would look like:</p>
+
+<pre><code>
+if (hits white)
+    hitOrange = hits orange enclosed objects
+    hitBlue = hits blue enclosed objects
+    if (hitOrange or hitBlue)
+        return true and info of closer hit
+return false
+</code></pre>
+
+<h3 id="understanding-axis-aligned-bounding-boxes-aabbs">
+<a class="anchor" href="#understanding-axis-aligned-bounding-boxes-aabbs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding Axis-Aligned Bounding Boxes (AABBs)</h3>
+
+<p>We want our bounding box collisions to be fast and as compact as possible. For this, we’ll implement a popular solution - axis-aligned bounding boxes (AABB’s). These boxes will be “parallelepipeds” - 3d parallelograms. Another option would be to use spheres, but depending on the shape of the object in question, spheres can result in more false positive collisions than a bounding box (Imagine enclosing a person in a sphere vs. in a box).</p>
+
+<p><img src="/assets/images/blog-images/path-tracer/the-next-week/parallelepiped-wiki.svg" alt="Parallelpiped"></p>
+
+<p>Since these AABB’s are simply containers for our renderable objects, we don’t need any additional information about collisions (like normals, materials, or hit points).</p>
+
+<p>To formulate our AABB’s, we’ll use the slab method. Here’s an explanation from <a href="https://pbr-book.org/3ed-2018/Shapes/Basic_Shape_Interface">pbr-book.org</a>:</p>
+
+<blockquote>
+  <p>One way to think of bounding boxes is as the intersection of three slabs, where a slab is the region of space between two parallel planes. To intersect a ray against a box, we intersect the ray against each of the box’s three slabs in turn.</p>
+</blockquote>
+
+<p><img src="/assets/images/blog-images/path-tracer/the-next-week/rotating-knot.gif" alt="Rotating knot with dynamic bounding box"></p>
+
+<p>Let’s start with an AABB example in 2D - a rectangle:</p>
+
+<p>We need see if the ray in question hits the edges of the slab in the x-coordinate space. It will, unless the ray is parallel to the plane.</p>
+
+<p><span class="captioned-image">
+    <img src="/assets/images/blog-images/path-tracer/the-next-week/ray-slab-intersect.svg" alt="Slab Intersection">
+    Slab Intersection (with normal $(1,0,0)$)
+</span></p>
+
+<p>We now check for ray-slab intersections in the y-coordinate space in the same manner. If there’s any overlap in $x$ and $y$’s $t$ intervals, that’s a collision:</p>
+
+<p><span class="captioned-image">
+    <img src="/assets/images/blog-images/path-tracer/the-next-week/ray-aabb-intersect.svg" alt="AABB Intersection">
+    2D AABB Collision 
+    </span>
+&lt;/span&gt;</p>
+
+<p>In 3D, the edges in question are planes instead of lines. To find where the ray intersects the plane, we can use the function</p>
+
+\[\mathbf{P}(t) = \mathbf{A} + t \mathbf{b}\]
+
+<p>$P$ is a point on the ray.
+$A$ is the ray origin.
+$b$ is the direction of the ray.
+The ray parameter $t$ is a real number (positive or negative) that moves $P(t)$ along the ray.</p>
+
+<p>In terms of $x$, the ray hits the plane $x = x_0$ at $t$ that satisfies the equation</p>
+
+\[x_0 = A_x + t_0 b_x\]
+
+<p>Therefore, $t_0$ and $t_1$ can be calculated as follows, respectively:</p>
+
+\[t_0 = \frac{x_0 - A_x}{b_x}\]
+
+\[t_1 = \frac{x_1 - A_x}{b_x}\]
+
+<h3 id="implementing-aabb-ray-intersections">
+<a class="anchor" href="#implementing-aabb-ray-intersections" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementing AABB Ray Intersections</h3>
+
+<p>The simple pseudocode for collisions using the method described in the previous section is as follows:</p>
+
+<pre><code>
+compute (tx0, tx1)
+compute (ty0, ty1)
+compute (tz0, tz1)
+return overlap?( (tx0, tx1), (ty0, ty1), (tz0, tz1))
+</code></pre>
+
+<p>There are a couple complications to be aware of:</p>
+<ul>
+  <li>The ray could be travelling in the negative direction after having bounced off an object or simply based on the camera’s coordinates</li>
+  <li>The division of $x_n - A_n$ by $b_n$ could cause infinites</li>
+  <li>A ray originating from a slab boundary could result in $NaN$</li>
+  <li>SIMD Vectorization issues (Minor and beyond the scope of this post)</li>
+</ul>
+
+<p>To get started addressing these issues and more, we should look to our interval computation:</p>
+
+\[t_0 = \frac{x_0 - A_x}{b_x}\]
+
+\[t_1 = \frac{x_1 - A_x}{b_x}\]
+
+<p>One thing to always be wary of is divison by zero. Funnily enough - valid rays that have a $b$ (direction) of 0 (in any coordinate space - x, y, or z) will cause division by zero. Peter mentions that “Also, the zero will have a ± sign under IEEE floating point” - so maybe we won’t <em>technically</em> get a divide by zero - I’m a little unsure of why he mentions this. You can read up on signed zero on <a href="https://en.wikipedia.org/wiki/Signed_zero">Wikipedia</a> or <a href="https://stackoverflow.com/questions/42926763/the-behaviour-of-floating-point-division-by-zero">StackOverflow</a>. Anyway, when $b = 0$, $t_0$ and $t_1$ will both be either +∞ or -∞ if not between coordinate $x_0$ and $x_1$, which means that we can use min and max to get the correct values.</p>
+
+\[t_{x0} = \min(
+     \frac{x_0 - A_x}{b_x},
+     \frac{x_1 - A_x}{b_x})\]
+
+\[t_{x1} = \max(
+    \frac{x_0 - A_x}{b_x},
+    \frac{x_1 - A_x}{b_x})\]
+
+<blockquote>
+  <p>The remaining troublesome case if we do that is if $b_x=0$ and either $x_0−A_x=0$ or $x_1−A_x=0$ so we get NaN. In that case we can probably accept either hit or no hit answer, but we’ll revisit that later.</p>
+</blockquote>
+
+<p>Now we need to think about how we’re going to implement the overlap function - we’re going to assume that the edges are in order - that is, $x_0$ / $y_0$ / $z_0$ is always less than $x_1$ / $y_1$ / $z_1$  Let’s think about it in 2D again:</p>
+
+<p><img src="/assets/images/blog-images/path-tracer/the-next-week/ray-aabb-intersect.svg" alt="AABB Intersection"></p>
+
+<p>We’re going to simply check if either $y_0$ or $y_1$ are contained within ($x_0$, $x_1$).</p>
+
+<p>We can extend this concept to 3D:</p>
+
+<pre><code>
+bool overlap(x0, x1, y0, y1, z0, z1)
+    z0 = max(x0, y0)
+    z1 = min(x1, y1)
+    return (z0 &lt; z1)
+</code></pre>
+
+<blockquote>
+  <p>If there are any NaNs running around there, the compare will return false so we need to be sure our bounding boxes have a little padding if we care about grazing cases (and we probably should because in a ray tracer all cases come up eventually).</p>
+</blockquote>
+
+<p>Translated to C++:</p>
+
+<pre><code class="language-cpp">
+#ifndef BOUNDINGBOXH
+#define BOUNDINGBOXH
+
+#include "RtWeekend.h"
+
+class BoundingBox {
+    public:
+        BoundingBox() {}
+        BoundingBox(const Vec3&amp; a, const Vec3&amp; b) { minimum = a; maximum = b;}
+
+        vec3 min() const {return minimum; }
+        vec3 max() const {return maximum; }
+
+        bool hit(const Ray&amp; r, double tMin, double tMax) const {
+            for (int a = 0; a &lt; 3; a++) {
+                auto t0 = fmin((minimum[a] - r.origin()[a]) / r.direction()[a],
+                               (maximum[a] - r.origin()[a]) / r.direction()[a]);
+                auto t1 = fmax((minimum[a] - r.origin()[a]) / r.direction()[a],
+                               (maximum[a] - r.origin()[a]) / r.direction()[a]);
+                tMin = fmax(t0, tMin);
+                tMax = fmin(t1, tMax);
+                if (tMax &lt;= tMin)
+                    return false;
+            }
+            return true;
+        }
+
+        vec3 minimum;
+        vec3 maximum;
+};
+
+#endif
+</code></pre>
+
+<h3 id="creating-bounding-boxes-for-our-hittables">
+<a class="anchor" href="#creating-bounding-boxes-for-our-hittables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Bounding Boxes for our Hittables</h3>
+<p>We’ll need a function to compute the bounding boxes of hittables. We can create a hierarchy of bounding boxes enclosing all primitives, and the individual primitives (like single spheres) will be the leaves at the bottom of the hierarchy.</p>
+
+<p>Our bounding box function will return a bool because some primitives (like planes) don’t have bounding boxes.</p>
+
+<p>Moving objects will have a bounding box that will enclose the primitive from timeStart to timeEnd.</p>
+
+<p>First, we’ll create a virtual function in <code class="language-plaintext highlighter-rouge">Hittable.h</code>:</p>
+
+<pre><code class="language-diff-cpp diff-highlight">
++ #include "BoundingBox.h"
+
+...
+
+class Hittable {
+public: 
+	virtual bool hit(const Ray&amp; r, double tMin, double tMax, HitRecord&amp; rec) const = 0;
++	virtual bool generateBoundingBox(double time0, double time1, BoundingBox&amp; outputBox) const = 0;
+
+};
+</code></pre>
+
+<p>and override it in <code class="language-plaintext highlighter-rouge">Sphere.h</code>:</p>
+
+<pre><code class="language-cpp">bool Sphere::generateBoundingBox(double timeStart, double timeEnd, BoundingBox&amp; outputBox) const {
+	
+	
+	BoundingBox box0 = BoundingBox(
+			centerAt(timeStart) - vec3(radius, radius, radius),
+			centerAt(timeStart) + vec3(radius, radius, radius));
+
+	// Sphere is not moving
+	if (timeStart-timeEnd &lt; epsilon ) {
+		outputBox = box0
+		return true;
+	}
+
+	else {
+		BoundingBox box1 = BoundingBox(
+			centerAt(timeEnd) - vec3(radius, radius, radius),
+			centerAt(timeEnd) + vec3(radius, radius, radius));
+		
+		outputBox = generateSurroundingBox(box0, box1)
+                return true;
+	}
+
+	
+}
+</code></pre>
+
+<p>We now need to implement the non-member <code class="language-plaintext highlighter-rouge">generateSurroundingBox</code> function in <code class="language-plaintext highlighter-rouge">BoundingBox.h</code>:</p>
+
+<pre><code class="language-cpp">BoundingBox generateSurroundingBox(BoundingBox box0, BoundingBox box1) const {
+            
+            double x,y,z;
+
+            x = fmin(box0.min().x(), box1.min().x());
+            y = fmin(box0.min().y(), box1.min().y());
+            z = fmin(box0.min().z(), box1.min().z());
+
+            vec3 min {x, y, z};
+
+
+
+            x = fmax(box0.max().x(), box1.max().x());
+            y = fmax(box0.max().y(), box1.max().y());
+            z = fmax(box0.max().z(), box1.max().z());
+
+            vec3 max {x, y, z};
+
+            return BoundingBox(min, max);
+        }
+</code></pre>
+
+<h3 id="creating-bounding-boxes-for-lists-of-hittables">
+<a class="anchor" href="#creating-bounding-boxes-for-lists-of-hittables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Bounding Boxes for Lists of Hittables</h3>
+
+<p>Similarly, we’ll have to add to our <code class="language-plaintext highlighter-rouge">HittableList</code> class:</p>
+
+<pre><code class="language-cpp">
+#ifndef HITTABLELISTH
+#define HITTABLELISTH
+
+#include "Hittable.h"
+
+class HittableList : public Hittable {
+public:
+	HittableList() {}
+	HittableList(shared_ptr<hittable> object) { add(object); }
+
+	void clear() { objects.clear(); }
+        void add(shared_ptr<hittable> object) { objects.push_back(object); }
+	virtual bool hit(const Ray&amp; r, double tMin, double tMax, HitRecord&amp; rec) const override;
++	virtual bool generateboundingBox(double timeStart, double timeEnd, BoundingBox&amp; outputBox) const override;
+
+	std::vector&lt;shared_ptr<hittable>&gt; objects;
+
+};
+
+bool HittableList::hit(const Ray&amp; r, double tMin, double tMax, HitRecord&amp; rec) const {
+	HitRecord tempHitRec;
+	bool hitStatus = false;
+	double closestSoFar = tMax;
+	for (const auto&amp; object : objects) {
+
+		if (object-&gt;hit(r, tMin, closestSoFar, tempHitRec)) {
+			hitStatus = true;
+			closestSoFar = tempHitRec.t;
+			rec = tempHitRec;
+		}
+	}
+	return hitStatus;
+	
+}
+
++   bool HittableList::generateBoundingBox(double timeStart, double timeEnd, BoundingBox &amp;outputBox) const {
++   	
++   	if (objects.empty()) {
++   		return false;
++   	}
++   
++       BoundingBox tempBox;
++       bool isFirstBox = true;
++   
++       for (const auto&amp; object : objects) {
++           if (!object-&gt;generateBoundingBox(timeStart, timeEnd, tempBox)) return false;
++           outputBox = isFirstBox ? tempBox :  generateSurroundingBox(outputBox, tempBox);
++           isFirstBox = false;
++       }
++   
++       return true;
++   	
++   }
+
+#endif // !HITTABLELISTH
+&lt;/code&gt;&lt;/pre&gt; 
+
+### Defining our Hittable BVH Class
+Our BVHs need to be `hittable`s.
+
+Take note of the fact that the child nodes point to generic `Hittable`s - they can other BVHs, spheres, or any kind of hittable.
+
+<pre><code class="language-cpp">#ifndef BVHH
+#define BVHH
+
+#include "RtWeekend.h"
+
+#include "Hittable.h"
+#include "HittableList.h"
+
+
+class BvhNode : public Hittable {
+    public:
+    
+        BvhNode();
+
+        BvhNode(const HittableList&amp; list, double timeStart, double timeEnd)
+            : BvhNode(list.objects, 0, list.objects.size(), timeStart, timeEnd)
+        {}
+
+        BvhNode(
+            const std::vector&lt;shared_ptr<hittable>&gt;&amp; srcObjects,
+            size_t start, size_t end, double timeStart, double timeEnd);
+
+        virtual bool hit(
+            const Ray&amp; r, double tMin, double tMax, HitRecord&amp; rec) const override;
+
+        virtual bool generateBoundingBox(double timeStart, double timeEnd, BoundingBox&amp; outputBox) const override;
+
+    public:
+        shared_ptr<hittable> left;
+        shared_ptr<hittable> right;
+        BoundingBox box;
+};
+
+bool BvhNode::hit(const Ray&amp; r, double tMin, double tMax, HitRecord&amp; rec) const {
+    if (!box.hit(r, tMin, tMax))
+        return false;
+
+    bool hitLeft = left-&gt;hit(r, tMin, tMax, rec);
+    bool hitRight = right-&gt;hit(r, tMin, hitLeft ? rec.t : tMax, rec);
+
+    return hitLeft || hitRight;
+}
+
+bool BvhNode::generateBoundingBox(double timeStart, double timeEnd, BoundingBox&amp; outputBox) const {
+    outputBox = box;
+    return true;
+}
+
+#endif
+&lt;/code&gt;&lt;/pre&gt;
+
+### Splitting BVH Volumes
+
+&gt; The most complicated part of any efficiency structure, including the BVH, is building it.
+
+These BVHs can be hard to create a mental image for - here's a video to help:
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/rM-BVsdi8c4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+We'll be building the BVH in the constructor. The BVH doesn't have to be perfect - as long as the list of `hittables` in a node gets divided into two sublists, the BVH `hit` function will work. Shirley notes that the best/fastest scenario is if the children `hittable`s have smaller bounding boxes than their parent.
+
+We'll follow Shirley's lead and adopt a simplistic middle-ground method:
+
+1. Randomly choose an axis
+2. Sort the primitives
+3. Store the primitives as evenly as possible across subtrees
+
+When the incoming `vector` object has a size of two, that's when we can stop recursing and put each of the two hittables in their respective subtrees.
+
+First, let's add a utility function to `RtWeekend.h` to return a random int in a given range:
+
+<pre><code class="language-cpp">inline int randomInt(int min, int max) {
+    // Returns a random integer in [min,max].
+    return static_cast&lt;int&gt;(randomDouble(min, max+1));
+}
+</code></pre>
+
+Now we can start forming our BVH class:
+
+
+<pre><code class="language-cpp">
+
+#ifndef BVHH
+#define BVHH
+
+#include &lt;algorithm&gt;
+#include "RtWeekend.h"
+#include "Hittable.h"
+#include "HittableList.h"
+
+class BvhNode : public Hittable {
+    public:
+
+        BvhNode();
+        BvhNode(const HittableList&amp; list, double timeStart, double timeEnd)
+            : BvhNode(list.objects, 0, list.objects.size(), timeStart, timeEnd)
+        {}
+
+        BvhNode(
+                const std::vector&lt;shared_ptr<hittable>&gt;&amp; srcObjects,
+                size_t start, size_t end, double timeStart, double timeEnd);
+
+        virtual bool hit(
+                const Ray&amp; r, double tMin, double tMax, HitRecord&amp; rec) const override;
+
+        virtual bool generateBoundingBox(double timeStart, double timeEnd, BoundingBox&amp; outputBox) const override;
+
+    public:
+        shared_ptr<hittable> left;
+        shared_ptr<hittable> right;
+        BoundingBox box;
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+
+Let's define the constructors and member functions:
+<pre><code class="language-cpp">
+
+
+BvhNode::BvhNode(
+        std::vectorlt;shared_ptrlt;Hittable&gt;&gt;&amp; srcObjects,
+        size_t start, size_t end, double timeStart, double timeEnd
+        ) {
+    auto objects = srcObjects; // Create a modifiable array of the source scene objects
+
+    // Determine random axis
+    int axis = randomInt(0,2);
+
+    // *The comparators will be implemented later on*
+    auto comparator = (axis == 0) ? compareX
+        : (axis == 1) ? compareY 
+        : compareZ;
+
+    size_t objectSpan = end - start;
+
+    // Sort the primitives
+    if (objectSpan == 1) {
+        left = right = objects[start];
+    } else if (objectSpan == 2) {
+        if (comparator(objects[start], objects[start+1])) {
+            left = objects[start];
+            right = objects[start+1];
+        } else {
+            left = objects[start+1];
+            right = objects[start];
+        }
+    } else {
+        std::sort(objects.begin() + start, objects.begin() + end, comparator);
+
+        auto mid = start + objectSpan/2;
+        left = make_sharedlt;BvhNode&gt;(objects, start, mid, timeStart, timeEnd);
+        right = make_sharedlt;BvhNode&gt;(objects, mid, end, timeStart, timeEnd);
+    }
+
+    aabb boxLeft, boxRight;
+
+    if (  !left-&gt;generateBoundingBox (timeStart, timeEnd, boxLeft)
+            || !right-&gt;generateBoundingBox(timeStart, timeEnd, boxRight)
+       )
+        std::cerr lt;lt; "No bounding box in BvhNode constructor.\n";
+
+    box = generateSurroundingBox(boxLeft, boxRight);
+}
+
+bool BvhNode::hit(const Ray&amp; r, double tMin, double tMax, HitRecord&amp; rec) const {
+    if (!box.hit(r, tMin, tMax))
+        return false;
+
+    bool hitLeft = left-&gt;hit(r, tMin, tMax, rec);
+    bool hitRight = right-&gt;hit(r, tMin, hitLeft ? rec.t : tMax, rec);
+
+    return hitLeft || hitRight;
+}
+
+bool BvhNode::generateBoundingBox(double timeStart, double timeEnd, BoundingBox&amp; outputBox) const {
+    outputBox = box;
+    return true;
+}
+
+#endif
+
+</code></pre> 
+
+
+### Adding our Box Comparison Functions
+
+First of all, let's define some axis `enum`s in `RtWeekend.h`:
+<pre><code class="language-cpp">
+...
+
+// Constants
+const double infinity = std::numeric_limits<double>::infinity();
+const double pi = 3.1415926535897932385;
+const double epsilon = 0.00001;
+
++   // Enums
++   enum Axis { x, y, z };
+
+// Utility Functions
+inline double degreesToRadians(double degrees) {
+    return degrees * pi / 180;
+}
+...
+&lt;/code&gt;&lt;/pre&gt; 
+
+Now we can add a generic non-member comparator to `BoundingBox` (right above the implementation of our `BvhNode` constructor):
+
+<pre><code class="language-cpp">
+inline bool box_compare(const shared_ptr&lt;hittable&gt; a, const shared_ptr&lt;hittable&gt; b, int axis) {
+    aabb box_a;
+    aabb box_b;
+
+    if (!a-&gt;bounding_box(0,0, box_a) || !b-&gt;bounding_box(0,0, box_b))
+        std::cerr &lt;&lt; "No bounding box in bvh_node constructor.\n";
+
+    return box_a.min().e[axis] &lt; box_b.min().e[axis];
+}
+</code></pre>
+
+and the calls to the comparator (right above the implementation of our `BvhNode` constructor):
+
+<pre><code class="language-cpp">
+bool compareX (const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+    return compare(a, b, Axis::x);
+}
+
+bool compareY (const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+    return compare(a, b, Axis::y);
+}
+
+bool compareZ (const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+    return compare(a, b, Axis::z);
+}
+&lt;/code&gt;&lt;/pre&gt; 
+
+![Our control image for testing BVH optimization](/assets/images/blog-images/path-tracer/the-next-week/with-bvh.ppm)
+The difference in rendering time for the above image is clear:
+
+<pre><code class="language-terminal">
+evan@evan-ThinkPad-E495:~/Projects/PathTracer/src$ ./a.out &gt; without-bvh.ppm
+Scanlines remaining: 0
+Done in:
+	1 hours
+	9 minutes
+	16 seconds.
+</code></pre> 
+
+<pre><code class="language-terminal">evan@evan-ThinkPad-E495:~/Projects/PathTracer/src$ ./a.out &gt; with-bvh.ppm 
+Scanlines remaining: 0   
+Finished in:
+	0 hours
+	13 minutes
+	45 seconds.
+</code></pre>
+
+
+### Implementing Solid Textures
+&gt; A texture in graphics usually means a function that makes the colors on a surface procedural.
+
+The aforementioned function could be synthesis, an image lookup, or somewehere in between. We'll start simply by implementing colors as textures.
+
+#### The First Texture: Solid Color
+
+##### Creating our Texture Class
+
+
+First, let's create our base class `Texture` with the abstract method `value`:
+<pre><code class="language-cpp">
+#ifndef TEXTUREH
+#define TEXTUREH
+
+#include "RtWeekend.h"
+
+class Texture {
+	public:
+		virtual Color value(double u, double v, const Vec3&amp; p) const = 0;
+};
+</code></pre> 
+
+
+Below `Texture` we'll define `SolidColor`:
+<pre><code class="language-cpp">
+...
+
+class SolidColor : public Texture {
+	public:
+		SolidColor() {}
+		SolidColor(Vec3 c) : ColorValue(c) {}
+
+		SolidColor(double red, double green, double blue)
+			: SolidColor(Vec3(red,green,blue)) {}
+
+		virtual Vec3 value(double u, double v, const Vec3&amp; p) const override {
+			return ColorValue;
+		}
+
+	private:
+		Vec3 ColorValue;
+};
+
+#endif</code></pre>
+
+Like me, you might be wondering what those `u` and `v` doubles are doing in our `value` function...
+
+##### UV Texture Coordinates for Spheres
+![UV Mapping](/assets/images/blog-images/path-tracer/the-next-week/uv-mapping.png) 
+
+As usual, [Wikipedia](https://en.wikipedia.org/wiki/UV_mapping) has an excellent introduction to UV Mapping:
+&gt; UV mapping is the 3D modeling process of projecting a 3D model's surface to a 2D image for texture mapping. The letters "U" and "V" denote the axes of the 2D texture because "X", "Y", and "Z" are already used to denote the axes of the 3D object in model space, while "W" (in addition to XYZ) is used in calculating quaternion rotations, a common operation in computer graphics.   
+</hittable></hittable></hittable></hittable></hittable></hittable></code></pre></double></code></pre></hittable></hittable></hittable></code></pre></hittable></hittable></hittable></code></pre></hittable></hittable></hittable></code></pre>
+
+  </div>
+
+<hr>
+<h1><i class="fas fa-hand-peace"></i></h1>
+<div class="post-tags">
+    
+  
+  <a class="tag-link"
+    href=/tags/graphics
+    rel="category tag">
+    <code>#graphics</code></a>
+
+  
+  <a class="tag-link"
+    href=/tags/ray-tracing-in-one-weekend
+    rel="category tag">
+    <code>#ray-tracing-in-one-weekend</code></a>
+
+  
+  <a class="tag-link"
+    href=/tags/c++
+    rel="category tag">
+    <code>#c++</code></a>
+
+</div>
+
+      <footer class="site-footer">
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+
+    <!-- link to Prism Syntax Highlighter -->
+    <script src="/js/site-scripts/prism.js"></script>
+
+    <!-- Autoloader configuration (https://prismjs.com/plugins/autoloader/) -->
+    <script> 
+      Prism.plugins.autoloader.languages_path = '/assets/prism-components/'; 
+    </script> 
+
+<!-- Diff-highlighter is very picky about whitespace -->
+    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+      'remove-trailing': true,
+      'remove-indent': true,
+      'left-trim': false,
+      'right-trim': true,
+      // 'break-lines': 80,
+      'indent': 0,
+      'remove-initial-line-feed': true,
+      'tabs-to-spaces': 4,
+      // 'spaces-to-tabs': 4
+    });</script> -->
+    
+
+      <!-- Back to top -->
+    <script src="/js/site-scripts/vanilla-back-to-top.min.js"></script>
+    <script>addBackToTop()</script>
+
+  </body>
+</html>

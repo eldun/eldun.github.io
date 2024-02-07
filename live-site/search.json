@@ -1,0 +1,73 @@
+[
+  
+    {
+
+      "postTitle"       : "Mixing it up:",
+      "postSubtitle"    : "Creating Random Sample Kits on the Model:Samples",
+      "postTags"        : "python, scripting, music, ai",
+      "postDate"        : "2023-03-01 00:00:00 -0500",
+      "postUrl"         : "/2023/03/01/model-samples-randomizer.html"
+
+    } ,
+  
+    {
+
+      "postTitle"       : "Morso:",
+      "postSubtitle"    : "Creating a Morse Code Android Application with Kotlin",
+      "postTags"        : "android, kotlin, java, morso",
+      "postDate"        : "2022-11-21 00:00:00 -0500",
+      "postUrl"         : "/2022/11/21/morso-pt-one.html"
+
+    } ,
+  
+    {
+
+      "postTitle"       : "Audio Plugins",
+      "postSubtitle"    : "Part 1/3: Learning about CLAP",
+      "postTags"        : "c++, music",
+      "postDate"        : "2022-10-20 00:00:00 -0400",
+      "postUrl"         : "/2022/10/20/clap-plugins-part-one.html"
+
+    } ,
+  
+    {
+
+      "postTitle"       : "Semi-Automating Microsoft Edge Searches",
+      "postSubtitle"    : " ",
+      "postTags"        : "web, javascript, automation",
+      "postDate"        : "2021-03-16 00:00:00 -0400",
+      "postUrl"         : "/2021/03/16/automating-microsoft-edge-searches.html"
+
+    } ,
+  
+    {
+
+      "postTitle"       : "Ray Tracing in One Weekend:",
+      "postSubtitle"    : "Part Two - The First Weekend",
+      "postTags"        : "graphics, ray-tracing-in-one-weekend, c++",
+      "postDate"        : "2020-06-19 00:00:00 -0400",
+      "postUrl"         : "/2020/06/19/ray-tracing-in-one-weekend-part-two.html"
+
+    } ,
+  
+    {
+
+      "postTitle"       : "Ray Tracing in One Weekend:",
+      "postSubtitle"    : "Part One - An Introduction",
+      "postTags"        : "graphics, ray-tracing-in-one-weekend",
+      "postDate"        : "2020-05-20 00:00:00 -0400",
+      "postUrl"         : "/2020/05/20/ray-tracing-in-one-weekend-part-one.html"
+
+    } ,
+  
+    {
+
+      "postTitle"       : "Building a Blog:",
+      "postSubtitle"    : "Howdy!",
+      "postTags"        : "web, ruby",
+      "postDate"        : "2020-05-18 00:00:00 -0400",
+      "postUrl"         : "/2020/05/18/building-a-blog.html"
+
+    } 
+  
+]

@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  
+<head>
+
+
+  <!-- favicon settings -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/site-images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/site-images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/site-images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site-images/site.webmanifest">
+  <link rel="mask-icon" href="/assets/images/site-images/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/assets/images/site-images/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/assets/images/site-images/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+
+
+  
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+
+  
+    MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    </script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+  </script>
+  
+
+  <!-- Prism is now loaded by being imported in assets/css/style.scss -->
+  <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Something to Stare At:</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Something to Stare At:" />
+<meta name="author" content="Evan" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I’ve had the same desktop wallpaper for almost ten years. I’d like to change it up. I’d also like to feel like an intellectual. Luckily, the Art Institute of Chicago and their API can help me out." />
+<meta property="og:description" content="I’ve had the same desktop wallpaper for almost ten years. I’d like to change it up. I’d also like to feel like an intellectual. Luckily, the Art Institute of Chicago and their API can help me out." />
+<link rel="canonical" href="http://localhost:4000/2023/04/25/artic-art-fetcher.html" />
+<meta property="og:url" content="http://localhost:4000/2023/04/25/artic-art-fetcher.html" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-04-25T17:46:10-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Something to Stare At:" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2023-04-25T17:46:10-04:00","datePublished":"2023-04-25T17:46:10-04:00","description":"I’ve had the same desktop wallpaper for almost ten years. I’d like to change it up. I’d also like to feel like an intellectual. Luckily, the Art Institute of Chicago and their API can help me out.","headline":"Something to Stare At:","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2023/04/25/artic-art-fetcher.html"},"url":"http://localhost:4000/2023/04/25/artic-art-fetcher.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167888524-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-167888524-1');
+  </script>
+  
+  <meta charset="UTF-8">
+
+ 
+  
+
+
+</head>
+
+  <body>
+    <!-- <a id="skip-to-content" href="#content">Skip to the content.</a> -->
+
+    <header class="page-header" role="banner">
+      <img class="header-image" src="/assets/images/site-images/chicken.jpg">
+      <h1 class="project-name"></h1>
+      <h2 class="project-tagline"></h2>
+      <!-- <link href="../assets/fontawesome/all.css" rel="stylesheet"> load all styles -->
+
+<script src="/js/site-scripts/toggle-search.js" type="text/javascript"></script>
+
+<nav>
+  
+  <a href="/"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-home"></i>
+    <br>
+    Home
+  </a>
+  
+  <a href="/about.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-user"></i>
+    <br>
+    About
+  </a>
+  
+  <a href="/archive.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-archive"></i>
+    <br>
+    Archive
+  </a>
+  
+  <a href="/tags.html"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-tags"></i>
+    <br>
+    Tags
+  </a>
+  
+  <a href=""
+
+     
+      id="search-button" onclick="toggleSearch(); return false;" 
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-search"></i>
+    <br>
+    Search
+  </a>
+  
+</nav>
+      <!-- Html Elements for Search -->
+<div id="search-container" style="visibility: hidden;">
+  <input type="text" id="search-input" placeholder="Search..." />
+  <ul id="results-container"></ul>
+</div>
+
+<!-- Script pointing to search-script.js -->
+<script src="/js/site-scripts/search-script.js" type="text/javascript"></script>
+
+<!-- Configuration -->
+<script>
+  SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="http://localhost:4000{postUrl}">{postTitle} {postSubtitle}</a></li>'
+  })
+  </script>
+
+
+      
+      
+    </header>
+
+    <hr id="header-main-divider">
+
+    <main id="content" class="main-content" role="main">
+      <div class="post-header inactive">
+<h1 id="post-title">Something to Stare At:</h1>
+<h3 id="post-subtitle">A Highly Configurable Art Fetcher</h3>
+<div class="post-date">
+    <i class="fas fa-calendar"></i> <time>25 Apr 2023</time>
+</div>
+</div>
+
+<img class="post-image" src="/assets\images\blog-images\art-fetcher\the-herring-net-1885.jpg" alt="Winslow Homer. The Herring Net, 1885. The Art Institute of Chicago." title="">
+
+
+
+<a id="continue-reading-point"></a>
+
+<div class="excerpt">
+<p><a id="continue-reading-point"></a>
+I’ve had the <a href="/assets\images\blog-images\art-fetcher\old-desktop-wallpaper.png">same desktop wallpaper</a> for almost ten years. I’d like to change it up. I’d also like to feel like an intellectual. Luckily, the <a href="https://www.artic.edu/">Art Institute of Chicago</a> and their <a href="https://api.artic.edu/docs/">API</a> can help me out.</p>
+
+
+</div>
+<!--end-excerpt-->
+
+
+
+
+<hr>
+
+<h2>Contents</h2>
+
+
+
+<hr>
+
+<div id="markdown-content">
+    <p><a id="continue-reading-point"></a>
+I’ve had the <a href="/assets\images\blog-images\art-fetcher\old-desktop-wallpaper.png">same desktop wallpaper</a> for almost ten years. I’d like to change it up. I’d also like to feel like an intellectual. Luckily, the <a href="https://www.artic.edu/">Art Institute of Chicago</a> and their <a href="https://api.artic.edu/docs/">API</a> can help me out.</p>
+
+<!--end-excerpt-->
+
+<hr />
+
+<h2 id="contents">Contents</h2>
+
+<ul class="table-of-contents">
+    <li><a href="#the-idea">The Idea</a></li>
+    <li><a href="#the-gui">The GUI</a></li>
+    <ul>
+        <li><a href="#the-big-picture">The Big Picture</a></li>
+        <ul>
+            <li><a href="#creating-a-window">Creating a Window</a></li>
+            <li><a href="#creating-a-frame-for-our-window">Creating a Frame for Our Window</a></li>
+            <li><a href="#setting-up-frames-within-our-main-frame">Setting Up Frames Within Our Main Frame</a></li>
+            <li><a href="#handling-resize">Handling Resize</a></li>
+            <li><a href="#changing-frames-to-labelframes">Changing Frames to Labelframes</a></li>
+        </ul>
+        <li><a href="#creating-the-gui-sections">Creating the GUI Sections</a></li>
+        <ul>
+            <li><a href="#the-file-management-section">The File Management Section</a></li>
+            <li><a href="#the-artwork-criteria-section">The Artwork Criteria Section</a></li>
+            <li><a href="#the-logging-pane">The Logging Pane</a></li>
+            <li><a href="#the-fetch-button">The Fectch Button</a></li>
+        </ul>
+    <li><a href="#creating-the-model">Creating the Model</a></li>
+        <ul>
+            <li><a href="#hooking-up-the-file-management-section">The File Management Section</a></li>
+        </ul>
+        <li><a href="#creating-the-backend">Creating the Backend</a></li>
+        <ul>
+            <li><a href="#forming a connection">The File Management Section</a></li>
+        </ul>
+
+    </ul>
+
+</ul>
+
+<hr />
+
+<h2 id="the-idea"><a id="the-idea"></a>The Idea</h2>
+
+<p>My plan is to create a simple python GUI for automatically downloading and managing images in a folder to be used by Windows’ slideshow feature. I’d like to allow the user to perform robust queries with parameters such as:</p>
+
+<ul>
+  <li>time period</li>
+  <li>type of art</li>
+  <li>predominant color</li>
+  <li>popularity</li>
+  <li>medium</li>
+</ul>
+
+<p>Additionally, I’ll allow the user to control:</p>
+
+<ul>
+  <li>how many images should be in the folder at any time</li>
+  <li>how frequently to check for updates</li>
+  <li>whatever else feels right</li>
+</ul>
+
+<hr />
+
+<h2 id="the-gui"><a id="the-gui"></a>The GUI</h2>
+
+<h2 id="the-big-picture"><a id="the-big picture"></a>The Big Picture</h2>
+
+<p>I figure the GUI is as a good a place as any to start. (<code class="language-plaintext highlighter-rouge">tkinter</code>)[https://docs.python.org/3/library/tkinter.html] is the sole framework that’s built in to the standard Python library, so that’s what we’ll be using here. I have used tkinter before (for my mostly-abandoned <a href="https://github.com/eldun/SausageSolver">‘Sausage Solver’</a> project), but it has been a while, so we’ll get back up to speed together. If you need a more in-depth run-through, check out <a href="https://tkdocs.com/tutorial/firstexample.html">tkdocs.com</a>. Here’s my mockup for the GUI:</p>
+
+<p><a id="mockup"></a>
+<span class="captioned-image half-sized-image">
+<img src="/assets\images\blog-images\art-fetcher\mockup.png" alt="My first draft for the art fetcher" />
+The general idea of the GUI
+</span>
+<!-- <span class="captioned-image">
+![sausage-solver](/assets\images\blog-images\art-fetcher\sausage-solver.png)
+My quarter-baked solver GUI from a couple months ago
+</span> --></p>
+
+<hr />
+
+<h2 id="creating-a-window"><a id="creating-a-window"></a>Creating a Window</h2>
+<p>I’m going to use the <a href="https://stackoverflow.com/a/17470842">template</a> that <a href="https://stackoverflow.com/users/7432/bryan-oakley">Bryan Oakley</a> uses for his tkinter projects. If you’re wondering who Bryan is, have a look at his StackOverflow profile. He’s the top answerer to most tkinter questions I’ve looked up. It’s his thing.</p>
+
+<p>Originally, I coded this GUI in a more procedural manner (like in the <a href="https://tkdocs.com/tutorial/firstexample.html">tkdocs eqample</a>), but it started getting messy.</p>
+
+<p><code class="language-plaintext highlighter-rouge">fetcher.py</code>:</p>
+<pre><code class="language-python">
+import tkinter as tk    # Standard binding to tk
+import tkinter.ttk as ttk    # Binding to ttk submodule for new/prettier themed widgets
+
+class MainApplication(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        ttk.Frame.__init__(self, parent, *args, **kwargs)
+        self.parent = parent
+
+        &lt;create the rest of your GUI here&gt;
+
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+    window.title("ArticArtFetcher")
+    window.mainloop()
+</code></pre>
+
+<p><span class="captioned-image">
+<img src="/assets\images\blog-images\art-fetcher\basic-gui-window.png" alt="Our GUI Window" />
+Our new GUI window
+</span></p>
+
+<hr />
+
+<h2 id="creating-a-frame-for-our-window"><a id="creating-a-frame-for-our-window"></a>Creating a Frame for Our Window</h2>
+<p>Our GUI will be visually and logically separated into ‘Frames’. Now that we have a window, we can add a ‘main frame’ to contain the rest of our frames. Why, you ask, do we need a frame for our frames if we already have a window? I had the same question; <a href="https://tkdocs.com/tutorial/firstexample.html">tkdocs</a> addresses it:</p>
+
+<blockquote>
+  <p>We could just put the other widgets in our interface directly into the main application window without the intervening content frame. That’s what you’ll see in older Tk programs.</p>
+
+  <p>However, the main window isn’t itself part of the newer “themed” widgets. Its background color doesn’t match the themed widgets we will put inside it. Using a “themed” frame widget to hold the content ensures that the background is correct.</p>
+
+  <p><img src="/assets\images\blog-images\art-fetcher\why-use-main-frame.png" alt="Placing a themed frame inside a window" /></p>
+</blockquote>
+
+<pre><code class="language-diff-python diff-highlight">
+import tkinter as tk    # Standard binding to tk
+import tkinter.ttk as ttk    # Binding to ttk submodule for new/prettier themed widgets
+
+class MainApplication(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(self, parent, *args, **kwargs)
+        self.parent = parent
+
+
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+    window.title("ArticArtFetcher")
++   window.columnconfigure(index=0, weight=1)
++   window.rowconfigure(index=0, weight=1)
++   window.minsize(200, 200)
++
++   # Create frame for window
++   MainApplication(parent=window).grid(column=0, row=0, sticky=(tk.NSEW))
+
+    window.mainloop()
+</code></pre>
+
+<p>The outward-facing result is identical:
+<span class="half-sized-image">
+<img src="/assets\images\blog-images\art-fetcher\basic-gui-window-with-frame.png" alt="Our GUI Window (with Frame)" />
+</span></p>
+
+<hr />
+
+<h2 id="setting-up-frames-within-our-main-frame"><a id="setting-up-frames-within-our-main-frame"></a>Setting Up Frames Within Our Main Frame</h2>
+<p>I’d like to divide our rudimentary GUI as illustrated in my <a href="#mockup">mockup</a>. We can accomplish that using <a href="https://tkdocs.com/tutorial/complex.html#labelframe">LabelFrames</a>.</p>
+
+<p>The <a href="https://tkdocs.com/tutorial/grid.html">grid geometry manager</a> will be our main tool for creating layouts. All we really have to do is plop in some grid coordinates and tell each widget where to anchor itself with the <code class="language-plaintext highlighter-rouge">sticky</code> attribute. Before we can do that, though, we’ll have to create our new widget classes as illustrated in <a href="https://stackoverflow.com/a/17470842">Bryan Oakley’s StackOverflow answer</a>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">fetcher.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
++class FileManagementFrame(ttk.Labelframe):
++    pass
++
++        
++class ArtworkCriteriaFrame(ttk.Labelframe):
++    pass
++
++class LogPaneFrame(ttk.Labelframe):
++    pass
++
++class FetchButtonFrame(ttk.Frame):
++    pass        
++
+ class MainApplication(ttk.Frame):
+     def __init__(self, parent, *args, **kwargs):
+         super().__init__(parent, *args, **kwargs)
+      
+         self.parent = parent
+       
+
++        self.file_management_frame = FileManagementFrame(self, text="File Management", borderwidth=5, relief=tk.RIDGE)
++        self.artwork_criteria_frame = ArtworkCriteriaFrame(self,  text="Artwork Criteria", borderwidth=5, relief=tk.RIDGE)
++        self.log_panel_frame = LogPaneFrame(self,  text="Log", borderwidth=5, relief=tk.RIDGE)
++        self.fetch_button_frame = FetchButtonFrame(self, borderwidth=5, relief=tk.RIDGE)
++
++        self.file_management_frame.grid(column=0, row=0, sticky=(NSEW), padx=10, pady=10)
++        self.artwork_criteria_frame.grid(column=1, row=0, sticky=(NSEW), padx=10, pady=10)
++        self.log_panel_frame.grid(column=0, row=1, sticky=(NSEW), padx=10, pady=10)
++        self.fetch_button_frame.grid(column=1, row=2, padx=10, pady=5, sticky=NSEW)
+
+
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+    window.title("ArticArtFetcher")
+    window.columnconfigure(index=0, weight=1)
+    window.rowconfigure(index=0, weight=1)
+    window.minsize(200, 200)
+
+
+    # Create frame for window
+    MainApplication(parent=window).grid(column=0, row=0 sticky=(tk.NSEW))
+
+    window.mainloop()
+</code></pre>
+
+<p>When you run this code, you’ll end up with an empty window. What’s wrong? For one, our Labelframes have nothing in them. Secondly, the rows and columns aren’t configured to resize (we’ll address resizing in the next section).</p>
+
+<blockquote>
+  <p>The size of a frame is determined by the size and layout of any widgets within it. In turn, this is controlled by the geometry manager that manages the contents of the frame itself.</p>
+</blockquote>
+
+<p><a href="https://tkdocs.com/tutorial/widgets.html#frame">-tkdocs</a></p>
+
+<p>Let’s add some placeholder labels, just to see how things look.</p>
+
+<p><code class="language-plaintext highlighter-rouge">fetcher.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+class FileManagementFrame(ttk.Labelframe):
+-   pass
++   def __init__(self, parent, *args, **kwargs):
++       super().__init__(parent, *args, **kwargs)
++       tk.Label(master=self, text="file management").grid()
+        
+class ArtworkCriteriaFrame(ttk.Labelframe):
+-   pass
++   def __init__(self, parent, *args, **kwargs):
++       super().__init__(parent, *args, **kwargs)    
++       tk.Label(master=self, text="artwork").grid()
+
+class LogPaneFrame(ttk.Labelframe):
+-   pass
++   def __init__(self, parent, *args, **kwargs):
++       super().__init__(parent, *args, **kwargs)   
++       tk.Label(master=self, text="log").grid()
+ 
+class FetchButtonFrame(ttk.Frame):   
+-   pass
++   def __init__(self, parent, *args, **kwargs):
++       super().__init__(parent, *args, **kwargs)    
++       tk.Label(master=self, text="fetch art").grid()
+</code></pre>
+
+<p><span class="row">
+    <span class="captioned-image">
+        <img src="/assets\images\blog-images\art-fetcher\basic-gui-window-with-empty-labelframes.png" alt="Empty Labelframes" />
+Before
+    </span>
+    <span class="captioned-image">
+        <img src="/assets\images\blog-images\art-fetcher\basic-gui-with-filled-labelframes.png" alt="Labelframes with placeholder widgets" />
+After
+    </span>
+</span></p>
+
+<hr />
+
+<h2 id="handling-resize"><a id="handling-resize"></a>Handling Resize</h2>
+
+<p>If we try to resize our nice little window, things look bad:</p>
+
+<p><span class="row">
+    <span class="captioned-image">
+        <img src="/assets\images\blog-images\art-fetcher\basic-gui-with-filled-labelframes.png" alt="Initial window" />
+Initial
+    </span>
+    <span class="captioned-image">
+        <img src="/assets\images\blog-images\art-fetcher\basic-gui-window-bad-resize.png" alt="Poorly Resized GUI" />
+Resized
+    </span>
+</span></p>
+
+<p>What’s wrong here? lets turn to the <a href="https://tkdocs.com/tutorial/grid.html#resize">tkdocs</a>:</p>
+
+<blockquote>
+  <p>It looks like sticky may tell Tk <em>how</em> to react if the cell’s row or column does resize but doesn’t actually say that the row or columns <em>should</em> resize if any extra room becomes available.</p>
+
+  <p>Every column and row in the grid has a weight option associated with it. This tells grid how much the column or row should grow if there is extra room in the master to fill. By default, the weight of each column or row is 0, meaning it won’t expand to fill any extra space.</p>
+
+  <p>For the user interface to resize, we’ll need to specify a positive weight to the columns and rows that we’d like to expand. You must provide weights for at least one column and one row. This is done using the <code class="language-plaintext highlighter-rouge">columnconfigure</code> and <code class="language-plaintext highlighter-rouge">rowconfigure</code> methods of grid. This weight is relative. If two columns have the same weight, they’ll expand at the same rate. In our example, we’ll give the three leftmost columns (holding the checkboxes) weights of 3 and the two rightmost columns weights of 1. For every one pixel the right columns grow, the left columns will grow by three pixels. So as the window grows larger, most of the extra space will go to the left side.</p>
+
+  <p><img src="/assets\images\blog-images\art-fetcher\column-weight-example.png" alt="Column weight example" /></p>
+</blockquote>
+
+<p>For posterity - <code class="language-plaintext highlighter-rouge">columnconfigure</code> and <code class="language-plaintext highlighter-rouge">rowconfigure</code> also take a <code class="language-plaintext highlighter-rouge">minsize</code> grid option.</p>
+
+<p>By adding a couple config lines, we get a resizable GUI that is looking ever closer to the mockup:</p>
+
+<p><code class="language-plaintext highlighter-rouge">fetcher.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+...
+
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+    window.title("ArticArtFetcher")
+    window.columnconfigure(index=0, weight=1)
+    window.rowconfigure(index=0, weight=1)
+    window.minsize(200, 200)
+
+    # Create frame for window
+    main_application = MainApplication(parent=window)
+    main_application.grid(column=0, row=0, sticky=(tk.NSEW))
+
+    # Configure resize
++   main_application.columnconfigure(index=0, weight=1)
++   main_application.columnconfigure(index=1, weight=1)
++   main_application.rowconfigure(index=0, weight=1)
++   main_application.rowconfigure(index=1, weight=1)
++   main_application.rowconfigure(index=2, weight=1)
+
+    window.mainloop()
+
+</code></pre>
+
+<p>In fact, we don’t even need placeholder labels now that the geometry manager has been configured:</p>
+
+<p><span class="row">
+    <span class="captioned-image">
+        <img src="/assets\images\blog-images\art-fetcher\basic-gui-with-filled-labelframes.png" alt="Initial window" />
+Initial
+    </span>
+    <span class="captioned-image">
+        <img src="/assets\images\blog-images\art-fetcher\basic-gui-window-bad-resize.png" alt="Poorly Resized GUI" />
+Resized without weight configuration
+    </span>
+        <span class="captioned-image">
+        <img src="/assets\images\blog-images\art-fetcher\basic-gui-window-good-resize.png" alt="Properly Resized GUI" />
+Resized with weight configuration
+    </span> 
+    <span class="captioned-image">
+        <img src="/assets\images\blog-images\art-fetcher\basic-gui-window-good-resize-labels-removed.png" alt="Properly Resized GUI" />
+Resized with placeholder labels removed
+    </span>
+</span></p>
+
+<hr />
+
+<h2 id="the-file-management-section"><a id="the-file-management-section"></a>The File Management Section</h2>
+
+<p>There are a few things I know I want the user to be able to control in regards to the filesystem. I’m sure I’ll think of more features once the program is actually usable. Here’s my list (for now):</p>
+
+<ul>
+  <li>Directory selector</li>
+  <li>Maximum picture count</li>
+  <li>Maximum folder size</li>
+  <li>Auto-delete</li>
+  <li>Download frequency</li>
+  <li>Description (either as .txt file on desktop or by finding a way to incorporate text into image)</li>
+</ul>
+
+<p>Here’s the code to set up a dummy version of what I want within the <code class="language-plaintext highlighter-rouge">FileManagementFrame</code> class. The widgets we’re using are assigned to a variable so that we can later retrieve their values in <code class="language-plaintext highlighter-rouge">controller.py</code>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">fetcher.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+
+import tkinter as tk    # Standard binding to tk
+import tkinter.ttk as ttk    # Binding to ttk submodule for new/prettier themed widgets
+from tkinter.constants import NSEW, NE, NW, SE, SW, N, S, E, W   # Standard binding to tk
+import tkinter.filedialog as filedialog
+
+
++ class FileManagementFrame(ttk.Labelframe):
++     def __init__(self, parent, *args, **kwargs):
++         super().__init__(parent, *args, **kwargs)
++ 
++         # Populate file management section
+
+         # Directory selection
+        self.output_directory = tk.StringVar()
+        self.output_directory.set("No Directory Selected")
+        tk.Label(self, text="Artwork Directory: ").grid(column=0, row=0, sticky=W)
+        tk.Label(self, textvariable=self.output_directory).grid(column=1, row=0, sticky=W)
+        ttk.Button(self, text="Choose Directory", command=self.choose_directory).grid(column=2, row=0)
+
+
+        # 'Max pic count' options
+        ttk.Label(self, text="Max Picture Count:").grid(column=0, row=1, sticky=W)
+        self.max_picture_count_entry = ttk.Entry(self, width=7)
+        self.max_picture_count_entry.grid(column=2, row=1)
+
+
+        # Max folder size
+        ttk.Label(self, text="Max Folder Size:").grid(column=0, row=2, sticky=W)
+        max_size_frame = ttk.Frame(self)
+
+        self.max_folder_size_entry = ttk.Entry(max_size_frame, width=4)
+        self.max_folder_size_entry.grid(column=0, row=0)
+
+        self.folder_size_units_combobox = ttk.Combobox(max_size_frame, width=2)
+        self.folder_size_units_combobox['values'] = ('MB', 'GB', 'TB')
+        self.folder_size_units_combobox.state(['readonly'])
+        self.folder_size_units_combobox.grid(column=1, row=0)
+
+        max_size_frame.grid(column=2, row=2)
+
+        # Auto Delete option
+        ttk.Label(self, text="Auto-delete old files:").grid(column=0, row=3, sticky=W)
+        # For whatever reason, I have to create a variable to hold the value of the checkbox instead of just getting the widget itself
+        self.auto_delete_checkbutton_var = tk.BooleanVar()
+        self.auto_delete_checkbutton = tk.Checkbutton(self, anchor=CENTER, variable=self.auto_delete_checkbutton_var)
+        self.auto_delete_checkbutton.grid(column=2, row=3, sticky=EW)
+
+        # Update frequency option
+        ttk.Label(self, text="Download new files every:").grid(column=0, row=4, sticky=W)
+
+        update_frequency_frame = ttk.Frame(self)
+        self.update_frequency_entry = ttk.Entry(update_frequency_frame, width=3)
+        self.update_frequency_entry.grid(column=0, row=0)
+        self.art_check_frequency_combobox = ttk.Combobox(update_frequency_frame, width=5)
+        self.art_check_frequency_combobox['values'] = ('Hours', 'Days', 'Weeks', 'Months')
+        self.art_check_frequency_combobox.state(['readonly'])
+        self.art_check_frequency_combobox.grid(column=1, row=0)
+        update_frequency_frame.grid(column=2,row=4)
+
+        # Description file option
+        
+        ttk.Label(self, text="Create artwork description file on desktop:").grid(column=0, row=5, sticky=W, columnspan=2)
+        # For whatever reason, I have to create a variable to hold the value of the checkbox instead of just getting the widget itself
+        self.create_description_checkbutton_var = tk.BooleanVar()
+        self.create_description_checkbutton = tk.Checkbutton(self, anchor=CENTER, variable=self.create_description_checkbutton_var)
+        self.create_description_checkbutton.grid(column=2, row=5, sticky=EW)
+
+        self.columnconfigure(index=0, weight=1)
+        self.columnconfigure(index=1, weight=0)
+        self.columnconfigure(index=2, weight=1)
+
+        configure_frame_row_resize(self)
+        
+        add_widget_padding(self)
+
+    def choose_directory(self):
+        dir = filedialog.askdirectory(mustexist=True)
+
+        self.output_directory.set(dir)
+
+</code></pre>
+
+<p><span class="half-sized-image">
+<img src="\assets\images\blog-images\art-fetcher\dummy-file-management-section.png" alt="Dummy file management section" /></span></p>
+
+<p>As will be the case with the other sections, we’ll hook up everything with callbacks further down the line.</p>
+
+<h2 id="the-artwork-criteria-section"><a id="the-artwork-criteria-section"></a>The Artwork Criteria Section</h2>
+
+<p>Here’s a short list of some criteria that may be worth filtering by:</p>
+
+<ul>
+  <li>time period</li>
+  <li>artist</li>
+  <li>type of art (e.g. painting, sculpture, book)</li>
+  <li>predominant color</li>
+  <li>popularity</li>
+  <li>style (e.g. impressionist, abstract)</li>
+  <li>theme</li>
+</ul>
+
+<p>More may come later. I think it’d also be neat to choose images based on the current weather and time - but that may belong in the file management section, once they’re already downloaded. I’m getting ahead of myself - let’s populate our art section in our GUI with dummy widgets!</p>
+
+<p><code class="language-plaintext highlighter-rouge">fetcher.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+...
+
+
+class ArtworkCriteriaFrame(ttk.Labelframe):
+
+    def on_choose_color(self):
+            colorchooser.askcolor()
+
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        # Date range        
+        current_row = 0
+        ttk.Label(self, text="Date Range (Inclusive)").grid(column=0, row=current_row, sticky=W)
+        date_range = ttk.Frame(master=self)
+        self.date_start_entry = ttk.Entry(date_range, width=5)
+        self.date_start_entry.grid(column=0, row=current_row)
+
+        self.date_start_age = ttk.Combobox(date_range, width=3)
+        self.date_start_age['values'] = ('BC','AD')
+        self.date_start_age.current(0)
+        self.date_start_age.grid(column=1, row=current_row)
+        ttk.Label(date_range, text="-").grid(column=2, row=current_row)
+
+        self.date_end_entry = ttk.Entry(date_range, width=5)
+        self.date_end_entry.grid(column=3, row=current_row)
+        self.date_end_age = ttk.Combobox(date_range, width=3)
+        self.date_end_age['values'] = ('BC','AD')
+        self.date_end_age.current(0)
+        self.date_end_age.grid(column=4, row=current_row)
+        date_range.grid(column=2, row=current_row)
+
+        # Artist
+        current_row += 1
+        ttk.Label(self, text="Artist").grid(column=0, row=current_row, sticky=W)
+        self.artist_combobox = ttk.Combobox(self, width=12)
+        self.artist_combobox.grid(column=2, row=current_row)
+
+        # Art type(e.g. painting, sculpture, etc.)
+        current_row += 1
+        ttk.Label(self, text="Type").grid(column=0, row=current_row, sticky=W)
+        self.art_type_combobox = ttk.Combobox(self, width=12)
+        self.art_type_combobox.grid(column=2, row=current_row)
+
+        # Color
+        current_row += 1        
+        ttk.Label(self, text="Predominant Color").grid(column=0, row=current_row, sticky=W)
+        color_frame = ttk.Frame(self)
+        ttk.Button(color_frame, command=self.on_choose_color).grid(column=0, row=0, sticky=EW)
+        self.choose_color_entry = ttk.Entry(color_frame, width=7)
+        self.choose_color_entry.grid(column=1, row=0, sticky=E)
+        color_frame.grid(column=2, row=current_row)
+
+        # Rarity
+        current_row += 1
+        ttk.Label(self, text="Fetch rarely viewed art").grid(column=0, row=current_row, sticky=W)
+        self.rarity_checkbutton_var = tk.BooleanVar()
+        tk.Checkbutton(self, variable=self.rarity_checkbutton_var).grid(column=2, row=current_row, sticky=EW)
+
+        # Style (e.g. impressionist, abstract, etc.)
+        current_row += 1
+        ttk.Label(self, text="Style").grid(column=0, row=current_row, sticky=W)
+        self.style_combobox = ttk.Combobox(self, width=12)
+        self.style_combobox.grid(column=2, row=current_row)
+
+
+
+        self.columnconfigure(index=0, weight=1)
+        self.columnconfigure(index=1, weight=0)
+        self.columnconfigure(index=2, weight=1)
+
+
+        configure_frame_row_resize(self)
+
+        add_widget_padding(self)
+
+...
+
+def configure_frame_row_resize(frame):
+    for row in range(frame.grid_size()[1]):
+        frame.rowconfigure(row, weight=1)
+
+def add_widget_padding(frame):
+    for widget in frame.winfo_children():
+        widget.grid_configure(padx=5, pady=5)
+        add_widget_padding(widget)
+
+
+...
+
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+    window.title("ArticArtFetcher")
+    window.columnconfigure(index=0, weight=1)
+    window.rowconfigure(index=0, weight=1)
++    window.minsize(800, 800)
+
+    # Create frame for window
+    main_application = MainApplication(parent=window)
+    main_application.grid(column=0, row=0, sticky=(tk.NSEW))
+
+    # Configure resize
+    main_application.columnconfigure(index=0, weight=1)
+    main_application.columnconfigure(index=1, weight=1)
+    main_application.rowconfigure(index=0, weight=1)
+    main_application.rowconfigure(index=1, weight=1)
+    main_application.rowconfigure(index=2, weight=1)
+
+
+
+</code></pre>
+
+<p>There we have it! Note that I also configured the minsize of the rows and columns.</p>
+
+<h2 id="the-logging-pane"><a id="the-logging-pane"></a>The Logging Pane</h2>
+<p>Thankfully, there’s a module for basic scrolling text widget, which makes this section pretty straightforward:</p>
+
+<p><code class="language-plaintext highlighter-rouge">fetcher.py</code>:</p>
+<pre><code class="language-python">
+class LogPaneFrame(ttk.Labelframe):
+
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.scrolled_text = scrolledtext.ScrolledText(master=self)
+        self.scrolled_text.configure(state=tk.DISABLED, background='light gray')
+        self.scrolled_text.tag_config('warning', background='black', foreground='red')
+        self.scrolled_text.tag_config('success', background='black', foreground='green')
+
+        self.scrolled_text.grid(column=0, row=0, sticky=NSEW)
+
+
+        self.columnconfigure(index=0, weight=1)
+        self.rowconfigure(index=0, weight=1, minsize=10)
+        configure_frame_row_resize(self)
+
+    def log_message(self, message, tag=None):
+        
+        self.scrolled_text.configure(state=tk.NORMAL)
+        self.scrolled_text.insert(tk.END,"\n" + message + "\n", tag)
+        self.scrolled_text.configure(state=tk.DISABLED)
+</code></pre>
+
+<h2 id="the-fetch-button"><a id="the-fetch-button"></a>The Fetch Button</h2>
+
+<p><code class="language-plaintext highlighter-rouge">fetcher.py</code>:</p>
+<pre><code class="language-python">
+class FetchButtonFrame(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        ttk.Button(self, text="Fetch").grid(column=0, row=0, sticky=NSEW)
+
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+</code></pre>
+
+<p><span class="captioned-image">
+<img src="\assets\images\blog-images\art-fetcher\dummy-gui.png" alt="Dummy GUI" />
+Our dummy GUI
+</span></p>
+
+<h2 id="creating-the-model"><a id="creating-the-model"></a>Creating the Model</h2>
+
+<p>As you may know, the view component of the <a href="https://developer.mozilla.org/en-US/docs/Glossary/MVC">Model-View-Controller (MVC) design pattern</a> is “dumb” - it doesn’t store any data - it merely represents the data stored within the model. First, let’s refactor our files to more closely follow the principles of MVC.</p>
+
+<p>We’ll move all of our <code class="language-plaintext highlighter-rouge">fetcher.py</code> code into <code class="language-plaintext highlighter-rouge">view.py</code> except for the <code class="language-plaintext highlighter-rouge">__main__</code> section.</p>
+
+<p><code class="language-plaintext highlighter-rouge">view.py</code>:</p>
+<pre><code class="language-python diff-highlight">
+import tkinter as tk    # Standard binding to tk
+import tkinter.ttk as ttk    # Binding to ttk submodule for new/prettier themed widgets
+from tkinter.constants import CENTER, EW, NSEW, NE, NW, SE, SW, N, S, E, W   # Standard binding to tk
+import tkinter.filedialog as filedialog
+import tkinter.colorchooser as colorchooser
+import tkinter.scrolledtext as scrolledtext
+
+class FileManagementFrame(ttk.Labelframe):
+    ...
+
+class ArtworkCriteriaFrame(ttk.Labelframe):
+
+    ...
+  
+class LogPaneFrame(ttk.Labelframe):
+
+    ...
+
+class FetchButtonFrame(ttk.Frame):
+    ...
+
+class MainApplication(ttk.Frame):
+    ...
+</code></pre>
+
+<p>That leaves <code class="language-plaintext highlighter-rouge">fetcher.py</code> (with a few minor changes):</p>
+<pre><code class="language-diff-python diff-highlight">
++ import tkinter as tk
++ import view
+
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+    window.title("ArticArtFetcher")
+    window.columnconfigure(index=0, weight=1)
+    window.rowconfigure(index=0, weight=1)
+    window.minsize(800,400)
+
+    # Create frame for window
++   main_application = view.MainApplication(parent=window)
+    main_application.grid(column=0, row=0, sticky=(tk.NSEW))
+
+    # Configure resize
+    main_application.columnconfigure(index=0, weight=1)
+    main_application.columnconfigure(index=1, weight=1)
+    # Log pane should be the only row that shrinks/resizes
+    main_application.rowconfigure(index=1, weight=1)
+
+
+    window.mainloop()
+</code></pre>
+
+<p>This will be our point of entry. The model, view, and (eventually) the controller will be conveniently separated from here onwards.</p>
+
+<p>Now we can get to work designing our model. Create a file by the name of <code class="language-plaintext highlighter-rouge">model.py</code> in the root folder, and we’ll continue on section by section.</p>
+
+<h3 id="the-file-management-section-1"><a id="the-file-management-section"></a>The File Management Section</h3>
+<p>Let’s take a look at our GUI and build our model accordingly.
+<img src="\assets\images\blog-images\art-fetcher\dummy-gui.png" alt="Dummy GUI" /></p>
+
+<p>We’ll start with some placeholders for all of our options:</p>
+
+<p><code class="language-plaintext highlighter-rouge">model.py</code>:</p>
+<pre><code class="language-python">
+
+class Model():
+    def __init__(self):
+        self.file_management_model = FileManagementModel()
+        self.artwork_criteria_model = ArtworkCriteriaModel()
+
+
+class FileManagementModel():
+    def __init__(self):
+        self.directory = None
+        self.max_picture_count = None
+        self.max_folder_size = None
+        self.max_folder_size_units = None
+        self.auto_delete = None
+        self.download_frequency = None
+        self.download_frequency_units = None
+        self.create_description = None
+
+
+class ArtworkCriteriaModel():
+    def __init__(self):
+        self.date_start = None
+        self.date_start_era = None
+        self.date_end = None
+        self.date_end_era = None
+        self.artist = None
+        self.type = None
+        self.predominant_color = None
+        self.fetch_rare_art = None
+        self.style = None
+</code></pre>
+
+<p>We can later turn these attributes into <a href="https://www.programiz.com/python-programming/property">properties</a> to implement business logic/constraints.</p>
+
+<p>We’ll need a way to change these values when the user interacts with the view, which we can accomplish by using tkinter’s <code class="language-plaintext highlighter-rouge">bind()</code> function - covered in the next section.</p>
+
+<h3 id="binding-view-interactions-to-the-controller"><a id="binding-view-interactions-to-the-conntroller"></a>Binding View Interactions to the Controller</h3>
+
+<p><img src="\assets\images\blog-images\art-fetcher\model-view-controller.png" alt="MVC Pattern" /></p>
+
+<p>The first order of business is allowing the view to reference the controller:</p>
+
+<p><code class="language-plaintext highlighter-rouge">view.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+class MainApplication(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.parent = parent
++       self.controller = None
+
+        ...
+
++   def set_controller(self, controller):
++       self.controller = controller
+</code></pre>
+
+<p><code class="language-plaintext highlighter-rouge">controller.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+class Controller():
+    def __init__(self, view):
+        self.view = view
+</code></pre>
+
+<p><code class="language-plaintext highlighter-rouge">fetcher.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+import tkinter as tk
++ import model, view, controller
+
+if __name__ == "__main__":
+    # Create window
+    window = tk.Tk()
+
+    ...
+
+    # Log pane should be the only row that shrinks/resizes
+    main_application.rowconfigure(index=1, weight=1)
+
++   view = main_application
++   controller = controller.Controller()
++   view.set_controller(controller)
+
+    window.mainloop()
+</code></pre>
+
+<p>At this point, we can use <a href="https://docs.python.org/3/library/tkinter.html?highlight=bind#bindings-and-events">tkinter’s <code class="language-plaintext highlighter-rouge">bind</code> function</a> to invoke certain functions upon certain actions. Some widgets have binding as a keyword parameter(called <code class="language-plaintext highlighter-rouge">command</code>), like <code class="language-plaintext highlighter-rouge">Button</code>. However, we can just use <code class="language-plaintext highlighter-rouge">bind()</code> on whichever widget we desire.</p>
+
+<p>I believe in our situation, it makes the most sense to simply send all the values from the view to the model when the user clicks fetch (We’ll cover validation later). Let’s bind the fetch button to a controller function:</p>
+
+<p><code class="language-plaintext highlighter-rouge">controller.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+class Controller():
+    def __init__(self, view):
+        self.view = view
+
++    def on_fetch_button_clicked(self, event):
++        print("fetch clicked")
+
+</code></pre>
+
+<p><code class="language-plaintext highlighter-rouge">view.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+...
+
+class FetchButtonFrame(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+-        tk.Button(self, text="Fetch", bg='light green').grid(column=0, row=0, sticky=NSEW)
++        self.fetch_button = tk.Button(self, text="Fetch", bg='light green')
++        self.fetch_button.grid(column=0, row=0, sticky=NSEW)
+
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+
+...
+
+class MainApplication(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        ...
+
++    def configure_bindings(self):
++        self.fetch_button_frame.fetch_button.bind(sequence="&amp;ltButtonPress&amp;gt", func=self.controller.on_fetch_button_clicked)
+</code></pre>
+
+<p>Note that we had to split up the instantiation and <code class="language-plaintext highlighter-rouge">grid()</code>ing of <code class="language-plaintext highlighter-rouge">fetch_button</code>. This is because grid always returns <code class="language-plaintext highlighter-rouge">None</code>, which is no good because we’re going to want to reference the button in <code class="language-plaintext highlighter-rouge">configure_bindings</code>.</p>
+
+<p>If you run the program and click fetch, you’ll see “fetch clicked” in the console.</p>
+
+<h3 id="performing-preliminary-validation-in-the-view"><a id="performing-preliminary-validation-in-the-view"></a>Performing Preliminary Validation in the View</h3>
+
+<p>It’s a good idea - before sending our user’s input to the controller - to do some simple validation in the view - such as only allowing integers in the “Max Picture Count” field. Let’s follow the <a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/entry-validation.html">doc</a>.</p>
+
+<p>(Sculpting the data for the API will take place in the controller, and ensuring that the data “makes sense”(business logic) will take place in the model.)</p>
+
+<blockquote>
+  <ol>
+    <li>Write a callback function that checks the text in the Entry and returns <code class="language-plaintext highlighter-rouge">True</code> if the text is valid, or <code class="language-plaintext highlighter-rouge">False</code> if not. If the callback returns <code class="language-plaintext highlighter-rouge">False</code>, the user’s attempt to edit the text will be refused, and the text will be unchanged.</li>
+  </ol>
+</blockquote>
+
+<p>Let’s create a function for validating int-only entries. We’ll just make it a <a href="https://stackoverflow.com/a/11788267">module function</a>, like <code class="language-plaintext highlighter-rouge">configure_frame_row_resize</code> and <code class="language-plaintext highlighter-rouge">add_widget_padding</code>, since it’ll be used across frames.</p>
+
+<p><code class="language-plaintext highlighter-rouge">view.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+
+def on_int_entry_edited(text):
+    if str.isdigit(text) or text == "":
+        return True
+    else:
+        return False
+</code></pre>
+
+<blockquote>
+  <ol>
+    <li>Register the callback function. In this step, you will produce a Tcl wrapper around a Python function.</li>
+  </ol>
+
+  <p>Suppose your callback function is a function named <code class="language-plaintext highlighter-rouge">isOkay</code>. To register this function, use the universal widget method <code class="language-plaintext highlighter-rouge">.register(isOkay)</code>. This method returns a character string that Tkinter can use to call your function.</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">view.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+
+class FileManagementFrame(ttk.Labelframe):
+    def __init__(self, parent, *args, **kwargs):
+
+        ...
+
+        # 'Max pic count' options
+        ttk.Label(self, text="Max Picture Count:").grid(column=0, row=1, sticky=W)
+        self.max_picture_count_entry = ttk.Entry(self, width=7)
+        self.max_picture_count_entry.grid(column=2, row=1)
+
++       int_validaiton_command = self.max_picture_count_entry.register(on_int_entry_edited)
+
+</code></pre>
+
+<blockquote>
+  <ol>
+    <li>When you call the Entry constructor, use the <code class="language-plaintext highlighter-rouge">validatecommand</code> option in the Entry constructor to specify your callback, and use the <code class="language-plaintext highlighter-rouge">validate</code> option to specify when the callback will be called to validate the text in the callback.</li>
+  </ol>
+</blockquote>
+
+<p>See <a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/entry-validation.html">here</a> for a list of options. We’ll just be using ‘all’.</p>
+
+<p><code class="language-plaintext highlighter-rouge">view.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+
+class FileManagementFrame(ttk.Labelframe):
+    def __init__(self, parent, *args, **kwargs):
+
+        ...
+
+        # 'Max pic count' options
+        ttk.Label(self, text="Max Picture Count:").grid(column=0, row=1, sticky=W)
+        self.max_picture_count_entry = ttk.Entry(self, width=7)
+        self.max_picture_count_entry.grid(column=2, row=1)
+
+        self.max_picture_count_entry.register(on_int_entry_edited)
+        self.max_picture_count_entry.config(validate='all', validatecommand=(int_validaiton_command, '%P'))
+
+</code></pre>
+
+<p>Note the <code class="language-plaintext highlighter-rouge">'%P'</code> in our <code class="language-plaintext highlighter-rouge">validatecommand</code> argument. This is a substituiton code describing the value that the text will have if the change is allowed. You can find all the substituiton codes and how to use them <a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/entry-validation.html">here</a>.</p>
+
+<p>You can now use this validation method with other int-only fields, like “Max Folder Size”:</p>
+
+<p><code class="language-plaintext highlighter-rouge">view.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+    ...
+
+    # Max folder size
+    ttk.Label(self, text="Max Folder Size:").grid(column=0, row=2, sticky=W)
+    max_size_frame = ttk.Frame(self)
+
+    self.max_folder_size_entry = ttk.Entry(max_size_frame, width=4)
+    self.max_folder_size_entry.grid(column=0, row=0)
++   self.max_folder_size_entry.config(validate='all', validatecommand=(int_validaiton_command, '%P'))
+
+...
+</code></pre>
+
+<h3 id="getting-view-data-to-the-model"><a id="getting-view-data-to-the-model"></a>Getting View Data to the Model</h3>
+
+<p>Let’s start by passing the instance of our model to our controller:</p>
+
+<p><code class="language-plaintext highlighter-rouge">fetcher.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+
+...
+
++    model = model.Model()
+    view = main_application
++    controller = controller.Controller(model, view)
+
+    view.set_controller(controller)
+    view.configure_bindings()
+
+    window.mainloop()
+</code></pre>
+
+<p>And then setting our model attributes to the values entered in the view:</p>
+
+<p><code class="language-plaintext highlighter-rouge">controller.py</code>:</p>
+<pre><code class="language-diff-python diff-highlight">
+
+class Controller():
+    def __init__(self, model, view):
++        self.model = model
+        self.view = view
+
+    def on_fetch_button_clicked(self, event):
+
++        self.update_file_management_model()
++        self.update_file_artwork_criteria_model()
+        
+
+    def update_file_management_model(self):
+        model = self.model.file_management_model
+        view = self.view.file_management_frame
+
+
+        try:
+
+            model.output_directory = view.output_directory
+            model.max_picture_count = view.max_picture_count_entry.get()
+            model.max_folder_size = view.max_folder_size_entry.get()
+            model.max_folder_size_units = view.folder_size_units_combobox.get()
+            model.auto_delete = view.auto_delete_checkbutton_var.get()
+            model.download_frequency = view.update_frequency_entry.get()
+            model.download_frequency_units = view.art_check_frequency_combobox.get()
+            model.create_description = view.create_description_checkbutton_var.get()
+        
+        except Exception as e:
+            self.log_message("Error updating File Management Model:\n" + str(e), 'warning')
+
+        else:
+            self.log_model_fields(model)
+
+    def update_file_artwork_criteria_model(self):
+
+        model = self.model.artwork_criteria_model
+        view = self.view.artwork_criteria_frame
+
+        try:
+
+            model.date_start = view.date_start_entry.get()
+            model.date_start_age = view.date_start_age.get()
+            model.date_end = view.date_end_entry.get()
+            model.date_end_age = view.date_end_age.get()
+            model.artist = view.artist_combobox.get()
+            model.type = view.art_type_combobox.get()
+            model.predominant_color = view.choose_color_entry.get()
+            model.fetch_rare_art = view.rarity_checkbutton_var.get()
+            model.style = view.style_combobox.get()
+
+        except Exception as e:
+            self.log_message("Error updating File Management Model:\n" + str(e), 'warning')
+
+        else:
+            self.log_model_fields(model)
+
+</code></pre>
+
+<h2 id="creating-the-backend"><a id="creating-the-backend"></a>Creating the Backend</h2>
+
+<p>Let’s create a new file in the root directory named <code class="language-plaintext highlighter-rouge">api.py</code>. This is where we’ll be making a connection with Artic’s servers. To accomplish this, we’ll use the <code class="language-plaintext highlighter-rouge">requests</code> library:</p>
+
+<p><code class="language-plaintext highlighter-rouge">api.py</code>:</p>
+<pre><code class="python">
+import requests
+import os
+
+web_api = 'https://api.artic.edu/api/v1/'
+local_api = os.getcwd() + '/artic-api-data/json/'
+url = "not specified"
+
+
+def get(endpoint):
+
+    return requests.get(url + endpoint)
+
+
+def post(endpoint, query):
+
+    # example_query = {
+    #     'q': 'cats',
+    #     'query': {
+    #         'term': {
+    #             'is_public_domain': True,
+    #         },
+    #     },
+    # }
+
+    return requests.post(url, json=query)
+
+
+
+if __name__ == "__main__":
+    url = web_api
+
+    response = get('artworks')
+
+    print(response.json())
+
+
+</code></pre>
+
+<p><code class="language-plaintext highlighter-rouge">requests</code> is not a built-in library, so you may have to install it: <code class="language-plaintext highlighter-rouge">pip install requests</code>. Once you run <code class="language-plaintext highlighter-rouge">api.py</code>, you should get a fat chunk of JSON in your output. And that’s pretty much the basic idea! We can check out the <a href="https://api.artic.edu/docs/#introduction">documentation</a> to learn more. Later on, we can add support for images stored locally.</p>
+
+<h2 id="populating-our-gui-fields-with-api-data"><a id="populating-our-gui-fields-with-api-data"></a>Populating our GUI Fields with API Data</h2>
+<p>Right now, our GUI dropdowns (artist, type, style) are empty. ARTIC’s search is powered by <a href="https://www.elastic.co/what-is/elasticsearch">ElasticSearch</a>, and we’ll need to formulate a query using ElasticSearch’s <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html">Query DSL</a> to get possible field values.</p>
+
+<p>We’ll import <code class="language-plaintext highlighter-rouge">api.py</code> into <code class="language-plaintext highlighter-rouge">model.py</code> and send our query from there.</p>
+
+<p><code class="language-plaintext highlighter-rouge">model.py</code>:</p>
+<pre><code class="python">
++ import api
+class Model():
+    def __init__(self):
+        self.file_management_model = FileManagementModel()
+        self.artwork_criteria_model = ArtworkCriteriaModel()
+
+    def populate_artists(self):
+        api.get('query goes here')
+    
+    ...
+</code></pre>
+
+<h3 id="forming-a-connection"><a id="forming-a-connection"></a>Forming a Connection</h3>
+
+<ul>
+  <li>validating new values in model, updating view accordingly</li>
+  <li>creating backend to communicate with artic</li>
+  <li>populating comboboxes with artic options</li>
+  <li>implementing file management options</li>
+</ul>
+
+<!-- I figure it's best to do basic UI validation in the view (e.g. only integers in the "Max Picture Count" field), and anything more complicated/important("Business Logic")c  -->
+
+<!-- 
+Alternatively, we could use [tkinter's validation](https://www.pythontutorial.net/tkinter/tkinter-validation/) in the view, but we'll do our validation in the model. I like the explanation given [here](https://stackoverflow.com/a/5607545) as to why it's a better idea. -->
+
+  </div>
+
+<hr>
+<h1><i class="fas fa-hand-peace"></i></h1>
+<div class="post-tags">
+    
+  
+  <a class="tag-link"
+    href=/tags/python
+    rel="category tag">
+    <code>#python</code></a>
+
+  
+  <a class="tag-link"
+    href=/tags/web
+    rel="category tag">
+    <code>#web</code></a>
+
+</div>
+
+      <footer class="site-footer">
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+
+    <!-- link to Prism Syntax Highlighter -->
+    <script src="/js/site-scripts/prism.js"></script>
+
+    <!-- Autoloader configuration (https://prismjs.com/plugins/autoloader/) -->
+    <script> 
+      Prism.plugins.autoloader.languages_path = '/assets/prism-components/'; 
+    </script> 
+
+<!-- Diff-highlighter is very picky about whitespace -->
+    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+      'remove-trailing': true,
+      'remove-indent': true,
+      'left-trim': false,
+      'right-trim': true,
+      // 'break-lines': 80,
+      'indent': 0,
+      'remove-initial-line-feed': true,
+      'tabs-to-spaces': 4,
+      // 'spaces-to-tabs': 4
+    });</script> -->
+    
+
+      <!-- Back to top -->
+    <script src="/js/site-scripts/vanilla-back-to-top.min.js"></script>
+    <script>addBackToTop()</script>
+
+  </body>
+</html>
