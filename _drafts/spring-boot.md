@@ -394,4 +394,4 @@ When creating a RESTful service, the tutorial skips over the imports needed for 
 </span>
 
 ### Closing Thoughts
-Nice tutorial! Working with Spring was fast and fun. I am still a bit unclear on how everything is working behind the scenes, but familiarity will come with time. Here's hoping I get the job
+Nice tutorial! Working with Spring was fast and fun. I am still a bit unclear on how everything is working behind the scenes, but familiarity will come with time. Here's hoping I get the job!
