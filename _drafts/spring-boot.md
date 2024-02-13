@@ -28,7 +28,7 @@ From Spring's [documentation](https://spring.io/projects/spring-boot):
 >
 > We take an opinionated view of the Spring platform and third-party libraries so you can get started with minimum fuss. Most Spring Boot applications need minimal Spring configuration.
 
-With such features as:
+With the ability to:
 
 - Create stand-alone Spring applications
 - Embed Tomcat, Jetty or Undertow directly (no need to deploy WAR files)
@@ -370,7 +370,7 @@ We've used a few [starters](https://docs.spring.io/spring-boot/docs/3.2.0/refere
 ---
 
 #### Building a RESTful Service
-[This](https://spring.io/guides/gs/rest-service) is the last "Getting Started" tutorial on the [Spring Boot Overview page](https://spring.io/projects/spring-boot). It seems to be extremely similar to our Hello, World example, so I'm not doing it :).
+[This](https://spring.io/guides/gs/rest-service) is the last "Getting Started" tutorial on the [Spring Boot Overview page](https://spring.io/projects/spring-boot). It seems to be extremely similar to our "Hello, World" example, so I'm not going to do it :).
 
 ---
 
@@ -381,4 +381,17 @@ Spring has curated a [surprisingly large collection of guides](https://spring.io
 
 #### Building a More Complete RESTful Service
 
+> What’s important to realize is that REST, however ubiquitous, is not a standard, per se, but an approach, a style, a set of constraints on your architecture that can help you build web-scale systems. In this tutorial we will use the Spring portfolio to build a RESTful service while leveraging the stackless features of REST.
+
 [The guide](https://spring.io/guides/tutorials/rest) I'll be following is comprehensive - I don't see any value in essentially re-writing it here. I'd highly recommend checking it out!
+
+<span class="warning">
+Uh-oh. Attempting to run the app will introduce us to some compilation errors about `javax` packages. [`javax.*` import statements got renamed to `jakarta.*`](https://stackoverflow.com/questions/37327697/spring-boot-javax-import-statements-not-working-correctly) and nobody updated the tutorial.
+</span>
+
+<span class="warning">
+When creating a RESTful service, the tutorial skips over the imports needed for HATEOAS (and VS Code didn't make any suggestions). Refer to the [Github repo](https://github.com/spring-guides/tut-rest/blob/main/rest/src/main/java/payroll/EmployeeController.java) for future compilation errors regarding missing symbols.
+</span>
+
+### Closing Thoughts
+Nice tutorial! Working with Spring was fast and fun. I am still a bit unclear on how everything is working behind the scenes, but familiarity will come with time. Here's hoping I get the job
