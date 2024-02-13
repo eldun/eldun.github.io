@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  
+<head>
+
+
+  <!-- favicon settings -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/site-images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/site-images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/site-images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site-images/site.webmanifest">
+  <link rel="mask-icon" href="/assets/images/site-images/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/assets/images/site-images/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/assets/images/site-images/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+
+
+  
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+
+  
+    MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    </script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+  </script>
+  
+
+  <!-- Prism is now loaded by being imported in assets/css/style.scss -->
+  <!-- <link href="/assets/css/prism.css" rel="stylesheet" /> -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Getting Familiar with Java Spring Boot</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Getting Familiar with Java Spring Boot" />
+<meta name="author" content="Evan" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In a recent interview, I was informed that it might be beneficial for me to learn a smidge about Spring Boot before the second interview. This is me, familiarizing." />
+<meta property="og:description" content="In a recent interview, I was informed that it might be beneficial for me to learn a smidge about Spring Boot before the second interview. This is me, familiarizing." />
+<link rel="canonical" href="eldun.github.io/2024/02/12/learning-about-spring-boot.html" />
+<meta property="og:url" content="eldun.github.io/2024/02/12/learning-about-spring-boot.html" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-02-12T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Getting Familiar with Java Spring Boot" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Evan"},"dateModified":"2024-02-12T00:00:00-05:00","datePublished":"2024-02-12T00:00:00-05:00","description":"In a recent interview, I was informed that it might be beneficial for me to learn a smidge about Spring Boot before the second interview. This is me, familiarizing.","headline":"Getting Familiar with Java Spring Boot","mainEntityOfPage":{"@type":"WebPage","@id":"eldun.github.io/2024/02/12/learning-about-spring-boot.html"},"url":"eldun.github.io/2024/02/12/learning-about-spring-boot.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167888524-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-167888524-1');
+  </script>
+  
+  <meta charset="UTF-8">
+
+ 
+  
+
+
+</head>
+
+  <body>
+    <!-- <a id="skip-to-content" href="#content">Skip to the content.</a> -->
+
+    <header class="page-header" role="banner">
+      <img class="header-image" src="/assets/images/site-images/chicken.jpg">
+      <h1 class="project-name"></h1>
+      <h2 class="project-tagline"></h2>
+      <!-- <link href="../assets/fontawesome/all.css" rel="stylesheet"> load all styles -->
+
+<script src="/js/site-scripts/toggle-search.js" type="text/javascript"></script>
+
+<nav>
+  
+  <a href="/"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-home"></i>
+    <br>
+    Home
+  </a>
+  
+  <a href="/about"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-user"></i>
+    <br>
+    About
+  </a>
+  
+  <a href="/archive"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-archive"></i>
+    <br>
+    Archive
+  </a>
+  
+  <a href="/tags"
+
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-tags"></i>
+    <br>
+    Tags
+  </a>
+  
+  <a href=""
+
+     
+      id="search-button" onclick="toggleSearch(); return false;" 
+    
+
+    
+      class="nav-bar-link"
+    >
+    
+    <i class="fas fa-search"></i>
+    <br>
+    Search
+  </a>
+  
+</nav>
+      <!-- Html Elements for Search -->
+<div id="search-container" style="visibility: hidden;">
+  <input type="text" id="search-input" placeholder="Search..." />
+  <ul id="results-container"></ul>
+</div>
+
+<!-- Script pointing to search-script.js -->
+<script src="/js/site-scripts/search-script.js" type="text/javascript"></script>
+
+<!-- Configuration -->
+<script>
+  SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="{postUrl}">{postTitle} {postSubtitle}</a></li>'
+  })
+  </script>
+
+
+      
+      
+    </header>
+
+    <hr id="header-main-divider">
+
+    <main id="content" class="main-content" role="main">
+      <div class="post-header inactive">
+<h1 id="post-title">Getting Familiar with Java Spring Boot</h1>
+<h3 id="post-subtitle"></h3>
+<div class="post-date">
+    <i class="fas fa-calendar"></i> <time>12 Feb 2024</time>
+</div>
+</div>
+
+<img class="post-image" src="/assets/images/blog-images/spring-boot/spring-boot-logo.png" alt="A pleasant green hexagon with a power symbol punched out of the center." title="">
+
+
+
+<a id="continue-reading-point"></a>
+
+<div class="excerpt">
+<p>In a recent interview, I was informed that it might be beneficial for me to learn a smidge about Spring Boot before the second interview. This is me, familiarizing.</p>
+
+</div>
+<!--end-excerpt-->
+
+
+
+
+<hr>
+
+<h2>Contents</h2>
+
+<ul id="toc" class="section-nav">
+<li class="toc-entry toc-h3"><a href="#what-is-spring">What is Spring?</a></li>
+<li class="toc-entry toc-h3"><a href="#why-use-spring">Why use Spring?</a></li>
+<li class="toc-entry toc-h3"><a href="#what-is-spring-boot">What is Spring Boot?</a></li>
+<li class="toc-entry toc-h3"><a href="#getting-started-with-springs-guides">Getting Started with Spring’s Guides</a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#the-quickstart-guide">The Quickstart Guide</a>
+<ul>
+<li class="toc-entry toc-h5"><a href="#project-configuration">Project configuration</a></li>
+<li class="toc-entry toc-h5"><a href="#adding-our-code">Adding our Code</a></li>
+<li class="toc-entry toc-h5"><a href="#running-hello-world">Running Hello World</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h4"><a href="#building-a-simple-web-app-with-spring-boot">Building a Simple Web App with Spring Boot</a>
+<ul>
+<li class="toc-entry toc-h5"><a href="#getting-started">Getting Started</a></li>
+<li class="toc-entry toc-h5"><a href="#another-reason-to-use-spring-boot">Another Reason to use Spring Boot</a></li>
+<li class="toc-entry toc-h5"><a href="#understanding-our-web-controller">Understanding our Web Controller</a></li>
+<li class="toc-entry toc-h5"><a href="#understanding-our-application-class">Understanding our Application Class</a></li>
+<li class="toc-entry toc-h5"><a href="#running-the-app">Running the app</a></li>
+<li class="toc-entry toc-h5"><a href="#unit-testing-our-endpoint">Unit Testing our Endpoint</a></li>
+<li class="toc-entry toc-h5"><a href="#adding-production-grade-services">Adding Production-grade Services</a></li>
+<li class="toc-entry toc-h5"><a href="#spring-boot-starters">Spring Boot Starters</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h4"><a href="#building-a-restful-service">Building a RESTful Service</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#diving-deeper">Diving Deeper</a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#building-a-more-complete-restful-service">Building a More Complete RESTful Service</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#closing-thoughts">Closing Thoughts</a></li>
+</ul>
+
+<hr>
+
+<div id="markdown-content">
+    <h3 id="what-is-spring">
+<a class="anchor" href="#what-is-spring" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is Spring?</h3>
+<p><a href="https://spring.io/">Spring</a> is a Java <a href="https://www.codecademy.com/resources/blog/what-is-a-framework/">framework</a> - the world’s <a href="https://snyk.io/blog/jvm-ecosystem-report-2018-platform-application/">most popular</a>.</p>
+
+<hr>
+
+<h3 id="why-use-spring">
+<a class="anchor" href="#why-use-spring" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why use Spring?</h3>
+<p><a href="https://www.baeldung.com/spring-why-to-choose">Lots of reasons!</a></p>
+
+<h3 id="what-is-spring-boot">
+<a class="anchor" href="#what-is-spring-boot" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is Spring Boot?</h3>
+<p>From Spring’s <a href="https://spring.io/projects/spring-boot">documentation</a>:</p>
+
+<blockquote>
+  <p>Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can “just run”.</p>
+
+  <p>We take an opinionated view of the Spring platform and third-party libraries so you can get started with minimum fuss. Most Spring Boot applications need minimal Spring configuration.</p>
+</blockquote>
+
+<p>With the ability to:</p>
+
+<ul>
+  <li>Create stand-alone Spring applications</li>
+  <li>Embed Tomcat, Jetty or Undertow directly (no need to deploy WAR files)</li>
+  <li>Provide opinionated ‘starter’ dependencies to simplify your build configuration</li>
+  <li>Automatically configure Spring and 3rd party libraries whenever possible</li>
+  <li>Provide production-ready features such as metrics, health checks, and externalized configuration</li>
+  <li>Absolutely no code generation and no requirement for XML configuration</li>
+</ul>
+
+<p>If you want to read more about the differences between Spring and Spring Boot, you can check out <a href="https://www.baeldung.com/spring-vs-spring-boot">this article</a>.</p>
+
+<hr>
+
+<h3 id="getting-started-with-springs-guides">
+<a class="anchor" href="#getting-started-with-springs-guides" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started with Spring’s Guides</h3>
+<p>Spring has a few suggested guides on their <a href="https://spring.io/projects/spring-boot">Spring Boot page</a>. Let’s start from the start with the <a href="https://spring.io/quickstart">Quickstart guide</a>.</p>
+
+<hr>
+
+<h4 id="the-quickstart-guide">
+<a class="anchor" href="#the-quickstart-guide" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <a href="https://spring.io/quickstart">Quickstart Guide</a>
+</h4>
+<p>The goal here, of course, is to build a classic “Hello, World” endpoint.</p>
+
+<h5 id="project-configuration">
+<a class="anchor" href="#project-configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project configuration</h5>
+<p>We’ll start by creating a new Spring Boot “web” project using a .zip generated from <a href="https://start.spring.io/">start.spring.io</a>.</p>
+
+<p><img src="/assets/images/blog-images/spring-boot/quickstart.png" alt="start.spring.io"></p>
+
+<h5 id="adding-our-code">
+<a class="anchor" href="#adding-our-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding our Code</h5>
+<p>Here’s the diff between the generated code and what we’re adding:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.example.Demo</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.springframework.boot.SpringApplication</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.boot.autoconfigure.SpringBootApplication</span><span class="o">;</span>
+<span class="o">+</span> <span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.GetMapping</span><span class="o">;</span>
+<span class="o">+</span> <span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RequestParam</span><span class="o">;</span>
+<span class="o">+</span> <span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RestController</span><span class="o">;</span>
+
+<span class="nd">@SpringBootApplication</span>
+<span class="o">+</span> <span class="nd">@RestController</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DemoApplication</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+      <span class="nc">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="nc">DemoApplication</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="o">}</span>
+
+<span class="o">+</span>   <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/hello"</span><span class="o">)</span>
+<span class="o">+</span>   <span class="kd">public</span> <span class="nc">String</span> <span class="nf">hello</span><span class="o">(</span><span class="nd">@RequestParam</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"name"</span><span class="o">,</span> <span class="n">defaultValue</span> <span class="o">=</span> <span class="s">"World"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+<span class="o">+</span>     <span class="k">return</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Hello %s!"</span><span class="o">,</span> <span class="n">name</span><span class="o">);</span>
+<span class="o">+</span>   <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>That’s it! Obviously, <code class="language-plaintext highlighter-rouge">hello()</code> can accept a name. The <code class="language-plaintext highlighter-rouge">@RestController</code> annotation lets Spring know that this code describes an endpoint. <code class="language-plaintext highlighter-rouge">@GetMapping("/hello")</code> tells spring to use <code class="language-plaintext highlighter-rouge">hello()</code> to answer requests sent to <code class="language-plaintext highlighter-rouge">localhost:8080/hello</code>. <code class="language-plaintext highlighter-rouge">@RequestParam</code> tells Spring to expect a name value, defaulting to <code class="language-plaintext highlighter-rouge">"World"</code>.</p>
+
+<h5 id="running-hello-world">
+<a class="anchor" href="#running-hello-world" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running Hello World</h5>
+
+<p>To run our application (with Maven):</p>
+
+<pre><code class="language-cmd">evan@pop-os:~/Projects/eldun/SpringBoot/demo$ ./mvnw spring-boot:run
+</code></pre>
+
+<p><span class="warning">
+The guide doesn’t go into detail about what’s happening here - you can read a little more about it <a href="https://www.javaguides.net/2019/05/run-spring-boot-app-from-command-line.html">here</a> or check out <a href="https://maven.apache.org/">Maven’s website</a>.
+</span></p>
+
+<p><span class="warning">
+If you’re using WSL, you might get the following error.</span></p>
+
+<pre><code class="language-cmd">Error: JAVA_HOME is not defined correctly.
+  We cannot execute
+</code></pre>
+
+<p>You can either set your JAVA_HOME, install Java in WSL, or just run the command in powershell/cmd.
+&lt;/span&gt;</p>
+
+<p>Visit <code class="language-plaintext highlighter-rouge">http://localhost:8080/hello</code> and you’ll see something like this:</p>
+
+<p><img src="/assets/images/blog-images/spring-boot/quickstart-result.png" alt='Our working "Hello World" endpoint'></p>
+
+<p>Add <code class="language-plaintext highlighter-rouge">?name=YourName</code> to the end of the URL to pass a parameter.</p>
+
+<hr>
+
+<h4 id="building-a-simple-web-app-with-spring-boot">
+<a class="anchor" href="#building-a-simple-web-app-with-spring-boot" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building a Simple Web App with Spring Boot</h4>
+
+<p>Based on the guide found <a href="https://spring.io/guides/gs/spring-boot/">here</a>.</p>
+
+<h5 id="getting-started">
+<a class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h5>
+
+<p>We can download or clone the initial code for this guide from <a href="https://github.com/spring-guides/gs-spring-boot">github</a>.</p>
+
+<h5 id="another-reason-to-use-spring-boot">
+<a class="anchor" href="#another-reason-to-use-spring-boot" aria-hidden="true"><span class="octicon octicon-link"></span></a>Another Reason to use Spring Boot</h5>
+<blockquote>
+  <p>Spring Boot offers a fast way to build applications. It looks at your classpath and at the beans you have configured, makes reasonable assumptions about what you are missing, and adds those items. With Spring Boot, you can focus more on business features and less on infrastructure.</p>
+</blockquote>
+
+<h5 id="understanding-our-web-controller">
+<a class="anchor" href="#understanding-our-web-controller" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding our Web Controller</h5>
+<p>We can take a look at the initial code (under <code class="language-plaintext highlighter-rouge">initial/src/.../HelloController.java</code>).</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kn">package</span> <span class="nn">com.example.springboot</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.GetMapping</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RestController</span><span class="o">;</span>
+
+<span class="nd">@RestController</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloController</span> <span class="o">{</span>
+
+	<span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/"</span><span class="o">)</span>
+	<span class="kd">public</span> <span class="nc">String</span> <span class="nf">index</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="s">"Greetings from Spring Boot!"</span><span class="o">;</span>
+	<span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>The class is flagged as a @RestController, meaning it is ready for use by Spring MVC to handle web requests. @GetMapping maps <code class="language-plaintext highlighter-rouge">/</code> to the <code class="language-plaintext highlighter-rouge">index()</code> method. When invoked from a browser or by using curl on the command line, the method returns pure text. That is because @RestController combines @Controller and @ResponseBody, two annotations that results in web requests returning data rather than a view.</p>
+</blockquote>
+
+<h5 id="understanding-our-application-class">
+<a class="anchor" href="#understanding-our-application-class" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding our Application Class</h5>
+<p>Let’s take a look at our initial Application class(<code class="language-plaintext highlighter-rouge">initial/src/.../Application.java</code>):</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.example.springboot</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.springframework.boot.SpringApplication</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.boot.autoconfigure.SpringBootApplication</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.ApplicationContext</span><span class="o">;</span>
+
+<span class="nd">@SpringBootApplication</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Application</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nc">ApplicationContext</span> <span class="n">ctx</span> <span class="o">=</span> <span class="nc">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="nc">Application</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+
+		<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Let's inspect the beans provided by Spring Boot:"</span><span class="o">);</span>
+
+		<span class="nc">String</span><span class="o">[]</span> <span class="n">beanNames</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">getBeanDefinitionNames</span><span class="o">();</span>
+		<span class="nc">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">beanNames</span><span class="o">);</span>
+		<span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">beanName</span> <span class="o">:</span> <span class="n">beanNames</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+	
+<span class="o">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>@SpringBootApplication is a convenience annotation that adds all of the following:</p>
+
+  <p>@Configuration: Tags the class as a source of bean definitions for the application context.</p>
+
+  <p>@EnableAutoConfiguration: Tells Spring Boot to start adding beans based on classpath settings, other beans, and various property settings. For example, if spring-webmvc is on the classpath, this annotation flags the application as a web application and activates key behaviors, such as setting up a DispatcherServlet.</p>
+
+  <p>@ComponentScan: Tells Spring to look for other components, configurations, and services in the com/example package, letting it find the controllers.</p>
+
+  <p>The main() method uses Spring Boot’s SpringApplication.run() method to launch an application. Did you notice that there was not a single line of XML? There is no web.xml file, either. This web application is 100% pure Java and you did not have to deal with configuring any plumbing or infrastructure.</p>
+
+  <p>There is also a CommandLineRunner method marked as a @Bean, and this runs on start up. It retrieves all the beans that were created by your application or that were automatically added by Spring Boot. It sorts them and prints them out.</p>
+</blockquote>
+
+<p>This is the first time I’ve run into “beans.” What are they? Here’s <a href="https://docs.spring.io/spring-framework/reference/core/beans/introduction.html">Spring’s chapter on the IoC principle</a>, and here’s <a href="https://docs.spring.io/spring-framework/reference/core/beans/introduction.html">Baeldung’s explanation</a>.</p>
+
+<h5 id="running-the-app">
+<a class="anchor" href="#running-the-app" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running the app</h5>
+<p>Executing the following command will output our beans:</p>
+<pre><code class="language-cmd">./mvnw spring-boot:run
+</code></pre>
+
+<pre><code class="language-cmd">Let's inspect the beans provided by Spring Boot:
+application
+beanNameHandlerMapping
+defaultServletHandlerMapping
+dispatcherServlet
+embeddedServletContainerCustomizerBeanPostProcessor
+handlerExceptionResolver
+helloController
+httpRequestHandlerAdapter
+messageSource
+mvcContentNegotiationManager
+mvcConversionService
+mvcValidator
+org.springframework.boot.autoconfigure.MessageSourceAutoConfiguration
+org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration
+org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration
+org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration$DispatcherServletConfiguration
+org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration$EmbeddedTomcat
+org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration
+org.springframework.boot.context.embedded.properties.ServerProperties
+org.springframework.context.annotation.ConfigurationClassPostProcessor.enhancedConfigurationProcessor
+org.springframework.context.annotation.ConfigurationClassPostProcessor.importAwareProcessor
+org.springframework.context.annotation.internalAutowiredAnnotationProcessor
+org.springframework.context.annotation.internalCommonAnnotationProcessor
+org.springframework.context.annotation.internalConfigurationAnnotationProcessor
+org.springframework.context.annotation.internalRequiredAnnotationProcessor
+org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration
+propertySourcesBinder
+propertySourcesPlaceholderConfigurer
+requestMappingHandlerAdapter
+requestMappingHandlerMapping
+resourceHandlerMapping
+simpleControllerHandlerAdapter
+tomcatEmbeddedServletContainerFactory
+viewControllerHandlerMapping
+</code></pre>
+
+<p>We’ve got the autoconfigure beans. Great.</p>
+
+<p>Run the service with <code class="language-plaintext highlighter-rouge">curl</code> and you should get the following output:</p>
+
+<pre><code class="language-cmd">$ curl http://localhost:8080
+Greetings from Spring Boot!
+</code></pre>
+
+<hr>
+
+<h5 id="unit-testing-our-endpoint">
+<a class="anchor" href="#unit-testing-our-endpoint" aria-hidden="true"><span class="octicon octicon-link"></span></a>Unit Testing our Endpoint</h5>
+<p>Spring facilitates quick and easy unit testing. Since we’re using Maven, we have to add to our <code class="language-plaintext highlighter-rouge">pom.xml</code>:</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+	<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+	<span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="nt">&lt;/artifactId&gt;</span>
+	<span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>Now we create a simple test at <code class="language-plaintext highlighter-rouge">src/test/java/com/example/springboot/HelloControllerTest.java</code>:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.example.springboot</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">hamcrest</span><span class="o">.</span><span class="na">Matchers</span><span class="o">.</span><span class="na">equalTo</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">test</span><span class="o">.</span><span class="na">web</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">result</span><span class="o">.</span><span class="na">MockMvcResultMatchers</span><span class="o">.</span><span class="na">content</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">test</span><span class="o">.</span><span class="na">web</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">result</span><span class="o">.</span><span class="na">MockMvcResultMatchers</span><span class="o">.</span><span class="na">status</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.junit.jupiter.api.Test</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.boot.test.context.SpringBootTest</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.http.MediaType</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.test.web.servlet.MockMvc</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.test.web.servlet.request.MockMvcRequestBuilders</span><span class="o">;</span>
+
+<span class="nd">@SpringBootTest</span>
+<span class="nd">@AutoConfigureMockMvc</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloControllerTest</span> <span class="o">{</span>
+
+	<span class="nd">@Autowired</span>
+	<span class="kd">private</span> <span class="nc">MockMvc</span> <span class="n">mvc</span><span class="o">;</span>
+
+	<span class="nd">@Test</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">getHello</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+		<span class="n">mvc</span><span class="o">.</span><span class="na">perform</span><span class="o">(</span><span class="nc">MockMvcRequestBuilders</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/"</span><span class="o">).</span><span class="na">accept</span><span class="o">(</span><span class="nc">MediaType</span><span class="o">.</span><span class="na">APPLICATION_JSON</span><span class="o">))</span>
+				<span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">status</span><span class="o">().</span><span class="na">isOk</span><span class="o">())</span>
+				<span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">content</span><span class="o">().</span><span class="na">string</span><span class="o">(</span><span class="n">equalTo</span><span class="o">(</span><span class="s">"Greetings from Spring Boot!"</span><span class="o">)));</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>MockMvc comes from Spring Test and lets you, through a set of convenient builder classes, send HTTP requests into the DispatcherServlet and make assertions about the result. Note the use of @AutoConfigureMockMvc and @SpringBootTest to inject a MockMvc instance. Having used @SpringBootTest, we are asking for the whole application context to be created. An alternative would be to ask Spring Boot to create only the web layers of the context by using @WebMvcTest. In either case, Spring Boot automatically tries to locate the main application class of your application, but you can override it or narrow it down if you want to build something different.</p>
+</blockquote>
+
+<p>In addition to mocking objects, we can test the whole stack (Integrated test) (<code class="language-plaintext highlighter-rouge">src/test/java/com/example/springboot/HelloControllerIT.java</code>):</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kn">package</span> <span class="nn">com.example.springboot</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.junit.jupiter.api.Test</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.boot.test.context.SpringBootTest</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.boot.test.web.client.TestRestTemplate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.http.ResponseEntity</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">assertj</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">api</span><span class="o">.</span><span class="na">Assertions</span><span class="o">.</span><span class="na">assertThat</span><span class="o">;</span>
+
+<span class="nd">@SpringBootTest</span><span class="o">(</span><span class="n">webEnvironment</span> <span class="o">=</span> <span class="nc">SpringBootTest</span><span class="o">.</span><span class="na">WebEnvironment</span><span class="o">.</span><span class="na">RANDOM_PORT</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloControllerIT</span> <span class="o">{</span>
+
+	<span class="nd">@Autowired</span>
+	<span class="kd">private</span> <span class="nc">TestRestTemplate</span> <span class="n">template</span><span class="o">;</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">getHello</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">ResponseEntity</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">response</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="na">getForEntity</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getBody</span><span class="o">()).</span><span class="na">isEqualTo</span><span class="o">(</span><span class="s">"Greetings from Spring Boot!"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+<blockquote>
+  <p>The embedded server starts on a random port because of webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, and the actual port is configured automatically in the base URL for the TestRestTemplate.</p>
+</blockquote>
+
+<h5 id="adding-production-grade-services">
+<a class="anchor" href="#adding-production-grade-services" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding Production-grade Services</h5>
+<p>Spring Boot provides several management services (health, audits, beans, and more) with its actuator module. We’ll add a dependency to our <code class="language-plaintext highlighter-rouge">pom.xml</code>:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+	<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+	<span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-actuator<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>Upon restarting the service, we’ll see a bunch of new endpoints - management services provided by Spring Boot.</p>
+
+<pre><code class="language-cmd">management.endpoint.configprops-org.springframework.boot.actuate.autoconfigure.context.properties.ConfigurationPropertiesReportEndpointProperties
+management.endpoint.env-org.springframework.boot.actuate.autoconfigure.env.EnvironmentEndpointProperties
+management.endpoint.health-org.springframework.boot.actuate.autoconfigure.health.HealthEndpointProperties
+management.endpoint.logfile-org.springframework.boot.actuate.autoconfigure.logging.LogFileWebEndpointProperties
+management.endpoints.jmx-org.springframework.boot.actuate.autoconfigure.endpoint.jmx.JmxEndpointProperties
+management.endpoints.web-org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
+management.endpoints.web.cors-org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties
+management.health.diskspace-org.springframework.boot.actuate.autoconfigure.system.DiskSpaceHealthIndicatorProperties
+management.info-org.springframework.boot.actuate.autoconfigure.info.InfoContributorProperties
+management.metrics-org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties
+management.metrics.export.simple-org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleProperties
+management.server-org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
+</code></pre>
+
+<p>We can visit these new endpoints with a browser or <code class="language-plaintext highlighter-rouge">curl</code> while the app is running:</p>
+<ul>
+  <li><a href="http://localhost:8080/actuator/health">actuator/health</a></li>
+  <li><a href="http://localhost:8080/actuator">actuator</a></li>
+</ul>
+
+<blockquote>
+  <p>For more details about each of these REST endpoints and how you can tune their settings with an application.properties file (in src/main/resources), see the the <a href="http://docs.spring.io/spring-boot/docs/3.2.0/reference/htmlsingle/#production-ready-endpoints">documentation about the endpoints</a>.</p>
+</blockquote>
+
+<hr>
+
+<h5 id="spring-boot-starters">
+<a class="anchor" href="#spring-boot-starters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring Boot Starters</h5>
+<p>We’ve used a few <a href="https://docs.spring.io/spring-boot/docs/3.2.0/reference/htmlsingle/#using.build-systems.starters">starters</a>, but there are many more.</p>
+
+<hr>
+
+<h4 id="building-a-restful-service">
+<a class="anchor" href="#building-a-restful-service" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building a RESTful Service</h4>
+<p><a href="https://spring.io/guides/gs/rest-service">This</a> is the last “Getting Started” tutorial on the <a href="https://spring.io/projects/spring-boot">Spring Boot Overview page</a>. It seems to be extremely similar to our “Hello, World” example, so I’m not going to do it :).</p>
+
+<hr>
+
+<h3 id="diving-deeper">
+<a class="anchor" href="#diving-deeper" aria-hidden="true"><span class="octicon octicon-link"></span></a>Diving Deeper</h3>
+<p>Spring has curated a <a href="https://spring.io/guides">surprisingly large collection of guides</a> that are much more involved than those above. I actually wish I had started here! Let’s build a more complete RESTful service using <a href="https://spring.io/guides/tutorials/rest">this guide</a>.</p>
+
+<hr>
+
+<h4 id="building-a-more-complete-restful-service">
+<a class="anchor" href="#building-a-more-complete-restful-service" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building a More Complete RESTful Service</h4>
+
+<blockquote>
+  <p>What’s important to realize is that REST, however ubiquitous, is not a standard, per se, but an approach, a style, a set of constraints on your architecture that can help you build web-scale systems. In this tutorial we will use the Spring portfolio to build a RESTful service while leveraging the stackless features of REST.</p>
+</blockquote>
+
+<p><a href="https://spring.io/guides/tutorials/rest">The guide</a> I’ll be following is comprehensive - I don’t see any value in essentially re-writing it here. I’d highly recommend checking it out!</p>
+
+<p><span class="warning">
+Uh-oh. Attempting to run the app will introduce us to some compilation errors about <code class="language-plaintext highlighter-rouge">javax</code> packages. <a href="https://stackoverflow.com/questions/37327697/spring-boot-javax-import-statements-not-working-correctly"><code class="language-plaintext highlighter-rouge">javax.*</code> import statements got renamed to <code class="language-plaintext highlighter-rouge">jakarta.*</code></a> and nobody updated the tutorial.
+</span></p>
+
+<p><span class="warning">
+When creating a RESTful service, the tutorial skips over the imports needed for HATEOAS (and VS Code didn’t make any suggestions). Refer to the <a href="https://github.com/spring-guides/tut-rest/blob/main/rest/src/main/java/payroll/EmployeeController.java">Github repo</a> for future compilation errors regarding missing symbols.
+</span></p>
+
+<h3 id="closing-thoughts">
+<a class="anchor" href="#closing-thoughts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Closing Thoughts</h3>
+<p>Nice tutorial! Working with Spring was fast and fun. I am still a bit unclear on how everything is working behind the scenes, but familiarity will come with time. Here’s hoping I get the job!</p>
+
+  </div>
+
+<hr>
+<h1><i class="fas fa-hand-peace"></i></h1>
+<div class="post-tags">
+    
+  
+  <a class="tag-link"
+    href=/tags/java
+    rel="category tag">
+    <code>#java</code></a>
+
+  
+  <a class="tag-link"
+    href=/tags/web
+    rel="category tag">
+    <code>#web</code></a>
+
+  
+  <a class="tag-link"
+    href=/tags/spring
+    rel="category tag">
+    <code>#spring</code></a>
+
+</div>
+
+      <footer class="site-footer">
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+
+    <!-- link to Prism Syntax Highlighter -->
+    <script src="/js/site-scripts/prism.js"></script>
+
+    <!-- Autoloader configuration (https://prismjs.com/plugins/autoloader/) -->
+    <script> 
+      Prism.plugins.autoloader.languages_path = '/assets/prism-components/'; 
+    </script> 
+
+<!-- Diff-highlighter is very picky about whitespace -->
+    <!-- <script>Prism.plugins.NormalizeWhitespace.setDefaults({
+      'remove-trailing': true,
+      'remove-indent': true,
+      'left-trim': false,
+      'right-trim': true,
+      // 'break-lines': 80,
+      'indent': 0,
+      'remove-initial-line-feed': true,
+      'tabs-to-spaces': 4,
+      // 'spaces-to-tabs': 4
+    });</script> -->
+    
+
+      <!-- Back to top -->
+    <script src="/js/site-scripts/vanilla-back-to-top.min.js"></script>
+    <script>addBackToTop()</script>
+
+  </body>
+</html>

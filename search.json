@@ -2,6 +2,16 @@
   
     {
 
+      "postTitle"       : "Getting Familiar with Java Spring Boot",
+      "postSubtitle"    : "",
+      "postTags"        : "java, web, spring",
+      "postDate"        : "2024-02-12 00:00:00 -0500",
+      "postUrl"         : "/2024/02/12/learning-about-spring-boot.html"
+
+    } ,
+  
+    {
+
       "postTitle"       : "Mixing it up:",
       "postSubtitle"    : "Creating Random Sample Kits on the Model:Samples",
       "postTags"        : "python, scripting, music, ai",
